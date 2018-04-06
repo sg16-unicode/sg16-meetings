@@ -20,7 +20,7 @@ The next SG16 meeting is scheduled for Wednesday, April 11th, from 2:30-4:00pm E
 - Attendees:
   - Tom Honermann
   - R. Martinho Fernandez
-  - JeanHyde Meneide
+  - JeanHeyd Meneide
   - Mark Zeren
   - Peter Bindels
   - Corentin Jabot
@@ -39,7 +39,7 @@ The next SG16 meeting is scheduled for Wednesday, April 11th, from 2:30-4:00pm E
     existing "std-text-wg" channel to "sg16-unicode" or, if we can't rename it,
     migrate to a new channel with the new name.
   - We'll rename the existing std-text-wg github repo to "sg16-unicode".  After the
-    meeting, JeanHyde suggested that we should migrate to a repo not tied to a
+    meeting, JeanHeyd suggested that we should migrate to a repo not tied to a
     a personal account and Tom agreed to do so.
 - We then went on to discuss future plans.
 - Mark suggested that we plan to get together with Apple Unicode developers before,
@@ -95,7 +95,7 @@ The next SG16 meeting is scheduled for Wednesday, April 11th, from 2:30-4:00pm E
   upcoming C++Now conference, May 6th-11th.
 - Tom noted that many of us have our own pet projects at the moment, many of which
   overlap considerably.  Tom has `text_view`, Zach has `text`, Martinho has
-  `Ogonek`, JeanHyde has his own `text_view`, Corentin has his own experiment with
+  `Ogonek`, JeanHeyd has his own `text_view`, Corentin has his own experiment with
   normalization, etc...  How can we best collaborate and execute on a shared vision
   for the standard?
 
