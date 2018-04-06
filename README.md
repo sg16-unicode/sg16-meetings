@@ -19,7 +19,7 @@ The next SG16 meeting is scheduled for Wednesday, April 11th, from 2:30-4:00pm E
 ## Meeting summary:
 - Attendees:
   - Tom Honermann
-  - R. Martinho Fernandez
+  - R. Martinho Fernandes
   - JeanHeyd Meneide
   - Mark Zeren
   - Peter Bindels
