@@ -1,6 +1,6 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, April 18th, from 2:30-4:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, April 25th, from 2:30-4:00pm EST.
 
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
@@ -108,7 +108,8 @@ The next SG16 meeting is scheduled for Wednesday, April 18th, from 2:30-4:00pm E
   IBM to ensure that what we propose won't be problematic for non-ASCII based systems.  Tom
   fervently agreed and indicated he has maintained contact with Hubert Tong.
 - We finished by agreeing to two meetings to be held before the pre-meeting mailing deadline
-  for Rapperswil.  The deadline is May 7th; we will meet April 11th and May 2nd.
+  for Rapperswil.  The deadline is May 7th; we will meet ~April 18th and May 2nd~ [Post-meeting
+  writeup correction: we will meet just once on April 25th].
 
 ## Assignments:
 - JeanHeyd: Research layering, concepts, required expressions, etc...
