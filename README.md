@@ -1,9 +1,126 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, April 11th, from 2:30-4:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, April 18th, from 2:30-4:00pm EST.
 
+- [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 11th, 2018
+
+## Draft agenda:
+- Identify champions to research and author papers for projects discussed in the last meeting:
+  - Terminology modernization
+  - Mandate char16_t and char32_t string literals be UTF-16/UTF-32.
+  - Identify existing features to deprecate/replace.
+  - basic_string specification cleanup.
+  - uninitialized append for contiguous containers.
+- Determine how to contribute to and collaborate on a common code repository; building from the ground up.
+
+## Meeting summary:
+- Attendees:
+  - Tom Honermann
+  - Steve Downey
+  - Mark Zeren
+  - Zach Laine
+  - JeanHeyd Meneide
+  - Nicole Mazzuca
+  - Florin Trofin
+- We first discussed some administrative updates:
+  - We now have a mailing list at http://www.open-std.org/mailman/listinfo/unicode!  Thanks to
+    JeanHeyd for an initial post summarizing our current projects and goals.
+  - Our Slack channel has been renamed to reflect our new SG16 branding.  Thanks to Mark for
+    taking care of that.
+  - We have a new SG16 GitHub organization at https://github.com/sg16-unicode.  The old
+    std-text-wg repo will be retired (but preserved).  Meeting summaries will now be tracked in
+    a new `sg16-meetings` repository.  We'll create additional repositories as needed.
+- We then spent a little time discussing how best to make use of the new GitHub org.
+  - Tom created GitHub projects for the initiatives discussed in our last meeting and asked
+    for feedback regarding tracking things that way.  None of us have much familiarity with
+    GitHub projects, so there wasn't much feedback.  Some experimenting will be required.  Tom
+    noted that task ownership seems to depend on creating issues associated with a git repo.
+  - Nicole noted that, because we now have a central org, we can create numerous repos.
+  - Steve mentioned that having a repository just for papers is very useful.
+  - Tom suggested creating a "sg16" repo with a Readme.md that provides an overview of
+    SG16 and other introductory text; for example, links to the mailing list and Slack.
+    Basically, a repo to host the Readme.md file from the old `std-text-wg` repo.  We might
+    also use this repo for general management purposes; e.g., to host GitHub issues used for
+    project tracking.
+  - Zach asked about where to host our mythical use cases doc and suggested an approach in
+    which the use cases are stored as code rather than as documentation.  This could support
+    testing the use cases with various implementations (for correctness, performance,
+    expressiveness, etc...).  Should we decide to submit a use cases paper, the paper could
+    presumably pull directly from the code.
+  - It was mentioned that being able to share code samples on godbolt.org (or another Compiler
+    Explorer host) would be helpful.  Nicole suggested we reach out to Matt Godbolt to see if
+    he would be amenable to adding Unicode related projects such as `ICU`.  Matt has fulfilled
+    similar requests in the past; e.g., for `range-v3`.
+- We then moved on to identifying champions to research and author papers for projects discussed
+  in the last meeting.  
+  - Steve volunteered to work on updating normative references to ISO/IEC 10646 to a revision
+    that isn't older than some committee members.
+  - Tom and Zack agreed to work on terminology modernization.
+  - Martinho wasn't present for the meeting, but had previously indicated interest in working on
+    a paper to mandate that char16_t and char32_t string literals be UTF-16/UTF-32; he reconfirmed
+    this on Slack after the meeting.  Tom volunteered to help try and identify any existing
+    compilers that don't use UTF-16/UTF-32.
+  - Mark reaffirmed his intent to work on basic_string specification cleanup.
+  - Mark also reaffirmed his intent to work on uninitialized append for contiguous containers.
+  - Noone volunteered to champion work on identifying existing features to deprecate/replace.
+- We briefly discussed deprecation approaches using `std::toupper()` as an example.  It was
+  acknowledged that eventual removal of this function may not be feasible due to widespread use.
+  Likewise, automatic refactoring may not be feasible since a suitable replacement function
+  might require multiple code points (either for context or for mapping).  Nicole noted that this
+  is an example of a function that can remain useful, but has a name that does not communicate
+  its limitations.  Deprecating it in favor of an appropriately named alternative (e.g.,
+  `ascii_toupper()`) would support automatic refactoring.
+- Our next discussion focused on further collaboration.
+  - Tom again expressed a desire to bring our collective efforts together to enable collaborating
+    on a reference implementation of features we'd like to see in a future TS.  Perhaps taking a
+    bottom up approach to building it.
+  - Zach noted that his `text` implementation and documentation are designed around three distinct
+    layers: strings, Unicode, and text.
+  - JeanHeyd expressed an interest in surveying `Ogonek`, `text`, `text_view`, etc... to identify
+    overlap and further define layering opportunities.
+- Tom then asked about recent reflector discussions regarding `string_view` and what we might
+  learn from them that would be applicable to view/reference types we might design.
+  - Zach noted a few guidelines:
+    - Don't support default comparisons between different kinds of views (e.g., string_view and
+      repo_view).
+    - Don't provide operators that hide complexity.  For example, an operator+ for text/string
+      views that would require allocation might be surprising.
+    - Owning vs non-owning is more imprtant than shallow vs deep compare.
+  - Mark mentioned that string_view cannot support intrinsic optionality because a null pointer
+    state is observeable (via `data()`).
+- We briefly discussed O(1) complexity requirements on `begin()`.
+  - Tom mentioned that his `itext_iterator` types do not currently meet this requirement because,
+    given an ill-formed initial code unit sequence, `begin()` may consume an unbounded number of
+    code units.  The consumption is necessary to ensure that, in the case where the end of the
+    underlying code unit sequence is reached before any code points are successfully decoded,
+    that `begin() == end()` will hold.
+  - Zach noted that his iterators don't encounter this situation because the `text` type ensures
+    that the underlying code unit sequence is always valid.  His transcoding iterators also do
+    not hit this because they produce a replacement character for each ill-formed sequence
+    (presumably limited to a bound length).  This would be an issue for support of an error
+    policy that simply skips ill-formed code unit sequences though.
+- Florin requested that we make sure to keep IBM users in mind and that we work with people from
+  IBM to ensure that what we propose won't be problematic for non-ASCII based systems.  Tom
+  fervently agreed and indicated he has maintained contact with Hubert Tong.
+- We finished by agreeing to two meetings to be held before the pre-meeting mailing deadline
+  for Rapperswil.  The deadline is May 7th; we will meet April 11th and May 2nd.
+
+## Assignments:
+- JeanHeyd: Research layering, concepts, required expressions, etc...
+- Mark: Review char8_t for LWG wording updates.
+- Mark: Work on the basic_string specification cleanup paper.
+- Mark: Work on the uninitialized append for contiguous containers paper.
+- Martinho: Work on the UTF-16/UTF-32 string literals paper.
+- Steve: Work on the paper to update ISO/IEC 10646 normative references.
+- Tom: Forward emails from the old std-text-wg mailing list to the new one and retire it.
+- Tom: Create new sg16 and sg16-papers repos and retire the old std-text-wg one.
+- Tom: Work with Zach on a terminology update paper.
+- Zach: Work with Tom on a terminology update paper.
 
 
 # March 28th, 2018
