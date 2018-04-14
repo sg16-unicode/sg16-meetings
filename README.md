@@ -1,6 +1,6 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, April 25th, from 2:30-4:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, April 25th, from 2:30-4:00pm EDT.
 
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
