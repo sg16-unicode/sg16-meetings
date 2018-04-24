@@ -87,7 +87,7 @@ The next SG16 meeting is scheduled for Wednesday, April 25th, from 2:30-4:00pm E
   learn from them that would be applicable to view/reference types we might design.
   - Zach noted a few guidelines:
     - Don't support default comparisons between different kinds of views (e.g., string_view and
-      repo_view).
+      rope_view).
     - Don't provide operators that hide complexity.  For example, an operator+ for text/string
       views that would require allocation might be surprising.
     - Owning vs non-owning is more imprtant than shallow vs deep compare.
