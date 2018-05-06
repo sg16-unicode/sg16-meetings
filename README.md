@@ -1,10 +1,154 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, April 25th, from 2:30-4:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, May 16th, from 2:30-4:00pm EDT.
 
+- [April 25th, 2018](#april-25th-2018)
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 25th, 2018
+
+## Draft agenda:
+- Review and discuss any draft papers targeting the Rapperswil pre-meeting mailing.
+- Discuss plans and goals for those attending Rapperswil.
+
+## Meeting summary:
+- Attendees:
+  - Tom Honermann
+  - Zach Laine
+  - Martinho Fernandes
+  - JeanHeyd Meneide
+  - Dalton Woodard
+  - Sergey Zubkov
+  - Steve Downey
+  - Peter Bindels
+  - Bob Steagall
+- We started off with introductions from first time attendees Dalton and Sergey.
+- Tom provided a few administrative updates:
+  - A new sg16 repo was created under the sg16-unicode github org; the old std-text-wg
+    repository is now retired.
+    - https://github.com/sg16-unicode/sg16
+  - A new sg16-papers repo was _not_ created under the assumption that it would be simpler
+    to just use the new sg16 repository.
+  - The old std-text-wg mailing list was removed; old emails were forwarded to the new
+    mailing list.
+  - The github projects that Tom was experimenting with have been removed in favor of
+    tracking via github issues on the sg16 repository.
+  - Alisdair provided some char8_t wording review; Mark is off the hook for doing so.
+- We then did a round of status updates.
+  - Steve provided a brief status update for the project to update normative
+    references to ISO/IEC 10646 (https://github.com/sg16-unicode/sg16/issues/1).
+    - Further discussion was postponed until after status updates.
+  - Martinho provided a brief status update for the project to mandate that `char16_t`
+    and `char32_t` literals use UTF-16 and UTF-32 encodings respectively
+    (https://github.com/sg16-unicode/sg16/issues/6).
+    - Further discussion was postponed until after status updates.
+  - Zach provided an update on Boost text and reported having fun adding support for the
+    Unicode bidirectional algorithm.
+  - Jeanheyd reported that he is working on benchmarks and comparisons of Ogonek, Boost
+    text, text_view, ICU, and other libraries.
+  - We briefly discussed some of the work that Bob Steagal has been doing.  Bob had
+    previously shared some UTF-8 conversion performance numbers with Zach and Tom.
+    Bob had not yet joined the meeting, so Zach gave a brief overview.  When Bob later
+    joined in, we discussed further (see below).
+- We then returned to discussion on normative updates for Unicode standard references:
+  - A productive discussion on Slack earlier in the day was helpful in setting
+    direction.  At issue was how to handle UCS-2 and UCS-4 references in the
+    standard since definitions of those terms would be lost by updating the
+    normative reference to a recent standard.  It was confirmed that UCS-2 and
+    UCS-4 are only referred to by the deprecated `codecvt` facets in annex D.
+  - Tom had suggested in the Slack discussion that we could remove the deprecated
+    features in C++20.  This would remove the existing references and avoid the need
+    to retain any definitions for UCS-2 and UCS-4.
+  - Zach noted that the standard practice for deprecation is to deprecate first and
+    replace/remove in a future standard.
+  - Steve noted that Debian code search reveals uses of the deprecated codecvt facets.
+  - Martinho suggested the deprecated facets could be specified to use UTF-16/UTF-32
+    instead of UCS-2/UCS-4.  This would be a technical break, but perhaps not a
+    significant concern.
+  - Tom noted that this would definitely break `codecvt_utf16` since it exists solely
+    to convert between UTF-16 and UCS-2/UCS-4.
+  - Steve stated that we can retain the old ISO/IEC 10646 reference for the deprecated
+    UCS-2 and UTC-4 references, and use an updated reference for everything else.
+  - Steve noted that LWG thought they had previously addressed the UCS-2/UCS-4 issue
+    by deprecating existing uses, but since references still remain, the issue is not
+    really addressed.
+  - Tom asked how we should move forward.  With one paper addressing both the normative
+    update and the UCS-2/UCS-4 references?  Two papers?  Perhaps three?
+  - Zach expressed a preference to address separate concerns separately.
+  - Tom expressed a preference for one paper with wording to address both issues.  The
+    intent being that, if that approach were to fail, we could fall back to separating
+    out the issues.  This preference is intended to avoid dependencies between the two
+    issues; to avoid the case where we end up updating the normative reference, but not
+    removing the UCS-2 and UCS-4 references, thus leaving undefined terms in the standard.
+  - Sergey asked about the possibility of updating the deprecated facets to specify that
+    the encoding conversion is implementation defined.
+  - Tom: Someone (not sure who) had previously (not in this meeting) noted that there
+    was already some implementation divergence regarding whether the codecvt facets
+    actually do convert between UCS-2/UCS-4 vs UTF-16/UTF-32.
+  - Martinho noted that the difference is unlikely to matter in real world usage because
+    lone surrogates are unlikely to be present.
+  - Peter countered that lone surrogates may appear in file names (on Windows where file
+    names have 16-bit code units).
+  - Zach stated that Windows no longer allows file names that are ill-formed UTF-16.
+  - Tom noted he had heard this, but hasn't seen it confirmed.
+  - Peter noted that WTF-8 exists to handle UCS-2 and malformed UTF-16.
+  - Martinho stated that there is a difference between ill-formed UTF-16 and text that
+    is not actually UTF-16.
+  - We confirmed Steve had the guidance he felt he needed from the group to proceed
+    as he deemed fit.
+  - Steve stated that he will circulate papers when ready.
+- We then returned to discussion on the character encoding for char16_t and char32_t
+  literals.
+  - Martinho have a quick overview of his draft:
+    - https://github.com/rmartinho/sg16/blob/master/proposals/p0000r0_utf16_32_literals.md
+  - Tom reported reaching out to the author of WG14 N2245
+    (http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2245.htm).  That author confirmed no
+    known C compiler implementations that don't use UTF-16/32.
+  - Zach said the paper looks good and asked what happens with \u escapes in ordinary
+    string literals today.
+  - Tom stated that is implementation defined.
+  - Zach and Martinho noted that there are potentially different results for escapes vs
+    conversion from source encoding.
+  - Tom suggested updating the character literal wording to use consistent naming with
+    the updated string literal wording.
+  - Tom also noted there would be a merge conflict with the char8_t proposal.
+  - Martinho noted that he had also observed that.  He also observed that the term,
+    "UTF-8 character literal" is defined but never referenced.  Martinho confirmed he
+    will define character/string literals using char16_t/char32_t and UTF-16/32 terms to
+    match the UTF-8 related definitions.
+- JeanHeyd asked about where to create new repositories for new projects.
+  - Zach and Steve both suggested creating personal repositories; we can transfer
+    ownership later if/when it becomes appropriate.
+- Steve observed that it would be helpful to use a consistent license for the
+  works we produce.
+  - JeanHeyd asked what license is preferred, CC0, Boost, MIT?
+  - Zach stated a preference for avoiding CC0 because of legal complexities with
+    "public domain".
+  - Tom expressed no particular preference but observed that CC0 is more complicated
+    from a wording perspective.
+  - Peter stated we should use a license that is friendly to implementors.
+  - Zach responded that fear of patent bombing prevents usage in some cases.
+  - We settled on using the Boost license for group projects.
+- Bob then provided an introduction and shared more specifics of his work.
+  - He has been working on UTF-8 conversion performance improvements and shared some
+    results that he will be presenting at C++Now.
+  - Peter asked if more benchmarks could be added to Bob's tests.
+  - Bob answered yes and noted that Zach did the work to integrate Boost text.
+- Steve reminded everyone to request paper numbers for the pre-Rapperswil meeting now.
+- We confirmed that the next meeting will by held on May 16th; three weeks from now
+  so as not to conflict with C++Now.
+
+## Assignments:
+- JeanHeyd: Research layering, concepts, required expressions, etc...
+- Mark: Work on the basic_string specification cleanup paper.
+- Mark: Complete and submit on the uninitialized append for contiguous containers paper.
+- Martinho: Complete and submit the UTF-16/UTF-32 string literals paper.
+- Steve: Complete and submit the paper to update ISO/IEC 10646 normative references.
+- Tom: Work with Zach on a terminology update paper.
+- Zach: Work with Tom on a terminology update paper.
 
 
 # April 11th, 2018
@@ -137,7 +281,7 @@ The next SG16 meeting is scheduled for Wednesday, April 25th, from 2:30-4:00pm E
 ## Meeting summary:
 - Attendees:
   - Tom Honermann
-  - R. Martinho Fernandes
+  - Martinho Fernandes
   - JeanHeyd Meneide
   - Mark Zeren
   - Peter Bindels
