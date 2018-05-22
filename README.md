@@ -1,11 +1,158 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, May 16th, from 2:30-4:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, May 30th, from 2:30-4:00pm EDT.
 
+- [May 16th, 2018](#may-16th-2018)
 - [April 25th, 2018](#april-25th-2018)
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 16th, 2018
+
+## Draft agenda:
+- Review and discuss papers in the Rapperswil pre-meeting mailing.
+- Discuss plans and goals for those attending Rapperswil.
+
+## Meeting summary:
+- Attendees:
+  - Bob Steagal
+  - Corentin Jabot
+  - Dalton Woodward
+  - Florin Trofin
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Martinho Fernandez
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- It was reported on Slack that Martinho's properly formatted UTF-8 P1041R0 paper
+  was served up by open-std.org either without a `CharSet` header or with a
+  Latin1 setting.  Tom contacted Hal and Keld.  Further discussion yielded a plan
+  to update
+  [SD-7](https://isocpp.org/std/standing-documents/sd-7-mailing-procedures-and-how-to-write-papers)
+  to require UTF-8 for `.md` files and to configure the open-std.org web server to
+  serve them with a `CharSet=UTF-8` header.
+- Zach, Bob, and JeanHeyd shared some of their experience at C++Now.
+- We then went on to review papers from the pre-Rapperswil mailing.
+- [P1041R0](http://wg21.link/p1041R0) - Make char16_t/char32_t string literals be UTF-16/32
+  - Tom noted a typo in the proposed wording changes for lex.ccon/4; a use of `UTF-8`
+    where `UTF-16` was intended.
+  - Given the encoding issues and lack of Markdown rendering support built into browsers,
+    it was suggested that future papers, at least for now, be submitted in a pre-rendered
+    format.
+  - Martinho asked about getting the paper scheduled for discussion in Rapperswil.  Tom
+    said he would forward SG16 polls on papers we discussed to WG chairs to communicate
+    our position and request time in Rapperswil.  Tom will copy paper authors and expected
+    presenters on this communication.
+  - It was asked if there was any library impact.  Martinho responded no.  Tom noted having
+    previously audited occurrences of `char16_t`, `char32_t`, `UTF-16`, and `UTF-32` and
+    could not think of a case.
+  - Zach suggested that, when presenting, it be emphasized that no implementation will need
+    to make changes; that this is just standarizing existing practice.  Emphasize that there
+    are no known implementations where the encoding used is not already UTF-16/UTF-32 and
+    that a member of the C committee was consulted.
+  - Poll: Those in favor of P1041R0?
+    - Unanimous consent.
+- [P1072R0](http://wg21.link/p1072r0) - Default Initialization for basic_string
+  - Mark noted that P1072 is dependent on P1010 which is dependent on Richard Smith's P0593.
+    This raised the question of prioritization and a request for SG16 to request that P0593
+    and P1010 get time in Rapperswil so that progress can be made on P1072 in San Diego.  Tom
+    agreed to make such a request; specifically to request that EWG entertain P0593 and that
+    LEWG look at P1010 (and P1072 time permitting).
+  - Mark went on to discuss applicability of P1072 to SG16.  Of particular concern are the
+    issues caused by requiring null termination.  This is not a problem for `vector`, and
+    hence not a concern expressed in P1010.
+  - Mark pointed out that the design is used in real world code today.
+  - Zach asked why `reserve()` doesn't suffice.  Mark explained the examples in the paper;
+    that we currently either have to repeatedly update the size of the container with each
+    addition, or eagerly resize the container and pay for an unused initialization.  The
+    goal of the paper is to avoid both costs by enabling writing to excess capacity
+    independently of updates to the container size.
+  - Tom asked if option A is viable.  The concern is that const member functions must be
+    thread safe.  A call to `resize_uninitialized()` makes uninitialized data available to
+    const member functions.  Further, there is no event to indicate when the uninitialized
+    data has been read and therefore no memory barier to function as a synchronization
+    point.
+  - Mark acknowledged that a two-phase commit approach is necessary to avoid UB.
+  - Martinho observed that two-phase commit is not sufficient by itself because `basic_string`
+    uses excess capacity to store a null terminator for the string; this is what allows
+    the `data()` and `c_str()` member functions to be `const` qualified.  Overwriting the
+    null terminator will cause UB for concurrently executing threads.
+  - Mark advised SG16 to consider the consequences of providing implicit null-termination
+    for string-like containers in the future.  An alternative approach would use string
+    builders that append a null-terminator when they are collapsed.
+  - Mark noted that the two-phase commit approach does at least allow the implementation to
+    re-establish invariants (such as ensuring a null-terminator is present at the start of
+    excess capacity following `insert_from_capacity()`.
+  - Tom suggested an emplace-like solution might be preferred to enable preserving invariants.
+  - Mark acknoledged a call-back/functor based solution would work (though it still doesn't
+    address the over-written null-terminator issue).
+  - Dalton asked whether making vector/string node-based containers such that data could be
+    written to a new buffer and then swapped in.  This has the disadvantage of requiring that
+    the current buffer be copied prior to performing the append.
+  - Tom asked if any performance numbers were available.  What is the expected gain?
+  - Mark responded that numbers are not available, but that Google has measured and claims the
+    improvements make this feature worthwhile.  Estimate is a few percent improvement.
+  - Corentin asked why not to use `vector` instead of `string`.
+  - Mark responded that `string` is a vocabulary type.
+  - Poll: Do we agree P1072R0 addresses a problem worth solving?
+    - Unanimous consent.
+  - Poll: Do we prefer option A, option B, or some option C?
+    - A: 0
+    - B: 2
+    - C: 5
+  - Mark clarified that option C, as discussed today, would be one of:
+    - An emplace-like call with a call-back/functor.
+    - A node-based swap.
+  - Discussion moved into allocator interaction with node types.
+  - Zach stated that swap is broken for PMR allocators.
+  - Steve agreed and provided an elaboration; that the swap of the allocators doesn't swap
+    the actual buffers.
+  - Mark noted that moving a buffer between `vector` and `string` encounters complexities due
+    to null-termination requirements.
+  - Martinho asked how a small buffer optimized string is moved into a node type.
+  - Dalton responded that you allocate.
+  - Tom added, or the node type implements the SBO itself.
+  - Mark expressed concern that an emplace-like call-back/functor approach may not work for
+    the network use case of wanting to read data off the network directly into the buffer.
+  - Zach suggested that, in a string builder approach, `vector` is the string builder.
+  - Corentin expressed a preference for a specific string builder type rather than `vector`.
+    Essentially a vocabulary type suited to the purpose.
+- [P1025R0](http://wg21.link/p1025r0) - Update The Reference To The Unicode Standard
+  - Steve briefly introduced the change as similar to what had been proposed, but not
+    completed, for C++17.
+  - Tom asked, why update the normative reference to specify each of Unicode 10, Unicode
+    without a version indicator, and ISO 10646?
+  - Steve answered, we need ISO 10646 for existing references; for example, the
+    `__STDC_ISO_10646__` macro.  We want to reference the Unicode standard (in addition to
+    ISO 10646) for stability guarantees and additional features.  We want to reference
+    Unicode 10 to establish a minimum requirement, and the unversioned Unicode standard to
+    enable implementors to adopt a newer version.
+  - Tom suggested adding a non-normative note that implementors are allowed to use Unicode
+    10 or newer; though they must use a corresponding version of ISO 10646.
+  - Martinho stated that we need to make it clear that implementors must choose a specific
+    Unicode release.
+  - Tom asked if we should require a predefined macro that indicates the Unicode version.
+  - Steve and Martinho both answered, maybe, but not yet as we don't actually depend on
+    anything Unicode version dependent yet.
+  - Poll: Those in favor of P1025R0:
+    - Unanimous consent.
+- Our next meeting will be May 30th; the week before Rapperswil.
+- There is a WG21 administrative teleconference May 25th.
+  - Tom will dial-in to give an update on SG16.  Martinho and JeanHeyd are encouraged to
+    attend as well since they have papers to present.
+- Those planning to attend Rapperswil:
+  - Martinho, Corentin, Peter, JeanHeyd.
+- Following the meeting, Martinho volunteered to present P1025R0 at Rapperswil since Steve
+  will not be present.  Steve agreed.
+
+## Assignments:
+- Tom: Forward SG16 poll results to WG chairs and request time in Rapperswil.
+- JeanHeyd: Research layering, concepts, required expressions, etc...
+- Mark: Work on the basic_string specification cleanup paper.
+- Tom and Zach: Work on a terminology update paper.
 
 
 # April 25th, 2018
