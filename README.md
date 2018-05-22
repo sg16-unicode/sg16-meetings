@@ -23,7 +23,7 @@ The next SG16 meeting is scheduled for Wednesday, May 30th, from 2:30-4:00pm EDT
   - Florin Trofin
   - JeanHeyd Meneide
   - Mark Zeren
-  - Martinho Fernandez
+  - Martinho Fernandes
   - Steve Downey
   - Tom Honermann
   - Zach Laine
