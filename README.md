@@ -1,12 +1,166 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, May 30th, from 2:30-4:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, June 20th, from 2:30-4:00pm EDT.
 
+- [May 30th, 2018](#may-30th-2018)
 - [May 16th, 2018](#may-16th-2018)
 - [April 25th, 2018](#april-25th-2018)
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 30th, 2018
+
+## Draft agenda:
+- Discuss plans and goals for those attending Rapperswil.
+- Review and discuss the following papers from the Rapperswil pre-meeting mailing:
+  - P1030R0: std::filesystem::path_view 
+  - P0540R1: A Proposal to Add split/join of string/string_view to the Standard Library
+  - P0645R2: Text Formatting
+  
+## Meeting summary:
+- Attendees:
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Martinho Fernandes
+  - Peter Bindels
+  - Sergey Zubkov
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Administrative updates:
+  - Tom reported that WG chairs were contacted regarding SG16 requests for paper reviews
+    in Rapperswil.  WG chairs are predictably swamped and prioritizing as best they know
+    how, but we may not get to present any of our papers.
+  - Zach observed that Titus is concerned about the amount of time that LEWG will need for
+    ranges, but that LWG should be more concerned.
+  - Tom relayed that JF Bastien volunteered to arrange introductions with Swift and WebKit
+    developers working on Unicode.  Tom reached out to arrange meetings, but hasn't heard
+    back.  Apple developers are busy preparing for WWDC; Tom will reach out again soon.
+  - Tom brought up the recent news that Microsoft has added beta support for UTF-8 as a
+    system code page as of the Windows 10 April update.  Tom made some new contacts
+    within Microsoft, but has not yet gotten any further information about Microsoft's
+    goals or plans with this change.
+- Rapperswil planning:
+  - Tom asked for volunteers to standup for SG16 at the Saturday plenary in Rapperswil
+    and give a brief update.  Martinho and JeanHeyd agreed to do so.
+  - Tom asked for those who have attended meetings before to offer any advice they have
+    for first time attendees.
+  - Zach recommended spending some time in each of the WGs.  Each WG has its own personality;
+  - It was noted that hanging around in WGs where one has a short paper in the queue creates
+    opportunities to present earlier than the paper might otherwise be scheduled.  The
+    P1025 (normative Unicode reference) and P1041 (char16_t/char32_t are UTF-16/UTF-32)
+    papers are good candidates.
+  - Zach also mentioned not to be afraid to ask questions and to try to read papers ahead of
+    time.
+  - Tom noted that anyone present in the room is allowed to vote in straw polls, but that
+    polls in plenary are generally restricted to ISO members.  It was noted that Herb will
+    make it clear when ISO membership is required to vote.
+- [P1030R0](http://wg21.link/p1030r0) - std::filesystem::path_view
+  - Martinho liked it, especially section 4.1 (Assume UTF-8 for char based interfaces).
+  - Tom liked it with the exception of section 4.1.
+  - Tom expressed a belief that the discussion in section 4.1 of how existing char based
+    interfaces on Windows handle conversion to wchar_t for invocation of native filesystem
+    interfaces is incorrect.  Tom's understanding is that char based strings are transcoded
+    to wchar_t strings using the system code page.
+  - Zach asked what is meant by ANSI encoding.
+  - Tom explained that Microsoft has long referred to char based encodings collectively as
+    ANSI encodings despite these encodings not reflecting an ANSI standard.
+  - \[Editor's note: Microsoft's glossary of terms on MSDN describes the origin of the ANSI
+    reference here.  It comes from a draft ANSI specification that was eventually standardized
+    as the ISO-8859 family of encodings.  See the definition of "ANSI" at
+    [https://msdn.microsoft.com/en-us/goglobal/bb964658.aspx#a](https://msdn.microsoft.com/en-us/goglobal/bb964658.aspx#a).
+    Microsoft now officially refers to these encodings as "Windows code pages".\]
+  - Zach initiated a discussion on compile-time vs run-time encodings.  Section 4.1 describes
+    a scenario in which file paths are pasted into source code as string literals, but the
+    existing interpretation of such strings, when used as paths at run-time, depends on
+    run-time locale settings.
+  - Peter mentioned that the Microsoft compiler now supports a `/utf-8` option that purports
+    to define the source and execution character encodings.  However, that option really only
+    affects how literals from the source code are translated to the execution character
+    encoding (UTF-8 at compile time, but never UTF-8 at run-time (at least, not until the newly
+    introduced beta support in Windows 10 that requires the user to opt in)).
+  - Tom stated that we can't fix the compile-time vs run-time aspects of the execution character
+    encoding.
+  - Martinho countered that `char8_t` offers a solution for this - we know the compile-time
+    and run-time encoding of `char8_t` characters and strings.
+  - Tom suggested a response to the author: maintain consistency with existing code; `char`
+    means "ANSI" encoding.  Use `char8_t` for UTF-8 (follow the changes to `path` proposed in
+    the `char8_t` proposal.
+  - Tom, Zach, and JeanHeyd all noted the presence of `#ifdef`s surrounding the `wchar_t` based
+    interfaces in the proposed design.  We don't use `#ifdef` as specification for implementation
+    defined features.
+  - JeanHeyd noted that that `path_view` should not fight with the platform; don't propagate
+    implementation defined behavior through interfaces to the programmer.
+  - Martinho observed that there is no rationale for providing `wchar_t` based interfaces only
+    for Windows; they are perfectly applicable to other platforms as well.
+  - Zach stated that `path_view` should work the same as `path`; just as `string_view` does for
+    `string`.  `path_view` should support the same set of constructors that `path` has and they
+    should behave the same.  If there is a need for new constructors, they should be added to
+    both `path` and `path_view`.
+  - Zack noted that `path_view` should be explicitly constructible from `path`, not the other
+    way around.  \[Editor's note: as currently specified, `path_view` is constructible from
+    `path`, though the constructor isn't explicit.  Note that `string_view`'s corresponding
+    constructor is also not explicit. \]
+  - Further discussion regarding memory allocation and the behavior of the proposed `c_str`
+    class ensued.  \[Editor's note: few details of this discussion were recorded.  From what
+    I recall, consensus was that the memory allocation behavior should be implementation
+    defined.\]
+  - JeanHeyd asked how we should communicate our feedback to the author.
+  - Zach replied with a preference for a direct person-to-person response.
+  - JeanHeyd volunteered to deliver feedback.
+  - Poll: Use execution character encoding for `char` interfaces, `char8_t` for UTF-8?
+    - Unanimous consent.
+- [P0882R0](http://wg21.link/p0882r0) - User-defined Literals for std::filesystem::path
+  - Tom stated that SG16 concerns are limited to encoding issues; LEWG should address any
+    other concerns; e.g., naming.
+  - Peter noted that the paper punts on UTF-8 support pending a solution from the comittee for
+    differentiating ordinary and UTF-8 string literals.  Fortunately, we have a solution for
+    that in the works!
+  - It was asked why the UDLs are not `constexpr`; the answer is because they produce `path`
+    objects and the `path` constructor allocates.
+  - Mark asked if the UDLs should produce `path_view` objects ala P1030 above and was rewarded
+    with a round of yeses.
+  - Peter observed that the UDL names are very generic (ha ha) and that the literal namespace
+    proposed for them differs unnecessarily from existing precedent (e.g.,
+    `std::filesystem::literals` vs `std::literals::filesystem`.  \[Editor's note: This design
+    also results in the UDL declarations being visible following `using namespace std::filesystem`;
+    this may be intentional.\]
+  - Poll: Contingent upon adoption of `char8_t`, add `char8_t` based overloads?
+    - Unanimous consent.
+- [P0540R1](http://wg21.link/p0540r1) - A Proposal to Add split/join of string/string_view to the Standard Library 
+  - Tom observed that the paper number and filename do not match.  \[Editor's note: Tom
+    followed up with Hal and the author.\]
+  - Everyone in unison, "non-member functions please!"
+  - Tom asked if there were any concerns about split/join functions operating at the code unit
+    level.
+  - Martinho replied, no, those are useful operations for splitting/constructing grapheme
+    clusters.
+  - Zach expressed concern about increasing the surface area of string based interfaces.
+  - Poll: Does adding these additional functions complicate future efforts due to increasing
+    the set of functionality to replicate at code point or higher levels?<br/>
+    \[ SF F N A SA \]<br/>
+        5 1 1 0  0
+- [P0645R2](http://wg21.link/p0645r2) - Text Formatting
+  - Zach requested `char8_t` overloads.  \[Editor's note: Peter has been planning to work on
+    adding `char16_t` and `char32_t` support.  There is an existing issue tracking support
+    for `char16_t`: https://github.com/fmtlib/fmt/issues/698.  That issue notes that support
+    for `std::numpunct<char16_t>` is missing; that would presumably be an issue for `char8_t`
+    support as well.\]
+  - Zach observed that formatting only works for trivial encodings in which one code unit
+    equals one code point; otherwise, field alignments won't match up in displayed text.
+  - Martinho responded that, if a font is missing a glyph for a combining character, then the
+    combining character will likely be displayed as a separate glyph.  Text layout is required
+    to display aligned text (e.g., depends on console, curses, etc...).
+  - Tom asked how such display concerns can be addressed; `format` is not a text display tool.
+  - Zach asked how field size is specified.  Code units?  Code points?  "Characters"?
+  - Peter provided a link to an existing github issue concerning field size and UTF-8.
+    - https://github.com/fmtlib/fmt/issues/628
+  - Tom noted that we were out of time; we'll continue discussion next time and will invite
+    Victor to join us.
+- Tom stated out next meeting will be scheduled for three weeks from now on June 20th.  The extra
+  week is to give everyone a break following Rapperswil.
 
 
 # May 16th, 2018
