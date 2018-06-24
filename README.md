@@ -1,7 +1,8 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, June 20th, from 2:30-4:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, July 11th, from 2:30-4:00pm EDT.
 
+- [June 20th, 2018](#june-20th-2018)
 - [May 30th, 2018](#may-30th-2018)
 - [May 16th, 2018](#may-16th-2018)
 - [April 25th, 2018](#april-25th-2018)
@@ -9,7 +10,143 @@ The next SG16 meeting is scheduled for Wednesday, June 20th, from 2:30-4:00pm ED
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
+# June 20th, 2018
 
+## Draft agenda:
+- Rapperswil recap.  Progress!
+- Continue review of P0645R2 (Text Formatting), hopefully with
+  Victor present if he can attend.
+- Review the draft D1097R0 proposal:
+  - https://github.com/rmartinho/sg16/blob/master/papers/d1097r0.md
+- Discuss what we want to learn from the Swift and WebKit developers.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - JeanHeyd Meneide
+  - Keld Simonsen
+  - Mark Zeren
+  - Martinho Fernandes
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- First order of business was to ensure that papers requiring updates following the Rapperswil meeting
+  are submitted in time for the post-Rapperswil mailing.  Tom confirmed that P0482R4 had been submitted
+  and correspondence with Hal confirmed that P1025R1 (adopted at Rapperswil) will be included in the
+  mailing.  Though not discussed in Rapperswil, Martinho plans to submit a revision of P1041 for the
+  mailing.
+- [P0645R2](http://wg21.link/p0645r2) - Text Formatting
+  - Victor started us off with a brief introduction of recent changes and review in Rapperswil.
+  - Victor reported having read the summary of our previous meeting and discussion of P0645.
+  - Discussion resumed regarding what field widths mean for multibyte encodings and combining characters.
+  - Victor asked if basing field widths on grapheme clusters would be appropriate.
+  - Zach provided an example of family emojis.  Consider 4 person code points separated by zero width
+    joiners.  Each person code point combined with a ZWJ is a distinct grapheme cluster, but a single
+    glyph may be used to display all four clusters.  So, grapheme clusters are not the right abstraction
+    for field width.
+  - Tom claimed that `format` should be used to format code units.
+  - Peter suggested assuming one column per code point.
+  - Keld asked about other libraries; are there any that use abstractions above code points for field
+    formatting?
+  - Tom stated that the competition is `printf` and iostreams.
+  - Keld asked what ICU does.
+  - Zach responded that he wasn't sure, but that Python uses code points for field formatting.
+  - Discussion then moved on to other topics briefly.
+  - Zach expressed enthusiasm for `format_to_n`.
+  - Tom asked if mixed character encodings are supported.  For example:
+    - `format("{}", u"text"); // execution character encoding for format string with UTF-16 argument.`
+  - Victor stated that mixed encodings are not supported and result in compilation failure.
+  - Zach observed that, if `char8_t` overloads were added, that, internally, `format` must consume
+    code points.
+  - Tom responded that this is true for any multibyte encoding, and therefore true in general for
+    the execution and wide character encodings.
+  - Victor agreed, but noted that operations other than fill and field formatting could be optimized
+    to avoid looking at code points.
+  - Peter asked if any multibyte encodings allow a NUL byte in trailing code unit sequences.  No
+    such encodings were named.
+  - Peter observed that, if an encoding library is used, `format` can always just read code points.
+  - Zach offered to provide Victor code using code point iterators from Boost.Text that could be used
+    to prototype code point based approaches.
+  - Discussion briefly turned to portability of `wchar_t` and Keld's work to increase the number of
+    C interfaces that do not rely on global program state; e.g., locale data.  Keld wants to improve
+    support for working with multiple encodings in a single process.
+  - Tom noted that such improvements are useful for our ideas around use of compile-time known
+    internal encodings with transcoding to run-time determined encodings at program borders.
+  - Tom asked how `format` handles signed and unsigned char; are they treated as integral/arithmetic
+    or character types?
+  - Victor replied that he didn't recall and would have to check.
+  - Keld asked about reentrancy.
+  - Victor responded that the only global state references are for locale data.
+  - Keld recommended allowing strings to be tagged with encoding data.
+  - Tom tried to bring discussion back to fill operations and field widths; are we agreed on use of
+    code points for field fill/alignment?
+  - Martinho asked how a code point approach works when writing to a fixed width buffer (of code units).
+  - Victor mentioned that `format_to_n` takes a code unit count constraint.
+  - Peter observed that a code unit count constraint can result in truncated code unit sequences.
+  - Victor suggested that `format_to` could produce code points instead.
+  - Steve asked how to avoid writing broken code; code points produced are likely going to be written
+    to a code unit buffer anyway.
+  - Keld stated that programmers like to write both code unit and code point code; perahps both
+    should be supported.
+  - Martinho claimed that truncated code unit sequences are probably not a large concern; buffers are
+    generally larger than required anyway.
+  - Discussion again drifted towards encodings that are known at compile-time vs run-time.
+  - Keld asked what types are generally used for double byte character sets; Japanese, Chinese, ...
+  - Martinho responded that those tend to be variable length encodings that switch between single byte
+    and multibyte.
+  - Tom agreed and mentioned ISO-2022 and escape sequences.
+  - Discussion drifted back to code units vs code points.
+  - Zach suggested that programmers will expect the output encoding to match the format string, but
+    that code points are more consistent and natural.  If the `n` in `format_to_n` means something
+    different than for field widths, that will be a problem.
+  - Victor agreed that programmers will expect to be filling a code unit based buffer.
+  - Tom observed that more discussion would be useful, but that we need to move on.
+  - Zach recommended trying to support both code unit and code point based approaches and observe
+    feedback and usage.
+- [D1097R0](https://github.com/rmartinho/sg16/blob/master/papers/d1097r0.md) - Named character escapes
+  - Martinho started by requesting feeback on:
+    - name matching (currently more limited than described by
+      [UAX44-LM2](https://www.unicode.org/reports/tr44/#UAX44-LM2))
+    - lack of support for named character sequences.
+  - Tom recommended adding a small section that summarizes what is actually proposed.  At present, the
+    paper presents a number of options, but one must read the proposed wording to determine which
+    options are actually proposed.
+  - Tom expressed a preference for following the UAX44-LM2 for name matching.
+  - Martinho responded with a dislike for the `U+1180 HANGUL JUNGSEONG O-E` exception and noted that
+    none of the other languages he surveyed use `UAX44-LM2` for matching.
+  - Keld noted existing APIs that allow specifying precision for matching.
+  - Martinho clarified that general collation APIs don't apply here (because of the
+    `U+1180 HANGUL JUNGSEONG O-E` exception).
+  - Tom asked if we should propose this for C and everyone responded yes.
+  - Tom mentioned the paper should address the potential for code breakage.  `"\N"` has a meaning now
+    (it means `"N"`).
+  - Tom asked if it is permissible to construct these escapes using macro concatentation.
+  - Tom observed that `'_'` seemed to be missing in the definition of `c-char`.
+  - Martinho stated that is intentional; `'_'` would be needed for `UAX44-LM2` matching, but that
+    actual character names never use `'_'`.
+  - Zach suggested adding a Tony Table to compare use of `\U` and `\N{}` escapes.
+  - Tom suggested clarifying that `\N{}` escapes would not be permitted in identifiers.
+  - Tom asked about interaction with raw string literals; `r-char-sequence` doesn't seem to include
+    `universal-character-name`.
+  - Martinho responded that `universal-character-name` escapes are not recognized in raw string
+    literals; following existing precedent.
+- Rapperswil recap:
+  - Tom asked if Rapperswil attendees were able to connect with authors of previously discussed
+    papers in order to deliver our feedback.
+  - JeanHeyd reported that connections did not happen however:
+    - P1030 was not discussed in Rapperswil.
+    - P0882 was discussed in LEWG but not well received.  No need for follow up.
+    - P0540 was discussed; LEWG feedback matched ours, so no need to follow up.
+- We ran out of time to discuss what we want to learn from the Swift and WebKit developers.
+- Tom asked about renaming the SG16 mailing list from `unicode` to `sg16-unicode`.  Both Tom and
+  Martinho had been annoyed by the similarity to the `unicode.org` mailing list by the same name.
+  No objections were raised; Tom will follow up with Keld.
+- Tom noted that our next regularly scheduled meeting would fall on July 4th, a US holiday.  The
+  next meeting will be scheduled for July 11th.
+
+  
 # May 30th, 2018
 
 ## Draft agenda:
