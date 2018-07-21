@@ -1,7 +1,8 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, July 11th, from 2:30-4:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, July 25th, from 2:30-4:00pm EDT.
 
+- [July 11th, 2018](#july-11th-2018)
 - [June 20th, 2018](#june-20th-2018)
 - [May 30th, 2018](#may-30th-2018)
 - [May 16th, 2018](#may-16th-2018)
@@ -9,6 +10,144 @@ The next SG16 meeting is scheduled for Wednesday, July 11th, from 2:30-4:00pm ED
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+# July 11th, 2018
+
+## Draft agenda:
+- Discuss what we want to learn from Swift and WebKit developers.
+- Potentially review papers from the Rapperswil post-meeting mailing.
+- Review issues list and start identifying goals for San Diego.
+
+
+## Meeting summary:
+- Attendees:
+  - Artem Tokmakov
+  - Mark Zeren
+  - Tom Honermann
+  - Victor Zverovich
+- Apologies to JeanHeyd Meneide and Steve Downey; It seems technical issues with BlueJeans prevented
+  them (and others?) from joining the meeting.  This issue and conflict with the World Cup semi-finals
+  reduced attendance.
+- Tom reconfirmed intent to rename our mailing list, but has not yet made progress on doing so.
+- We then started reviewing some papers from the Rapperswil post-meeting mailing.
+- [P0732R2: Class Types in Non-Type Template Parameters](http://wg21.link/p0732r2)
+    - Tom asked if `std::text` and/or `std::text_view` should be literal types?
+    - Tom noted this would require defining `operator<=>`.
+    - Mark suggested adding a `std::text_literal`, but then asked about motivation:
+      - `char8_t` allows differentiating encoding for standard mandated encodings.  Is there a need
+        to track encoding through non-type template parameters?
+      - [P0784](http://wg21.link/p0784) would enable dynamic allocation for literal types, so a
+        separate (non-allocating) type may not be required.
+    - Victor asked why `operator<=>` is relevant.  
+    - Tom explained that `operator<=>` is required for non-type template parameters, but defining it
+      for text is problematic because it would be either expensive, or wrong for many use cases
+      (e.g., because it would be code unit or code point based).
+    - Tom suggested that `std::fixed_string` may suffice since `std::text_view` could be layered
+      on top.
+    - Mark observed a solution would still be needed for encoding tagging then.
+- [P1030R1: std::filesystem::path_view](http://wg21.link/p1030r1)
+  - Tom mentioned that we had reviewed the earlier P0 revision during our
+    [May 30th meeting](#may-30th-2018).
+  - Tom noted that this revision addresses the concern we had with the `char` based interfaces
+    requiring UTF-8 encoding.  However, it addresses this by replacing the `char` based interfaces
+    with `std::byte` based ones.  This doesn't match existing practice for file name interfaces.
+  - Tom mentioned that he would have liked to poll on this change, but since we didn't have a
+    quorum, we would not do so.  The poll would have been to restore the `char` based interfaces,
+    but to match the encoding requirements for `std::filesystem::path`.
+- [P1100R0: Efficient composition with DynamicBuffer](http://wg21.link/p1100r0)
+  - Tom wondered if Mark wanted to look at this as potentially related to
+    [P1010](http://wg21.link/p1010).
+  - Mark responded that he felt it isn't strongly related.
+- We then discussed Victor's recent
+  [follow up email](http://www.open-std.org/pipermail/unicode/2018-July/000103.html) regarding
+  [P0645](http://wg21.link/p0645) and interpretation of field widths.
+  - Mark stated that this is fundamentally a console problem, but that field widths are needed
+    to implement programs like Eric Niebler's range based calendar example.
+  - Mark also asked if we can specify that fill characters only consume one column of output.
+  - Tom asked if we can rule out grapheme clusters as the unit of field width on the basis that
+    the library must support non-Unicode encodings.
+  - Victor suggested we could define a encoding agnostic concept of grapheme clusters.  For
+    Unicode, the concept is a 1x1 match with grapheme clusters.  For other encodings, that concept
+    might map to code points with no higher abstraction.
+  - Tom replied that doing so is viable and that `text_view` would have to do so if its
+    `Character` concept were to be redefined in terms of grapheme clusters.
+  - Victor reiterated that he wants to implement both code point and grapheme cluster based
+    approached and explore use cases.
+  - Tom observed that the concerns are effectively equivalent for consoles and text editors;
+    assuming use of a monospaced font.
+  - Tom asked if `format` is intended as a `printf` replacement.
+  - Victor responded, yes, but that doesn't mean that we have to replicate prior mistakes.
+  - Tom suggested an experiment: Take Eric's calendar program and modify it to display emojis
+    for holidays; e.g., U+1F384 Christmas Tree on December 25th.
+- Discussion then turned to questions we'd like to discuss with the Swift and WebKit teams.
+  - JeanHeyd (absent due to technical problems), provided the following five questions via Slack:
+    - JM1: How many bug reports are related to users incorrectly choosing which layer of abstraction
+         to work with for Strings (code units / code points / grapheme clusters)?
+      - Tom attempted a clarification; since Swift strings are graphme cluster based, I think this
+        question means, are users trying to do things at the grapheme cluster layer when they
+        would be better served working at the code unit or code point level?
+      - Mark posed the correlated question, how often do users try to work at code unit or code
+        point level when they should just work at the grapheme cluster level?
+    - JM2: Has the decision to use Extended Grapheme Clusters presented a problem (minor or major)
+         in the usage?
+      - Mark stated this should be the first question we ask.
+      - Mark presented a different way of asking this question: What have been the best and worst
+        results of this choice?
+    - JM3: Has anyone ever wanted to pry underneath the string abstraction and perform their own set
+         of text processing that wasn't supported by the language (e.g., retrieve code units / code
+         points so they can do something that Swift did not let them do)? If so, does it happen often?
+      - Tom stated the answer to the first question is clearly yes.  The second question is more
+        about how often this happens and what the use cases are that motivate doing so.
+      - \[Editor's note: a use case may be to work around differences in grapheme cluster boundaries
+        in different Unicode versions depending on the version of Swift or the underlying version
+        of ICU.\]
+      - Mark expressed an interest in string builder use cases.  How are custom string builders
+        created?
+    - JM4: Has Swift ever considered exposing lower-level unicode database code point / script
+         properties? CharacterSet seems to have some of that functionality, but has more ever been
+         requested / asked for?
+      - Tom expressed enthusiasm for this question.
+    - JM5: There's some indication that putting the normalization form and such in the type system may
+         prove beneficial. Has there been any progress on that front? We are looking to answer a
+         similar question for C++ up-front, and picking one normalization form that might have the
+         most up-front processing and performance benefits for typical users.
+       - Mark rephrased as, what was the rationale for choosing the current design?
+  - Tom then went over a list of questions he had come up with:
+    - TH1: The Swift string manifesto is about 1 1/2 years old.  What have you learned since?
+    - TH2: If you were starting over, what would you change?
+      - Tom stated that this isn't a very useful question; it's too open ended.
+      - Mark stated that bug reports are more intersting; What have you had to change?
+    - TH3: How tied is the Swift string implementation to ICU?
+      - Tom stated the intent of this question is to identify how much of ICU is needed to create
+        a useful Unicode string class.
+      - Tom added a second goal: to determine if the Swift developers would potentially be interested
+        in replacing uses of ICU with standard C++ library features, if they existed.
+    - TH4: Swift's string is locale insensitive (yay!).  Was a locale sensitive one considered?  Perhaps
+         as a distinct type?
+      - Tom stated the intent is to explore if a distinct type for localized strings might be useful
+        (since locale is a run-time property not available at compile-time).
+    - TH5: How often does string interpolation suffice vs using string formatting?
+      - Tom asked Victor if he had considered string interpolation support when designing his `format`
+        library.
+      - Victor responded, yes, but with uncertainty regarding how to do it in C++ today.  Python started
+        with a formatter and added interpolation later.  We could do likewise.
+    - TH6: Has canonical string equality been...
+      - A performance issue?
+      - A surprise to users?
+    - TH7: Have substrings turned out to work as well as hoped?
+      - Tom noted that Swift substrings seem superficially similar to `std::string_view`, but with
+        dynamic lifetime management of the underlying storage.
+    - TH8: Are the results of string interpolation always dynamic?  Does Swift have a constexpr equivalent
+         and, if so, do they work there?
+    - TH9: Would you remove string.count() (returns "character" count) if you could?
+      - Tom posed an additional question: How often do people use string.count() incorrectly?
+    - TH10: Are the unicodeScalars, utf8, and utf16 views allocating?  Or are they lazy transformations?
+    - TH11: There are a variety of "unsafe" methods.  Have they been problematic?
+  - Mark suggested an additional question:
+    - MZ1: Swift comparisons are provided.  Do users use them incorrectly?  Have they been a performance
+           problem?
+- Tom stated that our next meeting will be scheduled for July 25th.
+
 
 # June 20th, 2018
 
