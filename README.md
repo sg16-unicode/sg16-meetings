@@ -1,7 +1,8 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, July 25th, from 2:30-4:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, August 15th, from 2:30-4:00pm EDT.
 
+- [July 25th, 2018](#july-25th-2018)
 - [July 11th, 2018](#july-11th-2018)
 - [June 20th, 2018](#june-20th-2018)
 - [May 30th, 2018](#may-30th-2018)
@@ -10,6 +11,171 @@ The next SG16 meeting is scheduled for Wednesday, July 25th, from 2:30-4:00pm ED
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# July 25th, 2018
+
+## Draft agenda:
+- Discuss the Unicode support experience with Swift and WebKit representatives
+  (tentative pending their availability).
+- Review our issues list and start identifying goals for San Diego.
+
+## Meeting summary:
+- Attendees:
+  - Artem Tokmakov
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Tom Honermann
+  - Zach Laine
+- Tom announced that meeting with Swift developers was postponed due to scheduling conflicts and
+  that, in the meantime, we'll focus on interaction with them over email.  \[Editor's note:
+  Michael Ilseman and Dave Abrahams responded to the initial set of questions.  Their responses
+  are available in the SG16 mailing list archive at
+  http://www.open-std.org/pipermail/unicode/2018-August/000113.html \]
+- Discussion then proceeded with review of the
+  [SG16 issues list](https://github.com/sg16-unicode/sg16/issues).
+- [Issue #2: Deprecate `std::ctype`, `std::ctype_byname`, `std::isupper()`, and `std::toupper()`](https://github.com/sg16-unicode/sg16/issues/2)
+  - Zach suggested writing a direction paper regarding deprecation policies.
+  - Artem, observing that the indicated functions are used by iostreams (e.g., by `std::uppercase`),
+    suggested we just go the extra mile and deprecate iostreams to a mixture of approval and
+    laughter.
+  - Mark suggested that the issue scope be limited to previously identified functions.
+  - Tom agreed and renamed the issue (previously "Deprecate text/string/character interfaces that
+    are too broken to fix").
+  - Zach mentioned that `isupper`, `isnum`, and `isalpha` are definitely broken for Unicode and
+    expressed a preference that, if we're going to deprecate them, we should do so early in order
+    to encourage replacement.
+  - Zach went on to explain that replacements that properly handle Unicode must take locale into
+    account in order to do title casing and case mapping correctly.
+  - Tom asked for clarification - a code point based `toupper()` doesn't make sense?
+  - Zach responded, no; more information is needed.
+  - Tom asked, what about `isupper()`?
+  - Zach answered, Unicode properties can answer that question, but are insufficient for doing
+    case conversions.
+  - Tom summarized, the take away is that interfaces in `<ctype>` and `<locale>` are definitely
+    broken.
+  - Mark added, yup, especially considering that `int` is signed.
+  - Artem asked about support for UTF-8, UTF-16, and UTF-32.
+  - Mark replied, yup, those are problematic.  Even for `char32_t` due to combining code points.
+  - Tom stated this is not a high priority for C++20; no objections.
+- [Issue #3: Uninitialized append for contiguous containers](https://github.com/sg16-unicode/sg16/issues/3)
+  - Mark noted that [P1010](http://wg21.link/p1010) was not presented in Rapperswil; hopefully
+    it will be in San Diego.
+- [Issue #4: basic_string specification cleanup ](https://github.com/sg16-unicode/sg16/issues/4)
+  - Mark mentioned that Tim Song recently proposed some clanup, but those changes don't address
+    Mark's iterator invalidation concerns.
+- [Issue #5: char8_t (WG21 P0482, WG14 N2231)](https://github.com/sg16-unicode/sg16/issues/5)
+  - Tom stated that this is on target for C++20.  Tom has some minor wording changes to make per
+    request from early LWG review.
+  - Mark asked about the WG14 proposal.
+  - Tom replied that WG14 is meeting again in October and that he hopes to have a revision
+    ready to present.
+- [Issue #6: Specify that char16_t and char32_t literals are UTF-16 and UTF-32 respectively](https://github.com/sg16-unicode/sg16/issues/6)
+  - Tom indicated that the paper for this issue, [P1041R1](http://wg21.link/p1041r1), is ready
+    for presentation in San Diego.
+- [Issue #7: Modern terminology updates](https://github.com/sg16-unicode/sg16/issues/7)
+  - Zach observed that this is something that could be done for C++20 since the changes won't
+    impact implementors.
+  - Tom agreed but lamented a lack of time for working on it now.
+- [Issue #8: Explicitly disallow unnamed Unicode codepoints in http://eel.is/c++draft/lex.charset#2](https://github.com/sg16-unicode/sg16/issues/8)
+  - Tom expressed a belief that this issue is complete.  Martinho discussed it with CWG members
+    in Rapperswil and submitted a [pull request](https://github.com/cplusplus/draft/pull/2201)
+    that was accepted as an editorial issue.
+  - \[Editor's note: Tom was mistaken.  The accepted pull request addressed a terminology issue
+    ("short name" vs "short identifier"); the concern tracked by this issue remains, though
+    Martinho has a draft paper [D1139](https://github.com/sg16-unicode/sg16/blob/master/papers/d1139r0.md)
+    that addresses it.\]
+- [Issue #9: Requiring wchar_t to represent all members of the execution wide character set does not match existing practice](https://github.com/sg16-unicode/sg16/issues/9)
+  - Artem summarized: the standard requires that all members of the execution wide character set
+    be representable in a single `wchar_t` value.
+  - Zach stated a preference for treating this as low priority.  Mark agreed.
+  - Zach added that `wchar_t` is already a portability nightmare and there is therefore little
+    incentive to try and fix it.  Mark agreed.
+- [Issue #15: Add support for named Unicode character escapes](https://github.com/sg16-unicode/sg16/issues/15)
+  - Tom indicated that the paper for this issue, [P1097R1](http://wg21.link/p1097r1), is ready
+    for presentation in San Diego.
+- [Issue #16: code_point_sequence\[\_view\]](https://github.com/sg16-unicode/sg16/issues/16)
+  - Tom mentioned that Lyberta, the individual that filed this issue, had also discussed it on the
+    mailing list.
+  - Zack asked for clarification regarding what this issue is about.
+  - Mark summarized: this is the question of whether a `text` type should have `begin()` and
+    `end()` members that iterate over grapheme clusters or code points or whether the type should
+    not be a range, but provide explicit access to EGC and code point ranges.
+  - Tom added that Lyberta had also wanted to expose differences between encoding schemes and
+    encoding forms, though it seems this was driven by purity of design goals rather than use
+    cases.  Lyberta appeared to want to be able to, effectively, reinterpret cast a sequence of
+    UTF16-BE code units (bytes) to a sequence of UTF-16 code units (`char16_t`).  But that doesn't
+    work (portably) because bytes and `char16_t` might be the same size.
+  - Mark commented, well that is fine, but don't put that in the standard then.  That's why we like
+    C++; it lets you break the rules.
+- [Issue #30: Unclear behavior for octal and hex escape sequences in Unicode character and string literals](https://github.com/sg16-unicode/sg16/issues/30)
+  - Tom expressed a preference for making character literals like `u8'\x80'` well-formed; this
+    matches existing practice.
+  - Zach disagreed and presented the perspective that `u8`, `u`, and `U` literals should always
+    produce well-formed UTF sequences.
+  - Tom objected with the observation that `u8'\x80'` can't produce well-formed UTF-8 since it
+    only produces a single code unit.
+  - Zach suggested that perhaps `u8'\x80'` should be allowed, but `u8"\x80"` should not be.
+  - Mark stated that both should be allowed because the programmer explicitly used a hex (or octal)
+    escape sequence.
+  - Zach objected saying that if he were to use an escape sequence that he wants the compiler to
+    validate it.
+  - Mark admitted seeing Zach's point.
+  - Zach stated that, if a programmer wants to create an ill-formed sequence for some reason, then
+    they should use `bit_cast` from a `char` sequence after creating the data.  The intent of adding
+    a `u8` prefix to a string is to request well-formed UTF-8.
+  - Tom disagreed and stated the intent of adding a `u8` prefix is to enable transcoding from the
+    source character set to UTF-8.
+  - Mark noted that this distinction is important due to planned changes for `char8_t`.
+  - Tom disagreed and stated this is orthogonal since it is independent of the type system.
+  - Tom noted that we can address this as a core issue or by writing a paper.
+  - Mark said we should write a paper since there are different options for what the behavior
+    should be.  Zach agreed.
+  - Tom suggested that a core issue be filed to address the difference in what the standard states
+    and in what current implementations actually do.  A separate paper can then address what the
+    desired behavior is.
+  - Zach stated that he doesn't think a defect report suffices to address this.
+  - Tom stated that he'll file a core issue; Zach and Mark can follow up with a paper.
+  - Mark mentioned that Martinho has a stake in this; that he wanted hex and octal escapes to be
+    a back door.
+  - JeanHeyd confirmed and agreed that hex and octal escapes should function as back doors.  If
+    a programmer wants to ensure well-formed UTF, use `\u` or `\U` or (hopefully soon), `\N{}`.
+- [Issue #31: std::text and std::text_view](https://github.com/sg16-unicode/sg16/issues/31)
+  - Tom: On-going.
+- [Issue #32: std::char_traits<char16_t>::eof() requires uint_least16_t to be larger than 16 bits (LWG#2959)](https://github.com/sg16-unicode/sg16/issues/32)
+  - Tom summarized: All 16-bit values are valid UTF-16 code units.  This doesn't leave any room for
+    a 16-bit value to be used to indicate EOF.  Implementations often use `0xFFFF` to indicate EOF.
+    The result is spurious mismatches with `std::char_traits<char16_t>::eof()` when text encodes
+    (valid) UTF-16 `0xFFFF` code units.
+  - Zach observed that this isn't solvable without switching to a larger `int_type`.
+  - Tom agreed but noted that it is an ABI break.
+  - Tom added that libstdc++ made a change to minimize problems by mapping `0xFFFF` code units
+    to `0xFFFD` when comparing against `eof()`, but this doesn't solve the problem.
+- Tom asked what should be on the list for C++20.  Our `char8_t`, `char16_t` and `char32_t`
+  literals are UTF-16/UTF-32, named escape sequences, and uninitialized string append proposals
+  are underway.  We could make progress on other issues or work towards C++23 goals like
+  `std::text` and `std::text_view`.
+- Zach observed that the direction group would likely prioritize feature work over existing
+  issues.
+- Tom agreed and summarized, it sounds like prioritize features, resolve issues
+  opportunistically.
+- Zach then provided an update on Boost.Text.  He expects to have it ready for submission for
+  Boost review soon; David Sankel has agreed to assist.
+- Zach added that he got collation based text searching working and that it was fun because he
+  could use Boyer-Moore searching for it.  He asked if any of us had used full collation based
+  searching before.
+- Artem responded that most people want linguistic searching; for example, searches for "frog"
+  return "toad".
+- Mark observed that linguistic searching goes a bit beyond Unicode.
+- JeanHeyd asked if we should be considering exposing the Unicode character database.  Python
+  and Java do \[Editor's note: and the next version of Swift will\].
+- Tom was unsure and noted that programmers need for properties like "is number" and "is space"
+  often have more strict constraints than Unicode; e.g., when parsing some mini-language.
+- Zach added that, for full text processing, you're generally not looking at those properties
+  either.
+- Mark observed that adding the timezone database nearly made some committee members oppose the
+  feature due to the extra 1MB or so of size.
+
 
 # July 11th, 2018
 
