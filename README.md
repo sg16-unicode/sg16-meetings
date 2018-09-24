@@ -24,7 +24,7 @@ The next SG16 meeting is scheduled for Wednesday, August 29th, from 2:30-4:00pm 
 ## Meeting summary:
 - Attendees:
   - Artem Tokmakov
-  - JF Bastian
+  - JF Bastien
   - Mark Zeren
   - Peter Bindels
   - Steve Downey
