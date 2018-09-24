@@ -2,6 +2,7 @@
 
 The next SG16 meeting is scheduled for Wednesday, August 29th, from 2:30-4:00pm EDT.
 
+- [August 29th, 2018](#august-29th-2018)
 - [July 25th, 2018](#july-25th-2018)
 - [July 11th, 2018](#july-11th-2018)
 - [June 20th, 2018](#june-20th-2018)
@@ -11,6 +12,122 @@ The next SG16 meeting is scheduled for Wednesday, August 29th, from 2:30-4:00pm 
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# August 29th, 2018
+
+## Draft agenda:
+- SG16 direction.  Where are we heading?  Big picture.
+- Code points, EGCs, or explicit ranges for text views/containers?
+  - How to decide?  Pick a direction now?  Write a pros/cons paper for the committee?
+
+## Meeting summary:
+- Attendees:
+  - Artem Tokmakov
+  - JF Bastian
+  - Mark Zeren
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- With apologies from the editor, this summary writeup was very much delayed.
+- Zach started off with an update on Boost.Text.  He noted that implementing the
+  Uncode bidirectional algorithm was challenging.  Noone was surprised.
+- Tom provided a brief summary for the agenda.  Basically to review our direction and
+  confirm common goals and scope.
+- JF asked what we have planned for C++20 to which Tom replied that we have a few small
+  features in the queue and might otherwise take on some wording cleanup.
+- Steve asked about timing for a potential TS and discussion ensued regarding how to
+  get usage experience vs the benefits of going straight into the standard.
+- Tom proposed a few statements to be considered as axioms, guidelines, questions, or
+  possible directives for our work.
+- (Axiom) 1: C++ has a long history of supporting non-Unicode encodings; we can't abandon legacy encodings.
+  - JF brought up the concept of bridging with a comparison to `std::thread` and `native_handle`.
+    E.g., an interface could provide a Unicode centric interface that abstracts support
+    for legacy encodings.
+- (Axiom) 2: execution and wide execution character encoding will remain run-time
+   properties, `char8_t`, `char16_t`, and `char32_t` encodings will remain compile-time
+   properties.
+  - Tom asserted that legacy compatibility prevents mandating that the execution and wide
+    execution encodings be fully known at compile time and noted that they can be changed
+    dynamically by calling `setlocale`.
+  - Tom also noted that WG14 is considering allowing a program's locale to be dynamically
+    changed on a per-thread basis.  See [WG14 N2226](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2226.htm).
+  - Artem asked how much we've been looking at existing locale support.
+  - Zach responded that the existing locale support is insufficient to implement some parts
+    of Unicode, in particular, support for tailoring.
+  - JF mentioned that Javascript internationalization may be a good resource with regard to
+    how to map locale information to Unicode.
+- (Guideline) 3: Encourage the internal vs external encoding model with UTF-8 as the
+  preferred internal encoding.
+  - Tom asked if it is reasonable to encourage use of a particular encoding as the internal
+    encoding.
+  - Zach replied that he feels we must in order to avoid having to perform internal conversion
+    rather than (only) conversions at component boundaries.
+  - Mark suggested that extensions could enable support for other encodings.
+  - Peter emphasized existing advocacy and trends with regard to UTF-8:
+    - https://utf8everywhere.org
+    - https://w3techs.com/technologies/overview/character_encoding/all
+  - Tom asked JF if he could comment regarding how UTF-8 fits into the Apple ecosystem.
+  - JF responded that, as long as convenient transcoding interfaces are available, that it
+    wouldn't be an issue.
+  - Tom asked if restricting access to code units in `std::text` (in order to allow the
+    internal encoding to be implementation detail) would break use cases.
+  - Zach responded yes, that prevents passing the underlying code unit sequence to C APIs.
+    \[Editor's note: this response presumes that the underlying code unit sequence contains
+    a nul terminator\]
+- (Directive) 4: Improve support for transcoding at program borders (command line, env vars,
+  stdin, stdout, text files, network).
+  - Zach suggested not focusing on improving this now; let `fmt` deal with I/O; don't
+    enhance iostreams.
+  - Mark stated that we don't have to fix all of the problems with the standard library.
+- (Question) 5: Do `std::text` and `std::text_view` replace `std::string` in new programs?
+  - Mark stated no, not as a drop in replacement.
+  - Zach noted that we want to continue using `std::string` for simple cases.
+  - Tom asked, for new code, do we advocate a preference for `std::text` and `std::string`
+    only when needed?
+  - Zach stated no, for performance reasons.
+  - Tom clarified: that indicates a specific reason to prefer `std::string` in some context,
+    but in general, can we advocate use `std::text` unless there is a reason not to?
+  - Zach responded that an AAT (Almost Always Text) rule would make sense.
+  - Peter asked if it would ever be wrong to use `std::text` instead of `std::string`.
+  - Zach replied, no.
+  - Peter provided an example by way of `set<text>`.  If `std::text` comparisons are
+    expensive (e.g., canonical equivalence vs lexicographical), use as a container element
+    may not be desirable.
+  - Zach noted that might be a reason to specialize `std::less`.
+  - Zach observed that comparison cost is only an issue for relational comparison, equivalence
+    is inexpensive if the text is already normalized.
+  - Mark summarized, `std::text` provides storage, comparisons need specialized support.
+- (Question) 6: How do we manage `std::text` and `std::string` conversions?
+  - Tom asked if we need the ability to transfer buffer ownership between `std::string` and
+    `std::text`.
+  - Mark replied, yes, and that it needs to handle short buffer optimizations, but that this
+    is lower priority than making the Unicode algorithms available.
+  - Artem observed that `std::string_view` helps here.
+- (Question) 7: Where do null terminated strings fit in?
+  - Tom asked, can we try to reduce demand for them?  Perhaps propose a string/text type to WG14?
+  - Everyone replied, not quickly :)
+  - Mark asked if `std::text` needs null termination.
+  - Zach replied that it can be provided at the code unit level for C compatibility, but doesn't
+    make sense to provide null termination for code point or grapheme cluster sequences.
+- (Question) 8: Where do Unicode algorithms fit into the library and are they independent of
+  `std::text`?
+  - Tom stated a preference that Unicode algorithms are usable with arbitrary string types.
+  - Zach agreed stating that we should have code point range/iterator based interfaces as well as
+    grapheme cluster range based interfaces.
+- (Directive) 9: Adopt useful features from other languages.
+  - Tom clarified, for example, named escapes as proposed in [P1097](http://wg21.link/p1097).
+  - No disagreement.
+- (Directive) 10: Fix existing issues as needed.
+  - No disagreement.
+- (Question) 11: What role do we take with WG14?
+  - Tom asked, the question is really how much time to spend here.
+  - Zach stated that engaging with WG14 over `char8_t` and terminology updates makes sense.
+  - Mark observed that making Unicode data available via a C API could be useful.
+- (Question) 12: What is our target schedule?
+  - Steve suggested mostly targeting C++23, not a TS.
+  - Zach noted that we need to ensure usage experience and that we have bandwidth limitations.
 
 
 # July 25th, 2018
