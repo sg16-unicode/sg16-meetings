@@ -67,10 +67,10 @@ The next SG16 meeting is scheduled for Wednesday, October 17th, from 2:30-4:00pm
   not just use ICU?
 - Mark responded that programmers continue to struggle with classes of bugs that we could
   potentially minimize, handling of grapheme clusters for example.
-- Steve also noted continued mishandling of strings.
+- Steve also noted continued mishandling of strings in general.
 - Tom mentioned distribution and packaging issues.  Having something provided with the standard
   library helps to sidestep legal obstacles and package versioning problems.
-- Corenting commented that programmers need more easy to use functionality, libraries that
+- Corentin commented that programmers need more easy to use functionality, libraries that
   encourage correct use.
 - Tom agreed, noting that we want to bring down the learning curve for working with Unicode.
 - JeanHeyd added that not all programmers need all of Unicode, some would benefit just by having
