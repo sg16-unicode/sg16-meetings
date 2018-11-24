@@ -950,9 +950,12 @@ The next SG16 meeting is scheduled for Wednesday, December 5th, from 2:30-4:00pm
     clusters.
   - Zach expressed concern about increasing the surface area of string based interfaces.
   - Poll: Does adding these additional functions complicate future efforts due to increasing
-    the set of functionality to replicate at code point or higher levels?<br/>
-    \[ SF F N A SA \]<br/>
-        5 1 1 0  0
+    the set of functionality to replicate at code point or higher levels?
+
+    |  SF |   F |   N |   A |  SA |
+    | --: | --: | --: | --: | --: |
+    |   5 |   1 |   1 |   0 |   0 |
+
 - [P0645R2](http://wg21.link/p0645r2) - Text Formatting
   - Zach requested `char8_t` overloads.  \[Editor's note: Peter has been planning to work on
     adding `char16_t` and `char32_t` support.  There is an existing issue tracking support
