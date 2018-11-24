@@ -1,7 +1,8 @@
 # SG16 Meeting Summaries
 
-The next SG16 meeting is scheduled for Wednesday, October 17th, from 2:30-4:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, December 5th, from 2:30-4:00pm EST.
 
+- [October 17th, 2018](#october-17th-2018)
 - [October 3rd, 2018](#october-3rd-2018)
 - [August 29th, 2018](#august-29th-2018)
 - [July 25th, 2018](#july-25th-2018)
@@ -13,6 +14,143 @@ The next SG16 meeting is scheduled for Wednesday, October 17th, from 2:30-4:00pm
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 17th, 2018
+
+## Draft agenda:
+- char8_t: Markus' concerns, motivation, type safety, Unicode sandwich, most C++ code is yet to be written, transition story.
+- Code points, EGCs, or explicit ranges for text views/containers?
+  - How to decide? Pick a direction now? Write a pros/cons paper for the committee?
+
+## Meeting summary:
+- Attendees:
+  - Artem Tokmakov
+  - Cameron Gunnin
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Markus Scherer
+  - Martinho Fernandes
+  - Sergey Zubkov
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- [Issue #30: Unclear behavior for octal and hex escape sequences in Unicode character and string literals](https://github.com/sg16-unicode/sg16/issues/30)
+  - Tom explained the current situation; [CWG#2333](http://wg21.link/cwg2333) tracks this
+    issue.  CWG discussed at their August 2017 teleconference and decided that numeric escape
+    sequences should be ill-formed in UTF-8 character literals.  Mike Miller offered to reconsider
+    the issue if requested by SG16.
+  - Markus mentioned the utility in using numeric escapes to create ill-formed strings for testing
+    purposes.
+  - Markus also presented an alternative possibility, that numeric escapes only be ill-formed if
+    used to encode a code unit value that is never valid in a UTF string, e.g., `0xff`.
+  - Markus additionally noted that there is a distinction between Unicode strings (may contain
+    ill-formed contents) and UTF strings (must be well-formed).
+  - Zach asserted that the ability to use numeric escapes is more important than preventing
+    encoding of ill-formed UTF sequences.
+  - Tom noted that the current CWG resolution seems evolutionary given that it contradicts existing
+    practice.
+  - Markus noted a further benefit, maintaining consistency with languages like Java.  Additionally,
+    he explained that some logging libraries write strings with non-printable characters replaced
+    with escape sequences and that the ability to copy and paste those strings verbatim into code
+    is useful.
+  - Tom noted an additional use case; strings encoded as Modified UTF-8.  Modified UTF-8 requires
+    use of escapes to encode U+0000 as an overlong two-byte sequence.
+  - Markus added that the same use case applies to creation of CESU-8 strings; escape sequences are
+    needed for the individual encoding of UTF-16 surrogate pairs.
+  - Tom stated that it is useful to embed a null terminator with `\0`, though it would still be
+    possible to do so using `\u0000`.
+  - Mark observed that implementations can warn if a literal that contains numeric escape sequences
+    produces an ill-formed UTF string.
+  - Poll: Continue to allow hex and octal escapes that indicate code unit values, requiring only
+    that they fit into the range of the code unit type.
+
+    |  SF |   F |   N |   A |  SA |
+    | --: | --: | --: | --: | --: |
+    |   8 |   1 |   0 |   0 |   0 |
+    
+- char8_t:
+  - Zach started the discussion by noting that use of `char8_t` does not help to enfore
+    preconditions; ill-formed UTF-8 can appear in sequences of `char8_t` just as it can in sequences
+    of `char`.  How does `char8_t` help?
+  - Mark acknowledged that preconditions can always be violated.
+  - Tom offered `make_text_view` and UDLs as examples.  `char8_t` enables writing generic functions
+    that work with ordinary and UTF-8 string literals.
+  - Zach summarized, I see, it allows authors of overload sets to differentiate behavior.
+  - Markus chimed in, starting to see the motivation for `char8_t`; generic code can't distinguish
+    encodings unless it is represented in the type system.
+  - Markus further noted that the standard library has a high percentage of generic code relative to
+    code outside the standard.
+  - Tom agreed, but noted there is more focus on generic libraries now than in the past and that the
+    committee is working hard to improve support for generic programming as exemplified by Concepts.
+  - Tom mentioned that we have multiple encodings we have to support.
+  - Markus acknowledged the dilemma; many other languages have settled on a single internal encoding,
+    but C++ supports multiple encodings and there is no clear dominant one across the industry.
+  - Mark added that there is considerable baggage with `char` and the implementation definedness of
+    the execution encoding.
+  - Markus acknowledged the existence of many incompatible string types in C++ that are all similar
+    in intent.
+  - Tom stated that Concepts helps to bring these different string types together such that they
+    can be supported by generic code.
+  - Markus observed that the `char8_t` proposal changes existing behavior.
+  - Mark noted that `u8` literals aren't used much in C++.
+  - Markus mentioned that Google uses `unsigned char` and ensures use of UTF-8 internally.
+  - Tom responded that there is a backward compatibility story that is aided by C++20 support for
+    class types as non-type template parameters as proposed in [P0732](http://wg21.link/p0732).
+- Code points vs grapheme clusters:
+  - Martinho lead the discussion by expressing concern that grapheme cluster boundaries are not
+    stable.  The situation with Swift today is that behavior depends on the version of ICU installed
+    on the system.  Behavior is therefore non-portable.
+  - Mark mentioned that we have a similar issue with the timezone database and `<chrono>`.  Behavior
+    depends on which version of the database is installed.
+  - Tom acknowledged the concern; we won't have portable grapheme breaking in C++ either.
+  - Markus provided a link to a recent document authored by Mark Davis and noted a limitation imposed
+    by the instability of grapheme cluster boundaries; stored EGC indexes are invalidated when
+    changing Unicode versions.
+    - https://docs.google.com/document/d/1wuzzMOvKOJw93SWZAqoim1VUl9mloUxE0W6Ki_G23tw/edit
+  - Zach asked, as someone without a lot of end user experience, how often do programmers make poor
+    choices regarding handling of Unicode text?
+  - Steve responded that he sees bug reports frequently where programmers inadvertently sliced
+    grapheme clusters.
+  - Martinho provided links to a couple of example defects:
+    - https://bugs.swift.org/browse/SR-3582
+    - https://stackoverflow.com/questions/26862282/swift-countelements-return-incorrect-value-when-count-flag-emoji
+  - Tom asked, so how do we make a decision about how to proceed.
+  - Martinho countered that we don't need to yet.
+  - Steve chimed in with, how do we make them less scary?
+  - Mark responded with a question, how are things going to look?  new types on top of `std::string_view`
+    and `std::string`?
+  - Zach provided a brief overview of how Boost.Text handles grapheme clusters.
+  - Markus asked, does Boost.Text enforce well-formed UTF-8?
+  - Zach responded that it encourages, but does not require well-formed UTF-8.
+  - Markus mentioned that validation can be expensive.  If you know your input is well-formed, then
+    lookups can be optimized without having to decode.
+  - Tom described this as a design trade off; validate up front and reap performance benefits later,
+    or skip validation and lazily validate later.
+  - Markus noted that it is common for programmers to slam content into strings and then validate
+    them later.
+  - Mark mentioned that [P1072](http://wg21.link/p1072) helps to support that use case.
+  - Tom asked, assuming that we standardize a type that enforces well-formedness, is there room for
+    standardizing a non-validating type as well?  Or does that become an expert level do-it-yourself
+    feature?
+  - JeanHeyd advocated an adapter-over-range approach for `std::text`; tags can suppress validation
+    when it isn't necessary.
+  - Tom observed that it isn't possible to enforce well-formedness on views without introducing
+    validation costs.
+  - Steve mentioned that adapters over containers make memory allocation someone else's problem, for
+    better or worse.
+  - Martinho advocated that, if performing validation on container construction, would prefer
+    replacement character substitution since throwing gives you nothing.  Invalid input can be used
+    as an attack vector; if UTF-8 input is all `0x80`, replacement will triple the buffer size.
+  - Zach expressed openness to an adapter approach for Boost.Text.
+  - Mark expressed a preference for the adapter approach as it supports underlying containers with
+    reference counts or small buffer optimizations.
+  - Mark also mentioned that wrapping `std::string` provides a nice transition story.
+- Tom then summarized the plan for the San Diego meeting: discussion of the
+  [Unicode Direction paper](http://wg21.link/p1238), [P1072](http://wg21.link/p1072), Isabella
+  Muerte's [P1275](http://wg21.link/p1275), and then small groups to focus on further proposal
+  incubation.
+
 
 # October 3rd, 2018
 
