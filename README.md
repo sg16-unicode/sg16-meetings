@@ -1,5 +1,7 @@
 # SG16 Meeting Summaries
 
+SG16 meetings are typically held on Wednesdays from 2:30pm-4:00pm EST5EDT4 on the 2nd and 4th weeks of each month, but scheduling conflicts or other time pressures sometimes force alternative scheduling.  Meeting invitations are sent to the mailing list and prior attendees.
+
 The next SG16 meeting is scheduled for Wednesday, December 5th, from 2:30-4:00pm EST.
 
 - [October 17th, 2018](#october-17th-2018)
