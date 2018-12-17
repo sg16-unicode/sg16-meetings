@@ -1,9 +1,13 @@
 # SG16 Meeting Summaries
 
-SG16 meetings are typically held on Wednesdays from 2:30pm-4:00pm EST5EDT4 on the 2nd and 4th weeks of each month, but scheduling conflicts or other time pressures sometimes force alternative scheduling.  Meeting invitations are sent to the mailing list and prior attendees.
+SG16 meetings are typically held on Wednesdays from 2:30pm-4:00pm EST5EDT4 on the 2nd
+and 4th weeks of each month, but scheduling conflicts or other time pressures sometimes
+force alternative scheduling.  Meeting invitations are sent to the mailing list and
+prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, December 5th, from 2:30-4:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, December 19th, from 2:30-4:00pm EST.
 
+- [December 5th, 2018](#december-5th-2018)
 - [October 17th, 2018](#october-17th-2018)
 - [October 3rd, 2018](#october-3rd-2018)
 - [August 29th, 2018](#august-29th-2018)
@@ -16,6 +20,122 @@ The next SG16 meeting is scheduled for Wednesday, December 5th, from 2:30-4:00pm
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 5th, 2018
+
+## Draft agenda:
+- Draft guidelines for other WGs and SGs to request SG16 review.
+- char8_t remediation for backward compatibility impact.
+- Review P1072 following San Diego LEWGI feedback.
+
+## Meeting summary:
+- Attendees:
+  - Bryce Adelstein Lelblach
+  - Cameron Gunnin
+  - Corentin Jabot
+  - Florin Trofin
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Markus Sherer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Draft guidelines for other WGs and SGs to request SG16 review.
+  - Tom introduced the topic.  Bryce had suggested that SG16 produce a rubric detailing guidance
+    for when other WGs and SGs should consult SG16.  SG7 recently produced such a document.  Tom
+    felt this was an excellent idea and is now bringing it before SG16 for discussion.
+  - Tom first asked Bryce where SG7's rupric can be found.
+  - Bryce replied that it will be in the San Diego post-meeting mailing.
+  - Tom then asked for suggested guidance.
+  - Steve suggested a simple litmus test; "if it smells like Unicode..."
+  - Corentin mentioned having discussed this with Titus in San Diego and suggested that anything
+    having to do with text processing should be sent our way.
+  - Bryce asked about locales and it was agreed that Unicode has locale dependencies.
+  - Peter mentioned the {fmt} library; code units vs code points?
+  - Tom replied that we discussed {fmt} with Victor in SG16 on several occassions.
+  - Bryce asked if {fmt} is in C++20 and whether SG16 has any concerns about it.
+    \[Editor's note: not yet, but it passed LEWG review in San Diego\].
+  - Zach replied that it is certainly no worse than what we have now.
+  - Mark commented, bird in hand... even if we had issues with the {fmt} library, there is no
+    competing proposal.
+  - Corentin mentioned that {fmt} does not yet handle `char16_t` and `char32_t`, but can be extended
+    later.
+  - JeanHeyd elaborated, template overloads are present, but formatting strings must be `char`
+    or `wchar_t` at the moment.
+  - Zach suggested a requirement; that we need to reserve the right to explicitly specialize standard
+    library templates that might be instantiated by users with `char8_t`.
+  - Tom asked for a volunteer to identify such templates.
+  - Zach volunteered.  Hooray for Zach!
+  - Steve suggested that anything involving command lines, file names, and environment variables should
+    be sent our way.
+  - Mark added, any kind of encoding.  Including source encoding.
+  - Tom asked, do we want SG13 (HMI) members consulting us for text input and presentation issues?
+  - Steve replied, when they get to that point, yes.
+  - Tom asked for a volunteer to draft the rubric paper.
+  - Steve volunteered.  Hooray for Steve!
+- char8_t remediation for backward compatibility impact.
+  - Tom gave a brief introduction and pointed the group at a rough draft paper posted to the mailing list
+    (http://www.open-std.org/pipermail/unicode/2018-December/000180.html).
+  - Time was given for those who had not yet seen it to quickly scan it.
+  - Steve commented on the proposed change to make ostream inserters for `char16_t` and `char32_t`
+    ill-formed; for anyone actually relying on printing pointer values, a fix should be easy, add a
+    cast to `void*`.
+  - Corentin wondered if anyone actually does `std::cout << u8"text"`.
+  - Zach observed that someone could conceivably want to use the ostream inserters to print `char16_t`
+    values formatted as hex integers, say when dumping UTF-16 code units for diagnostic purposes.
+  - Steve asked if it would be problematic to allow `std::string` to be constructed with `char8_t` based
+    data.
+  - Zach responded that he didn't see any harm.
+  - Peter chimed in that `std::string` always holds UTF-8 in the code base he works on.
+  - Tom stated that supporting `std::string` interoperability with `u8` literals would require a lot of
+    overloads for the `char` based specialization of `std::basic_string`.  Implementors would not like
+    that.
+  - Zach asserted that he wants, somehow, to be able to construct `std::string` objects initialized with
+    `u8` literals.
+  - Tom asked if using a factory function would suffice.
+  - Zach responded that would require updates and therefore doesn't address existing code.
+  - Markus advised thinking of `std::string_view` in addition to `std::string`.
+  - JeanHeyd asked about allowing `std::u8string` to be convertible to `std::string`.
+  - Tom stated he thought that might allow most existing code to just work.  But, would we really want
+    that?  Implicit conversions are often undesirable.
+  - Peter responded that he thought so, yes.  Existing code mixes UTF-8 with `char`.
+  - Corentin observed that implicit conversion from `std::u8string` could lead to mojibake.
+  - Zach acknowledged that `std::string` doesn't guarantee any encoding.
+  - Peter asked about the possibility of making it UB for `std::u8string` to contain non-UTF-8 data.
+  - Zach requested not adding encoding guarantees for strings.
+  - Peter responded, it doesn't actually work anyway since you couldn't update a string without
+    introducing UB.
+  - Tom asked if the UDL approach to providing UTF-8 data in `char` via `u8` literals was realistic.
+  - Zach stated we shouldn't be suggesting macros as solutions.  \[Editor's note, macros are not required
+    to create a solution that works for C++17 and C++20, but source code changes are required\].
+  - Tom asked if use of `-fno-char8_t` is a valid option noting that it forks the language.
+  - Zach suggested, perhaps this is our first good opportunity to put tooling to use as part of a C++20
+    migration story.
+  - Corentin observed that it should be easy to use `clang-tidy` to update code.
+  - JeanHeyd asked if `char8_t` could implicitly convert to `char`.
+  - Corentin stated that he wants conversions to be explicit.
+  - Tom mentioned that the draft paper is intended to tell a migration story.
+  - Markus explained that he felt the economics are not right.  The current situation puts the burden of
+    addressing breakage on many programmers.
+  - Zach suggested adding tooling automation to the paper.
+  - Tom said he could add `clang-tidy`, what else should be mentioned?
+  - Zach stated he'd like to see compilers do fix-ups themselves.
+  - Corentin observed that implementors are unlikely to have something in place in the necessary time frame.
+  - Tom asked about experimentation.
+  - Peter stated his code base isn't using `u8` literals today and won't be able to.
+  - Markus observed that not all code is equally modifiable.  For example, Google's code base has a lot of
+    Google specific code, but also uses a lot of third party code.  Updating the third party code and
+    potentially maintaining differences from upstream, is more difficult than updating Google's own code.
+  - Tom suggested a C++17 compatibility library could be made available that implements some of the
+    remediation approaches noted in the draft paper.
+  - Bryce asked about the possibility that the `char8_t` proposal might be re-litigated due to backward
+    compatibility concerns.
+  - Tom replied, sure, anything is possible.
+  - Bryce suggested adding data about expected brekage to the remediation paper to avoid scaring people.
+- Peter requested time in SG16 for presenting and collecting feedback on a simple 2D graphics library
+  he has been working on.
 
 
 # October 17th, 2018
