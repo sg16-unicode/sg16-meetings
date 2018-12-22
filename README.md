@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, December 19th, from 2:30-4:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, January 9th 2019, from 2:30-4:00pm EST.
 
+- [December 19th, 2018](#december-19th-2018)
 - [December 5th, 2018](#december-5th-2018)
 - [October 17th, 2018](#october-17th-2018)
 - [October 3rd, 2018](#october-3rd-2018)
@@ -20,6 +21,139 @@ The next SG16 meeting is scheduled for Wednesday, December 19th, from 2:30-4:00p
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 19th, 2018
+
+## Draft agenda:
+- Continue discussion of char8_t remediation for backward compatibility impact.
+  - Discuss pros/cons of keeping u8 literals char based and introducing new char8_t based U8 literals.
+- Review P1072 following San Diego LEWGI feedback.
+
+## Meeting summary:
+- Attendees:
+  - Bryce Adelstein Lelblach
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+- Continued discussion of char8_t remediation for backward compatibility impact.
+  - Tom introduced the discussion topic.  One approach to minimizing backward compatibility impact
+    would be to restore `u8` literals being `char`-based and to introduce a new `U8` literal prefix
+    for `char8_t` based UTF-8 literals.
+  - Mark suggested following up with Google folks to determine if this would address their concerns.
+  - Tom stated he talked to Chandler following the San Diego vote.  Concerns expressed were that the
+    potential backward compatibility impact exceeded the benefits.
+  - Tom asked for pros and cons for a new `U8` literal prefix.
+  - JeanHeyd was first to note the obvious primary benefit, avoids backward compatibilty issues.
+  - Tom agreed, but added that P0482 does have other minor breakage; the changes to the return types
+    of the `u8string` member functions of `std::filesystem::path`.
+  - JeanHeyd pointed out that the visual difference between `u8` (lowercase) and `U8` (uppercase) is
+    subtle and bad for readability.
+  - Bryce agreed and pointed out that MISRA forbids identifiers that look similar.
+  - Bryce further stated that use of `u` and `U` for `char16_t` and `char32_t` literals was a mistake
+    for the same reason.
+  - Mark mentioned a pro, this approach preserves investment in any increased use of `u8` literals
+    in code over the next few years before migration to C++20.
+  - Bryce suggested that compiler warnings could be added to help educate programmers about the change
+    when compiling in pre-C++20 language modes.  This still depends on compiler upgrades of course.
+  - Tom agreed and noted that Clang trunk already issues such a warning when invoked with
+    `-Wc++2a-compat`.
+  - Mark asked if a cast or similar approach for converting `u8` literals to `char`-based types doesn't
+    suffice.
+  - Tom responded that Zach expressed a desire for existing code to continue working at our last
+    meeting.
+  - Tom asked what adoping an additional literal prefix would mean for messaging.  What would we be
+    telling programmers going forward?  We could deprecate `u8` literals and promote `U8` going
+    forward.
+  - JeanHeyd responded that deprecation doesn't really help to move programmers towards use of `char8_t`.
+    He'd prefer to break things, get over the migration hump, and keep a cleaner design.
+  - Mark asked why the `as_char` approach suggested in the draft paper doesn't suffice.
+  - JeanHeyd responded that it requires markup, so existing code requires changes.
+  - Mark pondered, a new prefix does kind of fix everything.  It doesn't have to be `U8`, we could use
+    `utf8` or similar.
+  - JeanHeyd suggested we could introduce new prefixes for all of UTF-8, UTF-16, and UTF-32 in order to
+    maintain symmetry and to address the subtle `u` vs `U` concerns.
+  - Tom suggested another pro; a new prefix avoids potentially forking the language by unintentionally
+    encouraging use of a `-fno-char8_t` option as has happened with `-fno-rtti` and `-fno-exceptions`.
+  - Mark asked where we're at with proposing `char8_t` to WG14.
+  - Tom responded that he would like to get a proposal in front of WG14 at their October 2019 meeting
+    in Ithaca.  In addition, he'd like to have proposals ready for our other proposals targeting core
+    language features:
+    - [P1097](http://wg21.link/p1097) - "Named character escapes"
+    - [P1041](http://wg21.link/p1041) - "Make char16_t/char32_t string literals be UTF-16/32"
+    - Source file encoding tags (no proposal yet).
+  - Tom added another pro, or con, depending on perspective; a new prefix maintains the ability to
+    continue writing UTF-8 based applications with `char`-based types.
+  - Mark opined that moving away from `char` aliasing issues is compelling.
+  - Steve noted that UTF-8 in `char`-based types often seems to work, but works for the wrong
+    reasons.  For example, UTF-8 encoded source files compiled as "8-bit ASCII" such that the UTF-8
+    code units just get copied from the source file.
+  - Tom asked about messaging again, what message are we sending to library authors?  Do they write
+    their UTF-8 based interfaces against `char` or `char8_t`?  How do they choose?
+  - Mark observed that this isn't a new problem.  Library authors code against `std::string` today
+    and it isn't a universal string type or a great type for Unicode.  We'll have similar concerns
+    with the introduction of `std::text` vs `std::string`.
+  - Tom concluded, sounds like templates will be the way to go.
+  - JeanHeyd commented that views help.  For example, `text_view` can effectively type erase the code
+    unit type.  But what does one assume for encoding for `char`?
+  - Tom responded that the execution encoding must be assumed per existing precedent in the standard.
+  - Mark concluded that he doesn't see a way out of the `char` vs `char8_t` problem.  But, with `char8_t`
+    being available, we'll get experience using it that will inform future library efforts.  In the short
+    term, being able to use either `char` or `char8_t` is advantageous.
+  - Peter chimed in from chat (due to a non-functioning microphone):
+    - "looks like my mic is completely broken. From what I can tell this is like the uptake of uint8_t,
+      it takes some time but over time everybody learns that these types have a given fixed meaning and
+      others are a :shrug: type"
+  - Tom presented a few polls.
+    - Poll 1: Add defined-as-deleted overloads for `operator<<` for `basic_ostream<char, ...>` specializations.
+
+    |  SF |   F |   N |   A |  SA |
+    | --: | --: | --: | --: | --: |
+    |   3 |   3 |   0 |   0 |   0 |
+
+    - Poll 2: Allow deprecated `std::filesystem::u8path` to be called with sources with `char8_t` value type.
+
+    |  SF |   F |   N |   A |  SA |
+    | --: | --: | --: | --: | --: |
+    |   2 |   3 |   0 |   1 |   0 |
+    - - Peter explained his against vote; this maintains working around something that we don't really
+          want to work in the first place.
+
+    - Poll 3: Restore `char`-based `u8` literals and introduce new `char8_t` based literals with a new prefix.
+
+    |  SF |   F |   N |   A |  SA |
+    | --: | --: | --: | --: | --: |
+    |   1 |   3 |   1 |   1 |   0 |
+    - - Bryce explained his against vote; we'll need to converge on a very short prefix, 2 characters at
+        most.  That seems unlikey.
+      - JeanHeyd commented that he still prefers to go with a solution that pushes the community in a
+        new and consistent direction.  `u8` literals aren't widely used, so we still have time to course
+        correct.
+      - Mark asked if tooling could be used to fix existing code by converting `u8` literals to ordinary
+        literals encoded with escapes.
+      - Tom responded that we discussed tooling possibilities at the last meeting.  Specifically Zach's
+        suggestion that this could be a good test for Titus' goals for tooling.
+
+    - Poll 4: Assuming `u8` literals remain `char8_t` based, allow `char` arrays to be initialized with `u8` string literals.
+      - Tom stated that the reason to consider this is that the `as_char` approach doesn't work for
+        array initialization.
+      - Bryce stated he wanted more time to think about this.
+      - Mark agreed with wanting more time.
+      - Poll not taken.
+- Review P1072 following San Diego LEWGI feedback.
+  - Mark provided a summary of changes:
+    - No buffer moving features; feedback from San Diego was negative regarding that due to exposure of
+      implementation details.
+    - `resize_default_init()` resizes the string such that the added content is default initialized.
+      Failure to write to the added elements results in undefined behavior.
+    - This approach matches Google's existing implementation.
+    - This approach is compatible with existing allocators.
+    - libc++ is already using this approach as part of its `std::filesystem` implementation to remove
+      an allocation.
+    - This doesn't preclude a buffer migration feature in the future.
+    - The paper establishes that `basic_string` is allocator aware.
 
 
 # December 5th, 2018
