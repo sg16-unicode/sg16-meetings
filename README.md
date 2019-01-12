@@ -132,7 +132,7 @@ The next SG16 meeting is scheduled for Wednesday, January 23th 2019, from 3:30-5
     storing the string contents.
   - Zach and Tom both expressed having used or encountered string pool classes that exist to collapse matching strings
     to a single copy.
-- WG21 Direction group [response to P1238R0: SG16: Unicode Direction](http://www.open-std.org/pipermail/unicode/2019-January/000195.html)
+- WG21 Direction group [response to P1238R0: SG16: Unicode Direction](http://www.open-std.org/pipermail/unicode/2019-January/000196.html)
   - Steve summarized the response.
   - Tom noted that the DG did not comment on the constraints listed in the paper.
   - Mark noted the DG request to clarify scope.
