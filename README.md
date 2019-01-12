@@ -7,6 +7,7 @@ prior attendees.
 
 The next SG16 meeting is scheduled for Wednesday, January 23th 2019, from 3:30-5:00pm EST.
 
+- [January 9th, 2019](#january-9th-2019)
 - [December 19th, 2018](#december-19th-2018)
 - [December 5th, 2018](#december-5th-2018)
 - [October 17th, 2018](#october-17th-2018)
@@ -21,6 +22,123 @@ The next SG16 meeting is scheduled for Wednesday, January 23th 2019, from 3:30-5
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 9th, 2019
+
+## Draft agenda:
+- Preparation for the Kona pre-meeting mailing deadline on 1/21.
+  - Review the SG16 rupric assuming a draft is available.
+  - Review the char8_t remediation paper assuming a revision is available.
+  - Review other papers requiring an update for Kona (P1041, P1097).
+
+## Meeting summary:
+- Attendees:
+  - Cameron Gunnin
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Michael Spencer
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Tom stated that he was unable to get a revision of the `char8_t` remediation paper ready for this
+  meeting, so no further discussion on it for now.
+- We then started reviewing Steve's [draft SG16 rubric](http://www.open-std.org/pipermail/unicode/2019-January/000195.html).
+  - Victor asked about locales as he and Howard have been working on chrono updates that add overloads
+    based on locale.
+  - Tom said, yes, bring to SG16 anything involving locales.
+  - Zach expressed a preference for just those locale features that relate to Unicode.
+  - Tom stated a preference for having a chance to offer our expertise; to help ensure appropriate use
+    of locales.
+  - Michael asserted that we don't want new Unicode stuff dependent on `std::locale`.
+  - Zach observed that it is very hard to write portable code that uses `std::locale` due to implementation
+    defined things.  For example,
+    - the set of locales is not specified.
+    - even the "C" locale is not portable.
+  - Tom suggested that the language regarding "requires review" by SG16 be softened as we don't have standing
+    to actually require review.
+  - Zach disagreed and offered the perspective that this paper should be adopted by the LEWG and EWG chairs
+    with the expectation that the chairs will enforce review requirements.
+  - Tom expresseed enthusiasm for that perspective; this paper should be targeted to LEWG and EWG to get their
+    buy-in.
+  - Tom asked about the SG-7 rubric in the hopes that we could compare/contrast with it.
+  - Michael located it and provided a link:
+    - http://wiki.edg.com/pub/Wg21sandiego2018/SG7/d1354r0.html?twiki_redirect_cache=c261eaeb64220cb36ab24bdb6fb29d4c
+  - Tom suggested we should have a section on text containers and string builders.
+  - Zach asked if we care about string builders.  If a string builder is used in such a way that it slices code
+    unit sequences, isn't that just an incorrect use of the builder?
+  - Tom stated he wants to catch any new operations that are problematic for some encodings.  For example,
+    reliance on broken interfaces like `std::ctype::widen`
+  - Cameron suggested we're interested in any new overloads involving Unicode types.
+  - Zach proposed adding a section detailing encoding assumptions.
+  - Tom agreed and suggested that can appear in the text encoding section; we need to make it explicit that char
+    based values of unknown origin are assumed to have execution encoding.
+  - Zach disagreed with the assumption of execution encoding stating that they should instead have an unknown encoding
+    and their contents should only be forwarded and operated on generically (e.g., as a bag of bytes), not examined
+    as having data in any particular encoding.
+  - Tom challenged this noting that reasonable assumptions can be made.  On Windows, execution encoding matches the
+    system code page, on POSIX it corresponds to the `LANG` or `LC_CTYPE` environment variables, and is generally
+    ASCII elsewhere (except z/OS).
+  - Zach noted that assumption doesn't work for file names.
+  - Tom agreed that filenames are special; they don't have a known encoding.  But C++17 at least offers `std::filesystem`
+    with means to get a filename in a displayable format via the `*string` and `generic_*string` member functions of
+    `std::filesystem::path`.
+  - Zach asserted those member functions are a trap; the names retrieved via those member functions don't necessarily
+    round trip.
+  - Michael observed that programmers need to be able to display file names and, if the standard doesn't provide a way
+    to do it, programmers will do it themselves, probably badly.
+  - Steve noted that file names may not be presentable at all
+  - Michael reiterated that we need interfaces that do the right thing easily; e.g., to create a display name for a file
+    in something other than `std::filesystem::path`.
+  - JeanHeyd observed that some of these problems would go away with a new I/O layer that uses `std::filesystem::path`
+    instead of `const char*` interfaces.
+  - Steve noted that we can't replace the OS interfaces though.
+  - Tom stated that we need to update the paper to require consultation with SG16 for anything involving file names.
+- [P1378R0: std::string_literal](http://wg21.link/p1378r0)
+  - JeanHeyd provided a link to an updated draft revision of the paper:
+    - https://thephd.github.io/vendor/future_cxx/papers/d1378.html
+  - JeanHeyd introduced the motivation; to provide means to guarantee that a string literal is used in invocations
+    of `std::embed` in order to enable dependency discovery in build systems.  Additional motivation is to provide
+    means to avoid unintended array-to-ponter decay and to handle string literals with embedded null characters without
+    having to depend on deduction via array reference in order to obtain the actual array size of the literal.
+  - JeanHeyd acknowledged that the proposal changes the type of all string literals in ways that are unlikely to
+    be acceptable.
+  - Michael observed that the proposed design doesn't actually meet the motivation requirements for `std::embed` since
+    the proposed type is copyable and therefore can be produced by many kinds of expressions, not just literals.
+  - Steve suggested another motivation: requiring string literals for things like format strings and SQL; requiring
+    a literal would avoid the possibility of consuming user provided input that could be used as an attack vector as
+    in SQL injection attacks.
+  - Zach observed that immediate (`consteval`) functions can help in this regard since they can't consume run-time
+    input by design.
+  - Tom asked about a different implementation strategy; making all of the class constructors private and befriending
+    a UDL.  This would ensure the class could only be constructed by calling a UDL (assuming copy constructors are
+    deleted).
+  - Michael suggested the constructors could also use compiler magic to require construction via a literal.
+  - Steve noted that having the size of a string literal readily available would be useful.
+  - Michael noted that this design impacts type deduction for `auto` declared variables and template parameters.
+  - Zach suggested that two-step conversion as would be required for backward compatibility would be problematic.
+  - JeanHeyd responded that any number of builtin implicit conversions are already permitted.
+  - Tom wondered if the number of conversions might impact overload resolution.
+  - JeanHeyd suggested the design might be useful to limit when error handling and encoding validation would be
+    necessary for `std::text`.
+  - Zach countered that string literals can form ill-formed code unit sequences.
+  - Zach acknowledged that the ability to avoid `strlen` could be a big deal.
+  - Michael asserted that the motivational use cases can largely be met with immediate (`consteval`) functions.
+  - JeanHeyd provided an additional motivation; comparison between string literals.  Today, whether `"foo" == "foo"`
+    is unspecified.  The proposed `std::string_literal` could make such comparisons work as expected.
+  - Mark asserted that an implementation is needed to evaluate backward compatibility impact.
+  - Mark noted having previously had a desire to determine if a pointer pointed to a string literal; to avoid
+    storing the string contents.
+  - Zach and Tom both expressed having used or encountered string pool classes that exist to collapse matching strings
+    to a single copy.
+- WG21 Direction group [response to P1238R0: SG16: Unicode Direction](http://www.open-std.org/pipermail/unicode/2019-January/000195.html)
+  - Steve summarized the response.
+  - Tom noted that the DG did not comment on the constraints listed in the paper.
+  - Mark noted the DG request to clarify scope.
+  - Zach stated that we need an elevator pitch and suggested: We want all Unicode algorithms available via standard
+    interfaces for C++23.
+- Tom announced that the next meeting will start an hour later than usual.
 
 
 # December 19th, 2018
