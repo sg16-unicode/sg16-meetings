@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, January 23th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, February 13th 2019, from 3:30-5:00pm EST.
 
+- [January 23rd, 2019](#january-23rd-2019)
 - [January 9th, 2019](#january-9th-2019)
 - [December 19th, 2018](#december-19th-2018)
 - [December 5th, 2018](#december-5th-2018)
@@ -22,6 +23,139 @@ The next SG16 meeting is scheduled for Wednesday, January 23th 2019, from 3:30-5
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 23rd, 2019
+
+## Draft agenda:
+- Peter Bindels will present his work on a simple 2D graphics library.
+- Discuss Steve's latest draft of the SG16 rubric.
+- Discuss Tom's latest draft of the char8_t remediation paper.
+
+## Meeting summary:
+- Attendees:
+  - Bryce Adelstein Lelblach
+  - Corentin Jabot
+  - JeanHeyd Meneide
+  - Michael Spencer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Peter Bindels presented his work on a simple 2D graphics library.
+  - https://github.com/dascandy/pixel
+  - Peter summarrized applicability to SG16:
+    - In a graphics API, what is the first thing you want to put on the screen?  Text of course!
+    - Putting text on the screen requires Unicode support for the library to be generally usable.
+    - A text type handling Unicode is therefore needed.
+  - Michael stated that how to display text is not part of text processing and therefore not part
+    of SG16 scope, but rather fits into SG13 scope.  SG16 won't standardize
+    [harfbuzz](https://www.freedesktop.org/wiki/Software/HarfBuzz).  The question for SG16 is,
+    how to accept text.  
+  - Zach suggested the perspective that, give me a sequence of code points and I will render them.
+    The Unicode line break algorithms handle layout pretty well.
+  - Peter noted that the bidirectional algorithm is needed as well.
+  - Zach added that normalization probably isn't required though.
+  - Tom asked if Peter wanted to support italic, bold, or underlined text.  A long and contentious
+    debate had been on-going on the Unicode Consortium mailing list regarding whether Unicode should
+    enable encoding stress indicators like these.  See the threads at
+    https://unicode.org/pipermail/unicode/2019-January/007313.html and
+    https://unicode.org/pipermail/unicode/2019-January/007434.html.
+  - Peter responded, no, plain text is sufficient.
+  - Zach stated that stress indicators are handled by fonts and controlled by markup.
+  - Tom elaborated, the question was intended to discover if Peter's needs are limited to plain text
+    or whether a higher level of markup is needed.  Would there be a desire to standardize some kind
+    of markup?
+  - Steve suggested that inline markup could be supported.  Or not supported as desired.
+  - Zach added that text display is relatively simple once decoding, line breaks, and bidirectional
+    support are enabled; fonts take care of the rest.
+  - Steve stated that our immediate goals are low level; provide code point and EGC decoding support.
+  - Peter summarized, so we're on the right track working to get new types into the standard.
+  - Tom agreed, new types and new algorithms.
+  - Steve added, and views.
+  - Peter, changing topics, Christopher DiBella has been asking for SG20 how to educate people about
+    Unicode.
+- [P1253R0: Guidelines for when a WG21 proposal should be reviewed by SG16, the text and Unicode study group](http://wg21.link/p1253r0)
+  - Tom asked, do we want to present this to the various WGs or just the WG chairs?
+  - Zach stated he was most concerned about EWGI and LEWGI.
+  - Corentin suggested presenting to LEWGI, WG chairs, and mentioning it at plenary.
+  - Bryce suggested that we could present it at an evening session and could arrange presentation at
+    EWGI and LEWGI at Kona.
+  - Tom stated he would follow up with WG chairs
+    \[Editor's note: Tom did later reach out to the EWG, LEWG, CWG, LWG, EWGI, and LEWGI chairs to ensure that
+    1) the chairs agree with the guidelines, and
+    2) are willing to direct proposal authors to SG16 when discussion touches on the topics discussed in the paper.
+
+    Several chairs have indicated their agreement so far.  Tom  also requested presenting the paper to EWGI and
+    LEWGI in Kona.\]
+  - Peter mentioned that there may be examples where a filename may be mutated on open (for normalization purposes)
+    such that attempts to reopen the file by the mutated name fail.  We should 1) verify that this can happen and,
+    if so, 2) update the paper to mention it.
+  - Tom advised that, while we're all participating in WG discussions, that we continue to look for additional
+    guidelines to be added.
+- Kona pre-planning:
+  - Tom mentioned that he was not intending for SG16 to meet in Kona, but it looks like we'll have a quorum after
+    all, and papers to discuss, so we will plan to meet.
+  - Steve mentioned he has a paper discussing transliteration: [P1439R0: Charset Transcoding, Transformation, and
+    Transliteration](http://wg21.link/p1439r0).
+  - Tom mentioned that Martinho and Hana have papers for us as well.
+    - [P1139R1: Address wording issues related to ISO 10646](http://wg21.link/p1139r1)
+    - [P1433R0: Compile Time Regular Expressions](http://wg21.link/p1433r0)
+  - Peter asked why Hana's paper is targeting SG16.
+  - Zach responded that the Unicode standard specifies algorithms for regular expressions.
+  - Bryce suggested SG16 may want to review Hana's paper before LEWGI does.
+- `char8_t` remediation:
+  - Peter asked if anyone had searched for uses of `u8R`.
+  - Tom replied, no, I didn't think to search for `u8` raw literals.
+  - Peter mentioned having found one in the wild.
+  - Victor searched Facebook and found 3 uses.
+  - Tom remembered that Victor previously mentioned approximately 1000 `u8` literals in Facebook code.
+  - Victor confirmed, mostly in Facebook code, mostly in tests.
+  - Zach commented that he mostly uses `u8` literals in tests as well.
+  - Steve stated that Chromium has a number of uses of `u8R` literals.
+  - Peter added that a December 2017 snapshot of the code base he works on had 27 uses of `u8` literals, all of
+    which were in tests.  Probably has some more now, but not a lot.
+  - Tom wondered why hits tend to be in tests.  Perhaps library authors test things that users just don't use?
+  - Zach responded that real world uses of libraries tend to use data in strings, not string literals.
+  - JeanHeyd echoed Zach, data tends to come from databases or files.
+  - Steve stated that most `u8` literals in the code bases he works on are in SQL queries or test code.  They're
+    still working to get off of C++03 code and have only mostly been using Unicode internally in the last 10 years.
+  - Zach, stated that any changes from the `char8_t` proposal that would result in silent behavioral changes must
+    be made ill-formed and that the remediation paper covers that.  We need to be careful when discussing the
+    remediation paper that we don't blow up concerns that aren't real.  For example, with concerns that some code
+    bases might be badly impacted.
+  - Tom asked Zach how he was feeling about code like `std::string(u8"text")` now as he had previously expressed
+    concern.
+  - Zach responded that he was previously concerned about the amount of breakage, but based on anticipated impact
+    and the fact that existing uses will now be ill-formed, no longer concerned.
+- Zach asked for clarity regarding guidance SG16 gave proposal authors in San Diego regarding encoding aware
+  interfaces.
+  - Zach explained, in our [response](http://wiki.edg.com/bin/view/Wg21sandiego2018/D0881R3) to
+    [P0881R3: A Proposal to add stacktrace library](http://wg21.link/p0881r3), we said that file names should be
+    treated as just a bag of bytes.  But in our [response](http://wiki.edg.com/bin/view/Wg21sandiego2018/P1275R0)
+    to [P1275R0: Desert Sessions: Improving hostile environment interactions](http://wg21.link/p1275r0), we
+    argued for an interface matching `std::filesystem::path` that exposes content in multiple encodings.
+  - Corentin argued that the responses are consistent.  In both cases, the content is stored as a bag of bytes,
+    but in the latter case, interfaces are available to offer it in an encoding suitable for display.
+  - JeanHeyd expressed a preference for just exposing bytes and leaving display issues up to the consumer.
+  - Zach stated that the display forms encourage errors; programmers try to round-trip the names and that doesn't
+    necessarily work.
+  - Tom stated that it is good for the standard to provide encoding aware interfaces, otherwise programmers will
+    re-invent them inconsistently.
+  - Corentin observed that implimentations can provide higher quality interfaces because they can rely on platform
+    specific behavior.
+  - Tom reported having recently searched for uses of `u8string` and `generic_u8string` on Github and found
+    only incorrect uses.  For example, cases where the programmer passed the result of `generic_u8string` to `fopen`.
+  - Steve said he would be in favor of deprecating the `std::filesystem::path` `u8string` and `generic_u8string`
+    member functions for C++23.
+  - Tom suggested we could deprecate them in favor of new names that indicate they are for display only.  But asked
+    if Zach thought they should exist at all.
+  - Zach responded, no, they shouldn't exist as members of `std::filesystem::path`.  Rather, we should have better
+    separation of concerns and an independent interface for translating file names to displayable strings.
+  - Corentin opined that it is better for programmers to have to think about encoding issues.
+- Tom verified that we'll keep with the new meeting time slot for the forseeable future and that the next meeting
+  will be February 13th.
 
 
 # January 9th, 2019
