@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, February 13th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, March 13th 2019, from 3:30-5:00pm EST.
 
+- [February 13th, 2019](#february-13th-2019)
 - [January 23rd, 2019](#january-23rd-2019)
 - [January 9th, 2019](#january-9th-2019)
 - [December 19th, 2018](#december-19th-2018)
@@ -23,6 +24,140 @@ The next SG16 meeting is scheduled for Wednesday, February 13th 2019, from 3:30-
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 13th, 2019
+
+## Draft agenda:
+- Preparation for Kona.
+- Discuss P1228R1 - A proposal to add an efficient string concatenation routine to the Standard Library (Revision 1)
+  - https://wg21.link/p1228r1
+- Discuss P1439R0 - Charset Transcoding, Transformation, and Transliteration 
+  - https://wg21.link/p1439r0
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jorg Brown
+  - Mark Zeren
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Preparation for Kona.
+  - Tom mentioned that we meet after EWGI and LEWGI have wrapped up for the week.
+  - Steve observed that we can become a roadblock for proposals if we meet late in the week.  That probably 
+    isn't a concern for this meeting, but could be for future meetings.
+  - Peter noted that the `char8_t` remediation paper needs scheduling in LEWG.
+  - Tom stated he will reach out to Titus.
+    \[Editor's note: Tom checked the LEWG schedule and [P1238R0](http://wg21.link/p1238r0) is on the P1 priority
+    list to be slotted in ad-hoc.  Titus expects to get through all P1 priority papers\]
+  - Corentin asked about scheduling for [P1097R2](http://wg21.link/p1097r2), Martinho's named character escapes proposal.
+  - Tom responded that he doesn't think of it as targeting C++20 due to lack of implementation experience.
+  - Zach stated it shouldn't be hard to implement.
+  - Tom asked if escape sequences impact the preprocessor.  Would preprocessors require updates?
+  - Hubert responded that they shouldn't, though `_Pragma` is potentially impacted due to sometimes needing
+    to reverse translation of the literal.
+  - Corentin observed that the paper is already on EWG's schedule for Saturday.
+- [P1228R1: A proposal to add an efficient string concatenation routine to the Standard Library (Revision 1)](http://wg21.link/p1228r1)
+  - Jorg introduced the paper:
+    - The proposed design has been in use at Google for 12 years and is available in Abseil as `StrCat`.
+    - The design is motivated by performance and desire for a simple API.  Only two overloads are proposed.
+    - The design has been discussed on the LEWG mailing list.
+      - http://lists.isocpp.org/lib-ext/2019/01/9692.php
+      - http://lists.isocpp.org/lib-ext/2019/01/10020.php
+    - The design does not have Unicode dependencies.
+  - Corentin observed that there is overlap with `std::format`.  Can internals be shared?  Are customization
+    points duplicated?
+  - Zach stated that seems like more of a discussion for LEWG to have.
+  - Corentin stated that the interface should prevent mixing types with potentially different encodings.
+    E.g., `std::string` and `std::u8string`.
+  - Victor agreed that it should not be possible to mix differently encoded strings.
+  - Zach suggested that it is reasonable to only support `char` initially.  Once you step outside of `char`,
+    other locale considerations kick in.
+  - Tom disagreed with locales only being a concern outside of `char` and professed agreement with the proposal
+    that locales be a separate concern.
+  - Hubert agreed with the proposal scope; avoid conversion aspects for both encoding and formatting, don't invite
+    the complexities exhibited by stream inserters.
+  - Jorg stated that having to consider locale would kill performance.
+  - Tom asked if anyone wanted to argue for locale awareness and got no responses.
+  - Corentin asked about dropping support for integral and float types such that only string types would be supported.
+  - Hubert agreed with that direction on the basis that, with numeric types, you often want locale support.
+  - Zach agreed observing that the proposed functionality seems to be conflating concatenation and formatting in a
+    single API.
+  - Hubert observed that it is useful to be able to request how much space would be needed for a numeric conversion.
+  - Jorg stated that basic (non-locale aware) integer formatting is cheap (4 instructions on Intel), but not for
+    floating point.
+  - Hubert mentioned that it is also useful to be able to query a maximum buffer size for a type.
+  - Jorg suggested that `std::numeric_limits` supports that.
+  - Hubert disagreed; It says how many digits roundtrip, not how many might be printed.
+  - Corentin observed that concatentation of differently normalized strings can change the number of perceived
+    characters.
+  - Peter asked why that is a problem.
+  - Zach responded that combining NFC can result in fewer extended grapheme clusters than the two strings by
+    themselves contained.
+  - Tom expressed distaste for section III.A and treating `char` as an integral type instead of a character type.
+  - Peter agreed, characters should be characters.
+  - Jorg explained the direction was taken to handle `int8_t` and friends that are often defined in terms of `char`.
+  - Zach suggested letting deduction work, `'0'+1` deduces as `int`.
+  - Peter asked about section III.A and whether it is always customary for a minus sign to precede a negative number.
+    In financial contexts, it sometimes follows the number.
+  - Zach noted that the minus sign may appear at the end in RTL languages.
+  - Tom asked for additional argumentation regarding treating `char` as an integral type vs a character type.
+  - Zach suggested following the precedent set by `std:string::operator+()`; accept the kinds of arguments that it
+    does and handle them the same way.
+  - Jorg stated that, without numeric conversions, users would have to call `to_string` which is more expensive.
+  - Hubert suggested the use of a proxy type when conversion is intended.
+  - Peter posted a link to example code he had previously written that used a rope to build a string.
+    - https://github.com/dascandy/s2/blob/master/tests/string/test_simple.cpp
+  - Tom summarized, the dea is to use `operator+` to construct a rope that is evaluated and collapsed upon
+    assignment to a `std::string` or other concrete type.
+  - Hubert noted that such approaches have difficulty with `auto`.
+  - Peter acknowledged that the result is `rope` if no conversion is specified.
+  - Zach asserted this is not a problem in practice and that `auto` can be beneficial to postpone materialization.
+  - Hubert stated that runs into problems with lifetime.
+  - Tom asked Mark about applicability to P1072.
+  - Mark responded, yes, [P1072](http://wg21.link/p1072) explicitly mentions Abseil's `StrCat` and is instrumental
+    to achieving desired performance.
+  - Jorg asked for more feedback on whether `wconcat`, `u8concat`, etc... should be provided.
+  - Corentin replied, yes please.
+  - Tom responded yes, I'd like to hear reasons not to provide them.  As long as the feature remains locale
+    independent, there are no encoding related concerns.
+  - Peter reiterated, for any locale stuff, let some wrapper type deal with it.
+  - Jorg added, or, if you want locale sensitive stuff, use `std::format`.
+  - Peter mentioned it would be good to update the paper with benchmarks comparing `concat` and `std::format`.
+  - Peter asked if `concat` needs to be concerned with `char_traits` and `allocator`?
+  - Zach stated that "allocators are why we can't have nice things"; ignore them.
+  - Tom stated that the alternative is to pass an allocator as an argument.
+  - Hubert suggested relying on independent type deduction for each argument, no conversions.
+  - Zach asked for clarification; calling `concat(1,0)` produces `"10"`?
+  - Jorg responded, yes.
+  - Peter asekd about allowing the result type to be an explicitly specified template parameter?  This would allow
+    supporting multiple string types without requiring deduction of the value type.
+  - Jorg expressed a preference for the option of passing an empty string as the first argument.
+  - Zach stated that LEWG will ask about constraints on the function.  Where does SFINAE happen?
+  - Jorg commented that he came into this meeting only intending to support `std::string` and things easily
+    convertible to `std::string_view`.  Support for other types will require constraining the value type across
+    all arguments.
+  - Tom asked for poll requests.
+  - Corentin suggested, do we want to support unadorned numeric conversions as arguments?
+  - Poll: Do we want to restrict arguments to strings, characters, and types convertible to strings.
+
+    |  SF |   F |   N |   A |  SA |
+    | --: | --: | --: | --: | --: |
+    |   3 |   4 |   1 |   0 |   1 |
+
+  - Jorg explained his against vote; It is really convenient to be able to simply convert integers and there is
+    lots of usage experience in Google and Abseil.
+  - Corentin asked if a better `to_string` would change his vote.
+  - Jorg responded, pobably not as it wouldn't be as convenient.
+  - Peter stated that wrappers let us add features incrementally.
+  - Jorg mentioned that Abseil's `StrCat` provides some converters (e.g., for hex), but they are rarely used.
+  - Victor stated he would like to see `concat` merged with an improved `to_string`.
+  - JeanHeyd stated that Sol2 provides a number of adorning types but that users don't like them.
 
 
 # January 23rd, 2019
