@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, March 13th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, March 27th 2019, from 3:30-5:00pm EST.
 
+- [March 13th, 2019](#march-13th-2019)
 - [February 13th, 2019](#february-13th-2019)
 - [January 23rd, 2019](#january-23rd-2019)
 - [January 9th, 2019](#january-9th-2019)
@@ -24,6 +25,114 @@ The next SG16 meeting is scheduled for Wednesday, March 13th 2019, from 3:30-5:0
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 13th, 2019
+
+## Draft agenda:
+- Post Kona review and follow up.
+- RFP: Transcoding interfaces.
+- RFP: Code point and EGC iterators.
+
+## Meeting summary:
+- Attendees:
+  - Bob Steagall
+  - Corentin Jabot
+  - JeanHeyd Meneide
+  - Martinho Fernandes
+  - Michael Spencer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+- Post Kona review and follow up.
+  - Tom started discussion with a proposal to initiate a draft working paper for SG16 proposals.  The intent
+    being to start drafting wording for features we'd like to get into C++23.
+  - Corentin expressed concerns that a large paper could prompt calls for a TS approach and that small focused
+    papers would be preferred.
+  - Steve noted that a consolidated paper has an advantage in demonstrating how the features work together.
+  - Peter observed that we will have co-dependent parts.
+  - Michael expressed distaste for large papers with loosely connected features; everything shouldn't go in
+    one paper.
+  - Tom suggested brainstorming a list of features we'd like in C++23.  The following were suggested:
+    - `std::text` and `std::text_view`.
+    - Unicode support for regular expressions.
+    - Unicode code point properties.
+    - Transcoding and transliteration interfaces (both compile-time and run-time).
+    - A trie container.
+    - A rope container.
+    - Unicode algorithms.
+    - Normalization.
+    - A code point type.
+    - A (Unicode) scalar type.
+  - JeanHeyd suggested separate papers could address code point properties, a code point type, and a scalar type.
+  - Martinho stated that risks getting a result that isn't useful depending on what features do/don't make it in.
+  - Tom mentioned that the Design Group has stated a preference for complete and cohesive proposals.
+  - JeanHeyd stated that a collection of papers can demonstrate a cohesive design.
+  - Steve observed that large papers are hard to review and provided the Ranges and Networking proposals as examples.
+  - JeanHeyd suggested starting with determining what we need for the 5 standard mandated encodings without support
+    for extensions.
+  - Steve noted that support for extensions may demand different interfaces for lossless vs lossy conversions and
+    different error handling.
+  - JeanHeyd countered that the ordinary and wide encodings already may be lossy, so such support is already needed.
+  - JeanHeyd suggested that strong typing can be used to provide interfaces that SFINAE based on requirements; e.g.,
+    that can require non-lossy code point conversions.
+  - Tom brought discussion back to the working paper idea and noted that such a paper can help drive a consensus
+    based process.
+  - Steve expressed another concern with small papers; we can end up with features being copied or re-implemented
+    in different papers.  For example, `source_location` in both the Library Fundamentals TS and in Contracts.
+  - Corentin asked what the dependencies are between each of the brainstormed features.
+  - Martinho stated that there is a core set that needs to be done first.  Discussion identified the following:
+    - Decoding and Encoding of UTF, both compile-time and run-time.
+    - Unicode properties with tailoring for the private use area.
+    - Normalization.
+  - Corentin asked if we could postpone tailoring and dependencies on localization.
+  - Martinho expressed a preference for Swift's model; default interfaces use the default locale, tailored
+    interfaces support providing a locale.
+  - Peter stated that, if tailoring is postponed, there is some risk of defining interfaces that won't work with
+    tailoring.
+  - Corentin suggested that, if we need locale support, we need to start from scratch.
+  - JeanHeyd countered that, what Unicode demands from the locale is different than what is provided by
+    `std::locale`.
+  - Tom asked, for locale support, do we rely on OS settings?  Or require the program to establish a locale?
+  - Steve noted that, today, by default, we get the "C" locale unless `std::setlocale` is called.
+  - Tom drew discussion back to the working paper idea and asked for volunteers to work on core features.
+    - JeanHeyd volunteered to work on transcoding and transliteration features.
+    - Corentin volunteered to work on code point properties.
+    - Martinho volunteered to work on normalization.
+- Discussion of D1515R0 - Code points, scalar values, UTF-8, and WTF-8
+  - https://rmartinho.github.io/cxx-papers/d1515r0.html
+  - Martinho presents.
+    - There is a trade off.  If we favor code points, then interfaces can work with WTF-8, Windows file names,
+      and other bad data.  If we favor scalar values, then we don't have to check for the presence of surrogate
+      code points.
+  - Steve asserted that we need to be able to work with ill-formed UTF text, but only at program boundaries.
+  - Tom suggested there are reasons to support both code point types and scalar value types.
+  - JeanHeyd agreed that both are needed, but that scalar values should be preferred.
+  - Bob asked if data can be appropriately round-tripped if conversions are done at program boundaries.
+  - Tom replied that a higher level protocol is needed for that.
+  - Steve provided the example of CDATA in XML.
+  - Martinho reported seeing use of the private use area to preserve invalid values.
+  - JeanHeyd asserted that handling of invalid values should require some form of opt-in.
+  - Peter responded that the opt-in is the choice of encoding and transcoding or transliteration operations.
+  - Corentin asked about the motivation for both a code point type and a scalar type.  Why not just rely on
+    UB which is what contracts would provide anyway?
+  - JeanHeyd asked rhetorically where the contract would be written if there wasn't a type.
+  - Tom elaborated, if the scalar type is a class type, then the contract goes on constructors and assignment
+    operators.
+  - JeanHeyd asked about how to handle WTF-8 via an encoding.
+  - Peter responded that you define a transcoder from WTF-8 to UTF-8.
+  - Peter also suggested that, instead of using the private use area to preserve invalid values, you map them to
+    something else, some kind of substitution character or marker.  This doesn't necessarily preserve roundtripping,
+    but allows handling.
+  - Steve noted that, if transcoding/transliteration interfaces are extensible, then we don't have to solve this
+    problem.
+- https://github.com/cplusplus/draft/pull/2768
+  - Tom introduced the issue; this PR to the C++ standard was marked as requiring SG16 review.  The issue was
+    created by Richard following his editorial review of the wording changes in [P1139R2](http://wg21.link/p1139r2).
+  - Tom asked that everyone take a look and offer any feedback.
+- Tom announced plans for our next meeting.  It will be on 3/27 and JF has volunteered to arrange for us to talk
+  with the JavaScript team about their support for Unicode regular expressions.  At this meeting, we'll discuss
+  what we might want to ask/learn from them.  If warranted, JF will then seek to arrange a future meeting.
 
 
 # February 13th, 2019
