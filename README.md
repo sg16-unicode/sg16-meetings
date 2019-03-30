@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, March 27th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, April 10th 2019, from 3:30-5:00pm EST.
 
+- [March 27th, 2019](#march-27th-2019)
 - [March 13th, 2019](#march-13th-2019)
 - [February 13th, 2019](#february-13th-2019)
 - [January 23rd, 2019](#january-23rd-2019)
@@ -25,6 +26,181 @@ The next SG16 meeting is scheduled for Wednesday, March 27th 2019, from 3:30-5:0
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 27th, 2019
+
+## Draft agenda:
+- Discussion with JF Bastien regarding JavaScript support for Unicode regular expressions.
+  Based on outcome, JF can arrange for JavaScript maintainers to attend a future meeting.
+- Discuss any work-in-progress from JeanHeyd, Corentin, and Martinho on transcoding, code point
+  properties, and normalization.
+- Discuss the recent LEWG mailing list emails regarding iostreams and char8_t support.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hana Dusiková
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - JF Bastien
+  - Mark Zeren
+  - Michael Spencer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Discussion with JF Bastien regarding coordinating Unicode regular expression support with ECMA TC39
+  and the ECMAScript standard.
+  - JF introduces:
+    - In contrast to what was stated in Kona, ECMAScript does specify Unicode support for regular expressions.
+    - It would be beneficial to align C++ and ECMAScript support for Unicode regular expressions.
+    - ECMA TC39 is currently working on adding support for Unicode sequence properties.
+    - ECMA TC39 is coordinating their work with the Unicode Consortium.
+    - SG16 should get involved and collaborate with ECMA TC39.
+    - JF provided the following links for reference purposes:
+      - https://github.com/tc39/proposal-regexp-unicode-sequence-properties
+      - https://unicode.org/L2/L2018/18337-broaden-properties.pdf
+      - https://www.unicode.org/L2/L2019/19056-prop-cmts.pdf
+      - http://unicode.org/reports/tr18/
+  - JF volunteered to connect interested SG16 participants with ECMA TC39 participants and asked for
+    volunteers.
+    - Zach expressed interest with the specifc desire for C++ to be aligned with the defacto standard (ECMAScript).
+    - Hana opted in with explicit concerns regarding whether the C++ standard can defer to ECMAScript for
+      wording specification.
+    - Tom expressed interest in following along, but has no significant ECMAScript or Unicode regular expression
+      experience to contribute; mostly intersted in staying informed for SG16 administrative purposes.
+    - Corentin said, sure, why not.
+  - Tom, responding to Hana's concern, stated that, by working with TC39 we can help ensure that the ECMAScript
+    standard can be referenced normatively by the C++ standard.
+  - Hana noted that, in Kona, we stated a goal of supporting [UTS#18](http://unicode.org/reports/tr18) level 1,
+    but ECMAScript doesn't meet that.
+  - Tom stated that is a good reason to work with them to find out why it isn't implemented.
+  - Hana provided a link discussing why level 1 is not met:
+    - https://github.com/tc39/proposal-regexp-unicode-property-escapes
+  - Zach suggested that, if ECMAScript doesn't support it, we probably don't need to either.  Small differences
+    in what is supported in different languages is annoying because programmers tend to think it is ok to copy
+    and paste between languages, but then get different behavior.
+  - Zach suggested researching what level of UTS#18 support ICU provides.
+  - JF noted most implementations defer to ICU and only inline simple expressions for performance.
+  - Corentin observed that full UTS#18 support is madness and subsetting is necessary.
+  - JF stated it would be beneficial to identify an appropriate subset of UTS#18 for both standards.
+  - Hana noted that, in the link she provided, TC39 states what is required and discourages implementors from
+    offering extensions in order to preserve portability and compatibility.
+- D1628R0: Unicode character properties
+  - Draft document available in the SG16 mailing list archives:
+    - http://www.open-std.org/pipermail/unicode/2019-March/000266.html
+  - Corentin presents:
+    - Goal: Provide useful properties from [UAX#44](http://www.unicode.org/reports/tr44).
+    - Goal: Enable querying properties for any code point for a subset of the UAX#44 properties that are deemed
+      generally useful.
+    - A reference implementation is available, but is considered early work:
+      - https://github.com/cor3ntin/ext-unicode-db.
+    - Hana has been using the reference implementation in CTRE to provide Unicode regular expression support
+      in constexpr form.
+    - The interface is specified as a set of predicate functions and enumerations.
+    - How to handle Unicode versions is an open question.  Some properties tend to be stable (e.g., general
+      category), others are less so (e.g., script, directional, joining).
+    - Corentin compared the last 5 Unicode standards for differences in property values and found little change.
+    - Multiple version support is needed in order to provide a stable and portable interface while allowing for
+      implementors to provide newer versions.
+  - Michael asked about providing different versions of the algorithms as doing so could require table duplication.
+  - Zach reported discovering that requirement as well.  Multiple versions of the algorithms can't be provided
+    without duplicating some tabular data.  This could double the necessary storage foot print.
+  - Zach observed that multiple versions of code point properties isn't useful if version specific algorithms are
+    not provided.
+  - Zach stated he didn't see a reason to expose the "age" property.
+  - Corentin offered two use cases for properties:
+    - For use in implementing the Unicode algorithms.
+    - For use by general programmers for non-algorithm purposes.
+  - Tom stated that it seems problematic to potentially have user code using a version other than what the
+    standard library is using.
+  - Zach noted that providing multiple versions goes against our existing guidance allowing implementors to
+    float the Unicode version.
+  - Steve observed that the specified interfaces are constexpr, but ICU doesn't provide data in constexpr form.
+  - Tom responded that the interfaces could be implemented using intrinsics that defer to ICU or a custom database.
+  - Corentin added that most tables are small with the name table being a notable exception.  The constexpr
+    design allows linking only what is needed.
+  - Tom asked, won't you still need the tables for run-time calls?
+  - Corentin responded that the tables could be linked in only if referenced.
+  - Zach stated that isn't dependable; implementors might have to link them in anyway.
+  - Zach listed a few specific concerns with the paper:
+    - `codepoint` is marked as exposition only but can't be because it is named in specified interfaces.
+    - `codepoint` needs to support `char` and `wchar_t`.
+    - Interfaces taking code points should accept any integral type, encoding is not relevant here.
+  - Corentin explained that the `codepoint` type was introduced specifically to not allow `char` and
+    `wchar_t` in order to avoid calls with character literals that might not be ASCII based.
+  - Zach stated a preference for integer values anyway.
+  - Tom noted that using a `codepoint` type allows using the type system to catch mistakes.
+  - Zach stated that type safety is illusory because `char` and `wchar_t` are code units not code points.
+  - Tom countered that accepting `char` and `wchar_t` is useful for character literals, but only for
+    character literals.
+  - Corentin mentioned that he wants the interface to be noexcept all the way through and that wide
+    contracts be used to avoid UB.
+  - Michael stated that these should be Unicode scalar values instead of code points then since any
+    value is valid.
+  - Corentin agreed, the interface is defined for any integer; the predicates just return false if the
+    value isn't a valid code point.
+  - Steve suggested we may want code point and scalar value types with contracts, but that probably
+    depends on alignment with `text_view` and ranges.  Maybe that is only useful at a higher level than
+    is needed for code point properties.
+  - Zach predicted that LEWG will object to the "cp_" prefix on these interfaces.
+  - Zach expressed a desire for more motivation in the paper; to demonstrate a need or justification
+    for each exposed property.  Examples of why a regular programmer would care about each of these.
+    Maintaining large interfaces or lots of properties complicates teaching.
+  - Corentin explained wanting to provide replacements for some broken things in the standard, like
+    `std::isalnum`.  Having these available will help programmers use Unicode properly.  As an example,
+    they are needed to implement Unicode regular expression support.
+  - Zach acknowledged, just want to see that motivation expressed in the paper.
+  - Tom agreed with adding explicit motivation like the `std::isalnum` example.  Not necessarily code
+    examples, but scenarios.
+  - Zach observed that some properties can be used incorrectly because they typically aren't used in
+    isolation.  Some properties should only be used via the Unicode algorithms.
+  - Hana stated a preference for exposing the Unicode standard as it is specified.  Considerable work
+    and expertise has gone into it.  It is a standard that people can learn.
+  - Zach disagreed on a philosophical basis; want to keep things simple.
+  - Steve observed that some of this is ergonomics of naming.  Programmer should reach for a function
+    first, then raw properties only if necessary.
+  - Zach cautioned about exposing an expert-only interface.
+  - Corentin mentioned, by defering to Unicode, we avoid making mistakes.  Properties that are only
+    used for derived properties are already excluded.
+  - Tom stated that we can always expose additional properties later as we identify use cases.
+  - Michael stated that some properties are implementation detail within the Unicode standard; they exist
+    for the algorithms to refer to them.  We should focus first on high level interfaces and those
+    probably won't be defined in terms of low level property interfaces.
+  - Zach stated that properties that are only needed to implement an algorithm need not be exposed
+    individually.
+  - Tom asked about tailoring and properties for the private use area (PUA).
+  - Corentin replied that tailoring should be provided by a separate interface.  The PUA shouldn't be
+    used in open interchange.
+  - Tom agreed, but stated that, within an application, a programmer might want all libraries to see the
+    same customized properties for the PUA.
+  - Steve noticed that the Unicode version numbers in the `version` enumerator values jump from `0x09`
+    to `0x10` rather than to `0x0A`.
+  - Corentin replied, oops.
+  - Corentin added, if we don't support multiple Unicode versions, there is a question of enumeration
+    value stability across implementations and differing Unicode versions.
+  - Tom suggested that we'd like to see a revision of the paper and asked for objections.
+  - No objections were raised.
+- D1629R0: Standard text encoding
+  - JeanHeyd screen shared an early draft that has not yet been published, so no link is available.
+  - JeanHeyd presents:
+    - The proposed design follows review of a number of prior papers and projects:
+      - [P0244 - Text_view: A C++ concepts and range based character encoding and code point enumeration library](http://wg21.link/p0244)
+      - [text_view](https://github.com/tahonermann/text_view)
+      - [libogonek](https://github.com/libogonek/ogonek)
+      - [Boost.Text](https://github.com/tzlaine/text)
+    - Enabling optimizations is a goal.
+    - Want a range based approach.  Want to enable lazy encoding/decoding.
+    - Wrapping iterators can be large, iterator/sentinel pairs are helpful to reduce iterator sizes.
+    - Can't depend on locale or `codecvt` because of performance costs; `wstring_convert` exhibited these costs
+      in [Sol2](https://github.com/ThePhD/sol2).
+    - Exposing state enables chunked streaming.
+    - An empty state can indicate a self-synchronizing encoding.
+    - State could be potentially omitted in interfaces for stateless encodings.
+    - The default error handler will substitute replacement characters.
+    - Error handling can be elided by specifying an assume_valid handler.
+    - Sized output ranges can be used for memory safety.
 
 
 # March 13th, 2019
