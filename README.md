@@ -338,7 +338,7 @@ The next SG16 meeting is scheduled for Wednesday, April 10th 2019, from 3:30-5:0
     isn't a concern for this meeting, but could be for future meetings.
   - Peter noted that the `char8_t` remediation paper needs scheduling in LEWG.
   - Tom stated he will reach out to Titus.
-    \[Editor's note: Tom checked the LEWG schedule and [P1238R0](http://wg21.link/p1238r0) is on the P1 priority
+    \[Editor's note: Tom checked the LEWG schedule and [P1423R0](http://wg21.link/p1423r0) is on the P1 priority
     list to be slotted in ad-hoc.  Titus expects to get through all P1 priority papers\]
   - Corentin asked about scheduling for [P1097R2](http://wg21.link/p1097r2), Martinho's named character escapes proposal.
   - Tom responded that he doesn't think of it as targeting C++20 due to lack of implementation experience.
