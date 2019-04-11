@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, April 10th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, April 27th 2019, from 3:30-5:00pm EST.
 
+- [April 10th, 2019](#april-10th-2019)
 - [March 27th, 2019](#march-27th-2019)
 - [March 13th, 2019](#march-13th-2019)
 - [February 13th, 2019](#february-13th-2019)
@@ -28,6 +29,100 @@ The next SG16 meeting is scheduled for Wednesday, April 10th 2019, from 3:30-5:0
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# April 10th, 2019
+
+## Draft agenda:
+- Continue discussion of JeanHeyd's D1629R0: Standard text encoding
+- Discuss any further work-in-progress from Corentin and Martinho on code point properties, and normalization.
+- Discuss execution encoding, current locale dependency, and the feasibility of mandating UTF-8.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hana Dusíková
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Steve Downey
+  - Tom Honermann
+Meeting summary:
+- Continue discussion of JeanHeyd's D1629R0: Standard text encoding
+  - JeanHeyd walked us through the code he has been developing to prototype interfaces to be proposed.
+    - https://github.com/ThePhD/phd/tree/master/include/phd/text
+    - Encoding types have `encode()` and `decode()` member functions that accept an input range, an
+      output range, a state, and an error handler and return an `encoding_result` type that forwards
+      the possibly mutated input range, output range, and state.  These functions operate on a single
+      code point at a time.
+    - `text_transcode` and `text_transcode_into` interfaces are provided for conversion of multiple
+      code points at a time.  Generic implementations are provided, but the design is intended to
+      support optimizing for contiguous ranges or characteristics of specific encodings.
+  - Tom asked if input and output iterators/ranges are supported or if forward iterators/ranges are
+    required.
+  - JeanHeyd replied that input and output iterators are supported, but an error handler won't be able
+    to observe the code units that provoked invocation of the error handler.
+  - Tom suggested that a
+    [caching iterator](https://github.com/tahonermann/text_view/blob/master/include/text_view_detail/caching_iterator.hpp)
+    can be used to solve that problem.  This is the approach used by
+    [text_view](https://github.com/tahonermann/text_view).
+  - Steve added that the state type can also be used to cache such code units.
+  - JeanHeyd explained more about the error handling.  `encoding_result` can store an error status
+    and any additional useful information.  The implementation uses the facilities provided by the
+    `<system_error>` header.
+  - Tom asked for clarification; ranges are always moved into and back out of error handlers?
+  - JeanHeyd answered, yes, via `encoding_result`.
+  - Tom asked about the possibility to encode only a state change without encoding a character.
+  - Steve asked for clarification; as in for a ISO-2022 style shift sequence?
+  - Tom confirmed.
+  - JeanHeyd replied that the state type can be used for whatever purposes.
+  - Tom expressed skepticism about that working from an interface perspective since both input and
+    state are provided.  Sometimes, you just want to encode a state transition.
+  - Steve noted that state is strongly tied to encoding and asked if state needs to be exposed in the
+    interface.  The ability to resume a conversion is still necessary, but wouldn't have to be handled
+    via state.
+  - JeanHeyd stated that having the state be separate is useful for flexibility in resumption.
+  - Steve added that state often becomes a house keeping burden.  Users generally don't know how to
+    work with it and do things like passing an initial default constructed state when a resumption
+    state is needed.
+  - Tom asked how much JeanHeyd had reviewed
+    [text_view](https://github.com/tahonermann/text_view) as some of what is being discussed appears
+    to be reinventing solutions implemented there.
+  - JeanHeyd responded that the interfaces were influenced by reviews of
+    [Boost.text](https://github.com/tzlaine/text),
+    [text_view](https://github.com/tahonermann/text_view), and
+    [Ogonek](https://github.com/rmartinho/ogonek).
+  - Corentin asked if the transcoding interfaces can provide lazy ranges.
+  - JeanHeyd responded no, not yet.
+  - Steve stated that lazy ranges don't necessarily play well with optimized transcoding operations.
+  - JeanHeyd stated that the interface is intended to allow optimization.  Implementors can use
+    `if constexpr` internally.
+  - Tom expressed concern about reliance on `if constexpr` within an encoding agnostic generic
+    function and suggested specialization as a more extensible solution.
+  - JeanHeyd explained that overloading can be used to provide more optimized implementations
+    without lots of specializations.
+  - Tom observed that the trade off is a bunch of overloads vs a bunch of specializations.
+  - JeanHeyd acknowledged the trade off, but noted that often fewer overloads are required because
+    conversions can be relied on.
+  - Tom suggested that, perhaps, there should be a `std::transcode` customization point.
+  - JeanHeyd acknowledged and said he is still playing around with such ideas and wants to enable
+    users to provide custom overloads.
+  - Tom expressed hope that users won't be writing these often at all; that such interfaces should
+    mostly be written by library providers.
+  - Steve agreed and added, or small infrastructure teams.
+  - Steve asked about type erasure and support for dynamic encodings.
+  - JeanHeyd expressed uncertainty about the need to provide that within the standard and illustrated
+    how a custom encoding that handles dynamic encodings could be written.
+  - Steve added that POSIX provides iconv which allows requesting a codec for a named encoding and
+    such functionality should be provided.
+  - Tom suggested it might suffice to be able to write an `iconv_encoding` type that wraps iconv.
+  - Tom asked how transcoding between encodings with different associated character sets are handled.
+  - JeanHeyd responded that no support is present yet, but that attempting to transcode between such
+    encodings would fail compilation it the code point types were not compatible.
+  - Tom observed that failing compilation requires a strong type, not `char32_t`, to enforce safety
+    via the type system.
+  - Corentin asserted that `basic_text_view` should not have a template parameter for normalization
+    since normalization is not relevant for all encodings.
+  - Tom agreed that, if present at all, normalization should be incorporated into the encoding type.
+
+
 # March 27th, 2019
 
 ## Draft agenda:
@@ -40,7 +135,7 @@ The next SG16 meeting is scheduled for Wednesday, April 10th 2019, from 3:30-5:0
 ## Meeting summary:
 - Attendees:
   - Corentin Jabot
-  - Hana Dusiková
+  - Hana Dusíková
   - Hubert Tong
   - JeanHeyd Meneide
   - JF Bastien
