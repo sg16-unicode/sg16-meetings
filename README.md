@@ -5,7 +5,7 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, April 27th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, April 24th 2019, from 3:30-5:00pm EST.
 
 - [April 10th, 2019](#april-10th-2019)
 - [March 27th, 2019](#march-27th-2019)
