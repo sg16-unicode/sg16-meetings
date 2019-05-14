@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, April 24th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, May 15th 2019, from 3:30-5:00pm EST.
 
+- [April 24th, 2019](#april-24th-2019)
 - [April 10th, 2019](#april-10th-2019)
 - [March 27th, 2019](#march-27th-2019)
 - [March 13th, 2019](#march-13th-2019)
@@ -29,6 +30,105 @@ The next SG16 meeting is scheduled for Wednesday, April 24th 2019, from 3:30-5:0
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# April 24th, 2019
+
+## Draft agenda:
+- Discuss execution encoding, locale dependency, impediments to supporting UTF-8, and the feasibility of mandating UTF-8.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Henri Sivonen
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Nathan Myers
+  - Steve Downey
+  - Tom Honermann
+- Discuss execution encoding, current locale dependency, and the feasibility of mandating UTF-8.
+  - Tom initiated discussion by asking for a list of issues in the standard that don't work as expected when the
+    execution encoding is UTF-8.
+  - Steve led with the observation that locale settings default to the "C" locale.  A call to `std::setlocale` is
+    required to enable characters outside the basic source character set.  Failure to set the locale results in
+    functions like `mbrtoc16`, `c16tombr`, and `mbrlen` failing when such characters are present.
+  - Steve added that iostreams requires I/O to match the current locale in order to meet expectations of attached
+    `std::codecvt` facets.
+  - Tom asked Nathan if he knew the history of where `std::codecvt` originated.
+  - Nathan responded that it was in the original design.  The intent was for it to perform conversions for external
+    I/O for the benefit of other parsing functions like for parsing numbers.  The design was intended less for
+    `std::cin` and `std::cout`, but more for bespoke streams.
+  - Steve mentioned that JeanHeyd had recently discussed another issue.
+  - JeanHeyd explained the problem with requirements that `std::basic_filebuf` place on `std::codecvt` facets in
+    [[locale.codecvt.virtuals]p3](http://eel.is/c++draft/locale.codecvt#virtuals-3); that the mapping of characters
+    is 1 internal character (code unit) to N external characters (code units).  This requirement prohibits support
+    for variable length encodings when the internal character type is not large enough to hold a decoded code point,
+    as is the case with any `std::codecvt<char, char, ...>` specialization that would be used to convert between,
+    for example, UTF-8 and ISO-8859-1.
+  - Tom asked if this requirement causes any problems when the `std::codecvt` facet is a `noconv` one.
+  - JeanHeyd clarified that the requirement prohibits arbitrary chunking of input/output because there is no
+    provisions for decoding/encoding a partial code unit sequence.
+  - Henri asked if `std::basic_filebuf` is broken for every multibyte encoding.
+  - JeanHeyd responded yes, according to standard implementors he has discussed this with, broken and unfixable.
+  - Tom wondered why this limitation exists as it sems to imply a buffer of size 1.
+  - Nathan commented that, since it is already broken, we can't break it further.
+  - Tom disagreed noting that it works for single byte encodings.
+  - Tom surmised that lifting the restriction might require an ABI break and wondered how much use of
+    `std::codecvt` exists in the wild and would be affected.
+  - Nathan asked if this issue only affects files.
+  - Tom responded that the limitation is present only for `std::basic_filebuf` and not for `std::basic_streambuf`,
+    so presumably yes, only affects files.
+  - Nathan provided some historical context; when iostreams was introduced, wide characters were expected to be
+    1x1 mappings from code unit to code point, so variable length encodings would be unnecessary.  Most UNIX
+    systems adopted a 32-bit `wchar_t`.
+  - Nathan suggested that, given the issues with it, we don't need to worry about improving `std::codecvt`.
+  - Steve responded that its presence gets in the way of implementing something else.
+  - Henri asked if it would be feasible for C++ startup to implicitly initialize the locale to UTF-8.
+  - Steve noted that doing so would break existing code.
+  - Nathan stated that we don't need to actually change the C or POSIX locale, we can define our own.
+  - Tom asserted that would be surprising to programmers expecting facilities to continue working as they do today.
+  - Steve added that programmers expect `printf` and `std::cout` to work together.
+  - Nathan responded that writes via `printf` go into a buffer and that writes to `std::cout` go to the same buffer.
+  - Steve countered that `std::codecvt` facets only hook iostreams.
+  - \[Editor's note: A few minutes of discussion were missed here \]
+  - JeanHeyd mentioned that the "C" locale doesn't have to match the system encoding.
+  - Tom stated that it has to be compatible though.
+  - Steve added that it must also be a single byte encoding.
+  - \[Editor's note: Another few minutes of discussion were missed here \]
+  - Tom stated that there needs to be a protocol for agreeing on encoding at both ends of a stream.  That protocol
+    is currently the current locale setting.  Writing something other than what a terminal expects is mojibake.
+  - Steve noted that much existing code works because streams are typically just bytes that are passed through.
+  - Tom added that most programs only deal with ASCII and break with non-ASCII characters.
+  - Corentin expressed two view points regarding status quo:
+    - 1) The current locale setting is a guess.
+    - 2) There is a conversion loss if the current locale cannot represent all characters from the internal encoding.
+  - Tom disagreed that current locale is a guess; implementations are required to know locale settings.
+  - Nathan claimed that the standard can lead implementations; that we can provide a target for implementors to aim for.
+  - JeanHeyd disagreed with that notion; if we make execution encoding UTF-8, implementors can aim for it over time.
+    However, it would be better to abandon execution encoding and focus on bytes.  Changing execution encoding breaks
+    existing machinery, changes the encoding of literals, causes `codecvt` facets to observe different data, etc...
+    Making execution encoding UTF-8 is not a practical reality; it is too big a breaking change.
+  - Henri offered another perspective.  glibc still offers traditional locales, but back around 2002, RedHat decided
+    that GTK would use UTF-8 internally.  To support existing file names, GTK provided `G_FILENAME_ENCODING` and
+    `G_BROKEN_FILENAMES` environment variables that influenced interpretation of file names.  Debian followed suit
+    in 2007.  The Linux ecosystem has moved to UTF-8.  Now that Microsoft has support for UTF-8 on terminals and is
+    UTF-16 internally, Microsoft should be able to migrate.
+  - Tom acknowledged that that matches his understanding of what Microsoft is working towards.
+  - Steve observed that most programmers don't want locale to affect their streamed data, they just want to write bytes.
+  - Henri asked about the feasibility of the implementation transcoding implicitly.
+  - JeanHeyd responded that `codecvt` gets in the way.
+  - Tom added that filenames are a problem as, in general, they can't be transcoded without harming them.
+  - Henri provided some background on how Rust handles file names.  A separate type is used for file names.  On
+    non-Windows platforms, file names are sequences of bytes and are decoded as text for presentation, but may not
+    roundtrip.  On Windows, WTF-8 is used.
+  - Steve noted that `std::filesystem` could operate similarly.
+  - Henri added some additional Firefox history.  At some point, a bug was introduced that resulted in it only
+    supporting UTF-8 file names.  When the problem was discovered, a decision was made to only support UTF-8 file
+    names and that remains the current policy.
+  - Nathan stated that he is not worried about breaking things because implementors will retain support for prior
+    behavior.
+  - JeanHeyd countered that some implementors may take an over-my-dead-body stance on mandating UTF-8.  We don't want
+    to introduce yet another language dialect.
+
+
 # April 10th, 2019
 
 ## Draft agenda:
@@ -44,7 +144,6 @@ The next SG16 meeting is scheduled for Wednesday, April 24th 2019, from 3:30-5:0
   - Mark Zeren
   - Steve Downey
   - Tom Honermann
-Meeting summary:
 - Continue discussion of JeanHeyd's D1629R0: Standard text encoding
   - JeanHeyd walked us through the code he has been developing to prototype interfaces to be proposed.
     - https://github.com/ThePhD/phd/tree/master/include/phd/text
