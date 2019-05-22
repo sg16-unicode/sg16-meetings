@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, May 15th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, May 22nd 2019, from 3:30-5:00pm EST.
 
+- [May 15th, 2019](#may-15th-2019)
 - [April 24th, 2019](#april-24th-2019)
 - [April 10th, 2019](#april-10th-2019)
 - [March 27th, 2019](#march-27th-2019)
@@ -28,6 +29,217 @@ The next SG16 meeting is scheduled for Wednesday, May 15th 2019, from 3:30-5:00p
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 15th, 2019
+
+## Draft agenda:
+- Continue discussion of UTF-8 as execution encoding.  Our focus last time was on impediments to use of UTF-8 as
+  execution encoding.  Focus this time will be on anticipated benefits of mandating UTF-8 and impact to existing
+  ecosystems.
+
+## Meeting summary:
+- Attendees:
+  - Cameron Gunnin
+  - Henri Sivonen
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - JF Bastien
+  - Michael Spencer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Discussion of potential benefits/costs of mandating UTF-8 as execution encoding:
+  - Tom introduced the topic with a brief summary from the last meeting.
+  - Zach stated he was all for moving to UTF-8.
+  - Tom asked how code would be written differently compared to today.
+  - Zach presented some problematic examples he has encountered in the past.  The first was surprises with UTF-8
+    encoded literals in source code not retaining UTF-8 encoding at run-time.  The second was difficulties writing
+    text and having it display in terminals as expected.  Today's compilers don't have options to state that the
+    output of a program will have any particular encoding.  Writing non-ASCII output is expert territory.  We can't
+    write portable code that dumps text and expect it to just work.
+  - Tom noted some subtleties with those examples; there are actually four encodings involved.  Source encoding,
+    presumed execution encoding, run-time execution encoding, and terminal/console encoding.  This raises the question
+    of what is meant by mandating UTF-8.  Mandating it for all of these encodings?
+  - Steve stated that these issues affect all platforms.  Use of characters outside the basic source character set
+    doesn't work unless `std::setlocale()` is called to set a locale other than `"C"`.  Changing the default locale
+    to `"C.UTF-8"` would be an improvement as it would suffice to make the multibyte conversion functions work as
+    expected without changing behavior for character classification functions.  This matches what Python is doing
+    as described in [PEP-538](https://www.python.org/dev/peps/pep-0538) and
+    [PEP-540](https://www.python.org/dev/peps/pep-0540).  This still allows the locale to be run-time selectable,
+    but provides a better default for character encoding.
+  - Tom commented that this would preserve existing behavior since, today, unless `std::setlocale()` is called to change
+    the current locale, characters outside the basic source character set elicit undefined behavior for the multibyte
+    conversion functions.
+  - Zach asked how this would be proposed.  By defining a "C.UTF-8" locale?  Or by specifying that the default "C"
+    locale operate as if `LC_CTYPE` were set to UTF-8?
+  - Steve responded that the implementation behave as though an implicit call to `std::setlocale(LC_CTYPE, "C.UTF-8")`
+    occurred during process startup.
+  - Henri observed that the behavior of `nl_langinfo` would be affected by doing so; `nl_langinfo(CODESET)` would now
+    return a string reflecing UTF-8 rather than the encoding used to implement the "C" locale.
+  - Zach noted that such a change needs discussion with WG14 and POSIX members.  It would not be good if behavior
+    differed based on whether C or C++ headers were included.
+  - JeanHeyd indicated that he is already working on such a discussion and plans to submit a paper to WG14 proposing
+    that "C.UTF-8" be made a standardized locale.
+  - Steve noted that POSIX exposes more encoding aware facilities than C does; more character classification functions
+    for example.
+  - Zach asserted that, if we made UTF-8 the default, life would be easier for everyone.
+  - Tom summarized discussion so far; we've been discussing changing the default locale, but not mandating UTF-8.
+  - Hubert noted that mandating UTF-8 will affect presumed encoding.
+  - Henri suggested that mandating a particular encoding might solicit reluctance from implementors.  If implementors
+    don't go along, then the standard doesn't match reality.
+  - JeanHeyd agreed with the concern and noted that changing the default leaves open an escape hatch for preserving
+    existing behavior.  While mandating a particular encoding would make some things easier, it would also leave some
+    platforms and/or implementations behind.
+  - Tom asked Hubert for his perceptions regarding changing the default; how would the platforms he supports be impacted?
+  - Hubert replied that, on z/OS, it would be kind of odd due to the possibility of multiple processes sharing the same
+    language environment.
+  - Tom asked what happens today if a single process changes its locale.
+  - Hubert responded with some uncertainty.  Switching between EBCDIC code pages is much less impactful than switching
+    from an EBCDIC code page to something ASCII based would be.
+  - Hubert returned to questions of implementation; how would the implicit call to `std::setlocale()` be implemented?
+    This isn't a typical language level thing.
+  - Tom responded that such a question is what he would have posed to Hubert.
+  - Hubert elaborated on potential complexities.  How would this work when separately compiled components potentially
+    compiled for different standard versions are linked together?  Is this a linker option?
+  - Tom stated that is outside the scope of the standard.
+  - Hubert agreed, but noted that concerns like this don't come up very often.
+  - Zach reiterated the intent; that the C++ startup code perform as if an implicit call to `std::setlocale()` took
+    place.
+  - Hubert acknowledged the intent, but noted the potential unintended effects that Henri eluded to earlier.  For example,
+    on AIX, Hubert tried a program that displays the current locale encoding.  When invoked with `LANG=C`, it indicated
+    ISO-8859-1.  An implicit call to `std::setlocale()` would change this behavior.
+  - Tom said he would like to see a concrete example of that behavior.
+  - \[Editor's note: Tom later experimented on a Linux system and observed the same behavior:
+
+        $ cat t.cpp 
+        #include <langinfo.h>
+        #include <locale>
+        #include <cstdio>
+        
+        int main() {
+          std::printf("%s\n", nl_langinfo(CODESET));
+          std::setlocale(LC_CTYPE, "");
+          std::printf("%s\n", nl_langinfo(CODESET));
+        }
+        
+        $ g++ t.cpp -o t
+        
+        $ LANG=C.UTF-8 ./t
+        ANSI_X3.4-1968
+        UTF-8
+
+    \]
+  - Zach suggested that the multibyte conversion functions don't really work now,
+    so changes can be made.
+  - Hubert disagreed and stated they work exactly as intended.
+  - Steve stated that functions like `std::wctomb` will silently drop or replace characters for the "C" locale.
+  - Tom asked Zach if this is an example of what he meant when he said they were broken.
+  - Zach replied, yes.
+  - Henri noted that silently dropping/replacing characters can be a security issue.  By specifying behavior, we
+    may reduce security problems.
+  - Hubert agreed that, if you don't do proper error checking, that can lead to problems.
+  - Tom asked if these functions have appropriate error handling interfaces.
+  - JeanHeyd stated that they do, they return -1 on error.
+  - Tom clarified, yes, they return -1 if an ill-formed code unit sequence is encountered, but do they also return in
+    error if a character lacks representation in the current locale and a replacement character is substituted?  Tom
+    thought at least some implementations substituted replacement characters without errors.
+  - Tom summarized the ramifications of an implicit `std::setlocale()` call; doing so is a breaking change given
+    Henri and Hubert's observations about querying the current locale encoding.
+  - Hubert agreed, noting that non-exotic platforms are impacted.
+  - Steve suggested that the observeable impact should be limited to querying locale properties.
+  - Hubert stated that may be true, but that we haven't discussed presumed execution ncoding yet.  The standard only
+    discusses one execution encoding, but there are two.
+  - Tom acknowledged and added that we know this to be problematic as it imposes a lowest common denominator approach
+    for encoding literals.  If the presumed execution encoding were UTF-8, that would clearly be problematic on z/OS,
+    but even on ASCII based platforms, if the locale can be changed at run-time, that limits use of UTF-8 in literals.
+  - Hubert commented that the fallout for z/OS for changing presumed execution encoding may not so bad because
+    extensions are already available to specify execution encoding and to opt into an ASCII based encoding.  Additional
+    support might be needed for locale encodings.
+  - Tom asked to clarify what was meant by additional support.
+  - Hubert responded that he was thinking about message catalogs used with translation.  Generally, messages can be
+    written in a common subset of characters available in all locales.  If we mandated an encoding that doesn't share
+    a common subset (e.g., UTF-8 on a predominantly EBCDIC based platform), then strings would have to be maintained
+    in resource files outside of translation units, or written in escape sequences.
+  - Tom asked if Unicode escape sequences are used much on z/OS.
+  - Hubert responded that, in newer code, yes, but generally only in Unicode literals, not in ordinary or wide literals.
+  - Tom returned to the question of benefits of mandating a single execution encoding.  If we did so, then we could make
+    text processing decisions at compile-time.
+  - JeanHeyd suggested that we can do that anyway.
+  - Tom responded that, no, evaluation of functions that are locale dependent must be deferred until run-time since the
+    encoding is not known.
+  - Tom asked about the feasibility of changing the default locale given existing ecosystems.  We would have to work with
+    POSIX, WG14, implementors, other languages?
+  - Zach reiterated that he wants to see the portability problems writing to terminals be fixed.
+  - Tom asked, but isn't that a problem not specific to C++?  All languages face this issue.
+  - Zach noted, for all processes, data comes out as bytes, but terminals can't handle them.
+  - JeanHeyd noted that codecvt facets may interfere, but the primary difficulty programmers face on Windows is that the
+    default terminal settings and execution encoding are locale dependent.
+  - Zach observed that, if everything was UTF-8, then the terminal could just do the right thing.  But we can't mandate
+    behavior for all languages.
+  - Henri asked if Microsoft's new terminal might help.
+  - Tom stated that it should, but will require some form of opt-in.  Historically, Microsoft's default console encoding
+    has been constrained by backward compatibility.  The encoding of the console differs from the locale encoding in
+    order to support those old applications that depend on line drawing character sets.  Unclear how new applications will
+    opt-in to UTF-8 behavior.
+  - Zach suggested that just having a way to determine if the current locale supported UTF-8 would be useful.
+  - Henri asserted that the experience with Python demonstrated that such approaches don't work in practice.  Asking the
+    C environment what the execution encoding is rather than just assuming it may actually cause more problems.  What
+    would you do if the current encoding wasn't compatible?
+  - Zach replied that, if the encoding is known, then the program can convert.
+  - Tom stated that is how the multibyte conversion functions are already specified to work; if they are used, then the
+    output will match locale encoding.
+  - JeanHeyd expressed having unsatisfactory experience with the multibyte conversion functions.  For example, Microsoft's
+    implementation of `mbrtoc32` unconditionally converts between UTF-8 and UTF-32 in violation of the standard.  The
+    conversion functions are also unable to detect some kinds of mojibake; for many single byte encodings, all possible
+    code unit sequences are valid.
+  - Hubert concurred that the multibyte conversion functions are not a good alternative to ICU.  Discussions about
+    `source_location()` are touching on a bigger problem; C++ is just one language residing in a large ecosystem in which
+    implementors are beholden to the platforms they support.
+  - Henri asked about wide characters being compatible across locales.  What encoding does z/OS use for them?
+  - Hubert deferred to documentation and noted that, on AIX, the wide character set does vary for some Chinese locales.
+  - Tom stated that the wide character set on z/OS is a wide form of EBCDIC with support for ISO-2022 escape sequences.
+  - Hubert followed up regarding the wide character sets used on AIX.  Depending on the size of `wchar_t`, either
+    UTF-16 or UTF-32 is used except for the Taiwanese locale which uses Big-5.
+  - Tom asked JF what benefits Apple might see from changing the default locale encoding to UTF-8.
+  - JF responded that there would be some simplicity.
+  - Tom pondered if the biggest benefit to Apple would come from dropping locale dependent encoding completely.
+  - Hubert asserted that isn't feasible; IBM customers are known to create their own custom locales.
+  - Steve noted that one way in which applications are meeting the requirement for GB18030 by the PRC is via locales.
+  - Henri expressed a belief that the PRC doesn't actually require GB18030 support; rather that the mandatory character
+    subset from it be supported.
+  - Steve stated that he was required to add support for GB18030 and did so via conversions at program boundaries.
+  - JeanHeyd suggested that no one is really looking to deprecate locale support.  We just want to make text processing
+    easier and better locale facilities would help.
+  - Henri stated that he would like to deprecate broken character classification functions like `isalpha()` since they
+    can't properly handle Unicode inputs.
+  - JeanHeyd suggested that, if we had new and improved locale primitives, then we could deprecate the old ones.
+- Discussion then moved on to an issue that JF raised on the mailing list concerning Unicode characters in identifiers.
+  - http://www.open-std.org/pipermail/unicode/2019-May/000367.html
+  - https://github.com/sg16-unicode/sg16/issues/48
+  - Tom briefly introduced the topic.  The C++ standard specifies a subset of Unicode characters that may be used in
+    identifiers.  That specification is via a series of code point ranges in
+    [[lex.name]p1](http://eel.is/c++draft/lex.name#1), but the standard doesn't offer a rationale for the specified
+    ranges.  It seems likely that the ranges aren't being maintained as Unicode evolves.
+  - JF stated that the current ranges lack justification, but that isn't much of a problem in practice.  Clang accepts
+    identifiers using the specified code points, but gcc does not, so such identifiers are not portable in practice.
+    Perhaps the standard should just adopt and defer to [UAX#31](https://unicode.org/reports/tr31).
+  - Henri asked what the motivation is to address this if it isn't a problem in practice.
+  - JF responded that it is a problem in principle.  It is unclear why gcc allows the code points in identifiers if
+    specified via `\u` escapes, but not when the actual characters are present in the source encoding.  If the standard
+    was more precise, perhaps implementations would be more consistent.  Also, such characters should be allowed in
+    module names and we should use the same identifier scheme there.
+  - Henri asked how much of the concern is separating identifiers from operators.
+  - JF responded little since there are no plans to, for example, adopt Unicode math symbols as operators.
+  - Hubert provided a little history.  The existing code point ranges were provided by Clark Nelson in WG14's
+    [N1518](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1518.htm) and were based on the version of
+    [UAX#31](https://unicode.org/reports/tr31) current at that time.
+  - Hubert stated that it would be annoying to have the standard defer to a Unicode TR as doing so makes it that much
+    more difficult to determine what the actual rules are for a given standard.
+  - Tom suggested that deferring to a Unicode TR would at least have the benefit of the ranges matching whatever version
+    of the Unicode standard the implementation adheres to.  This would presumably help maintain the ranges as characters
+    are added over time.
 
 
 # April 24th, 2019
