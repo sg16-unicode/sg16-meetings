@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, May 22nd 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, June 12th 2019, from 3:30-5:00pm EST.
 
+- [May 22nd, 2019](#may-22nd-2019)
 - [May 15th, 2019](#may-15th-2019)
 - [April 24th, 2019](#april-24th-2019)
 - [April 10th, 2019](#april-10th-2019)
@@ -29,6 +30,187 @@ The next SG16 meeting is scheduled for Wednesday, May 22nd 2019, from 3:30-5:00p
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 22nd, 2019
+
+## Draft agenda:
+- Axel Andrejs from Microsoft will present and discuss Microsoft's ongoing efforts to improve UTF-8 support in Windows.
+
+## Meeting summary:
+- Attendees:
+  - Axel Andrejs
+  - Henri Sivonen
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Steve Downey
+  - Tom Honermann
+- Microsoft's on-going efforts to improve UTF-8 support in Windows.
+  - Axel lead with some Windows history and current efforts:
+    - Windows was initially developed using locale dependent code pages, but switched to UTF-16 long ago.
+    - Today, the industry is moving to UTF-8, especially on the web.
+    - So, what to do about UTF-8?  Initial efforts were to improve resource managers, but Windows remains UTF-16 based.
+    - Now, what about the rest of the OS?  Windows 10 added support for UTF-8 as an (algorithmic) active code page (ACP).
+    - All of Windows' "ANSI" interfaces use `MultiByteToWideChar()` to convert `char` based input to UTF-16 using the
+      active code page.  This suffices to make UTF-8 mostly magically work, though Microsoft platforms remain UTF-16 based.
+    - Within the industry, most Windows developers don't test support for many code pages; usually just a few for
+      critical markets.  This leaves a large testing gap.
+    - UTF-8 poses some problems as a code page.  Testing UTF-8 support has revealed cases of code that fails due to a
+      number of issues:
+      - It is variable length and may require more than two code units per code point.  Code that (incorrectly) assumes 
+        wide strings are always larger (in terms of bytes) than the corresponding narrow encoding can cause buffer
+        overflows.
+      - The native C and C++ character type is `char` which is good in terms of flexibility, but bad in terms of type and
+        encoding safety.  `char` can be used for UTF-8, but failure to perform conversions where needed leads to mojibake.
+      - Some code just plain fails with any non-ASCII characters.
+      - Many programs assume an encoding (ASCII or Windows-1252) and fail with UTF-8.
+    - Because of known cases of existing code failing when the active code page is changed to UTF-8, Microsoft has no
+      plans to ever change an existing machine's active code page.  There is too much potential for breakage.
+    - Current efforts include improving UTF-8 support for individual Windows components, resource managers, resource
+      loaders, etc...  UTF-8 strings tend to be approximately 1/3 the size of wide strings on average.  Focus on where
+      that savings is beneficial.
+    - UTF-8 as active code page is still a beta option because there are major applications that don't work correctly
+      when it is enabled.  Most applications work ok in the US, but have problems elsewhere.
+    - Outside Windows desktop where compatibility with legacy applications is less important, Windows platforms are
+      moving more towards UTF-8.  These include Xbox, Hololens, smart devices, etc...
+    - Bifurcation will continue.  We may evangelize UTF-8 in some markets, but are unlikely to ever be able to move the
+      entire Windows ecosystem to UTF-8.
+    - The latest Windows 10 release allows executables to opt-in to UTF-8 as active code page via a fusion manifest.
+    - May add support for executables to opt-out of UTF-8 support for compatibility, either via a manifest setting or
+      application compatibility shim.
+    - Windows subsystems will continue to migrate to UTF-8.
+    - Would like to discontinue the ANSI/Wide interface split.  Likely to introduce more interfaces that are UTF-8/Wide
+      or just UTF-8.
+    - There are no plans for a native Windows UTF-8 kernel.
+    - We'll continue to reach out to major applicaions that are found not to work correctly when the active code page is
+      set to UTF-8.
+    - Within Microsoft, a number of developers have UTF-8 enabled as the active code page on their workstations.
+    - We will continue to do more ecosystem outreach as our confidence in UTF-8 as active code page increases.
+    - But, Windows will always need to retain compatibility.
+  - Henri asked if there are plans to augment existing ANSI/Wide interfaces with U8 variants that only work with UTF-8.
+  - Axel responded that they would like to do so where it makes sense.  Decisions to do so are up to component owners.
+    Feedback and requests for specific interfaces are appreciated.  There are no plans for mass conversion.
+  - Henri asked what would happen if an executable that was marked to run with UTF-8 was run on an older platform.
+  - Axel replied uncertainly that the fusion manifest entries would probably just be ignored.  This is what happens with
+    Universal Windows Programs (UWP) support.  Unsure if there is a way to mark the executable to fail in such cases,
+    but the executable could be marked to require a particular level of OS support.
+  - Mark asked how an executable that opts-in to UTF-8 as ACP would interoperate at the command line.  Is any transcoding
+    performed for stdin/stdout?
+  - Axel responded that, at present, all the opt-in does is override the ACP, so no, no transcoding of the command line
+    or standard streams is performed.
+  - Mark observed that this can then lead to failures.
+  - Axel affirmed adding that thought has been put into implicit transcoding, but it is a hard problem.
+  - Tom agreed noting that file names pose a significant problem since they may not be representable in a particular
+    encoding.
+  - Axel acknowledged, but stated that most file names are UTF-16.
+  - Henri asked about the new terminal coming to Windows 10.  How will it know how to interpret the output of a particular
+    program?
+  - Axel stated that there are active discussions about this and decisions are not yet settled, but people are working
+    on it.
+  - Tom asked about recommendations for current developers.  How do we move into this new world?
+  - Axel responded that `char*` is kind of nice for it's genericity but isn't safe.  Stronger types add safety, but
+    increase the interface surface area.  `char8_t` is a big topic.  ICU supports both `char16_t` and `wchar_t`, but
+    adds surface area.  As a global model, that doesn't work too well.  If targeting Windows only, best to stick to wide
+    strings.  For cross platform, we're all on this journey.  Would like more feedback.  There are always workarounds
+    because developers can do conversions themselves.  If there is demand, we'll add additional interfaces if the value is
+    there.  Would like more support for command line handling.  Really want the industry to move to UTF-8 as ACP.  Library
+    writers have to worry about all code pages anyway, including now UTF-8.
+  - Mark asked how new types like `char8_t` fit in.
+  - Axel expressed similar curiosity.
+  - Tom provided some thoughts on `char8_t`.  Unsure what kind of adoption will occur.  Expecting to see uses in niches or
+    as an internal encoding type.  Type safety can be used to guard components that are UTF-8 only from components that are
+    locale dependent.
+  - Henri asked if type based alias analysis is planned for the Microsoft compiler.
+  - Axel responded that he was unsure of the compiler team's plans.  Windows interfaces have pretty basic types, so there
+    is a lot of targeting lowest common denominator.  Always looking to take advantage of new features.
+  - Mark offered the idea of a compiler option that would allow use of `char8_t`, but would mangle it the same as `char`
+    for compatibility with prior compiler versions.  This would require errors for ambiguous overloads, but might still
+    be useful.
+  - Tom expressed interest noting that Microsoft already does something similar to duplicate symbols for `char16_t` and
+    `wchar_t`.
+  - Axel confirmed noting that they sometimes put code in headers and compile it twice (e.g., for ANSI and UNICODE
+    expansions of `TCHAR`).
+  - Henri asked why `char16_t` was not made the same type as `wchar_t` on Windows.
+  - Hubert responded that C++ requires different types for overloading purposes.  Also because the encoding can differ.
+  - Henri pondered whether, in retrospect, it would have been better if `char16_t` was specified as the same type as
+    `wchar_t` on Windows and `char32_t` the same type as `wchar_t` on POSIX systems.
+  - Steve stated that anyone attempting to write portable code is unhappy with `wchar_t`; it just isn't portable.
+  - Mark added that the type separation is useful.  For `char8_t`, the non-aliasing properties are a good motivator for
+    a separate type.
+  - Steve concurred noting that injecting Unicode into the type system will be useful.  Additionally, `std::byte` will
+    help us move further away from `char` for everything.
+  - Axel mentioned that, on Windows, there are few APIs that take `char*` and that expect an encoding other than the ACP.
+    The only indication is in documentation; the type system can't help enforce encoding expectations today.
+  - Mark asked what code page is used for Windows Subsystem for Linux (WSL).
+  - Axel responded that he would have to check, but once code reaches the kernel, everything is UTF-16.
+  - Tom observed that different encoding expectations in Windows vs the WSL makes piping data problematic.
+  - Mark surmised that the WSL uses UTF-8 like most Linux distributions.
+  - Axel added that the International Platform team didn't do anything special for WSL.
+  - Mark speculated that, if we decided to be very aggressive, we could require C++ code on Windows to run with the UTF-8
+    manifest option.
+  - Axel confirmed, but noted that requires new OS versions.
+  - Tom asked Axel if his team had reached out to other language maintainers like for Python, Ruby, and Go.
+  - Axel responded yes for .NET languages obviously, but not for other languages.  Need to reach critical mass internally
+    first, and then will expand outreach to other languages.
+  - Henri asked about enabling app development with UTF-8 on older OS versions.  Are there any plans for the standard
+    library to provide UTF-8 interfaces that convert to internal UTF-16 ones?
+  - Axel responded that work is progressing to improve support for UTF-8 in the CRT, but not sure of the time line.
+  - Mark asked about any work on interfaces that operate at the grapheme cluster level.
+  - Axel responded no, at present, they are more focused on basic APIs like `CreateProcess`.
+  - Tom asked how SG16 can help with the effort to improve UTF-8 support.
+  - Axel explained that the big challenge is how to handle the lowest common denominator.  New language features are used
+    internally, but public APIs are very old school and limited to basic types.
+  - Tom clarified, so keeping interfaces indpeendent of fancy new language features is helpful?
+  - Axel responded yes, but always interested in new types that make sense within the Windows type system.
+  - Tom summarized all of the different encodings that the C++ standard has to interact with; source encoding, internal
+    compiler encoding, presumed (compile-time) execution and wide execution encodings, (run-time) execution and wide
+    execution encodings, UTF-8, UTF-16, and UTF-32.  How do all of these encodings affect you?
+  - Axel responded that they sometimes have to guess about encodings; may rely on BOMs or recognition of UTF-8.
+  - Tom asked if Microsoft had ever considered allowing filesystems to support tagging files as having a particular
+    encoding.  Some other OSs like z/OS have such support.
+  - Axel responded no, not aware of any such efforts.
+  - Mark asked if Windows makes use of the Unicode Private Use Area (PUA).
+  - Axel responded yes, because, given the size of the development team at Microsoft, the answer to "do we use ..." is
+    always yes somewhere.
+  - Henri commented that Microsoft's eudcedit.exe editor generates a magic font for the PUA.
+  - Tom asked if Axel had any thoughts about changing the default "C" locale to be UTF-8.
+  - Axel responded that it might work out ok.  Old CRTs still get used though.  But this would make it easy for
+    programmers to start using UTF-8.
+  - Mark noted that Microsoft maintains backward compatibility, but that there may be some desire or intent for an ABI
+    break at some point.  Perhaps that would be the right time to change the default locale encoding.
+  - Henri asked if layering new versions of C++ on top of older C and C++ run-times is supported or whether new C++
+    language standards require the latest C and C++ run-time libraries.  Would it be possible to have the compiler set
+    the per-binary UTF-8 flag depending on target language level?
+  - Axel responded that the UTF-8 flag affects the process, so can't depend on DLL options or settings.
+  - Mark brought up a new issue; at some point, we will require various Unicode data sets.  Windows now distributes a
+    version of ICU.  Concerns about the size of the chrono library were raised when it was added to the standard and it
+    is much smaller than the Unicode data set.  We'll likely require at least data for normalization and collation.
+  - Axel provided some additional background.  Windows has NLS interfaces.  ICU was added to Windows 10 two years ago,
+    but application developers still want to target Windows 7 where it isn't available.  Windows 10 now supports about
+    3-4 times more locales than Windows 7 due to the inclusion of the CLDR.  Carrying ICU with an application is
+    becoming a significant servicing issue.  Time zone data bases were integrated into Windows to address similar
+    servicing issues, but have to be updated often and quickly for geopolitical reasons.  CLDR data is unlikely to
+    be updated as frequently.
+  - Henri asked for more details.  How is ICU updated in Windows 10?  Will older Windows 10 releases get updates?
+  - Axel responded that the latest available ICU is distributed in each 6 month release cycle, but that locale data and
+    Unicode versions are not otherwise patched.  Exceptions could be made, but would require significant motivation like
+    the geopolitical reasons that motivate time zone updates.
+  - Henri surmised that older Windows 10 releases won't get support for new Unicode characters, data tables, etc...
+  - Axel confirmed.
+  - Hubert stated that he had heard that the ICU distributed in Windows 10 does not exactly match any official ICU
+    release.
+  - Axel confirmed adding that patches are made for geopolticial reasons.
+  - JeanHeyd stated that the road to UTF-8 support is going to be a long one.  He plans to take papers to the C and
+    POSIX committees proposing to change the default locale to UTF-8 in order to facilitate a similar change for C++.
+    The goal is to allow applications to at least be able to communicate without mangling text.  It sounds like
+    Microsoft is heading in a good direction, but the C committee may be reluctant to make such a change.
+  - Axel agreed that this will be a long journey and encouraged everyone to play with the new UTF-8 functionality,
+    report problems, and poke application providers to improve support.  The problems are not massive, but cost/benefit
+    analysis must line up as always.  Application providers will be required to support UTF-8 as ACP for some Microsoft
+    platforms like the Xbox and Hololens.
+  - JeanHeyd commented that our biggest concern has been how to migrate to a UTF-8 world.  At least it sounds like there
+    is a path to follow.
 
 
 # May 15th, 2019
