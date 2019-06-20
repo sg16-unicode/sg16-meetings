@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, June 12th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, June 26th 2019, from 3:30-5:00pm EST.
 
+- [June 12th, 2019](#june-12th-2019)
 - [May 22nd, 2019](#may-22nd-2019)
 - [May 15th, 2019](#may-15th-2019)
 - [April 24th, 2019](#april-24th-2019)
@@ -30,6 +31,133 @@ The next SG16 meeting is scheduled for Wednesday, June 12th 2019, from 3:30-5:00
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# June 12th, 2019
+
+## Draft agenda:
+- Discuss and provide feedback for any draft papers targeting the 6/17 pre-Cologne mailing.
+
+## Meeting summary:
+- Attendees:
+  - Nathan Myers
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Planning for Cologne:
+  - Tom communicated that SG16 has requested a half day session in Cologne.
+  - Tom communicated that SG16 will host an evening session.  Potential topics (subject to author's desire) include:
+    - UTF-8 and current ecosystems.
+    - JeanHeyd's work on transcoding interfaces.
+    - Corentin's work on character properties.
+    - Hana's work on Unicode support in CTRE.
+  - JeanHeyd confirmed that his transcoding interfaces paper will appear in the pre-meeting mailing.
+- Discussion of the file name constraints added to the draft D1238R1 posted to the SG16 mailing list:
+  - http://www.open-std.org/pipermail/unicode/2019-June/000386.html
+  - Steve expressed approval for the new section.
+  - Zach agreed noting uncertainty that anyone cares about the details of normalization-insensitivity.
+  - Tom concurred and indicated he was unsure how important that is.
+  - Zach stated that it is important since extremely subtle bugs can happen from changing normalization.
+  - Tom acknowledged the possibility and noted reported problems for Apple's migration from HFS+ to APFS.
+  - Zach observed that there is no good way to tell what filesystem you are working on and what its
+    idiosyncracies are.
+  - Nathan asserted that programmers have to deal with presentation of file names and allow user selection.
+  - Steve noted that different file names can present the same (due to Unicode confusables or normalization
+    differences).
+  - Zach recalled an email from Marshall Clow some time ago regarding file systems using completely different
+    normalization schemes.  Different filesystems do things differently.
+  - Nathan stated that uploading a file to a web site also has presentation issues.
+  - Mark stated that jumping from one filesystem to another is inherently lossy, but treated as a transfer issue.
+    The only way to store a file accurately in text is to write it in something like base64.  Writing a file name
+    to a text file may break the encoding of the file.
+  - Zach claimed that we can't fix these issues except by declaring "things must work" and letting implementors
+    figure it out, which they probably can't do.
+  - Steve noted that we keep getting asked about handling of file names and this is intended to document constraints.
+  - Mark recalled an example; from the stack trace proposal, we specified file names be handled as a sequence
+    of bytes.
+  - Tom mentioned he was thinking about sending an email to the Unicode Consortium's mailing list asking about
+    current thinking regarding file names in text files.
+  - Mark argued that we should just try and stay out of this space.
+  - Tom asserted it is a big question for `std::text`.  How do we allow file names in `std::text`, particularly
+    if we require well-formed content?
+  - Mark suggested relying on an error policy.
+  - Zach claimed that we need to emphasize that, if a file name is retrieved from the file system, programmers must
+    maintain it as is.  Don't mutate it at all, don't compare it to text.
+  - Tom asked how one puts file names in text and have it be well-formed text?
+  - Zach replied simply, you don't.
+  - Mark provided an example of Apache using base64 encoding of names in URLs.
+  - Zach asserted that applications must provide a file selector interface.
+  - Tom asked how one would write `ls`?
+  - Zach responded that the file name be written in a presentation format that isn't necessarily suitable for
+    referencing the file.
+  - Steve observed that this already happens all the time that file names appear in output, but can't be parsed out
+    or referenced as is.
+  - Tom acknowledged and observed this is why GNU `find` has a `-print0` option.
+  - Nathan suggested that we may need to publish a document on how to deal with file names.
+  - Steve mentioned that we have `std::filesystem` and it has facilities for getting names out of paths.
+  - Zach claimed that problems happen if, for example, you have a UCS-2 file name on Windows that is ill-formed
+    UTF-16.
+  - Tom confirmed that recent Windows 10 releases still allow creation of file names that are not valid UTF-16.
+  - Zach asserted that we don't want interfaces that do transcoding or normalization to touch filenames.
+  - JeanHeyd suggested adding a new non-directive to the paper stating that we won't attempt to impose restrictions
+    on file names.
+  - Tom agreed to do so.
+  - \[Editor's note: Tom did so in [P1238R1](https://wg21.link/p1238r1) for the Cologne pre-meeting mailing\]
+- Discussion of planned transcoding papers:
+  - Zach stated he wasn't going to be able to produce a paper on transcoding for the Cologne pre-meeting
+    mailing.
+  - Tom let Zach know that was ok, especially since JeanHeyd was who had volunteered to write that paper and is
+    currently working on a draft.
+  - Zach noted a performance concern to address in the paper; generic transcoder interfaces don't perform well
+    with smart iterators.  For maximum performance, vector operations must be used as Bob Steagall demonstrated.
+  - Tom acknowledged that specializations for contiguous storage are needed.
+  - JeanHeyd said he came to the same conclusion and that the paper would discuss it.  He also indicated intent
+    to share the draft on the SG16 mailing list.
+  - \[Editor's note: JeanHeyd later shared that draft on the SG16 Slack channel.  The draft can be found at
+    [https://thephd.github.io/vendor/future_cxx/papers/d1629.html](https://thephd.github.io/vendor/future_cxx/papers/d1629.html)
+    and will be in the pre-meeting mailing as [P1629R0](https://wg21.link/p1629r0).\]
+- Discussion of z/OS compiler updates:
+  - Tom communicated recent news within the z/OS ecosystem.  IBM recently released versions of Clang for z/OS with
+    their latest updates for their xlC compiler.  Additionally, a third party provider also maintains a z/OS
+    C++14+ compiler based on LLVM.  Tom stated the details would appear in a revision of P1238.
+  - \[Editor's note: Tom did add those details to [P1238R1](https://wg21.link/p1238r1) for the Cologne pre-meeting
+    mailing\]
+- Discussion of Boost review for JeanHeyd's [`out_ptr`](https://github.com/ThePhD/out_ptr).
+  - Zach communicated that Boost formal review for JeanHeyd's
+    [`out_ptr`](https://github.com/ThePhD/out_ptr) library would begin on Monday June 17th and encouraged everyone
+    to participate via the Boost mailing list.
+- Discussion of C standard string transcoding functions:
+  - JeanHeyd asked for feedback regarding a set of transcoding functions he is considering proposing to the C
+    committee at their October meeting in Ithaca.  The functions match the existing C `mbstowcs`/`wcstombs` and
+    `mbsrtowcs`/`wcsrtombs` functions but transcode between UTF-8 (`char8_t`), UTF-16 (`char16_t`), and UTF-32
+    (`char32_t`).  The full cartesian product for all of the encodings results in approximately 40 functions.
+    He is wondering if the full set is needed or if a reduced set would suffice.  These functions are not used
+    often and aren't very performant.
+  - Tom stated that `mbstowcs` should be able to perform ok.
+  - JeanHeyd stated that dropping the restartable ones would reduce the number, but those are useful in some cases.
+    Another approach is to just propose the `c8`, `c16`, and `c32` variants that convert between the execution
+    encoding.
+  - Tom agreed that just providing conversion between the execution encoding and UTF variants was probably sufficient.
+- Discussion of updates to [P1072](https://wg21.link/p1072):
+  - Mark provided an update regarding plans for [P1072](https://wg21.link/p1072).  There are two options:
+    - Propose a lambda based interface.
+    - Propose an independent class coupled to `std::string`.
+  - Mark clarified that neither proposal would appear in the pre-meeting mailing.
+  - Zach expressed a desire for the functionality and for additional progress to be made.
+- Discussion of planned C committee proposals:
+  - Tom asked for any volunteers interested in writing and presenting papers to the C committee in October that
+    propose functionality we've added or plan to add for C++.  Such features include:
+    - `char8_t` ([P0482](https://wg21.link/p0482))
+    - Make char16_t/char32_t string literals be UTF-16/32 ([P1041](https://wg21.link/p1041))
+    - Named character escapes: ([P1097](https://wg21.link/p1097))
+  - JeanHeyd asked if we had ever followed up with the C committee regarding any known implementations that use
+    an encoding other thatn UTF-16/UTF-32 for `char16_t`/`char32_t` literals or that don't define
+    `__STDC_UTF_16__` and/or `__STDC_UTF_32__`.
+  - Tom responded that Philipp Krause had confirmed that there are no known implementations.
+  - \[Editor's note: though not mentioned in the meeting, there are implementations that use UTF-16 and UTF-32,
+    but neglect to define the `__STDC_UTF_16__` and/or `__STDC_UTF_32__` macros.\]
 
 
 # May 22nd, 2019
