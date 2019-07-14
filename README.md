@@ -71,6 +71,9 @@ The next SG16 meeting is scheduled for Wednesday, July 31st 2019, from 3:30-5:00
     - https://thephd.github.io/vendor/future_cxx/papers/d1629.html
     - The proposal includes low level and high level interfaces.
     - Normalization support will come later.
+  - Peter (via chat): There is a typo in section 3.3.2, "GB1032" should be "GB2312" or "GB18030".
+  - Elias (via chat): In 3.2.3.2, on the last line of the first snippet, the `basic_utf8` instead of `basic_utf16`
+    is probably a typo?
   - Zach expressed surprise at the lack of low level transcoding algorithms and lack of iterator based interfaces.
   - JeanHeyd replied that those algorithms are implemented within the encoding object and that the interface is
     range based rather than iterator based.  Objects are used instead of free functions in order to maintain state.
@@ -117,6 +120,12 @@ The next SG16 meeting is scheduled for Wednesday, July 31st 2019, from 3:30-5:00
   - Zach stated he would like to understand how that works.
   - Tom explained how input text iterators and output text iterators can be used together; e.g., via `std::copy`.
   - JeanHeyd expounded; Libogonek proved this out and Peter's S2 library did something similar.
+  - Peter (via chat): +1, doing exactly that in http://github.com/dascandy/s2.  I have the rope concept that
+    combines different code-point iterators as a single range so you can copy from that to a target (and the
+    assignment operator for target encodings is optimized to first calculate size & then do the copy).  
+    `s2::basic_string<s2::encoding::utf8> u8s = u16s.view();`
+  - Peter (via chat): 90% sure this is my hook for encoding conversion fast path -
+    https://github.com/dascandy/s2/blob/master/include/s2/detail/rope_detail.h#L41
   - Zach said he would like to see the code in libogonek to better understand it.  It is well understood how encoders
     produce code units and decoders produce code points, but hard to see how transcoding can be done without missing
     optimization opportunities.
