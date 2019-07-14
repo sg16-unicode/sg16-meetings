@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, June 26th 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, July 31st 2019, from 3:30-5:00pm EST.
 
+- [June 26th, 2019](#june-26th-2019)
 - [June 12th, 2019](#june-12th-2019)
 - [May 22nd, 2019](#may-22nd-2019)
 - [May 15th, 2019](#may-15th-2019)
@@ -31,6 +32,168 @@ The next SG16 meeting is scheduled for Wednesday, June 26th 2019, from 3:30-5:00
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# June 26th, 2019
+
+## Draft agenda:
+- Discuss papers from the Cologne pre-meeting mailing.  At least:
+  - P1629R0 - Standard Text Encoding
+  - P0267R9 - A Proposal to Add 2D Graphics Rendering and Display to C++
+    - just the new interfaces for text rendering.
+
+## Meeting summary:
+- Attendees:
+  - Elias Kosunen
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - JF Bastien
+  - Mark Zeren
+  - Michael Spencer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Tom started the meeting with some administrative details:
+  - Our regular meeting cadence would have us meet July 10th and July 24th, but the Cologne meeting is the 15th through
+    the 20th.  Tentative plan is to skip the next two regular meetings, meet July 31st, and then back to our regular
+    meetings during the 2nd and 4th weeks of the month in August.
+  - Hubert asked when the post-meeting mailing deadline is.
+  - Mark responded, August 5th.
+  - Tom communicated that issue #8 (https://github.com/sg16-unicode/sg16/issues/8) has been closed as resolved by the
+    adoption of [P1139R2](https://wg21.link/P1139R2) in Kona.
+  - Tom also communicated that the revision of [P1423R2](https://wg21.link/p1423r2) in the Cologne pre-meeting mailing
+    adds deleted `operator<<` overloads for wide streams for `char8_t`, `char16_t`, and `char32_t` following LWG
+    feedback during their [May 21st paper review telecon](http://wiki.edg.com/bin/view/Wg21cologne2019/LWGTelecom21May).
+    These changes will require LEWG review in Cologne.
+- [P1629R0 - Standard Text Encoding](https://wg21.link/p1629r0):
+  - JeanHeyd presented and provided a link to a draft revision (with only clerical errors fixed).
+    - https://thephd.github.io/vendor/future_cxx/papers/d1629.html
+    - The proposal includes low level and high level interfaces.
+    - Normalization support will come later.
+  - Zach expressed surprise at the lack of low level transcoding algorithms and lack of iterator based interfaces.
+  - JeanHeyd replied that those algorithms are implemented within the encoding object and that the interface is
+    range based rather than iterator based.  Objects are used instead of free functions in order to maintain state.
+  - Zach asked where code point conversion is happening; there isn't much state needed.  
+  - JeanHeyd explained that roundtripping through the encoding handles code points internally.  State is needed for
+    non-Unicode encodings and for error handling.
+  - Zach stated that, in Boost.text, the error handler is a template parameter.
+  - Zach asked if this design precludes doing performance optimizations like Bob Steagall has demonstrated.
+  - JeanHeyd replied that such optimizations are excluded in the encoder interface, but are intended to be supported
+    by specializing the high level interfaces; the specified free functions are customization points that can enable
+    optimizations.
+  - Tom asked why the `encode` and `decode` functions on the encoding object preclude optimizations.
+  - JeanHeyd replied that they only process one code point at a time.
+  - Zach asked what the motivation is for the slower interfaces over faster ones.
+  - JeanHeyd replied that the `encode` and `decode` customization points are eager and convert as much as possible.
+    The encoding object enables an iterative approach in which writing just the encoding object suffices to enable
+    the high level interfaces to work correctly, but at a less-than-optimal speed.  
+  - Steve said that it sounds like the code point at a time encoding object is the extension point for custom encoding.
+    It is unlikely that anyone will bother with a high performance implementation for many legacy encodings as
+    vectorizing support takes a lot of work.
+  - Zach expressed support for a convenience approach and a fast path, but also sees value in an iterator approach as
+    well.  Encoding details should be in either the algorithm (eager/fast) or in the iterator (lazy/slow).  Having
+    building blocks for constructing iterators isn't key.
+  - Zach expanded by contrasting with Python where the encode and decode functions always confused him because encoding
+    and decoding are basically different names for the same algorithm with direction reversed.  This design seems over
+    generalized.
+  - Tom stated that the design is range based, so iterators can be wrapped in a range, does that not suffice for
+    iterator use cases?
+  - Zach replied that standard alorithms don't take an output range, they take output iterators.
+  - Zach stated, when I'm doing a transcode, sometimes I want to loop and break, sometimes I just want to convert
+    everything.
+  - Peter stated he was confused by Zach's comments.
+  - JeanHeyd attempted to paraphrase.  What Zach is saying, is rather than specify building blocks, we should specify
+    lazy transcoding iterators.  The concern with that approach is that writing an iterator is a lot harder to do.
+  - Tom agreed noting that he discovered how hard they are to write when working on text_view.  For example, decoding
+    iterators need to eagerly consume code units.  
+  - Mark noted that we don't need to make it easy for implementors to write iterators, but it is good to make things
+    easy for other programmers.
+  - Zach stated that someone still needs to write the lazy iterator.  There is an impedence mismatch between input
+    and output.  A general template based iterator doesn't work.
+  - Tom stated it did for text_view.
+  - JeanHeyd stated that the ideas came from text_view and libogonek.  The encoding object avoids having to write
+    iterators and ranges.
+  - Zach stated he would like to understand how that works.
+  - Tom explained how input text iterators and output text iterators can be used together; e.g., via `std::copy`.
+  - JeanHeyd expounded; Libogonek proved this out and Peter's S2 library did something similar.
+  - Zach said he would like to see the code in libogonek to better understand it.  It is well understood how encoders
+    produce code units and decoders produce code points, but hard to see how transcoding can be done without missing
+    optimization opportunities.
+  - JeanHeyd explained that the fast path customization points enable that optimization by skipping the separate
+    decode and encode steps.
+  - Zach asked if iterator facade ever got standardized?  It makes writing iterators easy.
+  - \[Editor's note: no they haven't.  The iterator facade proposal is [P0186](https://wg21.link/p0186).  It was
+    discussed in Oulu in 2016.  Meeting minutes are [here](http://wiki.edg.com/bin/view/Wg21oulu/P0186).\]
+  - Zach expressed skepticism regarding encoding builders; we just need to worry about common encodings.
+  - Tom stated that there are use cases for code point at a time enumeration.
+  - Zach agreed but stated that should be provided via lazy iterators; this design is taking generic programming too far.
+  - Zach expressed a desire to be able to write a transcoding iterator that avoids construction of the intermediate
+    code point value during conversion.
+  - JeanHeyd noted that there are three extension points for customizing performance: the encoding object, transcoding
+    iterators, and customization points.
+  - Steve provided an example in which fast transcoding is trivial: transcoding ASCII to ISO-8859-1.
+  - Mark observed that programmers want fast functions and transcoding iterators, not encoding objects. 
+  - Steve stated that, within iconv's implementation, all transcoding conversions go through Unicode code points for
+    all encodings.  This is presumably fast enough for most use cases.  Converting from Shift-JIS to Big-5 doesn't
+    require extreme performance.
+  - JeanHeyd stated that additional work is needed to enable that middle path with fast transcoding iterators.
+  - Tom agreed; we need the lowest level for fall back to enable transcoding iterators between all encodings, but
+    can optimize specific cases.
+  - Zach stated that we really just need to list the specific transcoding iterators that are required.
+- [P0267R9 - A Proposal to Add 2D Graphics Rendering and Display to C++](https://wg21.link/p0267r9):
+  - Tom, unsurprisingly, stated that the interface should use `std:u8string` since it requires UTF-8 encoded text.
+  - Michael agreed and expressed dislike for the asumption of UTF-8 in a `std::string` object.
+  - Zach stated that the interfaces should be `std::string_view` and execution encoding.
+  - Steve pondered whether all current graphical display systems are Unicode.
+  - Tom stated that the X window system is locale based.
+  - Zach suggested it would be least surprising to programmers to use execution encoding.  That way they can just
+    pass regular strings.
+  - Peter stated that, On UNIX systems, UTF-8 tends to be the default, so things will work as is, but Windows
+    would be problematic.
+  - Zach observed that, without standard library support, converting text from execution encoding to UTF-8 is hard.
+  - Peter suggested leaving it to the UI libraries to figure it out.
+  - Zach responded that this is a UI library, so we need to figure it out.
+  - Michael pondered whether we should add overloads for `char`, `wchar_t`, `char8_t`, `char16_t`, and `char32_t`.
+  - Zach suggested that we only need `char` and `char8_t`.
+  - Hubert observed that the standard library is designed around locales.
+  - Tom asked Hubert to clarify, are you thinking these interfaces should take a locale object?
+  - Hubert responded that, if you have strings that you don't know the encoding for, then yes.
+  - JeanHeyd expressed a preference for just using `std::u8string` to avoid locale dependencies.
+  - Mark agreed that, perhaps, just `char8_t` is enough.
+  - Tom stated that, by the time 2D graphics is standardized, we should be able to get good conversion routines in
+    the standard library or we will have failed miserably!
+  - Hubert observed that the paper is missing bidirectional language support.
+  - Tom noticed that the paper doesn't say what happens with ill-formed encoded input.
+  - Mark suggested discussing font names; these should probably be bag-of-byte names.  The paper defers to the HTML
+    CSS specification.
+  - Zach noticed that the paper doesn't discuss normalization.  It would be nice if it called it out specifically.
+  - Tom asked if normalization matters.
+  - Zach responded that it does in some cases.
+  - JF suggested that we should make it possible to defer to the CSS specification if we can't right now.  We don't
+    want to do what we previously did in forking the Unicode identifier specification from
+    [UAX#13](https://unicode.org/reports/tr31)
+  - Mark noticed that some of the interfaces pass and return `std::string` by value where they probably shouldn't.
+  - JF pondered about overlap with SG13 and avoiding conflicts in scheduling when meeting in Cologne.
+  - \[Editor's note: SG13 and SG16 are meeting on separate days.\]
+- [P1750R0 - A Proposal to Add Process Management to the C++ Standard Library](https://wg21.link/p1750r0):
+  - Elias described the overlap with [P1275](https://wg21.link/p1275) and stated he is aware of previous SG16
+    review and is working with Isabella Muerte.
+  - Elias described the pipe interface.
+  - Tom asked if any operating system supports wide pipes.
+  - Elias stated he is unsure if Windows does.  The interface is templated on char type.
+  - Tom stated that Windows doesn't; `ReadFile` and `WriteFile` are used with pipes and they are byte oriented.
+  - Hubert asked about the interaction with streams.
+  - Elias responded that pipes can be wrapped in iostreams.
+  - Tom summarized the feedback so far: wide pipes may not be needed and prior SG16 concerns regarding environment
+    variables still stand.
+  - Tom stated that command lines probably need to be considered to be in execution encoding.
+  - Hubert stated that, for command lines, `exec` interfaces will likely be used and they use arrays, not strings.
+    A formatting approach makes sense.
+  - Elias stated that `process_launcher` takes a `std::filesystem::path`, not a string.
+- Meeting in Cologne.
+  - Tom communicated the tentative schedule for when SG16 would meet.
+  - Zach stated he will miss Monday.
 
 
 # June 12th, 2019
