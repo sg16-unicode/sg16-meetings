@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, July 31st 2019, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, Augyust 21st 2019, from 3:30-5:00pm EST.
 
+- [July 31st, 2019](#july-31st-2019)
 - [June 26th, 2019](#june-26th-2019)
 - [June 12th, 2019](#june-12th-2019)
 - [May 22nd, 2019](#may-22nd-2019)
@@ -32,6 +33,170 @@ The next SG16 meeting is scheduled for Wednesday, July 31st 2019, from 3:30-5:00
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# July 31st, 2019
+
+## Draft agenda:
+- Cologne post-meeting discussion.
+- Goals for WG14 in Ithaca (October 21st-25th).
+- Goals for Belfast (November 4th-9th).
+
+## Meeting summary:
+- Attendees:
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Peter Bindels
+  - Tom Honermann
+  - Zach Laine
+- Discuss drafting guidance explaining our consensus regarding providing char/wchar_t, char16_t, and char8_t
+  overloads in Cologne.
+  - Tom introduced the need to discuss guidance by presenting poll results taken for three papers:
+    - [P1030R2](http://wg21.link/p1030r2): std::filesystem::path_view:
+      - `char` and `wchar_t` oriented interfaces should be provided that behave according to the
+        `std::filesystem::path` specification in terms of encoding.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   3 |   2 |   0 |   4 |   2 |
+
+      - `char32_t` oriented interfaces should be provided that behave according to the
+        `std::filesystem::path` specification in terms of encoding.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   2 |   2 |   4 |   2 |   2 |
+
+    - [P0267R9](http://wg21.link/P0267R9): A Proposal to Add 2D Graphics Rendering and Display to C++
+      - Provide overloads for `char` (execution encoding) and `wchar_t`.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   0 |   0 |   4 |   3 |   3 |
+
+      - Provide overloads for `char16_t`.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   0 |   0 |   5 |   2 |   3 |
+
+      - Provide overloads for `char32_t`.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   0 |   0 |   3 |   3 |   4 |
+
+    - [P1750R0](http://wg21.link/P1750R0): A Proposal to Add Process Management to the C++ Standard Library
+      - Provide `std::process` `char` (execution encoding) and `wchar_t` interfaces.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   7 |   2 |   0 |   0 |   0 |
+
+      - Provide `std::process` `char8_t` interfaces.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   3 |   0 |   5 |   0 |   0 |
+
+      - Provide `std::process` `char16_t` interfaces.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   0 |   0 |   8 |   1 |   0 |
+
+      - Provide `std::process` `char32_t` interfaces.
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   0 |   0 |   3 |   5 |   0 |
+
+  - Tom explained that, to an outside observer, our guidance looks inconsistent:
+    - For polls about providing `char` and `wchar_t` based interfaces:
+      - For P1030R2, we were evenly split with strong positions on both sides.
+      - For P0267R9, we were fairly opposed to providing them.
+      - For P1750R0, we were strongly in favor of providing them.
+    - For polls about providing `char16_t` based interfaces:
+      - For P1030R2, we didn't even ask the question (we know of UTF-16 based file systems).
+      - For P0267R9, we were opposed to providing them.
+      - For P1750R0, we barely could have cared less about the question.
+    - For polls about providing `char32_t` based interfaces:
+      - For P1030R2, we were evenly split with strong positions on both sides.
+      - For P0267R9 and P1750R0, we were opposed (though more strongly so for P0267R9).
+  - Zach addressed `char32_t` as the easy case first.  The `char32_t` overloads exist for completeness, but no one
+    actually uses them.  They are inefficient.  `char32_t` is more useful for interfaces that accept non-contiguous
+    data.
+  - Mark stated that `char32_t` is useful when examining Unicode scalar values or elements of a grapheme cluster.
+  - Zach replied that, If we have a grapheme cluster span like type some day, then we'll want a contiguous
+    `char32_t` interface.  We can always add `char32_t` overloads as needed later.
+  - Mark agreed that we can wait for use cases to materialize.
+  - Tom asked if we should consider deprecating any existing `char32_t` interfaces.
+  - Peter, despite not having been present for these polls and related discussion in Cologne, quickly recognized
+    some patterns in the polls and offered some insightful rationale:
+    - For P1750, we are replacing existing functionality, so need to support existing non-standard `char` and
+      `wchar_t` based interfaces.  `char8_t` is our intended future direction, so we want that interface.  We don't
+      want to emphasize `char16_t` and `char32_t` going forward.
+    - For P0267, we are not replacing existing functionality, so we don't need `char`, `wchar_t`, `char16_t`, or
+      `char32_t` based interfaces; we can restrict to `char8_t` for now.
+    - For P1030, it seems like we don't know what we want.
+  - Mark added an additional rationale for P0267; fonts are Unicode based, so it makes sense to just start with
+    Unicode input.
+  - Tom noted that, in the time since Cologne, Niall has decided to add `char` and `wchar_t` based interfaces to
+    P1030.
+  - Zach expressed support for Peter's observations; `char` and `wchar_t` based interfaces are important for migration
+    purposes.
+  - Mark agreed and noted that we don't want to construct road blocks for proposals for new interfaces.
+  - Peter acknowledged that we don't want to make migration difficult and then raised the point that Apple's HFS+ and
+    APFS filesystems are problematic for `path_view` because their behavior is non-portable.
+  - Zach noted that similar problems exist for Windows with NTFS allowing UCS2 file names that are not valid UTF-16.
+  - Peter provided an additional example regarding FAT derived filesystems storing locale case translation tables and
+    noted that this is problematic when files are written with one locale and read using a different one (probably on
+    a different system).
+  - Tom returned to Peter's rationale in the context of P1030.  What is being proposed is a more performant alternative
+    for some uses of `std::filesystem::path`.
+  - Peter stated that the rationale for not providing `char` and `wchar_t` based interfaces is that the filesystem only
+    offers bytes when names are enumerated.  If we give those bytes back, the filesystem will accept them.  We can get
+    a displayable string, as from the `u8string()` member function of `std::filesystem::path`, but we can't necessarily
+    pass that path back to the filesystem.
+  - Tom stated that that rationale contradicts guidance regarding not wanting to construct impediments to migration.
+    The vast majority of file names use only the basic source character set.  By not providing `char` interfaces, we're
+    making very common use cases difficult.
+  - Zach observed that support for all valid file names requires use of `char` on Linux and `wchar_t` on Windows today.
+    The goal of the `std::byte` oriented interface is to provide something portable.
+  - Tom objected to those interfaces providing a portable abstraction since:
+      1. The underlying operating system interfaces used to implement those interfaces may themselves perform
+         translations.  For example, the normalization performed by HFS+ and APFS, and
+      2. Some OS interfaces don't support arbitrary byte sequences as file names.  For example, on Window's, a byte
+         oriented interface would either use `CreateFileA` which would perform locale conversions, or `CreateFileW` which
+         requires a sequence of 16-bit values (e.g., an odd number of bytes isn't supported).
+  - \[Editor's note: at this point, Tom became completely engrossed in the conversation and utterly and completely
+    failed to record individual commentary.  The following reflects his recollection of the discussion.
+      - Zach lol'd at the contortions that Tom's face apparently exhibited as Tom struggled to comprehend why anyone
+        thought the `std::byte` based interface was a good idea.
+      - Tom was awakened to the possibility that the `std::byte` interface wasn't necessarily conceived of as a means to
+        specify an actual sequence of bytes to be stored directly in the filesystem, but rather as a pointer to a sequence
+        of bytes that represent an opaque structure that was (probably) provided by the OS in the first place.
+
+    \]
+  - Zach stated that `path_view` is intended for performance and doesn't support mutation.
+  - JeanHeyd asserted that the `std::byte` oriented interface is intended to allow passing back to the OS a path name
+    that was originally provided by the OS.
+  - Zach agreed and added that the byte oriented interface is more like a handle to a file name, specifically a reference
+    to something matching the representation stored in `std::filesystem::path`.
+  - JeanHeyd added that the byte oriented interface exists for performance, but the `char` and `wchar_t` interfaces should
+    be provided for simple portable uses.
+  - Zach expressed a preference for making use of the `path_view` `char` based interface ill-formed on Windows and use of
+    the `wchar_t` interface ill-formed everywhere else, but added he was now convinced that the `char` and `wchar_t` based
+    interfaces should be provided.
+  - Mark observed that providing those means we need to worry about life-time management and when conversions occur.
+  - JeanHeyd responded that working implementations of `path_view` have already shipped and have demonstrated reduced
+    overhead due to avoidance of allocation.
+  - Tom expressed a preference for introducing a `raw_path` type to represent a canonical path rather than using
+    `std::byte`.
+  - JeanHeyd suggested using `std::filesystem::path::value_type` but noted that casts would still be needed.
+  - Zach ponded the idea of a `raw_path` type that is only constructible from `wchar_t` on non-Windows systems and only
+    constructed from `char` elsewhere.
+- Tom confirmed the date for our next telecon; August 21st with the intent being to discuss [P1108R2](http://wg21.link/p1108r2) - `web_view`.
 
 
 # June 26th, 2019
