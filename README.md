@@ -7,6 +7,7 @@ prior attendees.
 
 The next SG16 meeting is scheduled for Wednesday, September 4th 2019, from 3:30-5:00pm EDT.
 
+- [August 21st, 2019](#august-21st-2019)
 - [July 31st, 2019](#july-31st-2019)
 - [June 26th, 2019](#june-26th-2019)
 - [June 12th, 2019](#june-12th-2019)
@@ -33,6 +34,190 @@ The next SG16 meeting is scheduled for Wednesday, September 4th 2019, from 3:30-
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# August 21st, 2019
+
+## Draft agenda:
+- Discuss P1108, "web_view".  Our focus will be, unsurprisingly, character encodings and the use of iostreams with (presumably) UTF-8 data.
+- Goals for WG14 in Ithaca (October 21st-25th).
+- Goals for Belfast (November 4th-9th).
+- Discuss a few follow up items from P1689, "Format for describing dependencies of source files", following discussion in SG15.
+  - Bikeshed "data".  What do we call the code unit equivalent in path names?
+  - Are we ok stating that JSON readers/writers are not allowed to apply Unicode normalization?
+  - Are we ok with allowing a BOM (JSON doesn't permit one)?
+- Is "execution character set" the right term for the run-time locale dependent encoding used by the character classification and conversion functions?
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hal Finkel
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Discussion of a draft of P1108R3 - web_view:
+  - https://wg21.link/p1108r3 (link not yet active).
+  - Hal introduces.
+    - A protoype is available using wxWidgets:
+      - https://github.com/hfinkel/web_view
+    - There are a variety of ways we can provide graphical interaction within the standard.
+    - This approach comes out of discussions with folks at Apple and Nvidia.
+    - This approach outsources functionality to well used outside standards.
+    - The basic idea is that system services already exist with different APIs that can be wrapped in a standard
+      interface.
+    - For security reasons, interactions should run out-of-process and the interface must therefore not be too fine
+      grained.
+    - There is a common subset of functionality among the various system services that provides a push/pull interface.
+    - Constructing a `web_view` presents a window in which web content can be displayed and (Javascript) scripts can
+      be run.
+    - URI scheme extensions are supported by registering a (single) callback handler (per scheme).
+    - Close handlers are supported by registering a (single) callback handler.
+    - Interfaces are provided to request window close and to wait for window close.
+    - An example of a dynamic page is available in the paper.
+  - Hal provided a (successful!) live demonstration of the example from the paper.
+  - Hal then provided an additional (successful!) live demo of an additional example.
+  - Zach asked how C++ code can be invoked to update the displayed page.
+  - Hal responded that interaction is enabled by registering a URI scheme handler callback via the
+    `set_uri_scheme_handler` interface.
+  - Tom asked if the interface is effectively append only.
+  - Hal responded that it is based on a push model, so yes, requests update state.  The design supports both push
+    (via `run_script`) and pull (via callbacks registered with `set_uri_scheme_handler`).
+  - Zach stated that users will want the ability to route schemes to direct requests.
+  - Tom suggested that routing can be implemented via the callback registered with `set_uri_scheme_handler`.
+  - Corentin suggested using Web Sockets as well.
+  - Hal responded that there are many examples where utility libraries would come in helpful.  For example, we
+    probably don't want to do URI encoding and decoding, nor build interfaces using `std::format`.  We probably
+    want JSON support libraries.  Such utility libraries should be proposed separately though.
+  - Tom asked to clarify if `run_script` is for Javascript only and whether it would make sense for other languages
+    to be supported.
+  - Hal responded that it may be useful to specify the scripting language, like for Web Assembly.
+  - Zach suggested that such support could always be wrapped in Javascript.
+  - Zach acknowledged the elephant in the room by asking about the use of `std::string` in the interface.
+  - Corentin stated that we should give the same advice as for 2D graphics; use Unicode everywhere and,
+    specifically, UTF-8.  Supporting both UTF-8 and UTF-16 would complicate the interface.
+  - Zach noted that the W3C recommends UTF-8 only.
+  - Zach observed that for support of [RFC 39865](https://tools.ietf.org/html/rfc3986), encoding of URIs could
+    be handled within the library thereby allowing all URIs to be provided in UTF-8.  The remaining interfaces
+    could all take UTF-8 only as well, except, perhaps, for the window title.
+  - Tom stated that, for the title, even if UTF-16 is eventually required, conversion from UTF-8 is loss-less.
+  - Corentin suggested that URI escaping is complicated and that an interface for it should not be part of this
+    proposal.
+  - Tom asked if existing web view providers provide URI encoding services or if the implementation would be
+    obligated to provide it.
+  - Hal responded that some web view implementors just reject invalid URIs and that some others may not validate
+    much for file handling.  It isn't clear how existing web view providers interpret input; they probably just
+    assume UTF-8.
+  - Hal asked that, if UTF-8 were required, would it be sufficient to indicate that by just using `std::u8string`
+    in the interface.
+  - Zach responded yes, though `std::u8string` doesn't enforce well-formed UTF-8, so it may still be necessary
+    to explicitly specify a requirement for well-formed UTF-8 data.
+  - Corentin asked if use of `char8_t` based types doesn't already ensure that.
+  - Hubert responded no, we can't enforce well-formedness since programmers can always create `char8_t` arrays
+    with non-UTF-8 data.
+  - Zach suggested that we add blanket wording somewhere in the standard library specification stating that,
+    for interfaces that use `std::u8string` in library functions, that behavior is undefined if data is not
+    well-formed UTF-8.
+  - Hubert stated that approach makes sense.
+  - Hal, changing topics, asked for feedback regarding use of `std::ostream` in the URI scheme callbacks.
+  - Zach asked if we have `char8_t` based streams yet.
+  - Tom responded no.
+  - Zach stated that we would want that to help ensure the data is UTF-8.
+  - Hubert suggested that `codecvt` facets could be used to perform conversions.
+  - Zach acknowledged and added that, if the programmer imbues a locale, it is up to them to make sure it makes
+    sense.
+  - Corentin asked if Hal had considered use of strings instead of streams?
+  - Hal responded that a string based approach might make sense.  The benefit of the stream approach is that it
+    allows partial writes and some of the lower level interfaces support that.
+  - Tom, clarifying, stated that, within a callback handler, data written to the stream may start being processed
+    by the web view before the handler returns.
+  - Corentin suggested that we're going to have to provide `char8_t` based streams in C++23 anyway.
+  - Tom agreed.
+  - Hubert returned discssion to the earlier comments on blanket UTF-8 wording for `std::u8string`.  The place to
+    add such wording is in [[res.on.arguments]](http://eel.is/c++draft/res.on.arguments); "each of the following
+    applies to all functions ... unless explicitly stated otherwise".
+  - Zach volunteered to draft that blanket wording.
+  - Hal stated that we kind of broke UTF-8 hello world in C++20, but iostreams are weird for non-text data anyway.
+  - Tom replied that it was already broken, but we certainly didn't make it any easier.
+  - Hubert noted that localizations on iostreams currently require characters not in ASCII.  For example, monetary
+    symbols like the Euro sign (€).
+  - Hal noted that the URI scheme handler takes a constrained parameter, so overloads could be provided to handle
+    strings and streams.
+  - Hal stated that the next revision of the paper will include discussion about the URI scheme handler composing
+    a string and returning it vs support for partial writes via iostreams or some other concept.
+  - Tom suggested that there may be something in the Networking TS worth looking at.
+  - Hubert suggested that something lower level in iostreams, like `std::streambuf`, might be worth looking at too.
+  - Hal observed that `std::streambuf` has an associated locale.
+  - Tom acknowedlged; that is where `std::codecvt` facets do their work.
+  - Tom pondered whether we should ban `std::codecvt` facets on future `char8_t`, `char16_t`, and `char32_t`
+    iostreams by making attempts to imbue such streams with such a facet an error.
+  - Tom mentioned that we've talked about string builders in the past and this is a clear example where such
+    builders could be useful; though `std::format` might just be that tool these days.
+  - Zach observed that Beast and the like traffic in large ranges.  Perhaps some of those types would be useful here.
+  - Corentin suggested that Web Sockets are a better solution.
+  - Tom asked if it might make sense for the URI scheme handler to just use Web Sockets.
+  - Hal responded with concerns about complexity; the underlying APIs aren't the same.
+  - Hal stated that we will need to figure out the string vs stream interface as we want to avoid having to do
+    unnecessary copies.  We don't want to motivate the interface based on not knowing how to print UTF-8 to streams.
+    Responses are probably small, so strings are usually ok.  But encoded images might get pushed through these
+    interfaces as well.
+  - Zach asked how many URL scheme handlers can be active at a time; if we were reviewing for SG13, I would want to
+    know how much data can get pushed.
+  - Hal responded that the interface currently feels quick from a human perspective, but measurements of throughput
+    haven't been done yet.
+  - Hal followed up with some details of the prototype; wxWidgets has an unfortunate feature where all of the URI
+    callbacks are called on the UI thread.  That isn't desired since a slow handler blocks the UI.  All of the
+    underlying implementations support running handlers on non-UI threads.  The prototype needs to be changed to
+    further explore that.
+  - Hubert noted that an implementation could presumably host this as a single processs where the C++ code is the
+    plugin, so we can't necessarily assume a thread model.
+  - Hal responded that, on most systems, the straight forward implementation method has the UI driven by a thread
+    in the same process, but the web content renderer code runs in a separate process driven by RPCs.  This will
+    determine performance characteristics.
+- Discussion of goals for WG14 in Ithaca (October 21st-25th):
+  - JeanHeyd stated that he is planning to attend and to bring papers for:
+    - \[nodiscard\]
+    - Additional conversion functions for `char` and `wchar_t`.
+    - Support for `C.UTF-8` as the default C locale.
+  - Steve stated that the only thing that knows the encoding of `wchar_t` is the standard library and asked if any
+    encodings other than UTF-16 or UTF-32 are used in practice.
+  - JeanHeyd responded yes, AIX for Chinese locales uses Big-5.
+  - Tom added that z/OS uses a wide EBCDIC.
+  - Corentin asked what the motivation is for SG16 to add more conversion functions to C.
+  - JeanHeyd responded that it allows C++ implmenentors to use features provided by C.
+  - Tom suggested that it might be worth asking implementors what they would want and whether they would actually
+    use C interfaces.
+  - JeanHeyd acknowledged and stated he would ask.
+  - Zach stated that such interfaces might be nice to have for C, but C interfaces can't achieve the performance
+    that Bob Steagall demonstrated with his UTF-8 work.
+  - JeanHeyd noted that, since these interfaces are based on NTBSs, they will need to check for null characters
+    or know the string length ahead of time.
+  - Zach suggested that, for performance, it may be worth only looking ahead 16 bytes at a time.
+  - Tom stated that he is hoping to attend Ithaca and to bring papers for:
+    - char8_t.
+    - Make char16_t/char32_t string literals be UTF-16/32.
+    - Named character escapes.
+- Discussion of goals for Belfast (November 4th-9th).
+  - Steve stated he would like to put together an initial pass at cleaning up terminology for encoding and
+    character sets.
+  - Hubert stated that he would be happy with SG16 bringing such a paper, but timing is bad for CWG given where
+    C++20 is at.
+  - Tom stated he would like to bring a paper to enable a portable method of specifying that source files are
+    UTF-8 encoded.
+  - JeanHeyd stated he is working towards getting funding to work nearly full time on the
+    [P1629](https://wg21.link/p1629) standard text encoding paper.
+  - Tom asked JeanHeyd what we can do to help prove the design works well in practice and suggested porting some
+    project to it to demonstrate that:
+    - the interface works and fits existing use cases.
+    - that code is better.
+    - that performance is retained or improved.
+  - JeanHeyd responded that there are opportunities for a few checkpoints along the way.  For example, CppCon
+    where a presentation is currently planned.
+  - Tom asked for candidate projects that would be good for exercising the interface.
+  - JeanHeyd responded that he had previously tried with a chat server and that a text editor would be a good
+    choice.
+- Tom confirmed that the next meeting will be on September 4th.
 
 
 # July 31st, 2019
