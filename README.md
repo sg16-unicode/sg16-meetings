@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, September 4th 2019, from 3:30-5:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, September 25th 2019, from 3:30-5:00pm EDT.
 
+- [September 4th, 2019](#september-4th-2019)
 - [August 21st, 2019](#august-21st-2019)
 - [July 31st, 2019](#july-31st-2019)
 - [June 26th, 2019](#june-26th-2019)
@@ -34,6 +35,141 @@ The next SG16 meeting is scheduled for Wednesday, September 4th 2019, from 3:30-
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 4th, 2019
+
+## Draft agenda:
+- Discuss Corentin's draft D1854R0 - Conversion to execution encoding should not lead to loss of meaning
+  - https://cor3ntin.github.io/posts/encoding/D1854.pdf
+- Discuss a few follow up items from
+  [P1689, "Format for describing dependencies of source files"](https://wg21.link/p1689) following discussion in SG15.
+  - Bikeshed "data". What do we call the code unit equivalent in path names?
+  - Are we ok stating that JSON readers/writers are not allowed to apply Unicode normalization?
+  - Are we ok with allowing a BOM (JSON doesn't permit one)?
+- Is "execution character set" the right term for the run-time locale dependent encoding used by the character
+  classification and conversion functions?
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - David Wendt
+  - JeanHeyd Meneide
+  - Nathan Myers
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- The meeting started off with a round of introductions for the benefit of new attendees.
+- Discuss Corentin's draft D1854R0 - Conversion to execution encoding should not lead to loss of meaning
+  - https://cor3ntin.github.io/posts/encoding/D1854.pdf
+  - Corentin introduced the paper:
+    - The basic idea is to avoid the meaning of the program silently changing in unintended ways due to lack of
+      representation in the execution character set for a character in a character or string literal.
+  - Zach asked if he hadn't previously signed up to write this paper.
+  - Corentin explained that Zach signed up to write a paper about `u8string`.
+  - Tom then proceeded to explain the wrong paper but succeeded at only further confusing himself.
+  - Zach clarified that the paper he did sign up to write was to permit `uX"xxx"` string literals only when
+    the execution encoding is a Unicode encoding.
+  - Tom returned discussion to the paper at hand and noted that the paper only adds restrictions on ordinary
+    and wide literals because restrictions are already in place for `u8`, `u`, and `U` literals.
+  - Corentin demonstrated via godbolt.org that gcc rejects non-representable characters and that MSVC
+    substitutes a `?`.
+    - https://godbolt.org/z/kDwR1l
+    - \[Editor's note: demonstration of MSVC's substitution of a `?` character requires adding the
+      `/source-charset:utf-8` option to the MSVC command line in the above link.  Without that option, the
+       UTF-8 encoded source is interpreted by the MSVC compiler as Windows-1252.\]
+  - Corentin summarized that the goal is to standardize gcc's behavior.
+  - Corentin stated that he was unsure if Microsoft would be willing to implement this outside of `/permissive-`
+    mode since this might break existing code even though such code is already fragile and subject to breakage
+    just by being compiled on a different system (with a different default execution character set).
+  - Tom noted that by making this standard, if an implementor remains non-conforming, then users can complain if
+    they want to.
+  - Tom asked if there are any possible advantages to status quo.
+  - Zach replied no, this just hurts portability.
+  - Corentin observed that code can always be updated to use an escape sequence instead of an unrepresentable
+    character.
+  - Peter expressed concern about wide encoding because, on Windows, it is (or used to be) UCS-2, so emoji can't be
+    represented.
+  - Tom restated Peter's point; there may be cases where graceful degradation is ok.  E.g., losing emojis.
+  - Peter reported testing gcc and found that, in wide encodings, characters outside the BMP were lost when printing
+    to the console.
+    - ```
+      int main() {
+          std::wstring s = L"\U0001f4a9";
+          std::wcout << s;
+      }
+      ```
+  - Tom suggested that this is due to a libstdc++ iostreams issue; wide characters are simply truncated when
+    `std::wcout` writes them to stdout.
+  - Corentin demonstrated that gcc rejects wide string literals with characters not representable in the wide
+    execution character set as well.
+  - Tom requested a quick walk through of the wording.
+  - Tom suggested to update the paper to use stable names for the sections to be updated since numbers change.
+  - Peter noted that, in section 5.13.3.8, the red text is missing strike through.
+  - Corentin commented that, until writing this paper, he was not aware of multi-character literals.
+  - Peter responded regarding a recent use case for them for a table driven switch handling approach:
+    - ```
+      uint32_t tableId = (table->Signature[0] << 24) |
+                         (table->Signature[1] << 16) |
+                         (table->Signature[2] << 8) |
+                         (table->Signature[3] << 0);
+      switch(tableId) {
+          case 'APIC':
+          ...
+      }
+      ```
+  - Tom expressed some initial surprise to see the proposed wording changes for octal and hex escapes, but
+    concluded that they make sense.
+  - \[Editor's note: it would be helpful to add examples to the paper of code that would become ill-formed.\]
+- Discuss a few follow up items from
+  [P1689, "Format for describing dependencies of source files"](https://wg21.link/p1689) following discussion in SG15.
+  - Bikeshed "data". What do we call the code unit equivalent in path names?
+    - Tom introduced the naming concern.  [P1689R0](https://wg21.link/p1689r0) used the name "data" to refer to the
+      sequence of individual elements of a path.  [P1689R1](http2://wg21.link/p1689r1) changed the name to "code-units"
+      following feedback in Cologne.  Do we want to suggest a different name given our stance on file names not having
+      an associated encoding and, arguably therefore, no "code units"?
+    - Corentin argued to not invest time in this discussion unless/until SG15 progresses the paper further.
+    - Corentin also observed that user's won't see this name, so it doesn't really matter.
+  - Are we ok stating that JSON readers/writers are not allowed to apply Unicode normalization?
+    - Tom explained that this is no longer a concern.  in [P1689R1](http2://wg21.link/p1689r1), code units are always
+      explicitly specified.
+  - Are we ok with allowing a BOM (JSON doesn't permit one)?
+    - Corentin argued that we should follow the JSON specification.
+    - Tom explained his understanding that allowing one doesn't violate RFC 8259 since the BOM limitations there only
+      apply to network-transmitted text, and ECMA 404 doesn't specify encoding at all; there is no mention of "BOM",
+      "byte order", or "UTF-8" in that specification.
+      - https://tools.ietf.org/html/rfc8259#section-8.1
+      - https://www.ecma-international.org/publications/standards/Ecma-404.htm
+    - Zach asked what motivation exists for allowing a BOM.
+    - Tom replied that it would be useful for non-ASCII based platforms like z/OS.
+    - Peter added that it is useful for Windows as well since text files are likely to be interpreted as Windows-1252.
+    - Corentin noted that Unicode recommends against use of a BOM.
+    - Corentin stated that, if the specifications don't require UTF-8 encoded JSON, then we should specify that.
+- Is "execution character set" the right term for the run-time locale dependent encoding used by the character
+  classification and conversion functions?
+  - Zach suggested asking core about this since it seems like we've just been using the wrong terms.
+  - Steve noted that the existing wording is all old langauge pertaining to character sets, not necessarily encoding.
+  - Tom stated that there was an email thread about this on the core and SG16 mailing lists and that the conclusion
+    was that Steve and Tom should write a paper.  Steve has since done some work, but Tom hasn't.
+  - Zach stated that we need someone to go through the existing wording and refine our understanding of it.
+  - Tom agreed, and added that that is the paper to be written.  We use terms like "execution encoding" now that
+    aren't defined in the standard.
+  - Steve stated he would love to expose encoding details somehow.
+  - Corentin asked if we want to change the names as they've been around a long time.
+  - Steve stated he thinks it is worth tightening the specification without changing the intent.  Other than that
+    we should state that the wide character encoding can be a variable length encoding.
+  - Zach commented that clarifying terms in the standard is a good use of our time.
+  - Corentin stated we should have different names for compile-time and run-time encodings and that wording should
+    state requirements regarding their compatibility.
+  - Steve asserted that some archaeology is necessary here as much of this wording was created when locales were
+    being developed around the expectation that code worked with the "C" locale.
+  - Peter observed that variable length encodings go back to at least GB2313 from the 1980s.
+  - Steve noted that shift encodings go back to then too.
+- Zach mentioned that he has a repository where he is working on several small papers.
+  - https://github.com/tzlaine/small_wg1_papers
+- Peter requested feedback on his slides for CppCon.
+- Tom stated that the next meeting will be September 25th.
 
 
 # August 21st, 2019
