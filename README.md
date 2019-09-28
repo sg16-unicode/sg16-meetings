@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, September 25th 2019, from 3:30-5:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, October 9th 2019, from 3:30-5:00pm EDT.
 
+- [September 25th, 2019](#september-25th-2019)
 - [September 4th, 2019](#september-4th-2019)
 - [August 21st, 2019](#august-21st-2019)
 - [July 31st, 2019](#july-31st-2019)
@@ -35,6 +36,145 @@ The next SG16 meeting is scheduled for Wednesday, September 25th 2019, from 3:30
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 25th, 2019
+
+## Draft agenda:
+- Discuss LWG#3290 - Are std::format field widths code units, code points, or something else?
+  - https://cplusplus.github.io/LWG/issue3290
+  - Victor plans to have a draft paper for discussion.
+- Discuss P1844R0: Enhancement of regex
+  - https://wg21.link/p1844
+
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - JeanHeyd Meneide
+  - Lyberta
+  - Mark Zeren
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Discuss D1868R0 - 🦄 width: clarifying units of width and precision in std::format
+  - http://wiki.edg.com/pub/Wg21belfast/SG16/D1868R0.html
+  - Addresses https://cplusplus.github.io/LWG/issue3290
+  - Victor introduces:
+    - Any solution to this problem must deal with conflicting constraints.  The programmer's intention is
+      to align text output assuming a monospace font and some understanding of how the text will be rendered
+      (e.g., how many terminal columns will be consumed by each "character").  Implementors desire a clear
+      and precise specification; preferably one that does not have great complexity that may lead to
+      reliability issues or bug reports.
+    - Field precision is more consequential than field width because it truncates text potentially resulting
+      in ill-formed output if truncation doesn't occur at a suitable boundary.
+    - Experimentation with an approach that estimates field width based on Unicode's extended grapheme clusters
+      and script blocks produced good results; better results than estimation based on code point counts.
+    - Experimentation on macOS, Linux, and Windows revealed that Windows currently has the most significant
+      limitations with regard to support for Unicode characters currently not represented in Microsoft's
+      supported ANSI code pages.  Experiments have not been performed using the new Windows terminal which
+      may be expected to produce better results.
+    - Testing of Unicode family emoji demonstrated the most variability of results since family emoji may be
+      rendered as a single glyph or as a series of glyphs each representing a family member.
+    - Field width is an estimate.  Unless apriori knowledge of how the text will actually be rendered is
+      available, the width of any given text can only be approximated.
+    - The experimental implementation uses [Boost.text](https://github.com/tzlaine/text) to identify extended
+      grapheme cluster boundaries and computed width based on Unicode block ranges culled from an
+      implementation of `wcswidth`.
+  - Corentin mentioned that the issue with family emoji extends to other sequences of combining emoji.  For
+    example, ninja cat (`U+1F431 {CAT FACE}`, `U+200D {ZERO WIDTH JOINER}`, `U+1F464 {BUST IN SILHOUETTE}`) is
+    rendered with a single glyph on Windows, but currently with two glyphs on Linux.  Width fundamentally
+    depends on rendering.
+  - Corentin added that, for non-Unicode encodings, width estimation must look at code units and do things
+    differently for double-byte characters vs single-byte characters.
+  - Victor stated that he is content with handling of non-Unicode encodings being implementation defined.
+  - Zach agreed and asserted that we want a 90% solution.  Support of non-Unicode encodings would require
+    information that we can't currently specify in the `std::format` interface assuming `std::format`
+    remains locale independent; it is ok for implementations to assume an encoding.
+  - Tom thanked Victor for doing this research and stated he found it sufficiently compelling to take the code
+    unit solution he previously advocated for resolving [LWG 3290](https://wg21.link/lwg3290) off the table.  In
+    particular, the demonstration of prior art in the form of POSIX
+    [`wcswidth`](https://pubs.opengroup.org/onlinepubs/9699919799/functions/wcswidth.html) lent confidence to
+    this approach.
+  - Tom asked if width calculation for `wchar_t` could be delegated to `wcswidth`.
+  - Victor replied that `wcswidth` is locale dependent and that goes against the `std::format` design.
+  - Tom asked if width calculation for `char` and `wchar_t` couldn't be implementation defined such that an
+    implementation could query locale only when width or precision is explicitly specified and the arguments
+    are characters or strings.  Width or precision specifiers would effectively constitute an opt-in for locale
+    dependence.
+  - Zach objected on the basis that dependence on locale could cause output to differ on one platform vs another
+    for the same character or string data.
+  - Victor clarified that, if encoding doesn't match, the worst case result is mis-alignment.
+  - Corentin stated that, as currently specified, `std::format` formats bytes since it doesn't know the precise
+    encoding of inputs.  Correct text manipulation requires knowing the encoding.
+  - Corentin expressed agreement that display width is what programmer's expect.  Perhaps in C++23, the ability
+    to pass an encoding argument could be added.
+  - Tom mentioned that `std::format` can take a `std::locale` option from which the encoding could be queried
+    thus making it possible for programmers to opt-in to locale awareness simply by passing a locale object.
+  - Zach again objected based on the desire to have portable output.
+  - Corentin expressed a strong preference for a good solution in C++20 and asked if we could specify that width
+    and precision units are display width and, for characters outside the basic source character set, behavior is
+    implementation defined.
+  - Victor stated that is a minimum viable solution.  The paper proposes that encoding is an implementation
+    defined fixed encoding, not a run-time selected one.
+  - Corentin confirmed satisfaction with a minimal solution for C++20 that we can iterate on for C++23 and that
+    retains some flexibilty.
+  - Zach observed that, if we make it implementation defined today, then we'll be stuck with implementation
+    choices.  If the standard doesn't specify behavior, then implementors will choose one and we'll get stuck
+    either way.  This is similar to breaking ABI; it can be an over-my-dead-body issue.
+  - Corentin again expressed a desire for some way to preserve the ability to make changes later.
+  - Zach stated that it is important to remember what Victor said previously; width is an estimate.
+  - Mark observed that what we're discussing is mostly an edge case since most fields are aligned for numeric output.
+  - Tom countered that alignment is useful for things like names.
+  - Tom asked if `std::format` is constexpr.
+  - Victor replied that parsing of the format string is constexpr, but actual formatting is not.
+  - Corentin stated it would be useful to have constexpr formatting at some point, but querying locale would prevent
+    that.
+  - Tom disagreed and stated that an implementation could use an internal locale if formatting at compile-time.
+  - Tom summarized his perceptions of our positions so far:
+    - We appear to have agreement for display widths in some form.
+    - We have disagreements over adding a locale dependency as part of encoding assumption.
+  - Corentin asked Zach if he thought a best attempt at display width is sufficient.
+  - Zach replied that he wants the algorithm in the paper so that the same behavior is exhibited on all platforms
+    and is unconcerned about rendering dependent cases like for family emoji.
+  - Victor reiterated that width calculation is best effort and that he is ok with consistent results only being
+    ensured for the basic source character set.  This assurance only requires a fixed system dependent encoding.
+  - JeanHeyd asked for clarification that we would only be guaranteeing alignment for the basic source character
+    set in C++20 while leaving further specification until C++23.
+  - Victor replied, yes, basically.
+  - JeanHeyd asked if that implied an implementation defined fixed encoding.
+  - Victor responded, not implementation defined, but rather platform dependent so that all implementations targeting
+    a given platform would exhibit the same behavior.
+  - Tom observed that, if the system defined fixed encoding differs by platform, then we won't get consistent results.
+  - Zach disagreed based on a premise that, for the purposes of width computation, consistent results are achieved by
+    interpreting the input as Unicode.
+  - Corentin stated that he thinks we need to defer to (wide) execution encoding when computing width.
+  - Tom agreed stating that we should make width calculation as right as we can make it.
+  - JeanHeyd reformulated the trade off.  The most right answer depends on locale.  The always consistent result
+    generates garbage consistently but avoids the locale dependency.
+  - Victor stated that rendering can always change; we just need to decide if we are ok depending on something at
+    run-time.
+  - Zach re-iterated that, with the current specification, width calculation only works for single byte characters
+    that render as a single glyph and we don't have a way to customize the width formatting unless we defer to
+    something at run-time, but doing so conflicts with design goals of `std::format`.
+  - Corentin observed that the same issue exists with `printf` as it will fail if the execution encoding doesn't
+    match the run-time locale encoding; C and C++ fundamentally depend on encoding compatibility.
+  - Victor reminded everyone that the paper does support use of the locale encoding via an opt-in specifier.
+  - Steve reminded everyone that there is no system call to get the actual display width, so we're always guessing
+    anyway.
+  - JeanHeyd stated that he thought opt-in for locale dependent width was acceptable.
+  - Zach expressed a desire to get the right default for the long-term.  If we make the default behavior locale
+    sensitive, then we'll be stuck with that forever.
+  - Tom responded that, in the long term, encoding will hopefully become separated from locale thereby eliminating the
+    wrong default concern.
+  - Corentin suggested that, for C++20, we could require the `'l'` in the specifier and not have a non-locale option
+    until we figure this out.
+  - Steve observed that the locale dependency creates a buffer overflow situation in the case where the locale changes
+    in between width calculation and actual formatting to a buffer.
+  - Corentin stated a preference to just require `'l'` in the width specification for C++20 to give us time to address
+    this properly.
+  - Tom suggested adding a reference to [LWG 3290](https://wg21.link/lwg3290) in the paper.
+- Tom announced that the next meeting will be on October 9th.
 
 
 # September 4th, 2019
