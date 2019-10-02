@@ -266,13 +266,13 @@ The next SG16 meeting is scheduled for Wednesday, October 9th 2019, from 3:30-5:
   [P1689, "Format for describing dependencies of source files"](https://wg21.link/p1689) following discussion in SG15.
   - Bikeshed "data". What do we call the code unit equivalent in path names?
     - Tom introduced the naming concern.  [P1689R0](https://wg21.link/p1689r0) used the name "data" to refer to the
-      sequence of individual elements of a path.  [P1689R1](http2://wg21.link/p1689r1) changed the name to "code-units"
+      sequence of individual elements of a path.  [P1689R1](https://wg21.link/p1689r1) changed the name to "code-units"
       following feedback in Cologne.  Do we want to suggest a different name given our stance on file names not having
       an associated encoding and, arguably therefore, no "code units"?
     - Corentin argued to not invest time in this discussion unless/until SG15 progresses the paper further.
     - Corentin also observed that user's won't see this name, so it doesn't really matter.
   - Are we ok stating that JSON readers/writers are not allowed to apply Unicode normalization?
-    - Tom explained that this is no longer a concern.  in [P1689R1](http2://wg21.link/p1689r1), code units are always
+    - Tom explained that this is no longer a concern.  in [P1689R1](https://wg21.link/p1689r1), code units are always
       explicitly specified.
   - Are we ok with allowing a BOM (JSON doesn't permit one)?
     - Corentin argued that we should follow the JSON specification.
