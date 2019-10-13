@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, October 9th 2019, from 3:30-5:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, October 23rd 2019, from 3:30-5:00pm EDT.
 
+- [October 9th, 2019](#october-9th-2019)
 - [September 25th, 2019](#september-25th-2019)
 - [September 4th, 2019](#september-4th-2019)
 - [August 21st, 2019](#august-21st-2019)
@@ -36,6 +37,197 @@ The next SG16 meeting is scheduled for Wednesday, October 9th 2019, from 3:30-5:
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 9th, 2019
+
+## Draft agenda:
+- P1880R0 - u8string, u16string, and u32string Don't Guarantee UTF Endcoding
+  - https://github.com/tzlaine/small_wg1_papers/blob/master/P1880_uNstring_shall_be_utf_n_encoded.md
+- P1879R0 - The u8 string literal prefix does not do what you think it does
+  - https://github.com/tzlaine/small_wg1_papers/blob/master/P1879_please_dont_rewrite_my_string_literals.md
+- P1844R0: Enhancement of regex
+  - https://wg21.link/p1844
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - David Wendt
+  - Henri Sivonen
+  - JeanHeyd Meneide
+  - Peter Bindels
+  - Peter Brett
+  - Tom Honermann
+  - Zach Laine
+- P1880R0 - u8string, u16string, and u32string Don't Guarantee UTF Endcoding
+  - https://github.com/tzlaine/small_wg1_papers/blob/master/P1880_uNstring_shall_be_utf_n_encoded.md
+  - Zach introduced:
+    - The idea is that interfaces taking these string types expect that contents of these strings are
+      well-formed UTF-8, UTF-16, UTF-32 respectively; this requirement needs to be reflected in the standard.
+    - We should state a blanket requirement for these expectations.
+    - The paper proposes a 4th bullet to [[res.on.arguments]](http://eel.is/c++draft/res.on.arguments).
+  - PeterBr asked if the requirement should be for well-formed data.
+  - Zach replied that it should be.  LWG should confirm that.
+  - Henri asked what happens if an ill-formed code unit sequence is passed.  Is it undefined behavior or as-if
+    the Unicode replacement character was present?
+  - Zach replied that the current wording makes it undefined behavior.
+  - PeterBr provided an example of why the behavior is undefined.  Consider a string that ends with an incomplete
+    code unit sequence; the implementation could run off the end of the buffer.
+  - Zach responded that, for `std::basic_string` types, the buffer overrun can be avoided, but in that case, the
+    interface specification should state that behavior.  The proposed blanket wording is for the weakest interface
+    requirements and can be strengthened by individual interfaces.
+  - Henri asked if that is useful as it seems like undefined behavior is a huge foot cannon; replacement character
+    semantics would provide a safer interface.
+  - Zach responded that, if this is a foot gun, then so is `std::vector operator[]`.  You must meet preconditions.
+    Implementations can always constrain their handling if they want.  The intent here is to enable the fast path.
+  - PeterBr added that it would add complexity to implement replacement character behavior; interfaces would not
+    be able to use SIMD instructions if ill-formed strings must be handled.
+  - Zach repeated that the proposal just specifies the default behavior unless otherwise specified for an interface.
+  - Corentin opined that this seems almost editorial.
+  - Henri stated that, for `char8_t`, there are values that are never valid in well-formed UTF-8 text and asked what
+    an individual `char8_t` means; it must be restricted to ASCII.
+  - Tom noted that matches UTF-8 character literals; they can only specify ASCII values.
+  - Zach read the existing content in [[res.on.arguments]](http://eel.is/c++draft/res.on.arguments) in order to
+    demonstrate similarity in existing requirements.
+  - Henri asked if this represents a requirement that is more difficult to satisfy than the existing requirements.
+    For example, in UTF-16, almost all code bases will allow unpaired surrogates.  Does this requirement make the
+    standard library useless for their code bases?
+  - Zach stated that interfaces can specify their handling of unpaired surrogates.
+  - Henri asked again if this is a practical requirement.
+  - Tom responded that this is needed for our mantra of not leaving performance on the floor; we can't both check
+    for ill-formed text and maximize performance.
+  - Zach added that ICU already does this for performance.  Within Boost.Text, Zach added interfaces for both
+    unchecked and checked text.
+  - PeterBr opined that this paper is great and sorely needed.
+  - Tom and Corentin agreed.
+  - Henri asked Zach to expound on his statement that ICU already exhibits undefined behavior.
+  - Zach responded that, in ICU normalization code, assumptions are made when decoding UTF-8.  For example, unsafe
+    unpacking of UTF-8 is performed.
+  - Henri asked if ICU does likewise for UTF-16 for unpaired surrogates.
+  - Zach responded that he thought so, but is not completely sure.
+  - Corentin expressed support for an NB comment to include this in C++20.
+  - Tom opined that it doesn't much matter if this makes C++20 as implementors will already do the right thing.
+  - Henri asked if this might introduce a backward compatibility issue in C++23 if added after C++20.
+  - Tom responded that the undefined behavior is effectively already there; this is fixing an underspecification.
+  - Henri stated it would be a huge task to scrub existing code bases to avoid this undefined behavior.
+  - Zach predicted that we'll end up with separate interfaces for assuming an encoding vs checking the encoding.
+    This isn't hurting anybody, it is just enabling fast path implementations.
+  - Henri expressed concern about digging deeper into making default interfaces unsafe; like `std::optional::operator*`
+    is.  He would prefer unsafe interfaces be clearly marked as unsafe.  This undefined behavior has the potential
+    to introduce security issues.
+  - Zach responded that most standard interfaces are unsafe in some way, for example every function that accepts
+    arguments of pointer type.
+  - Henri countered that the undefined behavior can be avoided in this case; just like we could for
+    `std::optional::operator*`.
+  - Zach suggested that C++ is often used for its performance advantages; we want the default to be fast.  But this
+    proposal isn't really about that; it is about documenting our default behavior.
+  - PeterBr stated that `std::u8string` is `std::basic_string` with `char8_t`.  `std::basic_string` provides many
+    interfaces that allow mutating the string in a way that would break otherwise well-formed UTF-8.  Rust doesn't
+    do that.  We could specify a UTF-8 string type that maintains invariants, but it wouldn't be a `std::basic_string`
+    any more.  Thus, it is up to the programmer to not violate UTF-8 requirements.
+  - Corentin agreed that we don't want to change `std::u8string`; it is just a container of code units.  String
+    mutation should be managed via some overlying type like `std::text`.  This paper just reflects existing behavior.
+  - Henri asked if we really want to enable so much performance that we risk our users.  In Firefox, lots of string
+    checking is done to avoid security issues even though ill-formed UTF-8 is very rare.  The performance isn't bad.
+  - PeterBr responded that an implementation can choose to define its behavior.
+  - Henri countered that, if it isn't required everywhere, then it can't be relied on.
+  - Corentin suggested that, if you want safety, then `std::basic_string` is not the type you're looking for.  We're
+    going to need other types on top and, eventually, we'll have more trusted types.
+  - Zach added that no interfaces are being specified in this paper, so there are no ergonomic concerns.  Again, this
+    is just proposing blanket wording that can be strengthened in individal interfaces.
+- Tom initiated a discussion about polling during telecons.
+  - Tom introduced:
+    - He prefers to avoid polling during telecons in favor of polling during face to face meetings.  This is due
+      to 1) larger numbers of attendees at face to face meetings, 2) more opportunity for input from those that do
+      not regularly attend telecons, and 3) more opportunity for background thinking after a discussion before having
+      to respond to a poll.
+    - He also sees the telecons as useful for priming discussion and identifying non-obvious concerns.
+  - Tom asked if anyone wanted to argue for a change in practice.
+  - The group expressed general agreement to continue doing what we've been doing.
+- P1879R0 - The u8 string literal prefix does not do what you think it does
+  - https://github.com/tzlaine/small_wg1_papers/blob/master/P1879_please_dont_rewrite_my_string_literals.md
+  - Zach introduced:
+    - This started from an experience from a while back that we have previously discussed.
+    - Tests involving UTF-8 formatted source files failed when compiled with the Microsoft compiler, but not with
+      other compilers.
+    - The source files did not have a UTF-8 BOM and Microsoft's `/source-charset:utf-8` option wasn't being used,
+      so the source files were decoded as Windows-1252.
+    - String literals therefore did not contain what was expected because code units were not interpreted as expected.
+    - The paper proposes prohibiting use of `u8`, `u`, and `U` literals unless the source file encoding is a Unicode
+      encoding.
+  - Corentin suggested relaxing the prohibition to allow use of these literals so long as the source contents of the
+    literal only use characters from the basic source character set.  \[Editor's note: presumably this would still
+    allow characters outside the basic source character set if specified with `universal-character-name` escape
+    sequences.\]
+  - Corentin also stated that the current behavior makes sense according to the standard, but most programmers aren't
+    aware of source file encoding vs execution encoding concerns.
+  - Henri stated that the behavior makes sense if you think of C++ source code as text rather than bytes and agreed
+    that this isn't what programmers expect.
+  - PeterBr expressed support for the paper because it ensures you get the same abstract characters written in the
+    source file and added that it would be nice if this paper used the same terminology as propsoed in Steve's recent
+    terminology paper ([P1859R0](https://wg21.link/p1859r0)).  \[Editor's note: this paper will be in the Belfast
+    pre-meeting mailing.\]
+  - Zach agreed regarding use of terminology.
+  - Tom expressed concerns regarding breaking backward compatibility, particularly for z/OS where source files are
+    EBCDIC and `u8` literals are used to produce ASCII strings.
+  - Zach asked if it would help to only allow characters from ASCII.
+  - PeterBr stated that, if the compiler is not explicitly told what the source encoding is, you are in trouble since
+    the compiler can't always detect an encoding expectation mismatch.
+  - Henri noted that the translation model matches what is done on the web where HTML source is transcoded to some
+    internal (Unicode) encoding.  A compiler could preserve meta data about the encoding a literal came from and,
+    if the transcoded code point is above 0x80, issue a diagnostic.
+  - Zach asked for more information regarding concerns for z/OS and EBCDIC.
+  - Tom explained the source translation model according to [translation phase 1](http://eel.is/c++draft/lex.phases#1.1).
+    Source files are first transcoded from an implementation defined encoding to an implementation defined internal
+    encoding.  The internal encoding has to be effectively Unicode (or isomorphic to it) due to possible use of
+    `universal-character-name` sequences in the source code.  The internal encoding is then transcoded to the various
+    execution encodings where needed.
+  - Tom went on to explain that there are multiple EBCDIC code pages and that many of the characters available in
+    them are not defined in ASCII.  Restricting UTF literals to just ASCII would prevent use of those characters.
+  - Tom restated PeterBr's point from earlier.  This problem is always due to mojibake; the source file being
+    encoded in something other than what the compiler expects.
+  - PeterBr agreed that the root cause is the encoding mismatch and opined that this is a problem worth solving.
+    The question is how best to solve it.  The first place to look is at the translation from source encoding to
+    internal encoding.
+  - Henri expressed belief that it makes sense to address the problem where Zach suggests.
+  - Zach stated that the right place to detect this is during parsing; when parsing a UTF literal, it is critical
+    to know what the source encoding is.
+  - Tom countered that it is necessary to know the encoding as soon as you hit a code unit that doesn't represent a
+    member of the basic source character set.
+  - Henri stated that diagnosing any such code unit is a harder sell than just diagnosing one in a UTF literal.
+  - Tom agreed.
+  - PeterBr noted that it is implementation defined how (or if) characters outside the basic source character set
+    are represented.  The goal of the paper is effectively to tighten that up.  That means implementations can
+    have extensions to relax diagnostics.
+  - Henri responded that such arguments apply to any change to the standard.
+  - Zach agreed, but noted this is restricted to source files that have UTF literals with transcoded code points
+    outside of ASCII.
+  - Henri stated that there is more potential for failures for some character sets than others.  For example,
+    some character sets don't roundtrip through Unicode.  This failure mode already exists, but there is little value
+    in trying to diagnose this outside of UTF literals.
+  - PeterBr stated that a source file with code units representing characters outside of the basic source character
+    set is ill-formed subject to implementation defined behavior.  When a programmer writes a UTF literal, that is a
+    request for a specific encoding, but it is perfectly valid for the source file to be written in Shift-JIS.
+  - Henri acknowledged that perspective as logically valid, but doesn't address the problems caused by the Microsoft
+    compiler's default behavior not matching user expectations.  Programmers are using UTF-8 editors these days.
+  - PeterBr asserted that is a quality of implementation concern and not an issue with the standard.
+  - Tom agreed.
+  - Zach stated that the proposed restrictions can be worked around by using `universal-character-name` escapes
+    and stated a preference for implementing a solution that results in a diagnosis for the problem he encountered,
+    but that this isn't a critical issue.
+  - Corentin brought up static reflection and that, at some point, reflection will require defining or reflecting
+    the source file encoding.
+  - Tom stated that dovetails nicely with Steve's P1859R0 draft that provides a callable for conversion of string
+    literal encoding.
+  - Corentin noted that Vcpkg compiles all of its packages with the Microsoft compiler's `/utf-8` option and that
+    Microsoft may be open to defaulting source encoding to UTF-8 when compiling as C++20.
+  - Zach added that the Visual Studio editor, by default, adds a UTF-8 BOM to new source files it creates, though
+    it doesn't implicitly add a UTF-8 BOM when existing files are added to a project.
+  - Corentin observed that, because source encoding is not portable, most programmers just don't use characters
+    outside of ASCII except in comments; which is why such characters are ignored.
+  - PeterBr suggested that an evening session in Belfast to discuss this or other ideas might be an option and that
+    it would be good to talk directly with implementors.
+- Tom confirmed that the next meeting will be on October 23rd and will be the last meeting before Belfast.
 
 
 # September 25th, 2019
