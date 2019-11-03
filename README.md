@@ -90,7 +90,7 @@ The next SG16 meeting is scheduled for Wednesday, November 20th 2019, from 3:30-
     - The proposed changes to `std::regex_iterator` are ABI breaking.
   - PeterBr observed that the proposal doesn't deal with language specific aspects like case folding.
   - PeterBr stated he liked the motivation for this paper and the notion that `std::regex` can be made to work.
-  - Zach asked about suport for collation and whether anyone was familiar with the existing `collate` syntax option.
+  - Zach asked about support for collation and whether anyone was familiar with the existing `collate` syntax option.
   - PeterBr responded that the paper states that the `collate` option is ignored for these specializations.
   - Zach stated that the default collation is not useful and that tailoring is required.
   - Tom summarized, so the paper needs to address collation.
