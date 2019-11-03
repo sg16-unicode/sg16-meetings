@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, October 23rd 2019, from 3:30-5:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, November 20th 2019, from 3:30-5:00pm EDT.
 
+- [October 23rd, 2019](#october-23rd-2019)
 - [October 9th, 2019](#october-9th-2019)
 - [September 25th, 2019](#september-25th-2019)
 - [September 4th, 2019](#september-4th-2019)
@@ -37,6 +38,185 @@ The next SG16 meeting is scheduled for Wednesday, October 23rd 2019, from 3:30-5
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 23rd, 2019
+
+## Draft agenda:
+- P1844R0: Enhancement of regex
+  - https://wg21.link/P1844R0
+- P1892R0 - Extended locale-specific presentation specifiers for std::format
+  - https://wg21.link/P1892R0
+- P1859R0 - Standard terminology for execution character set encodings
+  - https://wg21.link/P1859R0
+  
+## Meeting summary:
+- Attendees:
+  - David Wendt
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Yehezkel Bernat
+  - Zach Laine
+- Tom initiated a round of introductions for new attendees.
+- P1844R0: Enhancement of regex
+  - https://wg21.link/P1844R0
+  - Tom introduced the paper on behalf of the author:
+    - The proposal is an expansion of `std::basic_regex` specializations.
+    - We've discussed issues with `std::basic_regex` before.  The author has put significant effort into this
+      proposal.  It includes wording.  We owe it to the author to set aside any biases and consider the benefits of
+      this paper.
+    - An implementation is available though it only implements the proposed `char8_t`, `char16_t`, and `char32_t`
+      specializations, not the existing `char` or `wchar_t` specializations.
+    - The paper does not propose an alternative to `std::basic_regex`, but rather attempts to address shortcomings
+      of it for UTF encodings via specializations.  \[Editor's note: this implies that the proposal doesn't address
+      issues with support of UTF encodings with the `char` and `wchar_t` specializations.\]
+    - The paper proposes a new regex syntax option, `ECMAScript2019`, to be used to select a regular expression
+      engine that implements the ECMAScript 2019 specification.  This option would be available for use with all
+      `std::basic_regex` specializations.
+    - The paper proposes a new `dotall` syntax option that allows the `.` character to match any Unicode code point,
+      including new line characters, when using the `ECMAScript2019` option.
+    - The new `ECMAScript2019` syntax option would be the only syntax option supported for the `char8_t`, `char16_t`,
+      and `char32_t` specializations.
+    - The `ECMAScript2019` regular expression engine would *NOT* exactly match the ECMAScript 2019 specification:
+      - The `\xHH` expression is redefined to match code points rather than code units.  However,
+      - The author would be fine with removing support for the `\xHH` expression since support for code points is
+        provided by the `\uHHHH` and `\u{H...}` expressions.
+    - The proposal removes locale dependency for the `char8_t`, `char16_t`, and `char32_t` specializations and
+      therefore does not propose any new specializations of `std::regex_traits`.
+    - The paper proposes new overloads of `std::regex_match` and `std::regex_search` to allow specifying look
+      behind limits on ranges.
+    - The proposed changes to `std::regex_iterator` are ABI breaking.
+  - PeterBr observed that the proposal doesn't deal with language specific aspects like case folding.
+  - PeterBr stated he liked the motivation for this paper and the notion that `std::regex` can be made to work.
+  - Zach asked about suport for collation and whether anyone was familiar with the existing `collate` syntax option.
+  - PeterBr responded that the paper states that the `collate` option is ignored for these specializations.
+  - Zach stated that the default collation is not useful and that tailoring is required.
+  - Tom summarized, so the paper needs to address collation.
+  - Zach refuted that need since it could profoundly impact performance.
+  - PeterBr suggested that, perhaps, regex for Unicode should operate on `std::text`.
+  - Tom expanded that suggestion to any sequence of code points and observed that the proposal kind of does that
+    already via the changes to `regex_iterator`.
+  - Zach agreed it would be useful to use as an adapter for code points.
+  - Tom asked if a new regex feature for non-compile-time regex support would be preferred over specializing
+    `std::basic_regex` as proposed.
+  - Zach responded that he doesn't think `std::regex` is DOA, but if we're going to support Unicode regex with
+    dynamic patterns, then, we should pursue some of the design of CTRE.
+  - Zach added that solving the problem is important and that he wants to see Unicode regex support but would
+    prefer to take a wait-and-see approach on this paper while watching how CTRE and `std::format` evolve.
+  - PeterBr acknowledged the benefits of CTRE, but stated that we do need a solution for dynamic regex.
+  - Zach reported that be believes that Hana is planning to make CTRE capable of supporting dynamic pattern
+    strings and If that were to happen, then we wouldn't need `std::regex` any longer.
+  - Mark lamented the lack of a proposal like this one when C++11 was being designed since the approach looks
+    good relative to other papers from the past.
+  - Mark added that it is an embarassment that we don't have a solution for this today, but that he feels kind
+    of neutral on it as well due to concerns about allocating time for this relative to other things we could
+    do.
+  - Mark asked what implementors would think and if they get requests for Unicode `std::regex` support.
+  - Mark asserted that the implicit use of the `ECMAScript2019` engine when a different syntax option is
+    specified has to be changed.
+  - Zach reiterated that this proposal is definitely an ABI break, that an ABI break is a serious problem, and
+    that the need for such a break suggests we need a different family of types.
+  - Mark added that the paper should make it clear that it does break ABI, not that it might.
+  - Tom asked if this proposal solves the `std::basic_regex` issues with support for variable length encodings.
+  - Zach responded that `std::regex` doesn't handle incomplete or ill-formed code unit sequences and suggested
+    that perhaps those should match against `\uFFFD`.
+  - Zach reported that `std::regex` can also match code unit ranges that stride code unit sequences since
+    `std::regex` effectively matches bytes.
+  - Tom asked what guidance we should offer to LEWG.
+  - Zach suggested:
+    - We should solve this problem.
+    - This approach is premature given other things in flight now, but if this had been proposed three years
+      ago he might have felt differently about it.
+  - PeterBr suggested it should be prioritized behind CTRE.
+  - Tom asked whether support for tailoring is important.
+  - Zach suggested placing tailoring at the lowest priority and mentioned that he doesn't think ICU supports it
+    as people don't often want to do collation aware searching.
+  - Tom reiterated that we should offer guidance that it be ill-formed to specify a syntax option other than
+    `ECMAScript2019` for the proposed specializations.
+- P1892R0 - Extended locale-specific presentation specifiers for std::format
+  - PeterBr introduced the paper:
+    - Looking through the `std::format` specification he found that there are useful floating point formats that
+      can not be produced in locale specific formats.
+    - Locale specific formats are important in scientific fields.
+    - The `'n'` specifier has a different meaning for integers than it does for floating point.
+    - An NB comment was filed to make the `'n'` specifier indicate a locale specific format rather than a type
+      modifier.
+    - The proposed change should not affect existing well-formed `std::format` calls except for `bool` which
+      would now be formatted as locale variants of "true" or "false" instead of 1 or 0.
+    - This would make `std::format` unambiguously the best choice for localized formatting since locales can
+      be easily specified and `std::format` already solves short falls of iostreams and printf such as ordering.
+    - Without this change, there is still a need to use `printf` for locale sensitive formatting.
+  - Mark noted that this change will break existing users of [{fmt}](https://github.com/fmtlib/fmt).
+  - PeterBr responded that it will for existing uses of `bool` but that he isn't concerned about existing users
+    of [{fmt}](https://github.com/fmtlib/fmt).
+  - Tom observed that use of `'l'` as the specifier as suggested in the paper avoids the break and aligns with
+    Victor's [P1868R0](http://wg21.link/p1868r0) paper to enable locale specific handling of character encodings.
+  - Mark stated that the core issue is that there remains some uses of `printf` that can't be directly replicated
+    with `std::format` and asked how a programmer would print, for example, the locale specific decimal character
+    but without the locale specific thousands separator.
+  - PeterBr responded that the programmer can create a custom locale.
+  - Zach stated that we can't defer this until C++23 because changing the meaning of `'n'` would break compatibility
+    and asked why we can't just introduce an `'l'` specifier in C++23?
+  - PeterBr responded that doing so makes things more complicated and asked whether we would deprecate `'n'` if
+    `'l'` were to be adopted.  We can postpone addressing this, but we get a cleaner solution in the long term by
+    addressing it now.
+  - Zach agreed with the motivation being to avoid a wart that we'll need to teach but that some opposition will be
+    raised due to perceived risk at this late stage.
+  - Zach stated that he likes the change, but that it needs good motivation.
+  - PeterBr suggested that `'n'` could be removed now and then restored with desired changes in C++23.
+  - Zach suggested that if Victor supports the paper, it will probably pass, but if he disagrees with it, then it is
+    probably DOA.
+  - Mark stated that the choices need to be clearly presented for LEWG.
+  - Zach observed that there are a few options and suggested presenting a cost/benefit of each so that LEWG is given
+    clear choices.
+  - Mark suggested socializing the issue on the LEWG mailing list now to flush out any objections.
+  - PeterBr stated that any help improving the paper would be appreciated.
+  - Mark suggested presenting either slides or a different paper that presents the options and analysis.
+  - PeterBr stated he would create a doc that could be collaboratively edited.
+- P1859R0 - Standard terminology for execution character set encodings
+  - Steve introduced the paper:
+    - The goal is to not affect implementations, but rather to fix wording so that we can use modern terminology
+      and understand each other better.
+    - We often use terms like "execution encoding" that are not defined in the standard and are opportunities for
+      confusion.
+    - We need to admit that `wchar_t` is not, in practice, able to hold all code points of the wide execution
+      character set.
+  - Zach asked what "literal encoding" is for.
+  - Steve responded that it reflects the encoding for non-UTF literals.
+  - Zach asked what difference is intended by "character set" and "character repertoire".
+  - Steve responded that the goal is to tighten up the meanings of existing terminology so as to avoid massive
+    changes to the standard.
+  - Mark observed that there seems to be a missing word in the definition of "Basic execution character set"; that
+    there seems to be a missing "that".
+  - PeterBr stated that this should be high priority in C++23 so we can get everyone on board with terminology.
+  - Steve agreed and asserted we'll need to socialize these new terms.
+  - Tom asked if there are any terms being dropped; it looks like the paper adds "literal encoding" and
+    "dynamic encoding".
+  - Steve responded that none are dropped and stated there will be an additional associated encoding added for
+    character types as well.
+  - Mark noticed that the paper discusses `literal_encoding` and `wide_literal_encoding` but doesn't define a term
+    for "Wide literal encoding".
+  - Tom asked if "source encoding" should be added.
+  - Tom asked if we should add a statement that the dynamic encoding must be able to represent all of the characters
+    of the execution character set.
+  - Steve responded that we could add that.
+  - PeterBr observed a potential problem with doing so on Windows where the dynamic encoding might be UCS-2, but the
+    execution character set is UTF-16.
+  - Tom suggested refining the requirement such that characters used in literals must have a representation in the
+    dynamic encoding.
+  - Mark suggested it would be helpful to have a cheat sheet with mathematical notation of which terms denote a
+    subset of other terms.
+  - Steve agreed.
+  - Tom suggested that we also need "wide dynamic encoding".
+  - Zach asked about the difference between the "encoding" and "character set" terms.
+  - Steve responded that the former states how characters are represented while the latter states what characters
+    must be representeable.
+  - Zach stated it would be useful to have text explaining the difference.
+  - Tom asked how ODR violations would be avoided for `literal_encoding` since literal encoding can vary by TU.
+  - Steve responded that the same technique used for `std::source_location` can be used; a value is provided.
+- Tom confirmed that the next meeting will be November 20th.
 
 
 # October 9th, 2019
