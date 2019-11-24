@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, November 20th 2019, from 3:30-5:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, December 11th 2019, from 3:30-5:00pm EDT.
 
+- [November 20th, 2019](#november-20th-2019)
 - [October 23rd, 2019](#october-23rd-2019)
 - [October 9th, 2019](#october-9th-2019)
 - [September 25th, 2019](#september-25th-2019)
@@ -38,6 +39,204 @@ The next SG16 meeting is scheduled for Wednesday, November 20th 2019, from 3:30-
 - [April 11th, 2018](#april-11th-2018)
 - [March 28th, 2018](#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# November 20th, 2019
+
+## Draft agenda:
+- Belfast follow up and review.
+- Volunteers to draft a library design guidelines paper.
+
+## Meeting summary:
+- Attendees:
+  - JeanHeyd Meneide
+  - Mark Zeren
+  - Steve Downey
+  - Tom Honermann
+  - Yehezkel Bernat
+  - Zach Laine
+- [P1868 - 🦄 width: clarifying units of width and precision in std::format](https://wg21.link/p1868):
+  - Tom introduced the topic:
+    - Concerns were raised in Belfast with regard to the stability of the proposed code point ranges to be
+      used for display width estimation.  The currently proposed ranges map all extended grapheme clusters
+      (EGCs) to a display width of one or two despite there being a number of known cases of EGCs that consume
+      no display width (e.g., `U+200B {ZERO WIDTH SPACE}`) or more than two display width units
+      (e.g., `U+FDFD {ARABIC LIGATURE BISMALLAH AR-RAHMAN AR-RAHEEM}`).
+    - Additionally, the EGC breaking algorithm is dependent on Unicode version and the proposed wording does
+      not specify which version of Unicode to implement.  Concerns were raised regarding having a floating
+      reference to the Unicode standard and the potential for differences in behavior across implementations
+      if the Unicode version is implementation defined and subject to change across compiler versions.
+    - How should we address these concerns?
+  - Zach commented that the wording review went through LWG ok and that he had posted a message to the LWG
+    mailting list responding to one concern that was raised.
+  - Zach reported that Jonathan Wakely stated that floating references to other standards are not permitted
+    but that implementors can, as QoI, offer support for other versions.
+  - Tom expressed surprise regarding that restriction given that we have a floating reference to ISO 10646
+    in the working paper today.
+  - Zach responded that LWG stated a requirement for a normative reference and is therefore planning to add
+    a normative reference to Unicode 12 with the intent that we update the normative reference with each
+    standard release.
+  - Tom asked that, if we reference a particular version, can implementations use a later version and remain
+    conforming.
+  - Zach responded that doing so seems to be acceptable to implementors.
+  - Steve remarked that CWG expressed a preference for a floating reference.
+  - JeanHeyd confirmed and added that is how the working paper ended up with the floating reference to ISO 10646.
+  - Zach said he will follow up about this discrepancy.
+  - Mark asked if we have a preference for floating vs fixed.
+  - Zach responded that implementations will do what they need to do for their users.
+  - Tom turned the discussion back to concerns raised by Billy regarding changes to the width estimate algorithm
+    being a breaking change; e.g., changing the width estimate for a given EGC.  This is a related but distinct
+    concern from the EGC algorithm changing due to a change in Unicode version.
+  - Zach stated that `U+FDFD` is an example of something we need to fix that can also be a breaking change.
+  - Steve repeated that the concern is basically any change in behavior potentially resulting in a surprising or
+    undesirable change.
+  - Mark asserted that we're going to continue having difficulties with dependencies on Unicode data and that the
+    situation is analagous with respect to the timezone database.  Implementors can enable stable behavior by
+    allowing choice of Unicode version.
+  - Steve noted that the rate of change of the Unicode standard has skewed towards stability.
+  - Mark opined that we should not solve this problem in the standard.
+  - Tom agreed and added that we can specify a minimum version, but leave the atual version implementation defined.
+  - Mark asked which version of the Unicode standard the proposed code point ranges were pulled from.
+  - Tom responded that the Unicode standard doesn't contain character display width data and that these were
+    extracted from an implementation of `wcswidth()`.
+  - Steve stated that he maintained a list of double wide characters for years and that it was not a significant
+    burden.
+  - Tom stated that his desire for a floating reference to the Unicode standard with an implementation defined
+    choice of version is intended to allow implementors to keep up with new Unicode versions.  Unicode releases
+    happen every year while C++ standards are only released every three years.  Implementors probably can't lag
+    Unicode by three years.
+  - Zach acknowledged the goal and stated that will result in some implementation divergence as some implementors
+    will keep up and some won't, but that the differences are likely to be minor.
+  - Tom asked if ISO 10646 annex U constitutes a reference to [UAX#31](http://www.unicode.org/reports/tr31).
+  - Steve suggested this is probably a beuracratic issue and added that having a normative reference is helpful.
+  - Zach responded that it could be harmful if we get cconflicting floating and non-floating references for
+    ISO 10646 vs Unicode, but this should fall to LWG and CWG to decide.
+  - Tom asked how we should go about fixing the currently proposed width estimates since the proposed ranges are
+    clearly missing support for cases of zero width or width greater than two.
+  - Zach opined that he wasn't sure there is a problem to be fixed since what is specified matches existing practice.
+  - Tom asked if we know where this implementation of `wcswidth()` came from and how widely deployed it is.
+  - Zach suggested asking Victor.
+  - \[Editor's note: According to [P1868R0](https://wg21.link/p1868r0), the implementation of `wcswidth()` is the
+    one at https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c. \]
+  - Tom asked for opinions regarding writing a short paper that explains the Unicode stability guarantees and argues
+    for floating references and implementations.
+  - Zach suggested waiting for a more motivating reason to do so.
+- [P1949 - C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949):
+  - Tom introduced the topic:
+    - EWG rejected the SG16 guidance offered in response to NB comment
+      [NL029](https://github.com/cplusplus/nbballot/issues/28) to deprecate identifiers that do not conform to
+      [UAX#31](http://www.unicode.org/reports/tr31) with noted exceptions for the `_` character.
+    - A suggestion was made that a CWG issue be filed to consider the lack of updates to the allowed identifiers
+      since C++11 as a defect.
+    - Tom agreed to file a core issue and started to do some research.
+    - According to [N3146](https://wg21.link/n3146), the original identifier allowances appear to have been
+      aggregated from various sources including
+      [UAX#31](http://www.unicode.org/reports/tr31) and
+      [XML 2008](http://www.w3.org/TR/2008/REC-xml-20081126/#sec-common-syn), and following guidance in
+      annex A of a draft of
+      [ISO/IEC TR 10176:2003](http://www.open-std.org/JTC1/sc22/WG20/docs/n970-tr10176-2002.pdf).
+    - Thank you to Corentin for quickly providing a way to query the code point ranges that have the `XID_Start`
+      or `XID_Continue` property set.  https://godbolt.org/z/h7ThEh.  These ranges differ substantially from
+      what is in the current standard.
+    - What should the proposed resolution for the core issue be?
+  - Steve stated that [UAX#31](http://www.unicode.org/reports/tr31) permits extensions, and what was adopted for
+    C++11 effectively whitelisted a large set of code points.
+  - Zach asked what EWG's concern was.
+  - Steve replied that they were nervous about such a late change and want more time to think it through.
+  - Zach opined that this seems like something better addressed in C++23.
+  - Steve noted that what is done can be back ported to prior standards though, that Clang and gcc support
+    Unicode encoded source code \[Editor's note: so does MSVC \], and that the longer we wait to address this,
+    the more code we potentially break.
+  - Tom stated that, from the DR perspective, we could either figure out what we want for C++23 and recommend
+    that as the proposed resolution, or we can do a more targetted fix for C++20 for specific problematic
+    cases knowing that we'll likely do differently for C++23.
+  - Steve stated that the only difference C++ needs from [UAX#31](http://www.unicode.org/reports/tr31) is support
+    for `_`, and such an extension is conforming.  It would also be ok to restrict identifiers to a common script
+    to avoid homoglyph attacks.
+  - Steve added that there is also the issue of normalization forms and that gcc will currently warn if
+    identifiers are not in NFC form.
+  - Mark asked if we should make it ill-formed for identifiers to not be in NFC form.
+  - Steve responded that doing so could break existing code.
+  - Tom suggested normalizing when comparing identifiers is another approach.
+  - Steve noted that doing so requires the Unicode normalization algorithms.
+  - JeanHeyd mentioned that we'll also have the problem of reflecting identifiers in the future and that
+    normalization will be relevant there.  Corentin brought this up in SG7.  Requiring NFC would be helpful there.
+  - Mark expressed support for the idea of requiring NFC.
+  - Steve suggested that there is always the `universal-character-name` escape hatch.
+  - Mark opined that EWG probably won't like requiring conversion to NFC in name lookup.
+  - Tom responded that gcc is at least detecting non-normalized identifiers today, that doing so must require
+    some level of Unicode database support, and that performance costs are presumably reasonable.
+  - Steve stated that gcc looks for some range of combining code points and may not be 100% accurate.
+  - Mark asked if non-NFC normalization can be detected without having to fully normalize?
+  - Zach responded that he didn't think so.
+  - Mark asked if normalization was brought up in EWG.
+  - Steve responded that it wasn't, that we didn't get that far in the discussion.
+  - Tom suggested that we have a good amount to think about here and that he is looking forward to the next
+    revision of Steve's paper.
+  - Steve took the bait and agreed that the paper will have to provide good arguments for why this is important.
+  - Zach suggested that this should be easy for implementors if they don't have to deal with normalization and
+    that we should just require NFC for performance reasons.
+  - Mark asked if we could make use of non-NFC ill-formed NDR so that implementations are not required to diagnose
+    violations.
+- [P1097 - Named character escapes](https://wg21.link/p1097):
+  - Tom introduced the topic:
+    - EWG narrowly rejected the paper, but expressed good support for the direction.
+    - Most concerns had to do with implementation impact and, in particular, the potential increase in compiler
+      binaries.  Some distributed build systems distribute compilers as part of the build process and the
+      additional latency imposed by incresing the size of compiler binaries adds cost.  Numbers haven't been
+      obtained, but guesses were around 2MB, but could probably be reduced to under 600K.
+    - One prominent EWG member was strongly opposed to the design because he would prefer a solution that avoids
+      baking Unicode into the core language.  Something like a string interpolation solution that could call
+      out to `constexpr` library functions to do character name lookup.
+    - Martinho was working on an implementation in Clang at Kona, but Tom doesn't know the state of it or where
+      to find it.  Tom reached out to Martinho via email, but didn't hear back.
+    - Anyone have time and interest to experiment and produce some estimates to address the implementation
+      impact concerns?
+  - Steve stated that he could probably do some work on it and that the name DB should compress really well with
+    use of a trie.
+  - JeanHeyd suggested that the [UAX44-LM2](https://www.unicode.org/reports/tr44/#UAX44-LM2) compression scheme
+    could help to reduce size.
+  - Tom expressed uncertaintly that it would help much over a trie, but we could experiment and put the results
+    in a paper.
+  - Zach suggested splitting names that contain "with" in them since the suffixes that tend to follow "with" are
+    highly repeated.
+  - Tom noted that the algorithmically generated names could be specially handled as well.
+  - Steve added that a tokenization approach could help too.
+  - Tom asked if anyone might know of a link to Martinho's implementation.
+  - Zach replied that a link was provided at some point, possibly in Slack.
+  - \[Editor's note: Tom searched Slack, but failed to find a reference. \]
+- [P1880 - uNstring Arguments Shall Be UTF-N Encoded](https://wg21.link/p1880):
+  - Tom introduced the topic:
+    - LEWG rejected the SG16 guidance offered in response to NB comment
+      [FR164](https://github.com/cplusplus/nbballot/issues/162) to adopt P1880 for C++20.
+    - What should we do next?
+  - Zach expressed frustration that he was available when the NB comment and paper were discussed in LEWG, but
+    that no one notified him that the discussion was happening.
+  - Zach stated that, after the SG16 meeting, he went through all references to `std::basic_string` and added
+    missing references to PMR strings and `std::basic_string_view`.  This research also identified a number of
+    references that are deserving of more scrutiny.
+  - Zach opined that this isn't very important for C++20 and that he will work on a revision for C++23, though
+    not for the Prague meeting.
+  - Zach stated he was surprised at how many references to these types he found in function templates.
+- Tom asked for volunteers to draft a library design guidelines paper.
+  - Tom introduced the topic:
+    - During the
+      [SG16 meeting on July 31st](https://github.com/sg16-unicode/sg16-meetings/blob/master/README.md#july-31st-2019),
+      we discussed guidelines for when to add function overloads for each of `char`, `wchar_t`, `char8_t`,
+      `char16_t`, and `char32_t` and he would like to have a library guideline paper that records our guidance.
+    - Would anyone be interested and willing to work on this?
+  - Zach expressed interest in doing so.
+- Mark brought up a wording update email Zach sent to LWG with regard to [P1868](https://wg21.link/p1868):
+  - Mark noted that the wording introduces a new term of art: "estimated display width units".
+  - Zach responded that the new term was intentional; we're leaving the width estimation effectively unspecified
+    for non-Unicode encodings.  Implementors expressed a preference for not having to document their choices and
+    we didn't want to force embedded compilers to have to be Unicode aware.  So, we needed a non-Unicode term.
+  - Tom noted that the wording appears to require embedded compilers to use the proposed Unicode algorithm if
+    their execution character set is Unicode.
+  - Zach acknowledged that would be the case.
+  - Mark siggested that is probably what we want if they are actually doing Unicode.
+  - Tom agreed and suggested such implementors could otherwise state that their execution character set is ASCII.
+- Tom communicated that the next meeting will be on December 11th.
 
 
 # October 23rd, 2019
