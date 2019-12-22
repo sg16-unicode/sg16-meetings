@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, December 11th 2019, from 3:30-5:00pm EDT.
+The next SG16 meeting is scheduled for Wednesday, January 8th 2020, from 3:30-5:00pm EST.
 
+- [December 11th, 2019](#december-11th-2019)
 - [November 20th, 2019](#november-20th-2019)
 - [October 23rd, 2019](#october-23rd-2019)
 - [October 9th, 2019](#october-9th-2019)
@@ -39,6 +40,165 @@ The next SG16 meeting is scheduled for Wednesday, December 11th 2019, from 3:30-
 - [April 11th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-11th-2018)
 - [March 28th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 11th, 2019
+
+## Draft agenda:
+- Vocabulary type(s) for extended grapheme clusters?
+  - Per Michael McLaughlin's questions posted to the (old) mailing list on 11/01.
+- P1097: Named character escapes
+  - Review research on minimizing the name lookup DB and code size.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - David Wendt
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- [1097: Named character escapes:](https://wg21.link/p1097)
+  - Tom introduced the topic:
+    - Since our last meeting, Corentin did some outstanding investigative and evaluation work and blogged
+      about his results:
+      - https://cor3ntin.github.io/posts/cp_to_name
+    - Corentin's implementation of his size reduction techniques is available at:
+      - https://github.com/cor3ntin/ext-unicode-db/tree/name_to_cp
+    - The goal for today is to review his results and determine next steps.
+  - Corentin opined that the data is still kind of large at approximately 260K.
+  - Zach noted that Corentin did a good job of estimating a theoretical lower bound for reducing the data
+    at around 180K, so achieving a result of 260K is great.
+  - Steve commented that the code shows the challenges C++ has with variable length data.  The natural
+    representation would use variants, but that can't be represented as well.
+  - Corentin agreed noting that good performance demands working at the byte level.
+  - Zach expressed a similar experience working on [Boost.text](https://github.com/tzlaine/text); flat arrays
+    of bytes had to be used to achieve scaling goals.
+  - Tom stated that we need to draft a revision of this paper and that he is happy to do so, but would welcome
+    any other volunteers.
+  - Corentin asked if we know how to get in touch with Martinho.
+  - Tom responded that he tried, but did not get a response.
+  - Tom noted that, if we can't get in touch with Martinho, then we'll need to submit a new paper rather than
+    a new revision.
+  - Corentin asked if a new paper was really necessary.
+  - Steve responded that, as a matter of procedure, we need a new paper to get it on the schedule.
+  - PeterBi added that we need a place to record the new information.
+  - Tom stated he would attempt to contact Martinho again.
+  - \[Editor's note: Tom did reach out again via email, but again did not get a response. \]
+  - Tom asked Corentin if he wanted to take this and run with it given the considerable investment he has already
+    made.
+  - Corentin responded that he is unfortunately time constrained.
+  - Corentin mentioned that the new paper should state the need for matching name aliases and case insensitivity.
+  - Tom agreed and noted that we have polls on those topics from presentation to EWGI in San Diego that record
+    a trail of intent for those cases.
+  - Zach asked Corentin if dashes are handled properly in his experiment.
+  - Corentin replied affirmatively that spaces, dashes, and underscores can be omitted or swapped as recommended
+    by Unicode in [UAX44](https://unicode.org/reports/tr44/#Matching_Names).
+  - Corentin added that the current 260K size includes support for name aliases.
+  - Steve observed motivation for allowing spaces, dashes, and underscores to be swappable; that behavior falls
+    out of a good implementation.
+  - Corentin stated that, should a desire arise to be able to map code points to names, then a different
+    implementation would provide a more optimized data set that handles mapping both directions.
+  - Tom asked Corentin for an estimated size for a perfect hash approach.
+  - Corentin responded with 300K to 400K.
+  - Corentin pointed out a potential challenge; that it may be desirable to support code point to name mapping
+    in the standard library, but probably not in the compiler.  This implies a potential need for the Unicode
+    character name data to be available to both.
+  - Steve stated that it seems unfortunate to not expose the compiler data to the library.
+  - Corentin suggested the data would probably need to be present in both the compiler and the library.
+  - Tom provided a possible way to avoid that; by making it available in the library, but accessible from the
+    core language.  At least one EWG member strongly advocated for such an approach; a string interpolation like
+    facility.
+- Vocabulary types for extended grapheme clusters:
+  - Tom introduced the topic:
+    - Michael McLaughlin had posted some questions to the (old) mailing list on 2019-11-01:
+      - http://www.open-std.org/pipermail/unicode/2019-November/000868.html
+    - These questions are related to representation of extended grapheme clusters (EGCs), specifically, how a
+      collection or sequence of them might be stored.
+    - Should the standard library provide vocabulary types for EGCs?
+  - Zach explained the choices he made for [Boost.text](https://github.com/tzlaine/text).  There are two vocabulary
+    types; [grapheme](https://github.com/tzlaine/text/blob/master/include/boost/text/grapheme.hpp#L25-L115) provides
+    value semantics and stores a small vector optimized sequence of code units with a maximum size limited according
+    to the
+    [Unicode stream-safe text format described in UAX #15](https://unicode.org/reports/tr15/#Stream_Safe_Text_Format),
+    and
+    [grapheme_ref](https://github.com/tzlaine/text/blob/master/include/boost/text/grapheme.hpp#L120-L163)
+    provides read-only reference/view semantics over a code point range denoted by an iterator pair.
+  - Zach added that he is unsure if anyone is using the value type.
+  - Corentin acknowledged the uncertainty regarding use cases for a value type.
+  - Corentin asked why the reference/view version is not an alias of a span.
+  - Zach responded that he wanted to support subranges and non-contiguous storage.  The implementation uses the
+    `view_interface` CRTP base from C++20 ranges.
+  - Steve asked who the anticipated consumers are for use of EGCs.
+  - PeterBr expressed similar curiosity and provided some background experience; he previously worked on a product
+    that was text based and everything was done on graphemes.  Support was available for individual grapheme
+    replacement, but a value type was never needed because reference/view semantics were always desired.  All text
+    processing was performed in terms of ranges of graphemes.
+  - Zach offered a couple of examples.  Text rendering depends on knowledge of EGC boundaries.  Additionally, an
+    EGC reference is the value type of an (EGC-based) iterator on a text range.
+  - Zach observed that breaking algorithms don't always break on EGC boundaries, though split EGCs still remain
+    EGCs on either side of the boundary.
+  - Steve stated that having a named type is very useful.  An EGC view is essentially a subrange, but naming it is
+    useful.
+  - PeterBr clarified that an EGC is effectively a range of code points.
+  - Tom asked if there is a good distinction between an EGC type that represents a range of code units or code points
+    that constitute exactly one grapheme vs a type that represents a range of EGCs in terms of a range of code units
+    or code points.
+  - Zach replied yes, [Boost.text](https://github.com/tzlaine/text) has a type that represents the latter case as well;
+    [grapheme_view](https://github.com/tzlaine/text/blob/master/include/boost/text/grapheme_view.hpp#L23-L89) is a
+    view that provides an EGC iterator.  So, yes, there are three potentially useful types: an owning EGC, a
+    reference EGC, and an EGC view.
+  - Steve asked how breaking algorithms that split EGCs interact with these types.
+  - Zach replied that all Unicode algorithms are specified in terms of code points, not EGCs.  So, a split EGC just
+    becomes two EGCs.  The sentence breaking algorithm may cause this to happen.
+  - Tom recalled prior conversations where we discovered that the EGC sum of the parts of a text may be greater than
+    the EGC sum of the whole text.
+  - Steve asked for confirmation that you can still view the split code point ranges as EGCs.
+  - Zach confirmed, yes.
+  - Corentin asked if all of these types aren't effectively subranges.
+  - Steve replied yes, but different types is useful to avoid subranges of subranges.
+  - Corentin countered that, if you have a `text_view` and you split it, you get a `text_view`.
+  - Zach stated that the idea that the Unicode algorithms produce sequences of code points but programmers want
+    EGCs is a key idea.
+  - PeterBr observed that rendering text requires more than just EGCs.
+  - Steve returned converation to the motivation for EGC types and mentioned the DB field example; there is a known
+    limit of how many bytes can be stored, EGCs indicate where text should be truncated to.
+  - Tom asked if there is a need to distinguish between an EGC view and a subrange of EGC view other than an EGC
+    reference; as Corentin mentioned, a subrange of a `text_view` is a `text_view`, so is a subrange of an EGC view
+    an EGC view?
+  - Zach stated he didn't see a need for such a distinction.  Most interfaces should operate on EGC views, but for
+    Unicode algorithms, it is necessary to drop down a level to a code point view.
+  - Steve summarized; an EGC reference is a view over code points with a contract that its range represents exactly
+    one EGC.
+  - PeterBr imagined a scenario in which a range of code points is sliced to produce multiple EGCs, but when
+    recombined with additional text, might yield different EGCs.
+  - \[Editor's note: Some discussion was missed here. \]
+  - Tom stated a need for consistent terminology.  Tom originally proposed `text_view` as a sequence of code points,
+    but we now think it should be EGC based.
+  - PeterBr expressed concern; most people think they want code points.  LEWG might object to an EGC based design.
+  - Zach stated that a concern we have is that we're the Unicode experts and everyone with strong opinions is pretty
+    much on this call; we need to be aware of echo chamber issues.
+  - Tom added that echo chamber issues are the thing that keeps me up at night; how do we ensure we deliver what is
+    truly useful?
+  - Steve added that he frequently is asked why some simple thing isn't implemented.  The answer is, because it isn't
+    actually simple.
+  - Corentin stated that he gets quite concerned whenever we discuss going in a direction that doesn't align with
+    Unicode recomendations; the UTC (Unicode Technical Committeee) doesn't get things wrong very often.
+  - Steve noted that, fortunately, we're kind of late to the game, we can learn from the experience of other languages,
+    and we don't have to discover all the problems ourselves.
+  - Tom returned discussion to the subrange of subrange concern; there may be a need to put subranges back together.
+  - Corentin replied that there is an ongoing effort to support that, but it is complicated.  JeanHeyd is working on
+    [P1664](https://wg21.link/p1664) and it should be discussed more in Prague.
+  - Steve described one of the challenges; for efficiency, when we have an EGC view and want to get down to the code
+    unit range for efficient IO, reassembly can get difficult.
+  - Zach replied that, if you have an EGC view over a code point view over a sequence of code units, that is easy.
+  - Tom countered that doing so requires that you know that the underlying storage is contiguous if you want to
+    operate on it at the code unit level.
+  - Steve added that there can't be a missing range in the middle.
+  - Corentin expressed a belief that this will be solved; maybe not for C++20, but for C++23.
+- Tom stated that our normal meeting cadence would have us meeting again on December 25th 🎅, but expected meeting that
+  day would be unpopular, so we'll plan to meet next on January 8th.
 
 
 # November 20th, 2019
