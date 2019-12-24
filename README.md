@@ -59,7 +59,7 @@ The next SG16 meeting is scheduled for Wednesday, January 8th 2020, from 3:30-5:
   - Steve Downey
   - Tom Honermann
   - Zach Laine
-- [1097: Named character escapes:](https://wg21.link/p1097)
+- [P1097: Named character escapes:](https://wg21.link/p1097)
   - Tom introduced the topic:
     - Since our last meeting, Corentin did some outstanding investigative and evaluation work and blogged
       about his results:
