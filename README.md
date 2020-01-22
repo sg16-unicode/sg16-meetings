@@ -147,7 +147,10 @@ The next SG16 meeting is scheduled for Wednesday, January 22nd 2020, from 3:30-5
     - Peter asked if the `XID_Start`/`XID_Continue` properties are stable.
     - Zach responded that he understood them to be stable.
     - Steve responded that they are derived properties and are not guaranteed to be stable, but
-      probably will be in practice.
+      probably will be in practice.  \[Editor's note: in later email discussion, Steve offered a
+      correction to this statement: `XID_Start` and `XID_Continue` are guaranteed stable, just not
+      immutable. Immutability is the property that things that are not identifiers remain not
+      identifiers. \]
     - Zach mentioned that he wasn't previously aware that UAX31 had options, but it seems our goal
       now needs to be to identify the options, select them, and then make sure proposed wording
       reflects our intent.
