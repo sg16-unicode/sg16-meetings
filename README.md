@@ -162,8 +162,8 @@ The next SG16 meeting is scheduled for Wednesday, January 22nd 2020, from 3:30-5
     - Zach professed support for standardizing on NFC; NFD is not really usable since combining
       marks don't tend to be represented by themselves in identifiers.
     - Tom asked if standardizing on NFC commits implementors to perform normalization.
-    - Steve responded that Gcc 10 already emits a warning for identifiers that are written in NFC
-      in source code.
+    - Steve responded that gcc 10 already emits a warning for identifiers that are written in
+      non-NFC forms in source code.
     - Zach stated that checking for NFC is fast, at least for common cases, so diagnosing is
       reasonable, but stating that non-NFC identifiers are IFNDR (ill-formed no diagnostic required)
       is also a possibility.
