@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, January 8th 2020, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, January 22nd 2020, from 3:30-5:00pm EST.
 
+- [January 8th, 2020](#january-8th-2020)
 - [December 11th, 2019](#december-11th-2019)
 - [November 20th, 2019](#november-20th-2019)
 - [October 23rd, 2019](#october-23rd-2019)
@@ -40,6 +41,208 @@ The next SG16 meeting is scheduled for Wednesday, January 8th 2020, from 3:30-5:
 - [April 11th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-11th-2018)
 - [March 28th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 8th, 2020
+
+## Draft agenda:
+- LWG issue 3341: basic_regex range constructor: Missing requirements for iterator types
+  - https://cplusplus.github.io/LWG/issue3341
+  - Billy O'Neal copied SG16 on this issue; see https://lists.isocpp.org/sg16/2019/12/0990.php
+  - What should be the proposed resolution?
+- P1949: C++ Identifier Syntax using Unicode Standard Annex 31:
+  - https://wg21.link/p1949
+  - Which UAX #31 requirements do we intend to satisfy (see section 2)?
+  - Which UAX #31 specific character adjustments do we want (see section 2.4)?
+  - Which UAX #31 NFKC modifications we we want (see section 5.1)?
+
+## Meeting summary:
+- Attendees:
+  - David Wendt
+  - JeanHeyd Meneide
+  - Lyberta
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- LWG issue 3341: basic_regex range constructor: Missing requirements for iterator types
+  - https://cplusplus.github.io/LWG/issue3341
+  - Tom introduced the topic:
+    - Billy O'Neal copied SG16 on this issue.  His email is available in the SG16 mailing list archives
+      at https://lists.isocpp.org/sg16/2019/12/0990.php.
+    - What should be the proposed resolution?
+  - Zach asked why we should be concerned about this issue.
+  - Tom responded that Billy copied us on it, presumably seeking our input.
+  - Zach stated that implicit transcoding should not occur; The safest thing to do would be to require
+    `ForwardIterator::value_type` to be exactly `charT`.
+  - JeanHeyd agreed with the no implicit transcoding stance; that would make `std:regex` even slower!
+  - Peter chimed in via chat agreeing with an exact type requirement and the following constraint:
+    - `std::is_same_t<value_type, decltype(*std::declval<ForwardIterator>()>`
+  - Peter asked if we should enable views to be used as inputs.
+  - Steve stated that would be a more difficult challenge given the recent difficulties faced when
+    attempting to add range constructors for standard containers.
+  - Zach agreed that adding range support could be difficult and is out of scope for this issue anyway.
+  - Peter concurred and noted that view support can always be added later.
+  - Tom observed that if a same type constraint is added, then SFINAE will kick in, but it might be
+    preferred to make it a hard error if the iterator value type doesn't match.
+  - Zach suggested leaving that for LWG to decide.
+  - Tom agreed and stated he would respond to Billy's email and LWG with our thoughts.
+- P1949: C++ Identifier Syntax using Unicode Standard Annex 31:
+  - https://wg21.link/p1949
+  - https://github.com/cplusplus/nbballot/issues/28
+  - Tom introduced the topic.
+    - In Belfast, EWG did not accept
+      [SG16's recommended resolution for NL029](http://wiki.edg.com/bin/view/Wg21belfast/SG16NBNL029)
+      for C++20.
+    - Tom volunteered to submit a core issue for C++20 in order to allow us to resolve the concern as
+      a defect, but he doesn't have a PR to propose.
+    - Tom is thinking about bailing on submitting that core issue, but thought he would check if SG16
+      might have consensus on what solution we would want.  In particular, if we were to adopt
+      [UAX #31](https://www.unicode.org/reports/tr31/tr31-31.html), what would be our answers to these
+      questions?
+      - Which UAX #31 requirements do we intend to satisfy (see section 2)?
+      - Which UAX #31 specific character adjustments do we want (see section 2.4)?
+      - Which UAX #31 NFKC modifications we we want (see section 5.1)?
+  - Zach suggested we skip C++20 and just proceed with addressing this for C++23.
+  - Steve provided motivation for dealing with this as a DR; some compilers are just starting to allow
+    extended characters in identifiers.  Previously, programmers had to go out of their way to create
+    weird identifiers.  Clang has allowed extended characters forever (since Clang 3.3 or so), gcc
+    support was added for gcc 10.  The window for changing behavior is shrinking.
+  - Zach asked if the concern was about breaking existing code given that this isn't the kind of break
+    we usually worry too much about.
+  - Tom replied that the breakage could be silent if Unicode normalization affects whether two
+    identifiers match.
+  - Steve added that breakage could occur due to excluded characters like the poop emoji.  Compilers
+    could provide backward compatibility options; Hyrum's law.
+  - Steve continued stating that, if we don't get this nailed down for C++23, we could probably still
+    do it because it probably won't affect that much code.
+  - Zach observed that the impact would mostly be due to banning emoji.
+  - Steve agreed; emoji is the only case people are likely to notice.  Programmers aren't likely to
+    want right-to-left characters in identifiers for example.
+  - Which UAX #31 requirements do we intend to satisfy (see section 2)?
+    - Tom stated that we need to choose whether to use the `ID_Start`/`ID_Continue` or
+      `XID_Start`/`XID_Continue` properties to define identifier syntax.  P1949 suggests using the
+      `XID_Start`/`XID_Continue` variants and doing so is necessary to meet the requirements for
+      [UAX31-R1](https://www.unicode.org/reports/tr31/tr31-31.html#R1) without defining a profile;
+      though, we'll need a profile to add `_` as a start character.
+    - Steve recommended we adopt the XID variants and add `_` as a start character.  However, this
+      doesn't suffice to guarantee identifier stability.
+    - Tom stated that, in order to meet requirement
+      [UAX31-R1a](https://www.unicode.org/reports/tr31/tr31-31.html#R1a), that he thinks we'll need
+      to specify additional characters to exclude.  The NL029 NB comment specified a particular range
+      to exclude, but he is not sure if or how that matches UAX31.
+    - Steve corrected Tom's interpretation; that requirement allows opting in to characters that are
+      disallowed by default.
+    - Peter stated that section 2.3 explains that some character that are restricted by default are
+      needed in some cases for some scripts.
+    - Peter continued stating that he thinks we lack the experience to make choices in this regard and
+      suggested we proceed with more restrictions now and relax them later based on experience and
+      motivation.
+    - Tom asked about meeting the requirements for
+      [UAX31-R1b](https://www.unicode.org/reports/tr31/tr31-31.html#R1b); assuming we want to meet
+      that requirement, how would we do so?
+    - Steve responded that, given ABI issues, we should commit to meeting this requirement.  In
+      practice, that means that, for example, if a future Unicode standard were to remove characters
+      from `XID_CONTINUE`, that we would update our profile to add them back in.
+    - Peter asked if the `XID_Start`/`XID_Continue` properties are stable.
+    - Zach responded that he understood them to be stable.
+    - Steve responded that they are derived properties and are not guaranteed to be stable, but
+      probably will be in practice.
+    - Zach mentioned that he wasn't previously aware that UAX31 had options, but it seems our goal
+      now needs to be to identify the options, select them, and then make sure proposed wording
+      reflects our intent.
+    - Tom agreed.
+  - Which UAX #31 specific character adjustments do we want (see section 2.4)?
+    - Peter, reviewing section 2.4, stated no observed need for exceptions other than for `_` in
+      the start position; a choice that is already explicitly listed as an option.
+  - Which UAX #31 NFKC modifications we we want (see section 5.1)?
+    - Tom stated that we need to figure out how to deal with normalization if we want stable
+      identifiers.
+    - Zach provided some background on NFC, NFD, compatibility, comparisons, and conversions.
+    - Zach professed support for standardizing on NFC; NFD is not really usable since combining
+      marks don't tend to be represented by themselves in identifiers.
+    - Tom asked if standardizing on NFC commits implementors to perform normalization.
+    - Steve responded that Gcc 10 already emits a warning for identifiers that are written in NFC
+      in source code.
+    - Zach stated that checking for NFC is fast, at least for common cases, so diagnosing is
+      reasonable, but stating that non-NFC identifiers are IFNDR (ill-formed no diagnostic required)
+      is also a possibility.
+    - Tom observed that conversions from other character sets like Windows-1252 probably always
+      result in NFC.
+    - Zach agreed noting that such conversion is probably done via the compiler's internal encoding.
+    - Peter stated that there are other character sets that have combining marks, but none of those
+      are probably supported by compilers.
+    - Tom, considering source code that is encoded as UTF-8 in NFD, asked if requiring NFC could be
+      problematic for existing editors and tools.
+    - Steve observed that this issue already exists and that tools today already expect NFC.
+    - Peter recommended that we make use of non-NFC normalized source code IFNDR and encourage tools
+      to diagnose violations.
+    - Zach responded that IFNDR is generally reserved for cases where something can't be reasonably
+      diagnosed; since diagnosis is reasonable here, non-NFC forms should be considered ill-formed.
+    - Steve added that compiler implementors can support options to relax NFC checking.
+    - Tom noted that this creates a specification issue since, if source encoding is not UTF-8, it
+      needs to be transcoded to NFC, but if it is UTF-8, source code needs to already be in NFC.
+    - Zach responded that we don't have to; we just specify the characters that are valid based on
+      `XID_Start`/`XID_Continue`.
+    - Steve added that the NFC check has to be done after conversion from source encoding to internal
+      encoding and that he is unaware of any encoding that does not naturally transcode to NFC.
+    - Peter observed that combining diacritics are part of `XID_Continue` and that there are
+      therefore two spellings of café; a 4 code point variant using
+      U+00E9 {LATIN SMALL LETTER E WITH ACUTE} and a 5 code point variant using
+      U+0301 {COMBINING ACUTE ACCENT}.
+    - Zach stated that this feature requires the compiler's internal encoding to be Unicode.
+    - Tom responded that, since C++11, the internal encoding must already be isomorphic to Unicode.
+    - Zach suggested that both forms of café should not be allowed; that NFC should be required, and
+      that use of combining characters should be disallowed in our profile.
+    - Steve responded that disallowing all combining characters probably isn't feasible; there aren't
+      precomposed forms of all characters; in NFC, combining characters will still appear, but only
+      when they are actually required.
+    - Zach suggested this is a restriction that could be relaxed later.
+    - Steve observed that this would make specification of the profile more difficult.
+    - Zach agreed and suggested just specifying a list of start and continue characters; this avoids
+      implementors having to do hard things.
+    - Peter noticed a problem with that approach; new Unicode characters could not be used unless and
+      until the standard is updated with a new list of start/continue characters.
+    - Tom added that this is why we want to defer to the implementation-defined Unicode version.
+    - Steve added this is also why we want the identifier stability guarantee; otherwise we get
+      linkage problems.
+    - Peter suggested it should be ok to define a profile with `<Start>` defined as `XID_Start` + '_',
+      and `<Continue>` defined as `XID_Continue` - <all_combining_characters>.
+    - Steve noted that we have a floating Unicode reference today.
+    - Tom agreed but noted that we have not yet required implementors to state which version of Unicode
+      they conform to.
+    - Steve agreed and added that, technically, we only have a floating reference to ISO/IEC 10646; this
+      may not cover the normalization algorithm.
+    - Steve summarized some options; there are two ways to deal with NFC: 1) source must be NFC normalized,
+      and 2) the compiler internal encoding must be NFC.  Not allowing combining characters gives us the
+      stability that we need without having to distinguish between those options.
+    - Steve continued that omitting combining characters avoids the problem of Unicode introducing new
+      precomposed characters that previously had to be represented with a combining character thereby
+      changing NFC.
+    - Tom responded that he thought the Unicode standard has a stability guarantee that new precomposed
+      characters will not be introduced.
+    - Peter observed that allowing combining characters is therefore required for new characters.
+    - Tom suggested we need to do some more research.
+    - Steve, after checking the Unicode standard, reported that normalization forms are guaranteed to be
+      stable.
+    - Zach quoted from section 3 of [UAX #15](https://www.unicode.org/reports/tr15/tr15-48.html):
+      - "It is crucial that Normalization Forms remain stable over time. That is, if a string that does
+        not have any unassigned characters is normalized under one version of Unicode, it must remain
+        normalized under all future versions of Unicode."
+    - Peter repeated his guidance that combining characters must be allowed in order to support some
+      scripts.
+    - Tom agreed and acknowledged that we probably therefore need to require NFC.
+    - Tom summarized options identified so far:
+      - 1) The compiler converts to NFC internally.  This could technically break some existing code.
+      - 2) Require UTF encoded source files to be NFC and that non-UTF encoded source files be transcoded
+           (noting that we believe that transcoding from any existing character sets will produce NFC).
+    - Zach observed that the implementation effort is equivalent for those cases since an NFC check can
+      bail out early if the check fails, but is otherwise same amount of work so that the complexity cost
+      is the same.
+    - Steve stated that he may not be in Prague, but that others can champion the paper as needed.
+    - Peter and Zach both volunteered to champion.
+    - Steve stated he would try to get an updated revision submitted for the Prague pre-meeting mailing.
+- Tom stated that the next meeting will be January 22nd.
 
 
 # December 11th, 2019
