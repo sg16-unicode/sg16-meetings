@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, January 22nd 2020, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, February 5th 2020, from 3:30-5:00pm EST.
 
+- [January 22nd, 2020](#january-22nd-2020)
 - [January 8th, 2020](#january-8th-2020)
 - [December 11th, 2019](#december-11th-2019)
 - [November 20th, 2019](#november-20th-2019)
@@ -41,6 +42,224 @@ The next SG16 meeting is scheduled for Wednesday, January 22nd 2020, from 3:30-5
 - [April 11th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-11th-2018)
 - [March 28th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 22nd, 2020
+
+## Draft agenda:
+- P1885R0: Naming Text Encodings to Demystify Them
+  - https://wg21.link/p1885
+  - Follow up on recent mailing list discussions.
+  - Identify and discuss intended use cases.
+- P2020R0: Locales, Encodings and Unicode
+  - https://isocpp.org/files/papers/P2020R0.pdf
+  - General discussion, corrections, suggestions, etc...
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - David Wendt
+  - Hubert Tong
+  - Jens Maurer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- P1885R1: Naming Text Encodings to Demystify Them
+  - https://wg21.link/p1885r1
+  - Tom introduced the topic for discussion:
+    - SG16 approved P1885R0 to forward to LEWG in Belfast.
+      - http://wiki.edg.com/bin/view/Wg21belfast/SG16P1885R0
+    - Corentin has now provided an R1 with minor updates.
+    - Since then, concerns were raised on the SG16 mailing list:
+      - https://lists.isocpp.org/sg16/2019/12/0993.php
+      - (See email thread continuation in January as well)
+    - Questions of use cases have been raised.
+  - Corentin stated that use cases haven't changed from his perspective and that the discussion on the
+    mailing list went off on a tangent.
+  - Tom replied that the discussion suggested a lack of consensus on the importance of a name vs a MIB ID.
+  - Corentin stated that what is proposed is just a name intended to resolve issues with names not being
+    portable across platforms.  The proposal relies on MIB IDs to correlate names for use with third party
+    products.  The proposal does not allow dynamically adding names so as to avoid the possibility of
+    inconsistent results.
+  - Tom asked what the motivation was for not including enumerators for all MIB IDs in `text_encoding::id`,
+    but to require the implementation to support all names and aliases from the
+    [IANA Character Set Registry](https://lists.isocpp.org/sg16/2019/12/0993.php).
+  - Corentin replied that the requirements were changed in R1.  Hosted implementations are now required to
+    support all of the names, but freestanding implementations need not.
+  - Tom asked for clarification regarding omission of enumerator IDs.
+  - Corentin replied that, if we specify enumerator names for all registered character sets, then we'll
+    have to maintain that list.  Additionally, if implementors can add names, that could lead to portability
+    or compatibility issues.  Discussion with others prior to Belfast suggested more names were not needed.
+  - Jens summarized the concern; the RFC has ~150 names and we would have to put all 150 names into the
+    enumeration and deal with the maintenance.  If we select just a few names, then we don't have a
+    maintenance burden.
+  - Tom countered that use of the `cs` prefixed identifiers described in section 2.3 of
+    [RFC 2978](https://tools.ietf.org/html/rfc2978) and maintained in the
+    [IANA Character Set Registry](https://lists.isocpp.org/sg16/2019/12/0993.php)
+    would avoid the portability and compatibility concerns and provide a specification we can defer to.
+  - Corentin replied that it isn't quite that simple because of version skew and that exposing MIB IDs to
+    programmers has limited value to begin with.
+  - Tom countered that, in the example use case provided in Belfast, you don't necessarily know what the
+    name is.
+  - \[Editor's note: That example use case is:
+    ```
+    template<class traits, class Rep, class Period>
+    void print_fancy_suffix(basic_ostream<char, traits>& os, const duration<Rep, Period>& d)
+    {
+      if constexpr (text_encoding::literal().mib == UTF-8) {
+        os << d.count() << "\u00B5s";
+      } else {
+        os << d.count() << "us";
+      }
+    }
+    ```
+    \]
+  - Corentin replied that the use case could still be covered by comparing the implementation provided
+    `text_encoding` object with one constructed by the programmer with a name.
+  - \[Editor's note: Presumably something like:
+    ```
+    template<class traits, class Rep, class Period>
+    void print_fancy_suffix(basic_ostream<char, traits>& os, const duration<Rep, Period>& d)
+    {
+      if constexpr (text_encoding::literal() == text_encoding("UTF-8")) {
+        os << d.count() << "\u00B5s";
+      } else {
+        os << d.count() << "us";
+      }
+    }
+    ```
+    \]
+  - Tom opined that string names are good for interaction with current third party libraries, but IDs are
+    preferred for the example provided
+  - Corentin replied that adding more enumerators is ok, but expressed discomfort with deferring to the
+    IANA registry due to the possibility of incompatibilities arising from version skew.
+  - Steve noted that the proposal only intends to provide portable names; there is no requirement for
+    encoders and decoders to be provided.
+  - Zach observed that no enumerator is provided for Windows-1252 and asked how an implementor that
+    frequently traffics in that encoding would provide support.
+  - Corentin responded that a `text_encoding` object can be constructed by name or that the fixed numeric
+    value from the IANA registry can be used.
+  - JeanHeyd asked if we could reserve a range of MIB IDs for use by implementations similar to the Private
+    Use Area in Unicode.
+  - Corentin replied that he is strongly opposed to doing so.
+  - Corentin asked if we really want all of these names to be available as identifiers when we can just
+    use strings.
+  - Zach responded that he thinks it makes sense for cases where we know compilers default to certain encodings.
+  - Corentin repeated that he doesn't want implementors to add their own names.
+  - Jens asked about the source for the names whether as strings or identifiers.
+    [RFC 3808](https://tools.ietf.org/html/rfc3808) lists the MIB names with interesting spellings, and
+    [RFC 2978](https://tools.ietf.org/html/rfc2978) defines a registration process, but neither provides
+    the latest names.
+  - Steve provided the URL to the IANA registry and explained that the RFCs don't change, but specify the
+    URL for the registry; which doesn't change often.
+    - https://www.iana.org/assignments/character-sets/character-sets.xhtml
+  - Tom added that the IANA registry mostly changes for administrative reasons, not because of new character
+    set registrations.
+  - Jens asked how it is determined which names are good for enumerators.
+  - Tom replied that
+    [RFC 2978](https://tools.ietf.org/html/rfc2978) specifies that each registered character set have an
+    associated name prefixed with "cs" that is appropriate for use as an identifier.
+  - Jens asked why the names in the proposal do not match the "cs" names.
+  - Corentin responded that he picked names that he preferred.
+  - Jens asserted that, in that case, implementors cannot extend the list.
+  - Zach stated that there isn't much cost in taking the list of "cs" prefixed names, removing dashes, and
+    dumping that list in the wording and asked again for motivation for omitting them.
+  - Corentin replied that he thought they were not needed.
+  - Zach agreed that many would not be used much, but determining which ones are important would be difficult
+    where as just including them all would be easy.
+  - Tom asked Corentin, why he felt comfortable deferring to the IANA registry for string names, but not for
+    enumerator names?
+  - Corentin replied that he felt that the names and alias names were definitive, but that the enumerator
+    names seemed more fuzzy.
+  - Corentin asked Jens if there are concerns regarding the use of trademark names in the standard; many of
+    the character set names include trademark names.
+  - Jens replied that we already use trademarked names like Windows and POSIX in the filesystem specification.
+  - Steve added that these names have already been vetted by their respective owners, if necessary, for
+    inclusion in the registry.
+  - Jens asked if the names in the IANA registry might already be reflected in an ISO standard that we could
+    reference instead.
+  - Corentin replied that he was unaware of such an ISO standard.
+  - Tom asked Jens how a search for such an ISO standard could be conducted.
+  - Jens suggested searching for "character set" in the ISO list.
+  - Steve noted that the RFC describing the IANA registration process does mention ISO standards such as
+    ISO 10646, ISO 8859, and ISO 2022.
+  - Corentin stated that web browsers, iconv, ICU, etc... all use the IANA registry; it is the defacto standard.
+  - Jens expressed some uncertainty with regard to how to refer to these RFCs from the standard, but mentioned
+    that we did similarly for the time zone database which is even less regulated.
+  - Jens raised a concern about impact to small/embedded implementations.  As proposed, they would have to
+    include an instance of the string name table with every instance of the program and that could be problematic
+    even for some hosted implementations.
+  - Tom suggested that, if the string table is not referenced; e.g., if none of the `text_encoding` factory
+    functions is referenced or if the `<text_encoding>` header is not included, that the implementation might
+    be able to omit it.
+  - Jens suggested that it would be helpful if the paper addressed cost of implementation and anticipated
+    impact to deployments.
+  - JeanHeyd suggested that the guarantee we make should be that if only `text_encoding::system()` or
+    `text_encoding::literal()` are called, then there should be no string table overhead.
+  - Jens asked if an implementation could provide support for a reduced set of names.  If not, the discussion of
+    how to reduce deployment cost is warranted since, as proposed, this is not a zero-cost of zero-overhead
+    solution.
+  - Jens also stated a preference for the `system()` and `wide_system()` functions to return a MIB ID rather
+    than a `text_encoding` object.
+  - Corentin responded that there may be cases where the system encoding is not registered with IANA.  In that
+    case, the MIB ID would be "unknown"; and a different interface would have to be used to retrieve the string
+    name of the encoding anyway.
+  - JeanHeyd provided WTF-8 and Modified UTF-8 as examples of encodings that are not registered with IANA but
+    that are known to be in use on Android and elsewhere on the web.
+  - Jens suggested that, in such cases, the implementation register their encoding.
+  - Zach asked to clarify what the motivation is for supporting string names at all.
+  - Tom responded that third party products like iconv and ICU have interfaces that require use of string names.
+  - Corentin confirmed.
+  - Tom added that the IANA registry is effectively a common subset of recognized names.
+  - Zach stated a preference for omitting string names and just relying on MIB IDs.
+  - Corentin responded that doing so would complicate use of iconv.
+  - Hubert expressed a lack of motivation for an interface that relies on numeric values that no one knows;
+    the string names make sense.
+  - Jens pondered if string name to MIB ID lookup was an orthogonal feature.
+  - Tom stated that question was posed in the mailing list discussion as well.
+  - Corentin mentioned existing host system interfaces.  Windows provides a code page with an ID.  POSIX systems
+    provide a name and no ID.
+  - Jens suggested that an interface that provides a string name does not suit all use cases.  For example,
+    a programmer might desire to assert a specific system encoding; that shouldn't require a full string table.
+  - Zach expressed a desire for the interface to provide more safety and that he would prefer a list of
+    identifiers over a list of string names.
+  - Hubert suggested other benefits of the string names, 1) useful for interaction with the system and third party
+    libraries, and 2) useful for interchange or serialization.
+  - Hubert expressed concern about use of a string interface for looking up an encoding name and asked what name
+    is provided in response to a lookup of a MIB ID.
+  - Corentin replied that there is no proposed lookup interface that accepts a MIB ID.  The factory interfaces
+    like `text_encoding::system()` return a preferred name, but otherwise, the name provided when constructing
+    a `text_encoding` object is preserved.
+  - Jens expressed a desire for a low-level interface that just returns an integer that could be used to assert
+    the environment is UTF-8 without having to compare with a bunch of strings; that could be a zero overhead
+    facility.
+  - Hubert asked if there is overhead if neither of `text_encoding::system()` or `text_encoding::wide_system()`
+    is called.
+  - Corentin responded that yes, there is, but it is low.
+  - Hubert cautioned that some standard library implementors are likely to oppose anything that increases
+    startup cost or requires "static constructors".
+  - Tom asked why the interface couldn't perform a lazy lookup.
+  - Corentin responded that calls to `setlocale()` could interfere; `text_encoding::system()` is intended to
+    return the locale dependent encoding known at program startup time.
+  - \[Editor's note: Later discussion on the SG16 mailing list revealed that it is possible on POSIX systems
+    to retrieve the locale dependent encoding known at program startup time regardless of intervening calls
+    to `setlocale()` with code like:
+    ```
+     locale_t loc = newlocale(LC_CTYPE_MASK, "", (locale_t)0);
+     const char* name = nl_langinfo_l(CODESET, loc);
+     ...
+     freelocale(loc); 
+    ```
+    \]
+  - Hubert suggested that programmers can collect this information on their own and that they should be aware if
+    some library is calling `setlocale()` before `main()` is invoked.
+  - Tom agreed, but stated that doing so is hard in practice, particularly for library authors.
+  - JeanHeyd observed that the C library behavior depends on the currently set locale and asked what benefit
+    is provided by `test_encoding::system()` if it's not in sync with the C and C++ libraries.
+  - Tom responded that it indicates what encoding is expected for I/O outside of the process.
+- Tom confirmed that the next meeting will be on February 5th and that it will be the last meeting before we
+  meet in Prague.
 
 
 # January 8th, 2020
