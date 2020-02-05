@@ -9,25 +9,25 @@ The next SG16 meeting is scheduled for Wednesday, February 5th 2020, from 3:30-5
 
 - [January 22nd, 2020](#january-22nd-2020)
 - [January 8th, 2020](#january-8th-2020)
-- [December 11th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#december-11th-2019)
-- [November 20th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#november-20th-2019)
-- [October 23rd, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#october-23rd-2019)
-- [October 9th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#october-9th-2019)
-- [September 25th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#september-25th-2019)
-- [September 4th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#september-4th-2019)
-- [August 21st, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#august-21st-2019)
-- [July 31st, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#july-31st-2019)
-- [June 26th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#june-26th-2019)
-- [June 12th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#june-12th-2019)
-- [May 22nd, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#may-22nd-2019)
-- [May 15th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#may-15th-2019)
-- [April 24th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-24th-2019)
-- [April 10th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-10th-2019)
-- [March 27th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-27th-2019)
-- [March 13th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-13th-2019)
-- [February 13th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#february-13th-2019)
-- [January 23rd, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#january-23rd-2019)
-- [January 9th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#january-9th-2019)
+- [December 11th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#december-11th-2019)
+- [November 20th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#november-20th-2019)
+- [October 23rd, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#october-23rd-2019)
+- [October 9th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#october-9th-2019)
+- [September 25th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#september-25th-2019)
+- [September 4th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#september-4th-2019)
+- [August 21st, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#august-21st-2019)
+- [July 31st, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#july-31st-2019)
+- [June 26th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#june-26th-2019)
+- [June 12th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#june-12th-2019)
+- [May 22nd, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#may-22nd-2019)
+- [May 15th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#may-15th-2019)
+- [April 24th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#april-24th-2019)
+- [April 10th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#april-10th-2019)
+- [March 27th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#march-27th-2019)
+- [March 13th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#march-13th-2019)
+- [February 13th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#february-13th-2019)
+- [January 23rd, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#january-23rd-2019)
+- [January 9th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#january-9th-2019)
 - [December 19th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#december-19th-2018)
 - [December 5th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#december-5th-2018)
 - [October 17th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#october-17th-2018)
@@ -469,97 +469,97 @@ The next SG16 meeting is scheduled for Wednesday, February 5th 2020, from 3:30-5
 
 # December 11th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#december-11th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#december-11th-2019.
 
 
 # November 20th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#november-20th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#november-20th-2019.
 
 
 # October 23rd, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#october-23rd-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#october-23rd-2019.
 
 
 # October 9th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#october-9th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#october-9th-2019.
 
 
 # September 25th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#september-25th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#september-25th-2019.
 
 
 # September 4th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#september-4th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#september-4th-2019.
 
 
 # August 21st, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#august-21st-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#august-21st-2019.
 
 
 # July 31st, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#july-31st-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#july-31st-2019.
 
 
 # June 26th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#june-26th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#june-26th-2019.
 
 
 # June 12th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#june-12th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#june-12th-2019.
 
 
 # May 22nd, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#may-22nd-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#may-22nd-2019.
 
 
 # May 15th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#may-15th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#may-15th-2019.
 
 
 # April 24th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-24th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#april-24th-2019.
 
 
 # April 10th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-10th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#april-10th-2019.
 
 
 # March 27th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-27th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#march-27th-2019.
 
 
 # March 13th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-13th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#march-13th-2019.
 
 
 # February 13th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#february-13th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#february-13th-2019.
 
 
 # January 23rd, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#january-23rd-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#january-23rd-2019.
 
 
 # January 9th, 2019
 
-See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#january-9th-2019.
+See https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#january-9th-2019.
 
 
 # December 19th, 2018
