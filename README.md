@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, February 5th 2020, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, February 26th 2020, from 3:30-5:00pm EST.
 
+- [February 5th, 2020](#february-5th-2020)
 - [January 22nd, 2020](#january-22nd-2020)
 - [January 8th, 2020](#january-8th-2020)
 - [December 11th, 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md#december-11th-2019)
@@ -44,6 +45,183 @@ The next SG16 meeting is scheduled for Wednesday, February 5th 2020, from 3:30-5
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# February 5th, 2020
+
+## Draft agenda:
+- Preparations for Prague.
+- P2020R0: Locales, Encodings and Unicode
+  - https://wg21.link/p2020r0
+  - General discussion, corrections, suggestions, etc...
+- P1629R0: Standard Text Encoding
+  - https://wg21.link/p1629r0
+  - Status update from JeanHeyd.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Lyberta
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+- Preparations for Prague.
+  - PeterBr asked if it would be possible to attend the SG16 meeting in Prague remotely.
+  - Jens provided some background:
+    - Historically, remote attendance has not been allowed for a variety of reasons including but not limited to:
+      - voting concerns
+      - confidientiality concerns
+      - attendance by people not familiar with our processes
+    - SG and WG chairs have facilitated remote attendance on occasion for paper authors or well known experts.
+    - For Prague, the Corona virus outbreak has prompted an exception for this meeting for paper authors.
+    - SG chairs can choose to facilitate remote attendance subject to technology support.
+  - PeterBr stated that the UK national body is considering making a request to enable remote access for people
+    facing attendance challenges due to issues like VISA access and child care responsibilities.
+  - Tom indicated that a member of the UK national body had reached out to him to ask how SG16 conducts our telecons.
+  - Jens stated that the number of meeting attendees is raising logistial and hosting challenges.
+  - Jens added that hotel wifi may not suffice for video conferencing.
+  - Tom asked if Jens could provide audio gear that SG16 could use to facilitate remote attendance.
+  - Jens confirmed he could.
+  - Tom confirmed that a best effort approach will be made to facilitate remote attendance via BlueJeans.
+  - Tom asked everyone to review the tentative schedule
+    - http://wiki.edg.com/bin/view/Wg21prague/SG16
+  - Jens suggested removing the Wednesday afternoon time slots since we don't have a room reserved for that time.
+  - Tom agreed to do so.  \[Editor's note: and did so.\]
+- Tom announced that the newly formed Message Formatting Unicode Working Group has been invited to attend the SG16
+  meeting planned for March 11th.
+  - https://github.com/unicode-org/message-format-wg
+- P2020R0: Locales, Encodings and Unicode
+  - https://wg21.link/p2020r0
+  - Corentin introduces:
+    - The paper chould be updated to include additional motivation for support of localization in the standard
+      library.  However, since locale support is already present in the standard library, there is a desire not
+      to distract from other topics and attempt to motivate unnecessarily.
+    - The intent of the paper is to provide guidance and establish direction.
+    - The existing locale support in the standard library is deficient, but in use regardless.  We could seek to
+      deprecate it in favor of new facilities, though actually marking these interfaces `[[deprecated]]` could
+      be problematic for some projects due to compiler warnings.
+    - A primary point in this paper is that character encodings and locales are distinct concerns, though they
+      have been historically conflated, particularly in POSIX.
+    - High quality locale support depends on Unicode algorithms.
+    - Attempting to provide locale support for non-UTF encodings is not realistic.
+    - Whether a character is an uppercase or lowercase letter is not locale dependent.  However, case conversion
+      is locale dependent.
+    - The existing character classification functions are deficient since they operate on code units as opposed
+      to sequences of code units or code points.
+    - New locale facilities must be Unicode based.  For support of legacy encodings, conversion to Unicode and
+      back will suffice.
+    - Iostreams and locale are closely tied and operate on individual code units.  Proper localization cannot
+      be provided using code unit based operations.
+    - Linux and macOS deployments nearly exclusively use a UTF-8 locale.  At program startup, the program
+      locale is set to "C".  Setting it to "C" is desirable; programs should opt-in to localization behavior.
+      However, setting it to "C" also has the effect of changing the encoding and that is not desirable.
+  - PeterBr stated that support for multiple encodings is not required for locale support.
+  - Corentin agreed with a caveat; that is true for Unicode encodings, but when not using Unicode encodings,
+    switching locales requires switching encodings.
+  - Steve stated that, for one of their internal facilities, encoding is important for understanding what is
+    provided by the locale library since the library provides `char` based interfaces and the localization data
+    is encoding dependent.  It would be possible to retranslate all existing messages, but would be a large
+    undertaking and getting localization wrong is expensive.  We need to enable bridges to the past.
+  - PeterBr noted that we can't expect UTF-8 locale support on Windows; it will be UTF-16.
+  - Corentin responded stating that is ok so long as it is Unicode since conversion to UTF-8 doesn't lose data.
+  - Steve remarked that it is impressive how much locale related code works by accident.
+  - Corentin supplied a list of operations affected by locale: case mapping, collation, search.  Search was
+    surprising; it depends on locale because matching base characters is desired for some locales, but not for
+    others.  The break algorithms are also locale dependent.
+  - Corentin added that, thanks to Han unification, text rendering is locale dependent.
+  - Jens observed that section 4 omits some items; number formatting for example.
+  - PeterBr stated it would be helpful to have some Japanese contributors in SG16 to answer questions about
+    formatting in their locales.
+  - Corentin opined that it is best to just follow Unicode; it specifies how to handle locales.
+  - Corentin added that, in some locales, multiple numeric formats may be used.  For example, in India.
+  - PeterBr asked if the character classification functions could we deprecated if replacements were made
+    available.
+  - Corentin replied that they tend to be used in cases where programmers explicitly expect ASCII.
+  - Jens stated that we all likely agree that the current character classification functions are defficient
+    and that new facilities are required in order to deprecate them.
+  - PeterBr asked how likely implementors are to be willing to ship a Unicode DB.
+  - Corentin suggested that discussion of that be postponed to discussion of
+    [P1628 -  Unicode character properties](https://wg21.link/p1628r0).
+  - Jens objected to the idea of defaulting the program's startup encoding to UTF-8 if the environment
+    specifies a UTF-8 encoding.  The "C" locale only supports the basic execution character set, e.g., ASCII.
+    Programs that want to support extended characters should call `setlocale(..., "")` at program startup to
+    opt-in.
+  - Corentin stated that the choice C made to default the locale to "C" was a good choice for formatting
+    facilities; many programs aren't intended to produce locale dependent formatting.  But encoding is different.
+  - Steve stated that the as-if rule is leaned on here as implementations don't actually call
+    `setlocale(..., "C")` during startup; adding a call to `setlocale(..., "")` would be a major change.
+  - Tom clarified that Corentin's intent is only to adopt the encoding from the environment locale on program
+    startup, not the locale formatting settings.  The proposal states that if, for example, the locale specified
+    an encoding of UTF-8, then the as-if call on program startup would be something like
+    `setlocale(LC_ALL, "C.UTF-8")`.
+  - Corentin acknowledged that the way C and C++ are tied is a valid concern and that implementors depend on the
+    underlying OS for locale support.
+  - Jens expressed skepticism regarding the ability to change the program startup behavior, suggested that a
+    new interface to retrieve the environment specified encoding be provided, and that `setlocale` be left alone.
+  - Tom agreed that new functionality doesn't have to follow current behaviors.
+  - Jens continued; new functionality can be provided that is independent of `setlocale`.
+  - Jens opined that "C.UTF-8" doesn't make sense.
+  - Tom stated that Python made a change to assume UTF-8 for the "C" locale and that the Python
+    [PEP-538: Coercing the legacy C locale to a UTF-8 based locale](https://www.python.org/dev/peps/pep-0538) and
+    [PEP-540: Add a new UTF-8 Mode](https://www.python.org/dev/peps/pep-0540)
+    documents are informative for motivation.
+  - PeterBr asked if use of the "C" locale implies use of the encoding of the execution character set.
+  - Jens replied that, effectively, yes, but wording could make that more clear.
+  - Tom stated his goal for this paper in Prague; to poll a subset of the possible future directions listed in
+    section 6 to establish priorities for them; we can then identify tasks and papers to write.
+  - Jens expressed a desire for a road map for the future before moving forward with deprecation.
+  - PeterBr agreed and stated that a desire for a road map underscored the need for good motivation.
+  - Corentin stated that we need to identify all of the current implicit and explicit locale dependencies.
+  - PeterBr suggested incremental improvements may be made by adding overloads with explicit locale parameters.
+  - Tom suggested that we spend an evening in Prague going through the paper in more detail with the intent to
+    improve presentation and fill in gaps.
+- P1629R0: Standard Text Encoding
+  - https://wg21.link/p1629r0
+  - JeanHeyd introduced:
+    - [N2440](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2440.pdf) and
+      [P1629](https://wg21.link/p1629) are intended to provide text decoding, encoding, and transcoding interfaces.
+    - These replace `wstring_convert` and friends.
+    - UTF-8 is difficult to enforce in `char` because non-UTF-8 data arrives in `char` based strings.
+    - C provides few useful interfaces in this area.
+    - WG14 approved parts of N2440 and an implementation is available in a standalone library.
+    - Plans to submit implementations of N2440 to glibc and musl libc are pending.
+    - P1629 provides extensible encoding objects.
+    - There is an implementation of P1629 that provides encoding, decoding, transcoding, validation, and code point
+      counting services.
+  - Corentin asked what the motivation is for contributing new interfaces to C.
+  - JeanHeyd responded that it makes sense to do so and that WG14 has already approved direction to add the mbs to
+    UTF conversion variants.
+  - Tom expressed his motivation for contributing to C; doing so reduces friction between the languages.
+  - PeterBr asked if the implementation of N2440 uses SIMD instructions.
+  - JeanHeyd replied that it does not yet, partially because the musl maintainers will want straight C implementations.
+  - Jens asked why the single-character interfaces are not proposed.
+  - JeanHeyd replied that only the restartable variants are being proposed.
+  - Jens stated that WG14 will consider a WG21 approved proposal to qualify as implementation experience.
+  - PeterBr asked about `replacement_code_unit` and how a replacement character that requires multiple code units
+    would be specified; it seems like the replacement character should be provided as a string.
+  - Tom expressed confusion about the existence of `replacement_code_unit` as he expected a replacement code point
+    to be specified.
+  - \[Editor's note: Tom later started an email thread on the SG16 mailing list regarding this:
+    https://lists.isocpp.org/sg16/2020/02/1101.php. \]
+  - JeanHeyd replied that a replacement code point is preferred and that the replacement code unit is a fall back.
+  - Corentin stated that he didn't think `replacement_code_unit` is needed at all.
+  - JeanHeyd replied that it is used to distinguish between errors happening in different encode/decode directions.
+  - Steve suggested that, perhaps, better names are needed to communicate their intent.
+  - JeanHeyd replied that he will update the replacement names and make them ranges or strings.
+  - Jens observed that the design appears to be all compile-time based and asked how run-time dependent encoding
+    is handled.
+  - JeanHeyd replied that the compile-time implementation can be wrapped in a run-time design.
+  - Jens expressed a desire to see the design specified in terms of concepts.
+  - JeanHeyd replied that the proposal will use concepts, but that the current implementation is intended to work
+    with pre-C++20 compilers.
+  - Tom asked how much of the proposal is implemented.
+  - JeanHeyd replied that interfaces have been implemented for decoding, encoding, transcoding, validation, and
+    code point counting.
+  - JeanHeyd added that support for normalization hasn't been completed, but normalization can be done later.
+- Tom stated that the next meeting will be February 26th and the focus will be on post-Prague follow up.
+
+  
 # January 22nd, 2020
 
 ## Draft agenda:
