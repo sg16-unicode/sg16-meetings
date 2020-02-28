@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, February 26th 2020, from 3:30-5:00pm EST.
+The next SG16 meeting is scheduled for Wednesday, March 11th 2020, from 19:30-21:00 UTC (3:30-5:00pm EST).
 
+- [February 26th, 2020](#february-26th-2020)
 - [February 5th, 2020](#february-5th-2020)
 - [January 22nd, 2020](#january-22nd-2020)
 - [January 8th, 2020](#january-8th-2020)
@@ -43,6 +44,198 @@ The next SG16 meeting is scheduled for Wednesday, February 26th 2020, from 3:30-
 - [April 11th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-11th-2018)
 - [March 28th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 26th, 2020
+
+## Draft agenda:
+- Post-Prague follow up.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - David Wendt
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- [P2071R0: Named universal character escapes](https://wg21.link/p2071r0):
+  - Tom provided a status update.  Waiting on a response to add an additional co-author.  Working on
+    updates to address EWG feedback.  Wording will need to be re-done for P2029.  On track for review
+    by EWG again in Varna; will hopefully be made tentatively ready then.
+- [P2029R0: Proposed resolution for core issues 411, 1656, and 2333; numeric and universal character
+  escapes in character and string literals](https://wg21.link/p2029r0):
+  - Tom stated an update will be submitted for the Prague post-meeting mailing with the intent that it
+    be discussed at the next core issues processing meeting.
+  - Jens stated that the next core issues processing meetings are planned for March 23rd and April 20th.
+- Renaming universal-character-name:
+  - Corentin brought up an
+    [email](https://lists.isocpp.org/sg16/2020/02/1152.php)
+    that he had sent to the SG16 and core mailing lists regarding a desire to rename
+    *universal-character-name* to *universal-character-codepoint* since no names are actually used in these
+    productions (code point values are).
+  - Jens stated that it can be difficult to get consensus on a change via the core reflector; such a change
+    needs core buy in.
+  - Corentin asked how he should proceed.
+  - Jens replied that the issue could be discussed in the next core issues processing meeting.  The process
+    to get an item on the agenda for those meetings is to get it on the CWG wiki page for Varna, but the
+    Varna wiki hasn't been populated yet.  Jens said that he would poke at someone to get the wiki
+    structure in place.
+  - Tom asked for more details about this process and whether it is really ok to get changes like this
+    initiated without a paper or core issue.
+  - Jens replied that a paper is best to ensure proper attention and progress.
+  - Jens added that an updated core issues list hasn't been published for some time now.
+  - \[ Editor's note: The last published core issues list is revision 100 and has a date of 2018-04-11. \]
+  - Jens asked if *universal-character-codepoint* is what we want and suggested *unicode-code-point* as an
+    alternative.
+  - Tom expressed support for Jen's suggested alternative.
+  - Zach expressed a preference for something more specific since this production is for one particular way
+    to express a code point.
+  - Jens responded that this is a grammar term and asked if the grammar term for P2071 should also be named
+    *something-codepoint* because it designates one.
+  - Corentin expressed support for that sentiment.
+  - Zach asked if the implication is that both `\uNNNN` and `\N{...}` would fall under *unicode-code-point*.
+  - Jens replied that they are distinct because `\uNNNN` can be generated from characters not in the basic
+    source character set that appear in identifiers in the source code.  `\N{...}` likely gets effectively
+    quickly translated to `\uNNNN`.
+  - Jens opined that the name isn't super important since this is just a grammar term and people should
+    expect to have to look up exactly what it means.
+  - Zach stated that *unicode-code-point* seems like the right choice then.
+  - Tom asked about using the names *unicode-code-point* for `\uNNNN` and *unicode-code-point-name* for
+    `\N{...}`.
+  - Corentin suggested that, in P2071, *named-escape-sequence* be renamed to *unicode-named-escape-sequence*
+    for the `\N{...}` case.
+  - Jens asked if `\N{...}` is allowed in identifiers.
+  - Tom replied that it is not.
+  - Jens noted that being a significant difference from `\uNNNN`.
+  - Tom expressed some hesitation with regard to adding "unicode" to *named-escape-sequence* since, in theory,
+    we could support non-Unicode names like D does.
+  - \[ Editor's note: D uses HTML 5 entity names for its named character escapes. \]
+  - Jens expressed a preference for *named-escape-sequence* as it is simple and matches nearby grammar terms
+    like *octal-escape-sequence* and *hexadecimal-escape-sequence*.
+  - PBindels asked about just using *code-point* for `\uNNNN`.
+  - Corentin stated that Unicode is needed in this case.
+  - Jens agreed noting that the syntax is specific to Unicode code points.
+  - Jens asked to confirm that there is no requirement for an implementation to have a list of acceptable or
+    unacceptable code points for `\uNNNN` other than for surrogate code points and the range of code point
+    values (0-0x1FFFF).
+  - Tom confirmed; implementations are not required or allowed to map an unrecognized code point to a
+    replacement code point.
+  - Jens acknowledged and added that programs that specify an unassigned code point will not be rejected either.
+  - Jens asked if naming this *unicode-code-point* implies a valid character.
+  - Steve suggested that, perhaps, the right name is *unicode-scalar-value*.
+  - Everyone expressed profound distate for the scalar value term.
+  - Jens suggested that P2071 be updated to add editorial direction to rename *universal-character-name* to
+    *unicode-code-point*.
+  - Tom agreed to do so.
+  - \[ Editor's note: concurrent with this meeting, a prominent core member replied to Corentin's email and
+    requested that we retain the *unversal-character-name* name since it has been in use in C99 and C++23 for
+    20 years now and is referenced in existing literature.  Due to there being opposition to the name change,
+    Tom then decided not to pursue the editorial rename via P2071.  Anyone wishing to pursue the rename
+    should therefore write a separate paper. \]
+- [P0592R4: To boldly suggest an overall plan for C++23](https://wg21.link/p0592r4):
+  - Tom introduced the topic.  At plenary in Prague, Peter Bindels asked what the process would be to amend
+    P0592.  Tom was approached by several committee members arguing that Unicode support should be added as
+    a priority for C++23.  Tom is concerned about spending committee time addressing a problem that might not
+    exist and is worried that attempting to add our favorite topic to the priority list might inspire other
+    groups to argue for adding theirs potentially consuming significant amounts of committee time.
+  - Jens asked what papers aren't making progress.
+  - Tom replied that, right now, SG16 is the bottleneck for SG16 work.  The EWG and LEWG chairs have been
+    quite supportive of making progress on Unicode matters.
+  - PBindels stated that he raised this in plenary partially to encourage people to write papers; we want to
+    ensure that EWG and LEWG are prepared for additional work that builds on the ground work we've been laying.
+  - Steve suggested a potential bad scenario.  Two years from now, there could be a glut of pattern matching
+    papers consuming lots of committee time just as C++23 is wrapping up.
+  - Tom agreed that is a possible concern, but added that he doesn't think we can preempt it.
+  - PBindels stated that P0592 is meant as a general guideline and that we need a plan for ourselves so that
+    we know what we are aiming for in C++23.
+  - PBrett agreed and added that knowing what we want, when we want it by, and who is responsible would be
+    helpful.
+  - Tom responded that the SG16 github site has issues tracking the SG16 work currently in motion as well as other
+    tentative ideas.  Many of those issues are marked as "help wanted" and are available for volunteers to take
+    on.
+  - Tom added that [P1238](https://wg21.link/p1238) is due for an update.  That paper could be updated to list
+    items that we want help with.  Perhaps we need to do more outreach to enlist additional help.  We could post
+    help wanted tweets or ask more people to get involved when giving talks.
+- [P1949R1: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949r1):
+  - Tom summarized the current status; Steve has been preparing a revision following EWG review in Prague.
+  - Steve stated that the paper is ready for the post-meeting mailing.
+  - Tom stated that we lost the tentatively ready status in EWG for this paper following
+    [additional email discussion](https://lists.isocpp.org/sg16/2020/02/1122.php)
+    that raised concerns about possible undefined behavior in conjunction with token pasting.
+  - Tom asked if the paper needs to address token syntax as well as identifier syntax.
+  - Corentin replied that NFC checking should happen after preprocessing.
+  - Tom asked if the grammar for identifiers is relevant for tokens.
+  - Jens replied that *preprocessing-token* is distinct and that they get converted into identifiers, keywords,
+    etc... at a particular translation phase.
+  - Jens added that this occurs in translation phase 7 per
+    [[lex.phases]p1.7](http://eel.is/c++draft/lex.phases#1.7) and
+    [[lex.token]p1](http://eel.is/c++draft/lex.token#1).
+    Core language wording should be added here to state that an identifier shall be in NFC form.
+  - \[ Editor's note: In the draft wording, this is added to
+    [[lex.name]](http://eel.is/c++draft/lex.name). \]
+  - Steve asked if this is a "shall" or "must" situation.
+  - Jens replied that "shall" is correct because a diagnostic is required and that "must" is a forbidden term
+    in normative wording.
+  - Tom mentioned that Peter Bindels has drafted a paper arguing for P1949 to be designated as a DR for C++20.
+  - Jens stated that the DR process would be to get P1949 adopted for C++23, and then get a plenary straw poll
+    to apply it as a DR against C++20.
+  - Steve agreed to add content to the paper arguing for treating the matter as a DR.
+  - PBindels told Steve to take whatever content he wanted from his DR draft and that he will abandon it.
+    - [Peter's draft](https://github.com/dascandy/fiets/blob/master/papers/DxxxxR0_P1949_as_DR.fiets)
+  - Jens suggested putting content directly in both the paper's front matter and at the beginning of the
+    core wording that this be considered a DR.
+  - Jens added that to ensure this is highlighted in core discussion.
+  - Tom asked if there would then be two core motions.  One to accept the paper for C++23 and another to
+    accept it as a DR for C++20.
+  - Jens replied that it could be one motion: "adopt for C++23 and consider as a DR for C++20"
+- [P1844R1: Enhancement of regex](https://wg21.link/p1844r1):
+  - Tom summarized the Prague outcome.  We declined to forward this paper on and Peter Bindels has authored a
+    draft paper to deprecate `std::regex`.
+  - Tom aplogized for not yet reviewing Peter's deprecation paper.
+  - PBindels stated he is waiting for review feedback from a select group of reviewers before sharing the draft
+    more widely.
+  - PBindels summarized the paper; it includes rationale for why programmers shouldn't use `std::regex`,
+    performance numbers, ABI issues, votes in Prague, etc...
+  - PBindels added that he would like to add more details on why the Visual C++ implementation is presumably
+    so heavily impacted by ABI concerns.
+  - Tom replied that the Visual C++ implementation exposes the entire state machine in template instantiations,
+    so no changes can be made that affect the state machine.
+  - Corentin suggested additional content stating that the design is overly complicated because it supports
+    so many regex languages and that the requirement to do so impacts performance.
+- [P1885R1: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r1):
+  - Tom suggested adding a list of encodings that are supported by ICU, iconv, Windows, etc..., but that are
+    not present in the IANA database.
+  - Corentin replied that he would try to do so.
+  - Tom suggested that we try to register an encoding to see how burdensome doing so is to assuage fears about
+    support for unrepresented encodings.
+  - Corentin replied that he didn't think that would be a good use of our time.
+  - PBrett added that doing so would be an abuse of process; the IANA registration process should only be used
+    to register encodings for which there is a demonstrable need.
+  - Tom acknowledged and agreed.
+  - Tom suggested adding additional use cases to the paper to make it more evident to LEWG(I) how this functionality
+    is expected to be used.
+  - Tom added that such use cases should include intended future direction as well; e.g., interaction with
+    [P1629: Standard Text Encoding](https://wg21.link/p1629).
+  - Corentin agreed to do so.
+  - JeanHeyd stated that he would look into prototyping integration between P1885 and P1629 and making it available
+    on godbolt.
+- [P1953R0: Unicode Identifiers And Reflection](https://wg21.link/p1953r0):
+  - Tom expressed uncertainty as to what the next steps are.
+  - Corentin stated that we need to get P1949 accepted first.  We can then revisit reflection and provide our
+    recommendations to SG7.
+  - Corentin added that we do need to keep on top of what SG7 is targeting for C++23.
+- [P1040R5: std::embed](https://wg21.link/p1040r5):
+  - Tom summarized the Prague outcome.  EWG expressed support for a file/directory handle `#depend` based
+    solution.  That solves SG16 concerns; unless there is still a need to support paths that are relative to a
+    handle at translation phase 7.
+  - JeanHeyd stated that there are lots of issues with the VFS/node/handle approach.  But regardless, the SG16
+    recommendation to use `char8_t` and UTF-8 resolves any SG16 related concerns.
+- Tom stated that the next meeting will be March 11th and that we'll be meeting with the new Unicode Message
+  Format Working Group.
 
 
 # February 5th, 2020
