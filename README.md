@@ -5,8 +5,9 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.
 
-The next SG16 meeting is scheduled for Wednesday, March 11th 2020, from 19:30-21:00 UTC (3:30-5:00pm EST).
+The next SG16 meeting is scheduled for Wednesday, March 25th 2020, from 19:30-21:00 UTC (3:30-5:00pm EDT).
 
+- [March 11th, 2020](#march-11th-2020)
 - [February 26th, 2020](#february-26th-2020)
 - [February 5th, 2020](#february-5th-2020)
 - [January 22nd, 2020](#january-22nd-2020)
@@ -44,6 +45,223 @@ The next SG16 meeting is scheduled for Wednesday, March 11th 2020, from 19:30-21
 - [April 11th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#april-11th-2018)
 - [March 28th, 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md#march-28th-2018)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 11th, 2020
+
+## Draft agenda:
+- Meet and greet for SG16 and the new Unicode Message Format Working Group (MFWG)
+  - Individual introductions.
+  - A brief history of each group.
+  - Current efforts and plans for each group.
+  - General discussion of message formatting.
+  - Discussion of how we might work together to mutual benefit.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Elango Cheran
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Lyberta
+  - Mark Zeren
+  - Markus Scherer
+  - Mihai Nita
+  - Peter Brett
+  - Romulo Cintra
+  - Shane Carr
+  - Steve Downey
+  - Steven R. Loomis
+  - Tom Honermann
+- The meeting started off with a round of introductions.
+- Tom provided a brief history of SG16 and changes championed for C++20.
+  - Tom mentioned the work that went into `std::format` via
+    [P1868](https://wg21.link/p1868)
+    in order to produce correctly aligned text for monospaced presentation formats.
+  - SLoomis stated that character display width is an important problem that is deserving of its own project.
+  - PBrett asked if there were plans to enable `std::format` to handle text translation.
+  - Tom stated that our current direction is captured in
+    [P1238: SG16 Unicode Direction](https://wg21.link/p1238).
+  - Markus provided some references for work being done in ICU to address C++20 incompatibilities:
+    - https://github.com/unicode-org/icu/pull/979 (a pull request providing minimal changes to allow ICU to
+      compile with C++20; basically a bunch of added `reinterpret_cast` casts for uses of `u8` string literals
+      to continue using them as arrays of `const char`)
+    - https://unicode-org.atlassian.net/browse/ICU-20984 (a proposal for a more principled change that avoids
+      the need for many of the `reinterpret_cast` casts)
+- Members of the MFWG provided an introduction and current status summary.
+  - Romulo gave a general introduction:
+    - The initial impetus for the group was the observed demand for client side message formatting and a lack
+      of browser features needed to effectively enable it two years ago.
+    - A recommendation was provided to join
+      [ECMA TC39](https://tc39.es)
+      and contribute to the group chaired by Shane Carr that is responsible for
+      [ECMA-402](https://tc39.es/ecma402).
+    - Discussed the idea of a new group with Shane focused on message formatting last year.
+    - Shane brought lots of new people, got them talking, and worked with the Unicode consortium to create
+      the new group.
+  - Shane continued:
+    - Message formatting was already recognized as an item to focus on for ECMAScript.
+    - The problem isn't unique to ECMAScript; it is a big problem space.
+    - A big question is, how much of the localization stack is to be covered?
+    - The Unicode consortium formed the new group in January, 2020 as a Unicode subcommittee.
+    - Romulo was named chair of the new group.
+  - Mihai continued with an overview of the scope and design direction:
+    - Think of message formatting like a locale aware implementation of `printf`.
+    - But one that can handle plurals.
+    - The idea is to separate the string from the localization data model.
+    - For `printf`, the format is a sequence of parts, each of which contributes raw text or a placeholder
+      with formatting data.
+    - Proper internationalization requires a more complicated data model.
+    - There are three major pieces needed:
+      - The data model.
+      - A serialization form.
+      - A message store.
+    - A goal is to provide a standard data model that can be mapped to various localization interchange
+      formats; not to produce yet another message format.
+  - Romulo wrapped up:
+    - Have had 5 meetings so far.
+    - Are still in the design and requirements discovery phase.
+    - Are still working on design processes to ensure efficient operation.
+- General discussion ensued:
+  - PBrett asked about challenges faced where ICU is currently deficient.
+  - Mihai responded that he has a document he can share:
+    - A major challenge is that ICU has the only widely deployed formatting implementation.
+    - There are some ECMAScript libraries.
+    - ICU does not support inflections well.  For example, in English, one might say "the book", but in other
+      languages, instead of inserting "the", the word "book" is changed.
+    - ICU also doesn't handle combinations of plurals well.  For example, a statement like
+      "I bought 5 books and 2 posters" requires a complext nested switch format due to combinatorial explosion
+      and the syntax is clunky.
+  - Markus provided an example of plural complexities.  Arabic has six different plural forms and more may be
+    added to say "exactly one" or for "none".  Two instances of pluralization in a message can lead to dozens
+    of possibilities.
+  - Shane stated that the ICU message format is the defacto standard right now, but there is no specification
+    for it.
+  - Elango responded that there are different defacto standards across different language ecosystems.  Data
+    literals in ECMAScript provide flexibility.  Many programmers roll their own solutions and this results in
+    inconsistency.  The goal is to create a specification to encourage normalizing behavior across disparate
+    implementations.
+  - Jens commented on the complication of language bindings and extensive behavioral options.
+  - Mihai agreed; message formatters congregate lots of functionality.
+  - Mihai mentioned his prototype of a formatter that uses
+    [Protocol Buffers](https://developers.google.com/protocol-buffers)
+    to translate syntax between different formatters.  A comprehensive core data model is essential to be able
+    to do so.
+  - Elango stated that the general facility has just one output for message formatting; date formatting is
+    provided by a plugin.
+  - Mihai opined that it would be useful to have support for ranges as well.
+  - PBrett stated that the ability to stream output is important for C++ and that this covers several
+    orthogonal areas of concern:
+    - The data model.
+    - The abstract representation.
+    - The concrete representation.
+    - The sinks that messages go to.
+    - Authoring of the translation database.
+  - PBrett added that the above raises an important question for the MFWG to address: what are you trying to
+    solve and what is the abstraction?
+  - Jens observed that there appears to be little overlap between SG16 and the MFWG; when the MFWG specification
+    is complete, SG16 will consume it.
+  - Tom provided some of his perceptions of the benefits of working together.  First, we ensure that the output
+    of the MFWG works for purposes that we envision.  Second, we get informed about infrastructure requirements
+    that may require new facilities to meet in order to adopt the MFGW output.  For example, enhancements to
+    locale support.
+  - Jens noted that, for `std::format` to be able to provide message formatting, it would have to be able to
+    access the message catalog.
+  - PBrett observed that adding that complexty to `std::format` may be challenging; it may be difficult to
+    separate dependencies.
+  - Markus noted that the mechanism used to pluralize a message is distinct from the source of the
+    pluralization data.
+  - Tom asked for clarification; pluralization is more of an algorithm than a lookup?
+  - Markus responded that the way ICU has worked for the last 25 years is to parcel out strings or states, and
+    then combine them according to specific rules.
+  - Jens stated that WG21 has shied away from localization isseus because the C++ story is so poor; serious work
+    is needed here.
+  - Mihai explained that, in the data model the MFWG is working on, a place holder is a cross reference to
+    another string.  If the mapping is generic, then a generic binding can be used, but loading can be customized.
+  - Jens expressed caution; we're wary of costs for features that are not used.  Paying such costs is fine when
+    needed, but should not pose overhead when not being used.
+  - Tom asked if the design can avoid such costs when such features aren't used.
+  - Jens responded that that isn't a fair question for a data model.  A more appropriate question would be what
+    the impact is to the tables used for pluralization data.
+  - Mihai responded that pluralization is not a large data set.  The question is more relevant for inflection.
+    Some languages are regular, but others are quite unregular and sorting requires a lot of data.
+  - Mihai added that message formatting brings algorithms together, but the information needed to guide the
+    formatter is distinct.
+  - Jens asked if support for pluralization and inflections is in scope.
+  - Elango responded that pluralization is, but that inflections may not be; this is work in progress.
+  - Shane further responded that support for inflections is in scope as part of the effort to make a standard
+    interface that enables plugging in extensions.
+  - Shane added that the focus is to provide a solution that does not require an implementor to implement
+    everything.  Implementors should be able to provide only the subset of features needed for a particular
+    deployment.
+  - Markus elaborated on ICU's pluralization support.  ICU doesn't attempt to determine the plural form for
+    any word in any language.  Rather, it identifies ranges of numbers for 100+ languages where things must
+    be done differently.  Translators are then required to author different messages.  Translation tools are
+    designed to prompt translators for each translation form that is needed.  The pluralization form is then
+    used for message selection.
+  - Jens observed that the ICU design is exactly what causes the combinatorial explosion.
+  - Mihai noted that the goal is to simplify the syntax, not to reduce the number of translations required.
+  - PBrett asked how translators can provide translations conveniently in those cases.
+  - Mihai responded that translation tools can do fuzzy matches and offer suggestions.
+  - PBrett asked about the MFWG road map; is it a goal to produce a Unicode TS?
+  - SLoomis responded, yes.
+  - PBrett asked if there is a tentative time line.
+  - Romulo responded that they are still in the design phase, so there is no clear road map right now.
+  - Mihai added that they have been focused on collecting use cases and feature requests; the rate of additions
+    is decreasing.
+  - Mihai elaborated that getting consensus on a data model being a goal took some time.
+  - Corentin stated that it would be great to support a common syntax in C++ and ECMAScript so that translators
+    have consistent experiences.  For `std::format`, Python's syntax was adopted thereby enabling developers to
+    switch easily.
+  - Mihai responded that a common format is anticipated for translators, but that does not necessarily correspond
+    to what a programmer writes.
+  - PBrett hypothesized that a C++ implementation could have a `constexpr` solution that uses C++, but that can be
+    translated to some other syntax.
+  - PBrett added that we need to think of how to deprecate and replace `std::message`.
+  - Jens noted that understanding the data model is important to envision how the various parts fit together and
+    asked if a draft data model exists.
+  - Mihai responded that there are currently two documents on the data model.  Elango provided a document that
+    argues for a data model, and Mihai provided one that maps a model to one of several implementations and
+    discusses how it can be modified to add features.  There is no final draft.
+    - https://docs.google.com/presentation/d/1dyW29SlqjPRZVScobqEXjnP29fhbqMkCfgxPOWj3Tnw
+      (requires permission to access)
+  - Corentin asked if there is a reference syntax available and noted that none of us our linguistics experts.
+  - Mihai responded that a syntax for ECMAScript is anticipated along with a language independent form in
+    a structured data format like JSON.
+  - Markus suggested that SG16 should consider whether it wants to do something in this area or whether this
+    functionality should be left to non-standard libraries.
+  - Tom responded that the design direction would allow for a standard implementation, but doesn't restrict the
+    use of non-standard implementations.
+  - Jens suggested that it would be good to appoint someone from SG16 to be a liazon to attend MFWG meetings and
+    keep tabs on things.
+  - Shane agreed with that approach; it would help to maximize utility to consumers.
+  - Jens commented that what the committee needs is a standard that we can defer to that was produced by
+    experts since, if left to our own devices, we'd probably produce a poor design.  Dependence on such a standard
+    needs to be figured into our road map.
+  - PBrett asked about the
+    [MFWG mailing list](https://groups.google.com/a/chromium.org/forum/#!forum/message-format-wg)
+    and
+    [MFWG github site](https://github.com/unicode-org/message-format-wg);
+    neither looks particularly active.
+  - SLoomis replied that most activity is happening in github issues.
+  - Shane added that there is a Slack Unicode channel.
+  - PBrett suggested that SG16 should discuss more, reflect, and contemplate how we want to move forward.
+  - PBrett asked what SG16 can do to help facilitate work by the MFWG.
+  - Mihai responded; try not to invent something new.
+  - Corentin noted that we need to re-design our locale facilities before we can take on message localization
+    and that we need to implement facilities matching those in
+    [ECMA-402](https://www.ecma-international.org/publications/standards/Ecma-402.htm).
+  - Tom returned to the subject of requirements and asked if there are cases where multiple locales need to be
+    consulted for the same message.
+  - Markus responded that mixtures of locales appear in cases where a placeholder refers to, for example, a name.
+  - Steve stated that such scenarios are common with currency; it is common, for example, to use USD outside of
+    US locales.
+  - Mihai added that this also happens with dates.  Dates may be presented in multiple formats.
+  - Steve added that use of a locale independent date format might be consistently used regardless of locale.
+  - Mihai stated that these scenarios should be possible to address, but not optimized for.
+  - Tom asked if the notion of locale independent message formatting is relevant to the MFWG.
+  - Markus replied that there are good use cases for locale independent formatting; logging for example.
+  - Steve added that JSON output should not be localized.
 
 
 # February 26th, 2020
