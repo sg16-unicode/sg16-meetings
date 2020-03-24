@@ -92,6 +92,12 @@ The next SG16 meeting is scheduled for Wednesday, March 25th 2020, from 19:30-21
   - Romulo gave a general introduction:
     - The initial impetus for the group was the observed demand for client side message formatting and a lack
       of browser features needed to effectively enable it two years ago.
+    - There are currently a number of libraries available that cumulatively account for millions of weekly
+      downloads:
+      - NPM trends:<br/>
+        https://www.npmtrends.com/i18n-vs-i18next-vs-messageformat-vs-polyglot-vs-intl-messageformat-vs-fluent-vs-fbt-vs-format-message
+      - Overview and analysis of various libraries:<br/>
+        https://docs.google.com/presentation/d/1RujNFCq3gH9TUEKDB_uFdKWNG1A1j2_NBCdnTmnEqv0/edit#slide=id.g4af2a8f783_0_210
     - A recommendation was provided to join
       [ECMA TC39](https://tc39.es)
       and contribute to the group chaired by Shane Carr that is responsible for
@@ -223,8 +229,10 @@ The next SG16 meeting is scheduled for Wednesday, March 25th 2020, from 19:30-21
   - Mihai responded that there are currently two documents on the data model.  Elango provided a document that
     argues for a data model, and Mihai provided one that maps a model to one of several implementations and
     discusses how it can be modified to add features.  There is no final draft.
-    - Elango's doc: https://docs.google.com/presentation/d/1fBfawWNfniCFox-PltCMyVtbcVwYGYkk78GUbWzas5o/edit#slide=id.g8254abe56c_0_0
-    - Mihai's doc: https://docs.google.com/presentation/d/1dyW29SlqjPRZVScobqEXjnP29fhbqMkCfgxPOWj3Tnw
+    - Elango's doc:<br/>
+      https://docs.google.com/presentation/d/1fBfawWNfniCFox-PltCMyVtbcVwYGYkk78GUbWzas5o/edit#slide=id.g8254abe56c_0_0
+    - Mihai's doc:<br/>
+      https://docs.google.com/presentation/d/1dyW29SlqjPRZVScobqEXjnP29fhbqMkCfgxPOWj3Tnw <br/>
       (currently requires permission to access)
   - Corentin asked if there is a reference syntax available and noted that none of us our linguistics experts.
   - Mihai responded that a syntax for ECMAScript is anticipated along with a language independent form in
