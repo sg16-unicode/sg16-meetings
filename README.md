@@ -223,8 +223,9 @@ The next SG16 meeting is scheduled for Wednesday, March 25th 2020, from 19:30-21
   - Mihai responded that there are currently two documents on the data model.  Elango provided a document that
     argues for a data model, and Mihai provided one that maps a model to one of several implementations and
     discusses how it can be modified to add features.  There is no final draft.
-    - https://docs.google.com/presentation/d/1dyW29SlqjPRZVScobqEXjnP29fhbqMkCfgxPOWj3Tnw
-      (requires permission to access)
+    - Elango's doc: https://docs.google.com/presentation/d/1fBfawWNfniCFox-PltCMyVtbcVwYGYkk78GUbWzas5o/edit#slide=id.g8254abe56c_0_0
+    - Mihai's doc: https://docs.google.com/presentation/d/1dyW29SlqjPRZVScobqEXjnP29fhbqMkCfgxPOWj3Tnw
+      (currently requires permission to access)
   - Corentin asked if there is a reference syntax available and noted that none of us our linguistics experts.
   - Mihai responded that a syntax for ECMAScript is anticipated along with a language independent form in
     a structured data format like JSON.
@@ -244,7 +245,8 @@ The next SG16 meeting is scheduled for Wednesday, March 25th 2020, from 19:30-21
     [MFWG github site](https://github.com/unicode-org/message-format-wg);
     neither looks particularly active.
   - SLoomis replied that most activity is happening in github issues.
-  - Shane added that there is a Slack Unicode channel.
+  - Shane added that there is a
+    [Slack Unicode channel](https://unicode-org.slack.com).
   - PBrett suggested that SG16 should discuss more, reflect, and contemplate how we want to move forward.
   - PBrett asked what SG16 can do to help facilitate work by the MFWG.
   - Mihai responded; try not to invent something new.
