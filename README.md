@@ -3,10 +3,16 @@
 SG16 meetings are typically held on Wednesdays from 3:30pm-5:00pm EST5EDT4 on the 2nd
 and 4th weeks of each month, but scheduling conflicts or other time pressures sometimes
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
-prior attendees.
+prior attendees.  To request an invitation, please contact tom@honermann.net.
 
-The next SG16 meeting is scheduled for Wednesday, March 25th 2020, from 19:30-21:00 UTC (3:30-5:00pm EDT).
+The next SG16 meeting is scheduled for Wednesday, April 8th 2020, from 19:30-21:00 UTC (3:30-5:00pm EDT).
+The draft agenda is:
+- Discuss the proposed operational plan for now until the NY meeting in November
+- Unicode Message Format Working Group liaison report.
+- D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31
+  - New draft revision review.
 
+Summaries of past meetings:
 - [March 11th, 2020](#march-11th-2020)
 - [February 26th, 2020](#february-26th-2020)
 - [February 5th, 2020](#february-5th-2020)
@@ -29,7 +35,10 @@ The next SG16 meeting is scheduled for Wednesday, March 25th 2020, from 19:30-21
 
 ## Meeting summary:
 - Attendees:
-  - Corentin Jabot
+  - Corentin Jabot- Discuss the proposed operational plan for now until the NY meeting.
+- Unicode Message Format Working Group liaison report.
+- D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31
+  - New draft revision review.
   - Elango Cheran
   - JeanHeyd Meneide
   - Jens Maurer
