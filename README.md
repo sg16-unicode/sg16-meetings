@@ -13,6 +13,7 @@ The draft agenda is:
   - New draft revision review.
 
 Summaries of past meetings:
+- [March 25th, 2020](#march-25th-2020)
 - [March 11th, 2020](#march-11th-2020)
 - [February 26th, 2020](#february-26th-2020)
 - [February 5th, 2020](#february-5th-2020)
@@ -21,6 +22,228 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 25th, 2020
+
+## Draft agenda:
+- Follow up on our meeting with the Unicode Message Format Working Group
+  - Draft volunteers to function as liaisons between our groups.
+- Plans to acquire implementation experience for:
+  - P1949R1: C++ Identifier Syntax using Unicode Standard Annex 31
+  - P2071R0: Named universal character escapes
+- D2124R0: std::regex should be deprecated starting in C++23
+  - https://htmlpreview.github.io/?https://github.com/dascandy/fiets/blob/master/html/D2124R0_Deprecate_std_regex.html
+  - Initial SG16 review.
+
+## Meeting summary:
+- Attendees:
+  - David Wendt
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Lyberta
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+- Summer plans in lieu of the Varna meeting.
+  - Tom introduced the topic.
+    - With the cancellation of the Varna meeting, the library and language subgroups are going to start
+      hosting telecons.  This raises two concerns:
+      - We'll face increased competition for our respective telecon time budgets.
+      - We traditionally have not conducted polls during telecons, but we'll need to start doing so if
+         we are to get papers forwarded to the subgroups for review during their telecons.
+    - Tom also mentioned that mailings will now occur monthly.
+  - Tom asked if anyone had concerns about continuing to attend SG16 telecons due to potentially having
+    to choose between SG16 or other subgroup telecons.  No concerns were reported.
+  - PBrett asked how polling will be conducted.
+  - Tom explained his current thoughts; we can adopt a tentatively ready approach and affirm decisions at
+    the next face-to-face meeting.
+  - PBrett suggested providing some method of async polling for those that are unable to attend telecons
+    due to time zone or other challenges.
+  - Tom replied that it is important that those voting are present for discussion leading up to a poll.
+  - Mark stated that the current schedule is ok, but that we could consider setting aside two time slots
+    favorable to different time zones and swap between them.
+  - PBrett suggested that having a tentatively ready queue provides an opportunity for a two tier
+    approach to decision making.
+  - JeanHeyd suggested adopting the LWG approach of monday emails preceding a meeting; that would invite
+    more participation from those that cannot attend a telecon.
+  - Tom expressed support for that suggestion.
+  - Mark opined that polling should not occur without an author present as we'd be unlikely to converge on
+    consensus.
+  - Mark suggested that, perhaps, we could record discussion.
+  - Tom replied that he could follow up with Herb regarding that possibility.
+  - PBrett suggested that we can publicize tentatively ready decisions, request feedback, and revisit based
+    on new information.
+  - Hubert stated that meeting minutes are useful, but that he would object to sharing recordings since
+    this group is open.  Trust between committee members is built over time and we have to trust people to
+    understand mis-statements.
+  - Tom asked Hubert that, if Herb were to approve some kind of recording, if this is something he could
+    potentially be open to.
+  - Hubert responded with maybe, but only if a demonstrable need is recognized that can't be addressed in
+    another way.
+  - Tom agreed with that criteria; recordings are sensitive, we can revisit this if need arises.
+  - Steve stated that more frequent mailings will help give us notice of poor responses to previous decisions.
+    Writing a short paper with new information should not be a high bar.
+  - Hubert replied that mailings are a heavy weight way of providing feedback.  During face to face meetings,
+    we accept and address feedback in real-time; sometimes including in plenary.
+  - Tom agreed, but added that writing a paper is always an option.
+  - Steve expressed a preference that there be a relatively high bar for reopening discussions.
+  - Tom agreed and provided an example case where discussion was reopened.  SG16 approved
+    [P1885R0](http://wg21.link/p1885r0) in Belfast, discussion afterwards resulted in the paper being
+    revisited in Prague where
+    [P1885R2](http://wg21.link/p1885r2) was approved.
+  - Hubert stated that, since SG16 is a study group, objections can always be raised with EWG, LEWG, or
+    in plenary.
+  - Tom returned to the mechanics of polling.  Bluejeans doesn't have polling features built in.  We could
+    switch to Zoom so that we could make use of its "raise hand" feature.  Otherwise, we'll have to figure
+    out another way to conduct polls.
+  - Tom stated that he would document a process to use and we can evaluate consensus on it at an upcoming
+    telecon.
+- Follow up on the prior meeting with the Unicode Message Format Working Group
+  - Tom asked if there were any volunteers to function as a liaison between our groups.
+  - PBrett volunteered to do so.
+- Plans to acquire implementation experience for:
+  - [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949):
+    - Tom asked Steve if he had any thoughts on implementation.
+    - Steve responded that he had not strongly considered it, but that he didn't think it should be too
+      difficult, at least for gcc where warnings are already emitted.
+    - Steve added that the immediate priority is to free up time to answer new questions raised since the
+      Prague meeting.
+    - Tom suggested that it may suffice to audit the warnings that gcc provides and, if they closely match
+      the proposal, to consider that sufficient implementation experience.
+    - Steve stated that the complicated part is the filter for what characters are allowed.
+    - Tom suggested another approach might be to analyze the gcc tests and add more as necessary to cover
+      edge cases.
+    - Steve responded that there is a table for allowed characters already and that he could probably
+      evaluate that prior to the New York meeting.
+  - [P2071: Named universal character escapes](https://wg21.link/p2071):
+    - Tom stated that he has not started on an implementation yet; he is currently focused on getting
+      implementations of `mbrtoc8` and `c8rtomb` ready to submit to glibc.
+    - Tom added that he might start an implementation after that, but if anyone else wants to work on it,
+      that would be great.
+    - JeanHeyd asked if an implementation was needed given the prior work that Corentin did.
+    - Tom responded that, technically no, but having an implementation available helps with consensus;
+      it means we're standardizing an existing practice.
+    - PBrett agreed; an implementation increases confidence in a design.
+    - Hubert stated that the implementation impact for C vs C++ may be much higher; WG14 may object.
+    - Jens noted that WG14 will want two implementations, but that acceptance in C++ counts as one.
+    - JeanHeyd asked if anyone was aware of a simple C compiler that would be good for experimentation.
+    - PBrett replied that
+      [TCC](https://bellard.org/tcc)
+      might be a good choice, but that it appears to be unmaintained.
+    - Jens noted that the implementation doesn't require a modern C compiler.
+    - JeanHeyd suggested that
+      [SDCC](http://sdcc.sourceforge.net)
+      may be another option.
+    - Steve stated that he would be surprised if there was significant code size impact as opposed to
+      data size.
+    - Jens responded that it doesn't much matter; growth is growth and potentially impactful for
+      constrained use cases.  Even 300K could be significant.
+    - Steve provided an example impact; the compiler may no longer fit on a floppy disk.
+    - Jens suggested it may make sense for this feature to be optional for C.
+    - Jens noted that Richard Smith had asked about allowing `\N` in identifiers and suggested they
+      should be allowed there.
+    - Tom responded that it is on his todo list to address that in a revision.  We'll then want to discuss
+      that option at a future telecon.
+    - Jens added that, from a core wording perspective, it would be simpler to specify these as
+      `universal-character-name`; allowed uses could still be differentiated.
+- [D2124R0: std::regex should be deprecated starting in C++23](https://htmlpreview.github.io/?https://github.com/dascandy/fiets/blob/master/html/D2124R0_Deprecate_std_regex.html):
+  - PBindels introduced the draft:
+    - `std::regex` doesn't work with variable length encodings.
+    - Performance is poor to the point it is faster to fork and exec a process to do the regex in another
+      language.
+    - We can't fix the problems due to ABI concerns.
+    - There is no plan to remove; just to deprecate until a suitable replacement is provided, as was done
+      for `std::auto_ptr`.
+    - We don't want to spend more committee time on `std::regex`.
+  - PBrett added that he has drafted additional changes that discuss what a new regex implementation
+    could provide and had planned to target those changes to the Varna pre-meeting mailing.
+  - Hubert noted that we now have monthly meetings.
+  - Tom noted that the next mailing deadline is now April 15th.
+  - Hubert stated that the relatively large set of supported RE grammars is a problem; we should avoid
+    POSIX ones that require implementation-defined behavior.
+  - PBrett noted that this concern is mentioned in the paper, but needs more detail.
+  - PBrett also noted that the paper would benefit from a reference to
+    [UTS#18](http://www.unicode.org/reports/tr18/tr18-19.html).
+  - Tom suggested that, perhaps, a separate paper listing requirements for a `std::regex` replacement
+    would be useful.
+  - JeanHeyd responded that is useful to have that information in this paper to guide authors who might
+    like to propose a replacement.
+  - PBrett suggested that a requirements paper could be provided later.
+  - PBindels opined that direction for a replacement should be documented in a new paper.
+  - Steve suggested that inability to handle Unicode is reason enough to deprecate `std::regex`.
+  - PBrett noted that `std::regex` can be used for UTF-8 if the regular expression author is very careful
+    and text is normalized.
+  - PBrett also noted that `std::regex` can be used on strings that are not text.
+  - PBindels aded a comparison; just like `std::string` can be used for non-text.
+  - Mark gently steered the group back to the topic of deprecation.
+  - PBrett asked if anyone that regularly attends LEWG or LWG has additional guidance.
+  - Hubert responded that including relevant LWG issues would be helpful.
+  - Mark responded that it would be useful to include links to relevant papers that discussed issues with
+    `std::regex` in the past and provided a list of such papers going back to 2005:
+    - [P0169R0: regex and Unicode character types](https://wg21.link/p0169r0)
+    - [P0014R1: Proposal to add the multiline option to std::regex for its ECMAScript engine](https://wg21.link/p0014r1)
+    - [P0757R0: regex_iterator should be iterable](https://wg21.link/p0757r0)
+    - [P1149R0: Constexpr regex](https://wg21.link/p1149r0)
+    - [P1844R1: Enhancement of regex](https://wg21.link/p1844r1)
+  - Mark added that references to closed LWG issues would also be useful.
+  - Hubert agreed; the existence of significant issues may be sufficient motivation for removal.
+  - PBrett noted that relevant LWG issues can be found by searching for "regex" on the
+    [LWG active issues list](https://cplusplus.github.io/LWG/lwg-active.html).
+  - Hubert provided a link to such an issue:
+    https://cplusplus.github.io/LWG/issue2546.
+  - Jens noted that `export` was removed, so there is precedent for removal without replacement.
+  - Jens suggested that someone follow up with Peter Dimov since he was involved with `boost::regex` and
+    the introduction of `std::regex` in C++11.
+  - PBrett suggested that, perhaps, the paper should include an option for removal.
+  - Jens cautioned against doing so.
+  - PBindels opined that there is plenty to gain by deprecation, but that noting the possibility of removal
+    is an option.
+  - Jens added another prior deprecation example; `<strstream>` deprecation was not particularly difficult
+    despite there still not being a full replacement for all use cases.
+  - JeanHeyd commented that
+    [P0448](https://wg21.link/p0448)
+    provides a span that is a full replacement for `<strstream>`, so removal may be possible relatively soon.
+  - Jens expressed a desire for an analysis of how a replacement could be evolved without running into the
+    same ABI issues.
+  - PBindels agreed with that desire, but opined that should be done in a different paper.
+  - Tom provided a list of suggestions:
+    - Drop all uses of "very", "much", "bad", "many", "entirely", "large", etc...
+    - In 3.1.1, the example is good, but confusing.  It may be worth emphasizing that use of braces denotes
+      a set of individual code units (not characters!) to be matched.  It may be helpful to explain the intent
+      and the observed behavior separately.
+    - In 3.1.2, it may be worth mentioning explicitly that Unicode has multiple ways to represent some characters.
+    - In 3.1.3, it isn't stated what character is used as a space character in the example string.
+    - Explicitly list the signatures of interfaces in `std:regex_traits` that are problematic.  Having the
+      signatures available makes some of the issues very clear.  For example, what does it mean to translate a
+      standalone code unit?
+      - `CharT std::regex_traits<CharT>::translate(CharT c) const`
+    - Explain why a replacement for `std::regex_traits` wouldn't suffice to address significant problems; the
+      interfaces provided by `std::regex` are not problematic by themselves.
+    - Reference failed papers.
+  - PBrett stated that people reading the paper should be aware of normalization.
+  - Jens responded that some won't and that they will form an opinion and vote on the paper regardless.
+  - Hubert asserted that the paper does not need to focus on details of Unicode; an additional problem is that
+    `std::regex` doesn't differentiate between the encoding of the pattern and the subject.
+  - Hubert provided a link to a
+    [gcc bug report](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81200)
+    demonstrating that WG21 didn't understand the `std::regex` functionality when they standardized it.
+  - PBrett asked if anyone has major concerns about deprecating `std::regex`.
+  - Mark responded that, when his organization moved to C++11, `std:regex` was the only new feature programmers
+    were told not to use.
+  - PBindels responded that he once tried to use `std::regex` to do an alternation on a few patterns and
+    performance made it clear this wasn't going to work out.
+  - PBrett responded that his organization usees `std::regex` in production, in limited cases, with known
+    Latin1 text.
+  - Hubert responded that he has come across cases where `std::regex` matching behavior is sensitive to
+    compiler language dialect options.
+  - Steve responded that deprecating it would make code reviews easier since all uses of it could be rejected
+    on the basis that deprecated features shouldn't be used.
+  - PBrett noted that `-Wno-deprecated` is ubiquitous in their code base.
+- Tom confirmed that the next meeting will be Wednesday, April 8th.
 
 
 # March 11th, 2020
