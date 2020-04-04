@@ -35,10 +35,7 @@ Summaries of past meetings:
 
 ## Meeting summary:
 - Attendees:
-  - Corentin Jabot- Discuss the proposed operational plan for now until the NY meeting.
-- Unicode Message Format Working Group liaison report.
-- D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31
-  - New draft revision review.
+  - Corentin Jabot
   - Elango Cheran
   - JeanHeyd Meneide
   - Jens Maurer
