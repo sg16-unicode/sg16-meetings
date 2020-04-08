@@ -5,12 +5,13 @@ and 4th weeks of each month, but scheduling conflicts or other time pressures so
 force alternative scheduling.  Meeting invitations are sent to the mailing list and
 prior attendees.  To request an invitation, please contact tom@honermann.net.
 
-The next SG16 meeting is scheduled for Wednesday, April 8th 2020, from 19:30-21:00 UTC (3:30-5:00pm EDT).
+The next SG16 meeting is scheduled for Wednesday, April 22nd 2020, from 19:30-21:00 UTC (3:30-5:00pm EDT).
 The draft agenda is:
-- Discuss the proposed operational plan for now until the NY meeting in November
-- Unicode Message Format Working Group liaison report.
+- Core issue 1871: Non-identifier characters in ud-suffix
+  - https://github.com/sg16-unicode/sg16/issues/61
+  - Core decreed that this issue is evolutionary.  JF requested SG16 review and provide a recommendation.
 - D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31
-  - New draft revision review.
+  - Review updates since the April 8th review.
 
 Summaries of past meetings:
 - [March 25th, 2020](#march-25th-2020)
