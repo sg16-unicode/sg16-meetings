@@ -1,11 +1,13 @@
 # SG16 Meeting Summaries
 
-SG16 meetings are typically held on Wednesdays from 3:30pm-5:00pm EST5EDT4 on the 2nd
-and 4th weeks of each month, but scheduling conflicts or other time pressures sometimes
-force alternative scheduling.  Meeting invitations are sent to the mailing list and
-prior attendees.  To request an invitation, please contact tom@honermann.net.
+SG16 meetings are typically held on Wednesdays from 19:30-21:00 UTC on the 2nd and 4th
+weeks of each month, but scheduling conflicts or other time pressures sometimes force
+alternative scheduling.  Meeting invitations are sent to the mailing list and prior
+attendees.  To request an invitation, please contact tom@honermann.net.
 
-The next SG16 meeting is scheduled for Wednesday, April 22nd 2020, from 19:30-21:00 UTC (3:30-5:00pm EDT).
+The next SG16 meeting is scheduled for
+Wednesday, April 22nd 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200422T193000&p1=1440)).
 The draft agenda is:
 - Core issue 1871: Non-identifier characters in ud-suffix
   - https://github.com/sg16-unicode/sg16/issues/61
