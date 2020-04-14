@@ -14,6 +14,7 @@ The draft agenda is:
   - Review updates since the April 8th review.
 
 Summaries of past meetings:
+- [April 8th, 2020](#april-8th-2020)
 - [March 25th, 2020](#march-25th-2020)
 - [March 11th, 2020](#march-11th-2020)
 - [February 26th, 2020](#february-26th-2020)
@@ -23,6 +24,275 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 8th, 2020
+
+## Agenda:
+- Discuss whether to hold telecons at the current UTC time year round and discontinue observing day light
+  savings time.
+- Discuss and poll to adopt the proposed SG16 operational plan:
+  - https://github.com/sg16-unicode/sg16/blob/78d6b4052ed561a6f5d384d6b5a4c7f30ac523c6/OperatingProcedures.md
+- Discuss whether to switch from Bluejeans to Zoom for future meetings.
+  - WG21 is encouraging (but not requiring) all SGs to use Zoom for consistency and for polling features.
+- Unicode Message Format Working Group liaison report.
+- D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31
+  - https://isocpp.org/files/papers/D1949R3.html
+  - New draft revision review.
+
+
+## Meeting summary:
+- Attendees:
+  - David Wendt
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- Discussion of telecons and daylight savings time:
+  - Tom introduced the topic.
+    - We've historically observed daylight savings time as observed in the EST5EDT4 timezone.
+    - Adjustments to meeting times due to timezone changes are a cause for confusion.
+    - Proposing to keep telecon times at the same UTC time year round.
+    - Any concerns?
+  - Everyone tried to work out what local telecon times would be when timezone adjustments next occur.
+    As might be expected, there was some initial confusion.
+  - Jens cleared up the confusion; when timezone changes are made in the fall, telecons will start one hour
+    earlier for locales that observe daylight savings time.
+  - Mark indicated that the earlier time might make for some tight scheduled for him, but probably ok.
+  - Tom stated that we'll try this and can always adjust if necessary.
+- Discussion and polls to adopt the proposed SG16 operational plan:
+  - Tom introduced the topic.
+    - As discussed during our last telecon, changes happening in WG21 in response to the COVID-19 crisis will
+      require that we begin polling papers during telecons.
+    - Tom circulated a draft document with proposed procedures for SG16 telecons and meetings:
+      - https://github.com/sg16-unicode/sg16/blob/78d6b4052ed561a6f5d384d6b5a4c7f30ac523c6/OperatingProcedures.md
+  - PBrett asked for clarification regarding forwarding of papers and whether a requested change means that we'll
+    need to wait for an updated revision and re-poll.
+  - Tom responded, no; we can approve with feedback and audit the next revision to ensure that our feedback was
+    addressed.  Such auditing may require naming a delegate to follow up in some cases.
+  - Steve noted that the isocpp.org paper management system allows for P-numbered papers that have not yet appeared
+    in a mailing to be updated.  Such updates should be avoided for P-numbered papers that have been shared prior
+    to appearance in a mailing.
+  - Jens stated that we should strive to avoid revision inflation but that it is probably beneficial to have a
+    P-numbered revision when polling to forwarding a paper to an upstream subgroup.
+  - **Poll: Adopt the proposed document as SG16's operating procedures**
+    - No objection to unanimous consent.
+ - Discussion of whether to switch from Bluejeans to Zoom for future meetings.
+  - Tom introduced the topic:
+    - WG21 leadership has suggested that all subgroups and study groups adopt Zoom for their telecons for
+      consistency, familiarity, and polling features.
+    - SG16 has been using Bluejeans successfully for the last two years.
+    - We haven't encountered many technical issues with Bluejeans.
+    - Bluejeans doesn't provide polling features.  Now that we'll need to be polling in telecons, such features
+      could prove helpful.
+    - Should we switch to Zoom?
+  - PBrett noted that there have been reports of serious privacy and security issues with Zoom.
+  - Tom responded that Herb has provided guidance on how to configure Zoom to address some of these issues.
+  - PBrett added that there are also concerns regarding how Zoom makes money.
+  - Tom responded that the ISO funds accounts for chairs that need them.  In my case, my ISO registration is
+    via my work email address and I have a Zoom account funded by my employer.
+  - PBrett noted that WebEx doesn't monetize usage monitoring; Zoom seems to have a we-can-do-whatever-we-want
+    approach to usage monitoring.
+  - Jens responded that eavesdropping concerns are probably not a strong concern for the ISO.  And SG16 is a
+    public group.
+  - Tom agreed.
+  - Jens stated that he has been having technical issues with Bluejeans; it fails to populate the participant
+    list and chat.  No such issues have been experienced with the Zoom client.
+  - Tom asked if there were any strong objections to switching to Zoom.
+  - PBrett responded that, if the question was phrased as, would I stop attending SG16 telecons if we switched
+    to Zoom, then the answer is no.
+  - Tom restated the question to just ask for preferences.
+  - Zach responded that he has no preference; both Bluejeans and Zoom work for him.
+  - Mark responded likewise.
+  - Steve responded that he has both installed and noted that the moderation features are better in Zoom.  If
+    SG16 were a larger group, we would need such features, but Bluejeans works fine for the size of our group.
+  - Zach stated that the LEWG telecon hosted with Zoom this week worked pretty well.  There were some challenges
+    getting everything on the screen; chat was pretty active, the raise hand feature was being used and that
+    required the participant list.  He had to tile windows to make everything fit.  The hand raise feature was
+    nice.  The LEWG chair struggled a little bit keeping tabs on chat, hands, screen.
+  - Zach added that he wasn't sure the raise hands feature is needed for groups of our size.
+  - PBrett reported having had a similar experience; it can be challenging to use Zoom without using multiple
+    monitors.
+  - Mark noted additional issues with the Zoom UI layout; widgets may obscure the main window.
+  - PBrett stated that we should have more motivation for switching.
+  - Jens reminded the group that Bluejeans is not working correctly for him.
+  - Tom suggested that we wait a month or so to evaluate how things go with other groups and then revisit.
+- Unicode Message Format Working Group liaison report.
+  - PBrett reported that, like everyone, they have been impacted by the COVID-19 pandemic, but they have worked
+    out a system for rotating chairs for meetings.
+  - PBrett added that, if anything interesting happens, that he will notify Tom to put an item on the agenda;
+    there is no reason to have a liaison report at each of our meetings at this time.
+- [D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31](https://isocpp.org/files/papers/D1949R3.html)
+  - Steve introduced changes since [P1949R2](https://wg21.link/p1949r2):
+    - The most significant changes relate to when normalization occurs.
+    - There is implementation divergence with regard to preprocessor identifiers.
+    - gcc requires that preprocessor identifiers meet the general identifier requirements, but Clang and Visual
+      C++ do not.  gcc rejects the following code because `\u0300` is not a valid initial character for an
+      identifier.
+      ```
+       #define accent(x) x##\u0300
+       constexpr int accent(A) = 2;
+       constexpr int gv2 = A\u0300;
+       static_assert(gv2 == 2, "whatever");
+      ```
+  - PBrett expressed a preference for gcc's behavior.
+  - Tom stated that the operands to the `##` operator are not identifiers.
+  - Jens agreed; they are preprocessing tokens.
+  - Steve responded that the grammar for preprocessing tokens includes identifier.
+  - Hubert agreed; the grammar for preprocessing tokens is stated in terms of identifiers.
+  - PBrett: provided a link to the grammar for `preprocessing-token` showing identifier.
+    - http://eel.is/c++draft/lex.pptoken#nt:preprocessing-token
+  - PBrett asked if it would be reasonable to modify the preprocessing grammar to require adherence to
+    [UAX#31](https://unicode.org/reports/tr31).
+  - Hubert responded that the question previously raised on the mailing list was, after token pasting, is it
+    required to check that a resulting preprocessor token that is ostensibly an identifier is in NFC and,
+    if not, is the result undefined-behavior (UB); in other words, is a non-NFC identifier a valid preprocessing
+    token?
+  - \[ Editor's note: that question was raised in the email thread that started at
+    https://lists.isocpp.org/sg16/2020/02/1122.php. \]
+  - Zach stated that, in general, yes, checking is required because combining two NFC sequences doesn't
+    necessarily produce an NFC sequence.  If we're going to diagnose ill-formedness, we need to check for that.
+    Otherwise we end up with ill-formed-no-diagnostic-required (IFNDR) and that should be avoided.
+  - PBrett mentioned that the draft paper doesn't have an example of pasting two NFC tokens that produce a
+    non-NFC result.
+  - Steve responded that the example in the paper is such an example.
+  - \[ Editor's note: The example in the paper is such an example, though not necessarily the kind of example
+    that Zach and Peter had in mind.  Including an example from the
+    [UAX#15 section on concatenation of normalized strings](https://unicode.org/reports/tr15/#Concatenation)
+    might be helpful. \]
+  - Jens noted that the second operand is not a valid UAX#31 identifier.
+  - Steve acknowledged that, but noted that a digit is not an identifier, but can be concatentated to a valid
+    identifier to produce a different one.
+  - PBrett asked if a bare combining character can be a valid preprocessing token; whether, in C++20, `\u0300`
+    is a valid preprocessor token.
+  - Jens responded, no; [[lex.name]p1 table 3](http://eel.is/c++draft/lex.name#tab:lex.name.disallowed)
+    lists U+0300 in the list of combining characters that are not permitted to start an identifier.
+  - PBrett summarized; Clang and Visual C++ are non-conformant because they allow `\u0300` as a preprocessing
+      token, but gcc handles this correctly.  This is the status quo.
+  - Jens stated that the lexer permits much undefined behavior, so we need to be careful.
+  - PBrett agreed and added that, for cases of existing UB, we can change behavior.
+  - Jens opined that the example ought to be ill-formed, but that there are oddities in the lexer and
+    preprocessor specifications.  For example there is wording that if the result of a concatenated token is
+    not a valid preprocessor token, then the result is UB; would like this example to be ill-formed.
+  - PBrett asked if this issue should be reviewed by SG12.
+  - Jens responded, no; so long as we're not removing allowances for UB or adding new UB, SG12 doesn't need
+    to be involved.  The example appears to be ill-formed.
+  - Tom asked for clarification; Clang and Visual C++ are missing a diagnostic?
+  - Jens responded, yes.
+  - Zach stated that this suggests that the NFC check should be performed later in translation as opposed to
+    checking that each operand of the `##` operator is in NFC.
+  - Jens disagreed with that approach.
+  - Steve observed that there are interesting interactions with header units since they externalize
+    preprocessor macros and require comparisons of them.
+  - Tom opined that the issue applies equally for headers since different header files can have different
+    source encodings.
+  - Jens suggested that implementations could convert to NFC as part of translation phase 1.
+  - Hubert reported having investigated implementation divergence and found that there seems to be confusion
+    regarding how max munch works for identifiers.
+    [preprocessing-token](http://eel.is/c++draft/lex.pptoken#nt:preprocessing-token)
+    has a rule to match non-white-space characters that don't otherwise fit in the grammar.  Max munch fails
+    to consume a `\u0300`, so `\u0300` is a valid preprocessing token.
+  - Jens noted the change in perspective; so the example is well-formed and gcc is wrong to reject it.
+  - PBrett concluded that, if `\u0300` is a non-white-space preprocessing token and is therefore a valid
+    operand for the `##` operator, then that means that the earliest we can diagnose non-NFC identifiers is
+    after token pasting.
+  - Steve summarized that the diagnostic options are translation phases 4 and 7.
+  - Hubert observed that there is a difference between writing `\u0300` and the actual U+0300 character
+    resulting from translation phase 1.
+  - Jens responded that, in translation phase 1, all extended characters are converted to
+    _universal-character-name_; bare character don't exist afterwards.
+  - Tom noted that differences are observeable in raw literals.
+  - Steve acknowledged, but noted that isn't relevant for identifiers.
+  - Zach stated that Hubert's point is important; macros need to be NFC checked.  But we want to make things
+    easy for implementors.  In the example, if we wanted to check the result of the contatenation in
+    translation phase 7, is there a simple rule to just check for macro names?  Or a simple rule to check all
+    identifiers in translation phases 4 and 7?  It may be worth asking implementors for opinions.
+  - PBrett stated that the check should be performed at the point that something becomes an identifier.  That
+    solves the problem for `#define` since it requires an identifier.
+  - Hubert responded that he is ok with the lexing portion of that.  The question is, when you try forming a
+    preprocessing token and it is supposed to be an identifier, do you need to check again?  If not, then
+    further checking is needed when converting preprocessing tokens to tokens.  Deferral would be preferred
+    in order to avoid interaction with the UB that Jens pointed out regarding token pasting producing invalid
+    preprocessing tokens.
+  - Zach summarized; we do need to check that preprocessing tokens used as identifiers are NFC.  And we need
+    to check that the result of token pasting is a NFC preprocessing token if used as an identifier.  And we
+    need to check identifiers at translation phase 7.
+  - Jens replied that the wording we have is already what we want; it doesn't differentiate between preprocessor
+    or translation phase 7 identifiers.  The result of token pasting is just a preprocessing token, so there is
+    no need to perform an NFC check since it isn't an identifier yet.
+  - Hubert clarfied his understanding of Zach's description; Jens stated that the result of token concatenation
+    is just a preprocessing token, but it can be any of the preprocessing token possibilities.  If it matches
+    an identifier, than we can check if it is NFC.
+  - PBrett stated that, in
+    [[cpp.concat]p3](http://eel.is/c++draft/cpp.concat#3),
+    if the result is not a preprocessing token, then the behavior is UB.  So we don't have to check for NFC
+    because it is already UB.
+  - Hubert responded that the question is then whether we care for this use case.
+  - Jens noted that caring for this use case is more expensive.
+  - PBrett stated that the case he is concerned about is where token pasting produces a name that is then used
+    to define a macro; a diagnostic should be issued in such cases.
+  - Jens responded that UB has already occurred at that point, so a diagnostic doesn't apply.
+  - Jens noted that the only use cases we have for producing non-NFC preprocessing tokens are for use with the
+    stringize operator
+  - Hubert added, or for discarding tokens.  The stringize case isn't too compelling because regular string
+    concatenation suffices.
+  - Hubert brought up another concern that had been previously raised; *preprocessing-token* includes
+    *pp-number*.  For user defined literals (UDLs), if we only check the identifier grammar, then we only check
+    at phase 7 when these tokens become UDL suffixes.
+  - Steve observed that this is where the discussion regarding use of currency characters in UDLs comes into
+    play.
+  - Jens stated that the current rules for
+    [[lex.name]](http://eel.is/c++draft/lex.name)
+    are reasonable and good enough since they restrict what identifiers can be.
+  - Zach asked if the implication is that we need to check for NFC at translation phases 4 and 7.
+  - Jens responded, yes.
+  - PBrett added that the example is then ill-formed because substituting the accent in the first `constexpr`
+    line produces UB, and the second `constexpr` is ill-formed because `A\u0300` is not in NFC.
+  - Steve stated that he will try to update the paper to clarify this.
+  - \[ Editor's note: Several minutes of discussion were not recorded because the editor was having a hard
+    time following it. \]
+  - Jens stated that we may need to introduce a *pp-identifier* preprocessing token kind to replace use of
+    *identifier*; the NFC check would then happen when converting a *pp-identifier* to an *identifier*.
+  - PBrett expressed support for this direction as it avoids the UB and difficulties with lexing the source
+    code.
+  - Jens asked Hubert if he is content with the introduction of a new *pp-identifier* term.
+  - Hubert responded that he is.
+  - Steve summarized the direction.  A new *pp-identifier* will be introduced that matches the preprocessor
+    notion of an identifier and for which an NFC check will be performed at the point that it is converted to
+    an identifier.  This avoids potentially needing to perform incremental NFC analysis during lexing.
+  - PBrett asked if the new *pp-identifier* could require conformance with UAC#31, but just not be in NFC.
+  - Zach replied, yes.
+  - PBrett asked for confirmation that a *pp-identifier* will never need to be compared.
+  - Jens replied, correct.
+  - Hubert added that this retains the case where a lone `\u0300` is neither a *pp-identifier* nor an
+    *identifier*; it is one of those lone non-white-space preprocessing tokens.
+  - Jens confirmed; right, because a *pp-identifier* must start with an `XIDStart` character.
+  - Steve asked for confirmation that *pp-identifier* will appear in the grammar roughly like *pp-number* does.
+  - Jens confirmed, yes.
+  - Tom asked Steve if additional feedback is needed.
+  - Hubert asked if there is any further question about how to apply the UAX#31 conformance statmeents.
+  - Steve replied that he would welcome recommendations on how to present that.  At present, the paper documents
+    a profile for conformance with R1, and an NFC requirement for conform to R4.  The remaining requirements are
+    intentionally unmet or not applicable.
+  - Jens replied that the phrasing doesn't seem right.  The intent of UAX#31 is to require documentation stating
+    what requirements apply and why or why not; the paper is lacking some introductory text.
+  - Steve acknowledged, something along the lines "profile is, ..., and the others are not applicable".
+  - Jens requested that the paper be updated to use complete sentences.
+  - Steve agreed to do so.
+  - Tom noted that, in section 9.3.1, there appears to be a formatting issue.
+  - Steve acknowledged and stated he would correct it.
+  - Jens volunteered to follow up with suggested wording on the mailing list.
+  - \[ Editor's note: Jens did so; the email thread is available at https://lists.isocpp.org/sg16/2020/04/1235.php. \]
+  - \[ Editor's note: After the meeting, Hubert sent a message to the mailing list arguing that attempted concatenation
+    of `\u0300` concatenates only the `\` character because the lexer observes `\`, `u`, `0`, `3`, `0`, `0`, not the
+    single *universal-character-name*.  The result is UB because the concatenation doesn't produce a valid preprocessing
+    token.  The email thread is available at
+    https://lists.isocpp.org/sg16/2020/04/1229.php. \]
+- Tom reminded the group that WG21 is moving to monthly mailings and that the next mailing deadline is April 15th.
+- Tom confirmed that the next meeting will be on April 22nd.
 
 
 # March 25th, 2020
