@@ -202,8 +202,10 @@ Summaries of past meetings:
     operand for the `##` operator, then that means that the earliest we can diagnose non-NFC identifiers is
     after token pasting.
   - Steve summarized that the diagnostic options are translation phases 4 and 7.
-  - Hubert observed that there is a difference between writing `\u0300` and the actual U+0300 character
-    resulting from translation phase 1.
+  - Hubert stated that there is a difference between writing `\u0300` and the actual U+0300 character
+    in the physical file.
+  - \[ Editor's note: Hubert clarified after the call that he was speaking to a need to consider the user
+    expectations in both cases.  The conversation got away before this point could be clarified. \]
   - Jens responded that, in translation phase 1, all extended characters are converted to
     _universal-character-name_; bare character don't exist afterwards.
   - Tom noted that differences are observeable in raw literals.
