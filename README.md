@@ -6,14 +6,16 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, April 22nd 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200422T193000&p1=1440)).
+Wednesday, May 13th 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200513T193000&p1=1440)).
 The draft agenda is:
-- Core issue 1871: Non-identifier characters in ud-suffix
-  - https://github.com/sg16-unicode/sg16/issues/61
-  - Core decreed that this issue is evolutionary.  JF requested SG16 review and provide a recommendation.
-- D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31
-  - Review updates since the April 8th review.
+- D1949R4: C++ Identifier Syntax using Unicode Standard Annex 31 
+  - Review updates since the April 22nd review.
+- Review the queue for C++23:
+  - How are we doing relative to the directives in [P1238R1](https://wg21.link/p1238r1)?
+  - What is our vision for C++23?  (What would be our elevator pitch?)
+  - What features are we on track to deliver?
+  - What features need additional prioritization?
 
 Summaries of past meetings:
 - [April 8th, 2020](#april-8th-2020)
