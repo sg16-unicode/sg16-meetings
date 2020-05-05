@@ -18,6 +18,7 @@ The draft agenda is:
   - What features need additional prioritization?
 
 Summaries of past meetings:
+- [April 22nd, 2020](#april-22nd-2020)
 - [April 8th, 2020](#april-8th-2020)
 - [March 25th, 2020](#march-25th-2020)
 - [March 11th, 2020](#march-11th-2020)
@@ -28,6 +29,187 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 22nd, 2020
+
+## Agenda:
+- [Core issue 1871: Non-identifier characters in ud-suffix](https://wg21.link/cwg1871)
+  - [SG16 github issue #61](https://github.com/sg16-unicode/sg16/issues/61)
+  - Core decreed that this issue is evolutionary. JF requested that SG16 review and provide a recommendation.
+- [P1949R3: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949r3)
+  - Review updates since the April 8th review.
+
+## Meeting summary:
+- Attendees:
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+- [Core issue 1871: Non-identifier characters in ud-suffix](https://wg21.link/cwg1871)
+  - Tom introduced the topic.
+    - This is a Core issue that has been deemed evolutionary and sent to EWG to handle.
+    - JF requested that SG16 provide a recommendation.
+  - PBrett expressed distaste for the idea and that it should be rejected.  ISO 4217 provides a standardized set of
+    currency identifiers that avoid challenges imposed by symbols.  We could instead define a currency language or
+    library facility.
+  - PBindels agreed.
+  - Jens agreed as well and noted that the ISO 4217 specification is what the finance community depends on.
+  - PBrett stated that we don't want to allow use of symbols that we might want to use for non-identifier things
+    like operators in the future.
+  - PBindels noted that some currency symbols already serve other purposes.  For example, some compilers support an
+    extension allowing use of '$' in identifiers.
+  - Tom added that some currency symbols are overloaded; '$' doesn't mean USD.
+  - Steve added that there may be aliasing issues with legacy character sets.
+  - Mark suggested it might be worth getting input from Mateusz Pusz given his work on
+    [P1935](https://wg21.link/p1935) and strong types and UDLs for physical units.
+  - Jens responded that we need not spend further time soliciting input from non-SG16 attendees.  EWG will handle
+    this; our responsibility is to provide the SG16 consensus.
+  - **Poll: Is there any objection to unanimous consent for recommending rejection of this proposal?**
+    - No objection to unanimous consent.
+- [P1949R3: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949r3):
+  - Tom introduced the topic:
+    - Steve submitted an updated revision for the April mailing that addresses the feedback provided in our
+      [April 8th review](https://github.com/sg16-unicode/sg16-meetings#april-8th-2020).
+  - Steve summarized the changes:
+    - `pp-identifier` was introduced to allow preprocessing tokens that are ostensibly identifiers to be non-NFC
+      until converted to an identifier.  At that time, a well defined event during translation, NFC would be checked.
+    - This approach allows non-NFC identifier-like tokens to be used in locations that aren't used as identifiers;
+      for example, when stringizing tokens.
+    - This approach does permit the possibility of aliasing in some scenarios, but those cases should be handled
+      as don't-do-that.
+  - Hubert objected that, with respect to macro invocations, aliasing can lead to surprising behavior.
+  - PBrett asked if the paper didn't already address that.
+  - Jens clarified Hubert's objection; it is undisputed that a macro definition requires an NFC identifier, but
+    when scanning macro text, a non-NFC `pp-identifier` intended to name a macro can't be diagnosed.
+  - Steve stated that Hubert provided a good example on the SG16 mailing list.
+  - \[ Editor's note: That example is in https://lists.isocpp.org/sg16/2020/04/1259.php. \]
+  - Jens summarized the behavior of that code.  Depending on normalization, the result is either the stringized
+    form of the macro replacement text or something else.
+  - PBrett noted that, in this case, the check for NFC was evaded by use of the stringize operator.
+  - Steve stated that he won't claim that there aren't other ways that this can happen, but in most cases, this
+    will eventually result in a syntax error.
+  - Jens noted that lone combining marks might cause odd editor behavior depending on what precedes them.
+  - Tom stated that there are two ways to attack this problem.  Either we require `pp-identifier` tokens to be
+    NFC, or we delay the check until they are used as identifiers.
+  - PBrett responded that the second approach leads to the problems we discussed at the last telecon.
+  - Jens noted that, for `\u0300`, since it doesn't constitute a valid identifier due to U+0300 not being in the
+    set of characters allowed initially according to [[lex.name]p1](http://eel.is/c++draft/lex.name#1), `\` is
+    one token and `u300` is another.  This is the status quo and can lead to tearing of combining characters.
+  - PBrett asked if this issue can be dodged by changing stringization such that `pp-identifier` cannot be
+    stringized unless it is also an identifier.
+  - Hubert responded that a narrow approach probably isn't desired.  The rationale is that, if you take
+    `pp-identifier` and don't enforce NFC, `XID_Start`, or `XID_Continue` on it, if lexing happens a certain way,
+    then we won't be able to adopt any Unicode characters as new operators without impacting backward compatibility.
+  - Jens added, for example, the sigma character.
+  - Hubert opined that infix operators are more compelling.  For example instead of the `|>` operator currently
+    being discussed.
+  - Jens summarized the problem Hubert indicated; in the paper as worded, symbols can be lexed into single tokens that
+    can then be concatenated.  That's bad.
+  - Jens added that this suggests the proposed `pp-identifier` approach fails in the long term and that a more
+    narrow fix is needed; `XID_Start` and `XID_Continue` should be enforced for `pp-identifier`.
+  - Steve noted that there are combining marks in `XID_Continue`, even in NFC.
+  - Jens stated that we don't want to enforce NFC during character-by-character lexing.
+  - Jens suggested another approach.  The idea is to require `XID_Start` and `XID_Continue` for lexing of
+    `pp-identifier` and then to do the NFC check on the resulting token.  That addresses the case where a
+    `pp-identifier` in macro replacement text might name a macro or macro parameter.
+  - Jens continued; the case that must be avoided is the lone combining mark.  That can be addressed by adding a
+    `pp-lone-ucn` to `preprocessing-token` and that can be used with the concat operator with the result that doing so
+    will lead to a diagnosable error later if used as an identifier.  The max munch rule would apply first so that
+    `universal-character-name*s that specify a combining character in `XID_Continue` and are preceded by a valid
+    identifier are incorporated into the identifier.
+  - Hubert asked if production of such a token would be diagnosed immediately.
+  - Mark asked for clarification; whether `pp-lone-ucn` could begin with a character not in `XID_Start`.
+  - Hubert followed up with an additional question; in the case of two consecutive not visibly separated UAX#31
+    identifiers; is that two preprocessing-tokens?
+  - Jens responded that a sequence of characters that are only in `XID_Continue` would each be individual tokens.
+  - Jens directed the group to wording provided on the wiki; there is a preexisting defect that we should not try to
+    fix in this effort, but which I think we can.
+  - \[ Editor's note: For those with access to the WG21 wiki site, that wording is
+    [an attached file on the summer 2020 SG16 project page](http://wiki.edg.com/pub/Wg21summer2020/SG16/uax31.html). \]
+  - Steve asked if this design would prohibit stringizing a lone combining character.
+  - Jens responded that it would and that lone combining characters in source code are bad.
+  - Steve agreed; if you want to combine a combining character, use a string literal.
+  - PBrett agreed as well and stated he would have serious questions about such a use case.
+  - Tom asked for confirmation that this approach applies equally regardless of whether the combining character
+    appears in the source file as an extended character or as a *universal-character-name* escape.
+  - Steve confirmed.
+  - Jens stated that there is a remaining issue that his proposed wording removed `identifier-non-digit` but that
+    there are now dangling references to it in the definition of `pp-number`.
+  - Hubert stated that the usual characteristic of `pp-number` that is of interest here is for UDLs; `pp-number`
+    describes how you get UDL suffixes as identifiers.
+  - Steve stated that *identifier-non-digit* is *non-digit* or *universal-character-name*, but *universal-character-name*s
+    in identifiers can not specify a character from the basic source character set.
+  - PBrett asked if Hubert is more comfortable with Jens proposed changes and whether we'll need to discuss this again.
+  - Hubert responded that he is happy with this and confirmed the presence of wording that makes lone UCNs ill-formed,
+    the wording that enforces `XID_Start` and `XID_Continue` for `pp-identifier`, that the basic source character
+    details are handled by the existing non-terminals, and that tokens look perfectly safe.
+  - Jens indicated that the wording edits to `pp-number` are now present and for viewers to reload the wiki page.
+  - Hubert stated that, as wording goes, this is pretty natural.  It covers corner cases, but doesn't require that
+    the wording call them out.
+  - Jens suggested that it may be worth noting in the annex how our grammar relates to the UAX#31 grammar; that our
+    non-digit terminals are all in `XID_Start`.
+  - Hubert suggested adding wording to explicitly avoid UB on token concatenation by ensuring that the program is
+    ill-formed if token concatenation produces a non-NFC token.
+  - Mark asked about an update to 5.4p2 and whether "single" was stripped from "non-whitespace" character.
+  - Jens indicated it should apply to both.
+  - Mark acknowledged.
+  - Hubert stated that "the last category" wording in 5.4 should be updated since it doesn't apply to just the last
+    category any longer.
+  - Jens updated the wording and indicated to reload the page.
+  - PBrett asked whether, in Jen's new wording, if the reference to UAX#44 for `XID_Start` and `XID_Continue` should
+    be to UAX#31?
+  - Steve responded, no.
+  - Jens explained that the `XID_Start` and `XID_Continue` properties are defined in UAX#44; UAX#31 specifies the
+    requirements for how to use them.
+  - Hubert expressed sympathy for trying to name these categories; e.g., "stray-universal-character-name".
+  - Jens indicated he presumes the wording is generally ok with folks now.
+  - Jens stated that he sent around an email with other comments.
+  - \[ Editor's note: That email can be found at https://lists.isocpp.org/sg16/2020/04/1256.php. \]
+  - Steve acknowledged and stated that he would respond and that he agreed with the suggestions.
+  - Jens noted that some of those concerns have been addressed by discussion today.
+  - Jens stated that there should be a statement about the difficulty of checking for NFC and asked if we can
+    qualify the difficulty for matching `XID_Start` and `XID_Continue`; "gcc already does this" doesn't provide
+    much assurances.
+  - Hubert suggested that Steve may want to ask Hal about fixing the paper submitted for the mailing to remove the
+    draft indicator in the paper's header.
+  - PBrett asked if we will poll the paper today.
+  - Tom responded, no; given discussion and new wording, that he would like discussion from today to sit in our
+    minds for a few weeks and be incorporated in a new revision before we poll.
+  - Jens noted that his wording avoids adding a normative reference to UAX#31; only a normative reference to
+    UAX#44 is actually needed.
+  - Steve acknowledged; the non-normative reference and annex just provides rationale for the design intent.
+  - Tom presented some additional suggestions for the paper:
+    - Additional rationale:
+      - Motivation: Note potential security concerns; that misbehaving code may pass code review.
+      - Legacy encodings convert naturally to NFC.
+      - Programmer and text editors tend to produce NFC; can that claim be backed up with some data?
+      - Discuss translation phase 1; since this is implementation-defined, implementations can convert to NFC.
+        However, doing so may interfere with author intent since non-NFC is permitted in string literals.
+    - Wording:
+      - Include removed wording so that readers can see what is removed without having to go look it up.
+      - Typo in X.3 R2, Immutable Identifiers; "idenfiers".
+      - Typo in X.4 R3, Pattern_White_Space and Pattern_Syntax Characters; "properites"
+  - Hubert asked if we want to discourage implementors from doing NFC conversion in translation phase 1.
+  - Jens responded that doing anything to phase 1 will impact code compatibility.  It would be ok to discuss
+    this in front matter; that if you do NFC conversion in translation phase 1, that you may want to consider
+    string literals.
+  - Mark observed that if one compiler does NFC conversion in translation phase 1 and another one doesn't, then
+    the source file is non-portable.
+  - Steve responded that source encoding is always non-portable.
+  - Jens stated that he just doesn't want any normative wording changes for translation phase 1.
+  - Steve asked if we'll plan to discuss this again.
+  - Tom responded, yes.
+  - Mark suggested the next discussion of it should be relatively short; unless Hubert finds more interesting
+    examples!
+  - Steve stated that he will proceed with making changes and asked Jens if he is satisfied with the wording
+    currently in the wiki.
+  - Jens replied that he is.
+- Tom indicated that the next telecon will by May 13th; three weeks from now.
+- Steve noted that will be just in time for the next mailing.
 
 
 # April 8th, 2020
@@ -43,7 +225,6 @@ Summaries of past meetings:
 - D1949R3: C++ Identifier Syntax using Unicode Standard Annex 31
   - https://isocpp.org/files/papers/D1949R3.html
   - New draft revision review.
-
 
 ## Meeting summary:
 - Attendees:
@@ -213,7 +394,7 @@ Summaries of past meetings:
   - Tom noted that differences are observeable in raw literals.
   - Steve acknowledged, but noted that isn't relevant for identifiers.
   - Zach stated that Hubert's point is important; macros need to be NFC checked.  But we want to make things
-    easy for implementors.  In the example, if we wanted to check the result of the contatenation in
+    easy for implementors.  In the example, if we wanted to check the result of the concatenation in
     translation phase 7, is there a simple rule to just check for macro names?  Or a simple rule to check all
     identifiers in translation phases 4 and 7?  It may be worth asking implementors for opinions.
   - PBrett stated that the check should be performed at the point that something becomes an identifier.  That
