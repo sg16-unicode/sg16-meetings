@@ -496,11 +496,11 @@ Summaries of past meetings:
 
 ## Meeting summary:
 - Attendees:
+  - Amanda Kornoushenko
   - David Wendt
   - Hubert Tong
   - JeanHeyd Meneide
   - Jens Maurer
-  - Lyberta
   - Mark Zeren
   - Peter Bindels
   - Peter Brett
@@ -716,11 +716,11 @@ Summaries of past meetings:
 
 ## Meeting summary:
 - Attendees:
+  - Amanda Kornoushenko
   - Corentin Jabot
   - Elango Cheran
   - JeanHeyd Meneide
   - Jens Maurer
-  - Lyberta
   - Mark Zeren
   - Markus Scherer
   - Mihai Nita
@@ -1136,10 +1136,10 @@ Summaries of past meetings:
 
 ## Meeting summary:
 - Attendees:
+  - Amanda Kornoushenko
   - Corentin Jabot
   - JeanHeyd Meneide
   - Jens Maurer
-  - Lyberta
   - Peter Bindels
   - Peter Brett
   - Steve Downey
@@ -1533,9 +1533,9 @@ Summaries of past meetings:
 
 ## Meeting summary:
 - Attendees:
+  - Amanda Kornoushenko
   - David Wendt
   - JeanHeyd Meneide
-  - Lyberta
   - Peter Bindels
   - Steve Downey
   - Tom Honermann
