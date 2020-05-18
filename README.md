@@ -6,16 +6,12 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, May 13th 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200513T193000&p1=1440)).
+Wednesday, May 27th 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200527T193000&p1=1440)).
 The draft agenda is:
 - D1949R4: C++ Identifier Syntax using Unicode Standard Annex 31 
-  - Review updates since the April 22nd review.
-- Review the queue for C++23:
-  - How are we doing relative to the directives in [P1238R1](https://wg21.link/p1238r1)?
-  - What is our vision for C++23?  (What would be our elevator pitch?)
-  - What features are we on track to deliver?
-  - What features need additional prioritization?
+  - Review updates since the April 22nd review pending an updated revision.
+- TBD
 
 Summaries of past meetings:
 - [April 22nd, 2020](#april-22nd-2020)
