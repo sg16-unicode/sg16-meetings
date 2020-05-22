@@ -14,6 +14,7 @@ The draft agenda is:
 - TBD
 
 Summaries of past meetings:
+- [May 13th, 2020](#may-13th-2020)
 - [April 22nd, 2020](#april-22nd-2020)
 - [April 8th, 2020](#april-8th-2020)
 - [March 25th, 2020](#march-25th-2020)
@@ -25,6 +26,191 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 13th, 2020
+
+## Agenda:
+- Review the queue for C++23:
+  - How are we doing relative to the directives in P1238R1?
+  - What is our vision for C++23? (What would be our elevator pitch?)
+  - What features are we on track to deliver?
+  - What features need additional prioritization?
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Tom Honermann
+  - Zach Laine
+- Review the queue for C++23:
+  - Tom introduced the topic.  Now that C++20 is complete, we have about two years until feature freeze for C++23.
+    This is a good time to step back, review our projects in flight, determine which projects are on track for
+    adoption in C++23, which ones we would like to get in C++23 but may be at risk of being ready in time, and
+    which ones are not likely candidates for C++23.
+  - PBrett asked where our queue of C++23 proposals can be found.
+  - Tom replied that it is an ethereal container.
+  - PBrett asked if it should be made more corporeal.
+  - Tom replied that it should be.
+  - Tom shared that he had reviewed [P1238R1](https://wg21.link/p1238r1), mapped active SG16 papers to each of its
+    directives, and posted it to the SG16 Slack channel.
+  - \[ Editor's note: That map is below augmented with additional entries discussed during the telecon.
+    - 5.1: Standardize new encoding aware text container and view types
+      - [P1629: Standard Text Encoding](https://wg21.link/p1629)
+    - 5.2: Standardize generic interfaces for Unicode algorithms
+      - [P1628: Unicode character properties](https://wg21.link/p1628)
+    - 5.3: Standarize useful features from other languages
+      - [P2071: Named universal character escapes](https://wg21.link/p2071)
+    - 5.4: Improve support for transcoding at program boundaries
+      - [P1275: Desert Sessions: Improving hostile environment interactions](https://wg21.link/p1275)
+      - [P1885: Naming Text Encodings to Demystify Them](https://wg21.link/p1885)
+    - 5.5: Propose resolutions for existing issues and wording improvements opportunistically
+      - [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949)
+      - [P1854: Conversion to execution encoding should not lead to loss of meaning](https://wg21.link/p1854)
+      - [P1859: Standard terminology for execution character set encodings](https://wg21.link/p1859)
+      - [P1880: uNstring Arguments Shall Be UTF-N Encoded](https://wg21.link/p1880)
+      - [P2029: Proposed resolution for core issues 411, 1656, and 2333; numeric and universal character escapes in character and string literals](https://wg21.link/p2029)
+  - \]
+  - Tom continued; this provides some perspective regarding where we have been spending our time.  Interestingly,
+    the place we seem to be spending the most time, at least by paper count, is addressing existing core and
+    wording issues.  We have previously discussed those being lower priority objectives relative to adding new
+    features.
+  - Tom started walking through the directives and associated papers.
+  - 5.1: Standardize new encoding aware text container and view types
+    - [P1629: Standard Text Encoding](https://wg21.link/p1629):
+      - Tom stated that he is feeling some concern about getting this through the committee process with just two
+        years until feature freeze.
+      - Corentin continued that thought; we don't have implementation experience yet.  Getting this through the
+        committee in two years seems possible.  Getting it through in two years with everyone happy about it doesn't
+        seem possible.
+      - PBrett noted that JeanHeyd has been working on an implementation.
+      - Tom added that JeanHeyd has been laying groundwork for the feature, particularly in WG14 for C.
+      - Zach stated that his primary concern is collecting user experience feedback.
+      - JeanHeyd described the current state of his work.  He is working on new `mc` and `mwc` interfaces for WG14
+        for conversion between UTF-8, UTF-16, UTF-32, and the locale dependent narrow and wide character sets.  These
+        interfaces are designed similarly to `iconv` with hooks for accommodating private encodings and would be used
+        to implement the fast path conversion implementations.
+      - JeanHeyd stated that the implementation is working and the next step is wording for WG14.
+      - PBrett expressed uncertainty regarding what the expectation is for C++23.
+      - JeanHeyd responded that the bare minimum is support for encoding concepts and objects.
+        [P1629](https://wg21.link/p1629) reflects this bare minimum; the encoding objects and associated free
+        functions.
+      - PBrett asked if there are dependencies between P1629 and the WG14 focused work.
+      - JeanHeyd replied, no, they are distinct.  
+      - PBrett asked if it is practical to implement P1629 without the WG14 interfaces in place.
+      - JeanHeyd replied yes, the implementor would just have to use non-standard encoding, decoding, and
+        conversion routines.
+      - Mark asked if implementors could provide an implementation based on `iconv`.
+      - JeanHeyd replied, yes, but with the caveat that it would perform well for contiguous ranges, but not for
+        highly segmented sequence containers like `std::list`.
+      - Jens re-phrased Mark's question; the question was whether an `iconv` based implementation can handle
+        something terrible like `std::list<char>`.
+      - JeanHeyd responded, yes, but a temporary buffer would be needed.  The buffer could be stack allocated.
+      - Jens asked for verification that `iconv` can support code unit at a time conversions.
+      - JeanHeyd replied that `iconv` takes pointers to in and out buffers and updates them to reflect the conversion
+        state; unused code units can be cached.
+      - Zach stated that `iconv` is only interesting as a proof of concept; users won't accept it due to poor
+        performance.  Bob Steagal showed that `iconv` can be badly beat by optimized conversion facilities.
+      - Mark noted his intention in asking the question; whether implementors can reasonably provide a
+        non-performant implementation to start with.
+      - Tom observed that doing so could result in an implementor being stuck with a non-performant implemention
+        due to ABI concerns.
+      - JeanHeyd responded that, so long as state representation doesn't change, ABI shouldn't be an issue.
+      - Tom noted that calls to `iconv` would appear in instantiated templates, so any changes to definitions of
+        function templates or templated member function would raise ABI concerns; we don't want another
+        `std::regex` debacle.
+      - Zach re-iterated his desire to gather user experience.
+      - JeanHeyd responded that getting an implementation in front of users is the goal of his current efforts, but
+        that it will likely take until November to get the implementation fully in place.
+      - Zach stated that implementation experience is great, but what he really wants is feedback from users since
+        that is how we'll find the usability problems.
+      - Mark stated that it would be great to replicate the evolution that the {fmt} and chrono libraries followed,
+        but acknowledged that this feature doesn't have quite the same kind of broad applicability.
+      - JeanHeyd responded that he has been contacted by programmers that are interested in using this.
+      - PBrett exppressed skepticism that we'll be able to get this in for C++23 this way and that the best approach
+        might be to get it accepted into Boost first.
+      - Mark suggested that Boost may not be the right vehicle for this.
+      - Zach opined that a standalone library with a couple of hundred stars would suffice; getting a library accepted
+        in Boost takes time.
+      - Tom expressed a desire to get an implementation in front of users sooner than that.
+  - 5.2: Standardize generic interfaces for Unicode algorithms
+    - [P1628: Unicode character properties](https://wg21.link/p1628):
+      - Tom noted that we haven't talked about this proposal for a while.
+    - Tom stated that he was hoping Zach, as one of few programmers that has actually implemented the Unicode
+      algorithms, might be able to help make progress here.
+    - Zach responded that he is hoping to get the ball moving on `Boost.text` again soon with a goal of getting more
+      input and hopefully starting on papers by the end of the year.
+    - Zach noted that `text` and `text_view` are somewhat novel, so that makes them risky for C++23.
+    - Zach added that he did make some changes recently and that the algorithms are now faster than ICU except for
+      tailored collation.
+  - 5.3: Standarize useful features from other languages
+    - [P2071: Named universal character escapes](https://wg21.link/p2071):
+      - Tom noted that this paper was received well by EWG in Prague and seems on track for C++23.
+      - Tom stated that he has some minor updates to do to the paper before getting it back in front of EWG again.
+    - Tom asked if there are other features we should be focusing on.
+    - PBrett responded that he is aware of other features, but that they don't really fit into the C++ standard library.
+    - Zach asked what features Peter had in mind.
+    - PBrett responded that some languages have distinct string types for different kinds of strings.  For example,
+      Rust has OS strings.
+    - Tom mentioned the encoding pragma paper that he has yet to write.
+  - 5.4: Improve support for transcoding at program boundaries
+    - [P1885: Naming Text Encodings to Demystify Them](https://wg21.link/p1885):
+      - Tom noted that this one has been making progress and that he would follow up with Corentin to inquire about
+        next steps.
+    - [P1275: Desert Sessions: Improving hostile environment interactions](https://wg21.link/p1275):
+      - Tom noted that this paper has languished and asked if anyone would like to champion moving something forward
+        with respect to environment variables and command lines.
+      - JeanHeyd stated that he will reach out to Isabella to find out what the status is.
+      - PBrett noted that this is relevant for the [P1750](https://wg21.link/p1750) process invocation paper.
+      - Tom agreed and remembered that Jeff mentioned in Prague that he and/or Elias were planning to split this
+        functionality out to a new paper.  Tom stated he would follow up with them.
+  - 5.5: Propose resolutions for existing issues and wording improvements opportunistically
+    - [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949):
+      - Tom noted that this paper is on track for C++23.
+    - [P1854: Conversion to execution encoding should not lead to loss of meaning](https://wg21.link/p1854):
+      - Tom stated that this paper was last
+        [discussed in Belfast](http://wiki.edg.com/bin/view/Wg21belfast/SG16P1854R0)
+        and there are some conerns to be discussed and/or addressed.
+      - Tom stated that he is not sure what Corentin's intentions are.
+    - [P1859: Standard terminology for execution character set encodings](https://wg21.link/p1859):
+      - Tom noted that there hasn't been any movement on this paper since it was
+        [discussed in Belfast](http://wiki.edg.com/bin/view/Wg21belfast/SG16P1859R0).
+      - PBrett expressed support for making this a top priority item to address.
+    - [P1880: uNstring Arguments Shall Be UTF-N Encoded](https://wg21.link/p1880):
+      - Zach stated that this paper is DOA; an audit of wording revealed 250 places where we would have to
+        note an exception to front matter wording and having to do so makes this effort not worthwhile.
+      - JeanHeyd asked if there are many interfaces that accept a `std::u8string`.
+      - Zach responded that yes, there are due to many interfaces that accept a `std::basic_string`.
+      - Jens elaborated; these are cases where the character type is determined by a distinct template parameter.
+      - Jens stated that he would like to see an example where the encoding is relevant.
+      - Zach replied that one of the places is the entire interface of `std::basic_string` itself; many such
+        member functions accept a `std::basic_string`.
+      - Jens noted that `char8_t` was invented to ensure a specific encoding.
+      - Mark noted that many of these interfaces don't lend themselves to enforcing encoding invariants;
+        `std::basic_string` wasn't designed to do so.
+      - Jens observed that the general provision that is desired is that `std::basic_string` objects used
+        elsewhere meet such variants.
+      - Jens stated that hooks are needed in EWG and LEWG to get SG16 involved when certain topics come up.
+      - Tom replied that those hooks are in place, but with recent chair changes, should be re-iterated.
+        Tom stated he would follow up.
+      - \[ Editor's note: Tom did so and the EWG and LEWG chairs confirmed their intent to abide by
+         [P1253](https://wg21.link/p1253).  https://lists.isocpp.org/sg16/2020/05/1292.php \]
+    - [P2029: Proposed resolution for core issues 411, 1656, and 2333; numeric and universal character escapes in character and string literals](https://wg21.link/p2029):
+      - Tom stated that this is on track and making its way through Core.
+- Tom asked the group for opinions on what we should focus on for C++23.
+  - PBrett opined that the papers under 5.5, and terminology updates specifically, should be top priority.
+  - Zach agreed regarding terminology and added Unicode algorithms.
+  - Mark opined that having text in Boost would be a big deal.
+  - PBrett stated that SG16 needs to stay involved with [P1750](https://wg21.link/p1750), the process management
+    paper.  And we need to address how programs receive command line arguments.
+  - Tom stated that, if these are our top priorities, then it sounds like our vision for C++23 is building
+    foundations and addressing long standing issues.
+  - Jens commented that such a vision fits in well with C++23 in general.
+- Tom stated that the next telecon will be held on 5/27.
 
 
 # April 22nd, 2020
