@@ -1694,7 +1694,7 @@ Summaries of past meetings:
     some library is calling `setlocale()` before `main()` is invoked.
   - Tom agreed, but stated that doing so is hard in practice, particularly for library authors.
   - JeanHeyd observed that the C library behavior depends on the currently set locale and asked what benefit
-    is provided by `test_encoding::system()` if it's not in sync with the C and C++ libraries.
+    is provided by `text_encoding::system()` if it's not in sync with the C and C++ libraries.
   - Tom responded that it indicates what encoding is expected for I/O outside of the process.
 - Tom confirmed that the next meeting will be on February 5th and that it will be the last meeting before we
   meet in Prague.
