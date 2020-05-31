@@ -15,6 +15,7 @@ The draft agenda is:
   - Establish a methodology for drafting wording updates.
 
 Summaries of past meetings:
+- [May 27th, 2020](#may-27th-2020)
 - [May 13th, 2020](#may-13th-2020)
 - [April 22nd, 2020](#april-22nd-2020)
 - [April 8th, 2020](#april-8th-2020)
@@ -27,6 +28,178 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 27th, 2020
+
+## Agenda:
+- D1949R4: C++ Identifier Syntax using Unicode Standard Annex 31 
+  - Review updates since the April 22nd review.
+- Discuss terminology updates to strive for in C++23
+  - P1859R0: Standard terminology character sets and encodings
+  - Establish priorities for terms to address.
+  - Establish a methodology for drafting wording updates.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Mark Zeren
+  - Martinho Fernandes
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- D1949R4: C++ Identifier Syntax using Unicode Standard Annex 31
+  - [Draft revision under discussion](https://lists.isocpp.org/sg16/att-1315/p1949.html)
+  - Steve summarized the changes since R3 and some additional perspectives on the history.
+    - The most significant change is new wording provided by Jens.
+    - This wording better matches the [UAX #31](https://unicode.org/reports/tr31) design.
+    - The wording changes introduce new *identifier-start* and *identifier-continue* grammar terms.
+    - More motivation, history, and other editorial changes have been added.
+    - Per recent discussion on the SG16 mailing list, Steve noted that `XID_Start` and `XID_Continue`
+      were made stable some time after Unicode 5.2 and C++11.
+    - At the time that C++11 was standardized, ISO recommendations were to define allowable identifiers as
+      ranges of code points.
+    - The C++11 design was based on the "Aternate Identifier Syntax" specified in the Unicode 5.2 version
+      of UAX #31 and that was a reasonable choice at the time.  \[ Editor's note: "Alternate Identifier
+      Syntax" was renamed to "Immutable Identifiers" in Unicode 9. \]
+    - Checking for non-NFC strings is significantly faster than actually normalizing; there are short cuts
+      supported by Unicode.
+  - Zach provided some details regarding the NFC checking algorithm he implemented in Boost.Text.  It was
+    inspired by ICU and consists of four checking levels; the first of which is very fast and the the rest
+    are progressively slower to handle different edge cases.
+  - PBrett opined that we're all probably pretty comfortable with implementability of the proposal.
+  - Zach agreed, but noted that we need to be able to explain the complexity to EWG.
+  - Steve noted that the real question from implementors is about having to compare against the
+    `XID_Start` and `XID_Continue` classes; fortunately we have implementation experience.
+  - Jens responded that implementation experience is not necessarily convincing.  For example, EDG implemented
+    support for C++98 exported templates, but that was an ill-designed feature.  Describing an algorithm would
+    be more useful.
+  - Steve noted that the paper contains links to [UAX #15](https://unicode.org/reports/tr15) and the algorithms
+    that it describes for detecting normalization form.
+  - PBrett commented that experience in other languages helps to illustrate viability.
+  - Steve stated that it is worth noting that the Unicode character database is not needed for implementation
+    purposes.
+  - Tom asked if that is stated in the paper.
+  - Steve replied that it isn't.
+  - Tom asked Steve if we would be willing to add that.
+  - Steve replied, will do.
+  - Zack noted that the data needed for NFC normalization easily fits in a header and that the `XID_Start`
+    and `XID_Continue` ranges are smaller.
+  - Steve noted that all of the needed data is listed in a verbose form in an appendix of the paper.
+  - PBrett asked if there are examples of script specific identifiers that are allowed today that will cease
+    to be valid.
+  - Steve responded that there are examples in UAX #31.
+  - Tom asked if the change to *pp-number* should perhaps be *pp-number identifier* instead of
+    *pp-number identifier-continue* since the non-numeric portion corresponding to *ud-suffix* needs to be a
+    valid identifier for declaration of a user-defined literal function.
+  - Jens replied that such a change would work, but we currently use a max munch approach that allows, for
+    example, `1x1x1x` to be a valid *pp-number*.
+  - Hubert observed that better diagnostic messages could be produced with such a change.
+  - Jens responded that the proposed changes are a consequence of other changes in the paper and are not
+    intended to change the lexing behavior of *pp-number*.  Tom's suggested change would be an unnecessary
+    design change.
+  - Tom suggested the currently proposed wording sounds like what we want then.
+  - Corentin noted that the *identifier-start* and *identifier-continue* productions both include *nondigit*,
+    but *nondigit* is a subset of *universal-character-name*.
+  - Steve responded that *universal-character-name* corresponds to `\uXXXX` where as *nondigit* selects
+    characters from the basic source character set.
+  - Corentin asked what the intent was in creating a new kind of *preprocessing-token* that, when matched,
+    always means the program is ill-formed.
+  - Tom responded that Corentin missed the meeting where this was discussed and that the previous meeting
+    notes may be helpful.  Basically, this allows rejecting lone combining characters.
+  - PBrett suggested that Corentin's question may suggest that this is too subtle.
+  - Jens responded that there are two levels of interpretation here.  The first is the lexer grammar and it is
+    only concerned with munging characters.  The second is the formation of tokens.  The new production allows
+    issuance of nice diagnostics.
+  - PBrett asked if the last two sentences in that paragraph ([lex.pptoken]p2) could be swapped as that would
+    better match the order of the grammar productions.
+  - Jens replied that they could be.
+  - Jens noted that italics were missing for three instances of *universal-character-name* and that, in the
+    plural form, the ending "s" should not be italicized.
+  - Jens further noted that italics were missing for the use of "identifier" in the new wording in [lex.name];
+    italics are needed because this is a reference to the grammar term.
+  - Hubert stated that some implementations of markup make it difficult to not italicize plural suffixes, but
+    that it is sometimes possible by using a ZWJ.
+  - Jens suggested that Steve not worry about it if removing italics for the plural suffix is difficult.
+  - Corentin observed that the existing reference to ISO/IEC 10646 and the new reference to UAX #44 are for
+    distinct publications that may be out of sync.
+  - Jens responded that the existing reference to ISO/IEC 10646 is undated.  Implementors should therefore
+    use the latest available thus implying a moving target.  New ISO/IEC 10646 versions become available more
+    frequently than ISO C++ releases.  This then requires implementors to update to newer ISO/IEC 10646
+    revisions in between ISO C++ releases.
+  - Jens stated a preference for a dated ISO/IEC 10646 reference that is updated with each ISO C++ release.
+  - Tom asked if a dated reference would allow implementors to adopt newer versions of ISO/IEC 10646 than the
+    corresponding ISO C++ release references.
+  - Jens replied that they shouldn't in their pedantic modes.
+  - Hubert agreed.
+  - Zach added that Jens preference matches the guidance provided by LWG for
+    [P1868](https://wg21.link/p1868) and the reference to [UAX #29](https://unicode.org/reports/tr29).
+  - Corentin reiterated his claim that the various references require version correspondence.
+  - Hubert responded that, with respect to the characters made available, the intersection of characters
+    available in the various specifications is what would matter; other characters would be rejected.   
+  - Hubert observed that the reference to [UAX #44](https://unicode.org/reports/tr44) should actually
+    be a reference to the `DerivedCoreProperties.txt` file from the Unicode character database.
+  - Jens agreed that the normative reference we actually need is to `DerivedCoreProperties.txt`
+    since UAX #44 does not contain its contents.
+  - Martinho clarified that UAX #44 describes the semantics for the contents of `DerivedCoreProperties.txt`,
+    but not its syntax.
+  - Tom stated that it sounds like we need a normative reference to both then.
+  - Steve added that the versions of UAX #44 and `DerivedCoreProperties.txt` must be consistent.
+  - PBrett returned to the subject of dated vs undated references.  The current reference to ISO/IEC 10646
+    is undated and these other references must match since they are dependent references on the version of
+    ISO/IEC 10646.
+  - Tom asked if that implies that this paper must change the reference to ISO/IEC 10646 to a dated reference.
+  - Hubert responded that we can deal with that separately.
+  - Jens asked if a dated reference for UAX #44 and `DerivedCoreProperties.txt` is needed for this paper.
+  - Hubert responded that ISO/IEC 10646 version 5 does refer to Unicode character databse files without
+    reference to UAX #44.
+  - Steve noted that means transitive references exist.
+  - Hubert agreed, but noted that transitive references don't exist for all of the references needed.
+  - Corentin asked Steve which Unicode version the source of the XID data in the paper came from.
+  - Steve responded that it was probably Unicode 12.
+  - PBrett stated that, if we're going to pin down any one of these references, then we must pin down all of
+    them.  Otherwise, the correspondence doesn't make sense.
+  - Zach opined that these new references don't need to be in sync with ISO/IEC 10646, but that it would be nice
+    if they were.  We only need the normalization algorithm and XID data for this paper.
+  - Martinho asserted that the base line will be whatever is available at publication time.
+  - Hubert observed that we seem to have distinct needs.  As far as UAX #31 is concerned, since it is only
+    needed to satisfy references in the new informative annex, a dated reference should be used for it.
+  - Steve added that, since it is informative, the reference to UAX #31 is only needed in the bibliography.
+  - Hubert continued stating that, for UAX #44 and `DerivedCoreProperties.txt`, that a dated match to
+    ISO/IEC 10646 is unnecessary and would be challenging for reasons of timing; ISO/IEC 10646 is currently in
+    DIS status.
+  - Hubert summarized; the reference to UAX #31 should be dated, and the references to UAX #44 and
+    `DerivedCoreProperties.txt` should be undated.
+  - Steve noted that leaving them undated might be helpful for applying these changes as a defect report for
+    prior standards.
+  - Jens asked Hubert to confirm that a normative reference to `DerivedCoreProperties.txt` is required.
+  - Hubert confirmed that it is.
+  - Jens asked Steve to please add such a normative reference.
+  - Jens asked Hubert to confirm his opinion that the references to UAX #44 and `DerivedCoreProperties.txt`
+    should be undated.
+  - Hubert confirmed and added that adding a date now would be counterproductive since there will be new
+    publications of them before the next ISO C++ publication.
+  - Martinho provided a link for an undated reference to `DerivedCoreProperties.txt`.
+  - Tom reported being unable to find the wording updates to add UAX #31 to the bibliography.
+  - Steve reported that there had been a markdown issue that has since been fixed.  The reference can be found
+    by searching for "::add".
+  - Hubert suggested that the reference to `DerivedCoreProperites.txt` should specify "as interpreted by UAX #44".
+  - \[ Editor's note:
+    [later discussion on the SG16 mailing list](https://lists.isocpp.org/sg16/2020/05/1326.php)
+    proposed "The character classes XID_Start and XID_Continue are Derived Core Properties as described by UAX #44".
+    \]
+  - Tom confirmed an intent to poll forwarding the paper to EWG with the discussed changes and asked for volunteers
+    to validate that the updates are consistent with the discussion.
+  - Zach and Jens agreed to do so.
+  - **Poll: D1949R4: Forward to EWG with changes as discussed pending validation that updates reflect SG16 intent**
+    - Attendees: 11
+    - No objection to unanimous consent.
+- Tom confirmed that the next meeting will be June 10th and that the topic will be terminology.
 
 
 # May 13th, 2020
