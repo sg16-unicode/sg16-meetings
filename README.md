@@ -335,6 +335,10 @@ Summaries of past meetings:
     - [P1885: Naming Text Encodings to Demystify Them](https://wg21.link/p1885):
       - Tom noted that this one has been making progress and that he would follow up with Corentin to inquire about
         next steps.
+      - \[ Editor's note: Tom reached out and Corentin responded that he is concerned about the relatively weak
+        support for the paper as is within SG16 and has some uncertainty regarding next steps.  Tom encouraged
+        updating the paper to document use cases and to compare IANA encoding representation with encodings supported
+        by ICU, Microsoft, and the Encoding Standard to quantify representational deficiencies. \]
     - [P1275: Desert Sessions: Improving hostile environment interactions](https://wg21.link/p1275):
       - Tom noted that this paper has languished and asked if anyone would like to champion moving something forward
         with respect to environment variables and command lines.
@@ -342,6 +346,8 @@ Summaries of past meetings:
       - PBrett noted that this is relevant for the [P1750](https://wg21.link/p1750) process invocation paper.
       - Tom agreed and remembered that Jeff mentioned in Prague that he and/or Elias were planning to split this
         functionality out to a new paper.  Tom stated he would follow up with them.
+      - \[ Editor's note: Tom reached out and Jeff confirmed intent to work on this, possibly within the next couple
+        of months. \]
   - 5.5: Propose resolutions for existing issues and wording improvements opportunistically
     - [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949):
       - Tom noted that this paper is on track for C++23.
@@ -350,6 +356,9 @@ Summaries of past meetings:
         [discussed in Belfast](http://wiki.edg.com/bin/view/Wg21belfast/SG16P1854R0)
         and there are some conerns to be discussed and/or addressed.
       - Tom stated that he is not sure what Corentin's intentions are.
+      - \[ Editor's note: Tom reached out and Corentin responded that, per the Belfast discussion, progress on this
+        paper is blocked by dependence on P1885.  Corentin is interested in revisiting the decision to take that
+        dependency. \]
     - [P1859: Standard terminology for execution character set encodings](https://wg21.link/p1859):
       - Tom noted that there hasn't been any movement on this paper since it was
         [discussed in Belfast](http://wiki.edg.com/bin/view/Wg21belfast/SG16P1859R0).
