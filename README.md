@@ -1705,7 +1705,7 @@ Summaries of past meetings:
     inconsistent results.
   - Tom asked what the motivation was for not including enumerators for all MIB IDs in `text_encoding::id`,
     but to require the implementation to support all names and aliases from the
-    [IANA Character Set Registry](https://lists.isocpp.org/sg16/2019/12/0993.php).
+    [IANA Character Set Registry](https://www.iana.org/assignments/character-sets/character-sets.xml).
   - Corentin replied that the requirements were changed in R1.  Hosted implementations are now required to
     support all of the names, but freestanding implementations need not.
   - Tom asked for clarification regarding omission of enumerator IDs.
@@ -1717,7 +1717,7 @@ Summaries of past meetings:
     maintenance burden.
   - Tom countered that use of the `cs` prefixed identifiers described in section 2.3 of
     [RFC 2978](https://tools.ietf.org/html/rfc2978) and maintained in the
-    [IANA Character Set Registry](https://lists.isocpp.org/sg16/2019/12/0993.php)
+    [IANA Character Set Registry](https://www.iana.org/assignments/character-sets/character-sets.xml)
     would avoid the portability and compatibility concerns and provide a specification we can defer to.
   - Corentin replied that it isn't quite that simple because of version skew and that exposing MIB IDs to
     programmers has limited value to begin with.
