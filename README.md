@@ -6,13 +6,23 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, June 10th 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200610T193000&p1=1440)).
+Wednesday, June 17th 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200617T193000&p1=1440)).
 The draft agenda is:
-- Discuss terminology updates to strive for in C++23
-  - [P1859R0: Standard terminology character sets and encodings](https://wg21.link/p1859)
-  - Establish priorities for terms to address.
-  - Establish a methodology for drafting wording updates.
+- Continue discussion of terminology updates to strive for in C++23
+  - Resume discussion of relationships between (abstract) character, (character) repertoire,
+    (coded) character set, and character encoding.
+    - Review ISO/IEC 10646:2017 section 3 terms and definitions
+      - https://standards.iso.org/ittf/PubliclyAvailableStandards/c069119_ISO_IEC_10646_2017.zip
+    - Review the Unicode glossary
+      - https://www.unicode.org/glossary
+    - Review Corentin's email
+      - https://lists.isocpp.org/sg16/2020/06/1493.php
+    - Compare and contrast terms as described by the above resources.
+  - Determine suitability of ISO/IEC 10646 terms for use in the C++ standard.
+  - Discuss the relationship of the above terms to named entities in the standard.
+  - Identify possible terms to add to
+    [[intro.defs]](http://eel.is/c++draft/intro.defs).
 
 Summaries of past meetings:
 - [May 27th, 2020](#may-27th-2020)
