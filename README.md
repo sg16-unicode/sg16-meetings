@@ -14,6 +14,8 @@ The draft agenda is:
     (coded) character set, and character encoding.
     - Review ISO/IEC 10646:2017 section 3 terms and definitions
       - https://standards.iso.org/ittf/PubliclyAvailableStandards/c069119_ISO_IEC_10646_2017.zip
+    - Review Unicode section 3.4 terms for characters and encodings
+      - https://www.unicode.org/versions/Unicode13.0.0/ch03.pdf
     - Review the Unicode glossary
       - https://www.unicode.org/glossary
     - Review Corentin's email
@@ -25,6 +27,7 @@ The draft agenda is:
     [[intro.defs]](http://eel.is/c++draft/intro.defs).
 
 Summaries of past meetings:
+- [June 10th, 2020](#june-10th-2020)
 - [May 27th, 2020](#may-27th-2020)
 - [May 13th, 2020](#may-13th-2020)
 - [April 22nd, 2020](#april-22nd-2020)
@@ -38,6 +41,205 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+# June 10th, 2020
+
+## Agenda:
+- Discuss terminology updates to strive for in C++23
+  - [P1859R0: Standard terminology character sets and encodings](https://wg21.link/p1859r0).
+  - Establish priorities for terms to address.
+  - Establish a methodology for drafting wording updates.
+
+## Meeting summary:
+- Attendees:
+  - Alisdair Meredith
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Marcos Bento
+  - Mark Zeren
+  - Martinho Fernandes
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- A round of introductions was held for the benefit of new attendees.
+- Zach asked for everyone to contribute to the Boost.Text review scheduled to start on the following day,
+  June 13th.
+  - Contributors will need to subscribe to the
+    [boost@lists.boost.org](https://lists.boost.org/mailman/listinfo.cgi/boost)
+    mailing list at
+    https://lists.boost.org/mailman/listinfo.cgi/boost.
+  - An introductory invitation for SG16 members was posted to the SG16 mailing list and is available at
+    https://lists.isocpp.org/sg16/2020/06/1499.php.
+- Tom mentioned that work has progressed on establishing a shared calendar for all WG21 telecons.  Official
+  announcements are expected soon.  For now, BlueJeans calendar invites will continue to be sent as usual,
+  but may be discontinued in the future if the shared calendar works well for everyone.
+- Discuss terminology updates to strive for in C++23
+  - Tom introduced the topic.
+    - Per prior meetings, modernizing terminology in the standard is an SG16 goal for C++23.
+    - Tom expressed uncertainty with regard to the best starting point for discussion, but suggested starting
+      by reviewing a set of existing terms used in the standard that he included in an
+      [email to the SG16 mailing list](https://lists.isocpp.org/sg16/2020/06/1484.php)
+      right before the meeting.
+  - Corentin expressed desire to take a holistic approach to updating the wording and directed attention to his
+    [D2178R0 draft attached to a message sent to the SG16 mailing list](https://lists.isocpp.org/sg16/2020/06/1460.php).
+  - Corentin suggested splitting the effort to focus first on core wording, then on library wording.
+  - PBrett opined that core wording will be difficult and would prefer a single paper to address it, but
+    potentially multiple papers to address library wording.
+  - PBrett noted that some library components treat non-text as text.  For example, file names, command line arguments,
+    stream contents, and environment variables.
+  - Hubert suggested inserting a third phase up front to just establish terminology itself.
+  - Alisdair agreed noting that commonly understood terminology provides the tools necessary to discuss wording.
+  - Steve expressed a desire to introduce new terms in order to facilitate easier communication; specifically new
+    short terms that can substitute for otherwise wordy phrasing.
+  - Steve stated that we'll need to re-word with expectation of impact to existing implementations.
+  - Tom agreed noting that he ran into such situations drafting
+    [P2029](https://wg21.link/p2029).
+    This happens due to interaction with core issues and discovery of existing conformance issues in implementations.
+  - Corentin replied that any such impact should be minimal, and should effectively be bug fixes, each of which has
+    limited impact to existing implementations.
+  - PBrett asked if we have general agreement for splitting the work in three phases as indicated.
+  - No objections were raised.
+  - Hubert stated that we may need to introduce new terms.
+  - Tom suggested that, perhaps, we should start discussion with *character* first.
+  - Hubert responded that
+    [P1859R0](https://wg21.link/p1859r0)
+    already discussed *abstract character* and no one raised concerns.
+  - Discussion turned to the first item in the list of terms Tom sent to the mailing list,
+    "The encoding of source files".
+  - Someone noted that the source may not be a file, or even a digital resource with an encoding in any traditional
+    sense.
+  - Steve responded that Richard Smith is a conforming implementation of the standard.
+  - Alisdair asked if the standard should rule out source files contained in .zip files.
+  - Tom replied that he wasn't aware of such translation phase 1 abilities being challenged and that any proposed
+    changes should strive to preserve such abilities.
+  - Corentin observed that, if the source input is an image, there is no traditional character encoding or character
+    set, but a stream of characters is still available.
+  - Hubert suggested that it may be useful to introduce the notion of a logical source file that is distinct from any
+    physical representation.
+  - Steve noted that a path through that logical representation is currently required to retrieve original spelling
+    of characters in raw string literals.
+  - Corentin opined that the current machinery works and that it is nice to be able to discard the notion of a
+    physical source representation after phase 1.
+  - Hubert stated that translation phase 1 does too much right now.
+  - Corentin agreed and stated a preference that translation phase 1 only perform character mapping.
+  - Jens described how translation phase 1 could be divided into sub-phases.  Phase 1A would produce logical
+    characters and phase 1B would map to *universal-character-name*s.
+  - Jens opined that the notion of physical source file is too limiting; other input forms should not be excluded.
+  - Corentin reiterated his fondness for discarding physical details after translation phase 1.
+  - Jens stated that the current method of reverting portions of translation phases 1 and 2 to retrieve the original
+    spelling for raw string literals is very hacky; it would be better to preserve the original information in a more
+    direct manner.
+  - Tom asked if there are additional benefits that could be had by addressing the raw string literal issue.
+  - Alisdair responded that, since trigraphs were removed, this scenario is now the tail wagging the dog.
+  - Steve noted that addressing it could solve the
+    [issue recently discussed on the SG16 mailing list](https://lists.isocpp.org/sg16/2020/06/1469.php)
+    involving EBCDIC characters that get converted to *universal-character-name*s that are not semantically
+    preserving.
+  - Hubert noted that we still have outstanding issues with raw string literals and new line characters.
+  - Corentin suggested that introduction of an additional character mapping may be heading in the wrong direction;
+    we want to make things simpler and being able to focus solely on Unicode post translation phase 1 would help
+    that goal.
+  - Hubert responded that there is a benefit to having the standard reflect the general case.
+  - Tom suggested it would be useful to give this concern a name and move on to other discussion.
+  - Alisdair raised the relationships between character, character set, and character encoding.
+  - Hubert pondered whether we need character repertoire and noted over use of the term character set where
+    character encoding is often meant.
+  - PBrett suggested discontinuing the use of character set.
+  - Corentin disagreed noting that the execution character set is a character set and that discussion of code points
+    requires a character set as opposed to a repertoire.
+  - PBrett asked why a character repertoire plus an encoding doesn't suffice.
+  - Corentin responded that his explanation was based on Unicode definitions.
+  - Hubert stated that use of the Unicode definitions is fine; the basic execution character set is sometimes
+    used where an encoding is intended unless you subscribe to the belief that `wchar_t` implies a trivial
+    encoding.
+  - Hubert continued noting that the basic execution character set is sometimes used as a repertoire, and at
+    other times used as a character set.
+  - Tom responded that he thinks of the basic execution character set as defining a restriction on character
+    sets since it places some constraints on code assignments; the code points for digits 0-9 must be in
+    sequence, and the code point value for NUL must be 0.
+  - Hubert noted that the abstract numeric values mapped to abstract characters are sometimes ficticious.
+  - Corentin discussed the idea of the internal character set being a repertoire; that works up until
+    translation phase 5 when conversions for literals produce objects with values.
+  - Tom provided a description of his understanding of character repertoire, character set, and character encoding.
+    A character repertoire is a set of abstract characters.  A character set is a map of abstract characters
+    corresponding to some character repertoire to numeric code point values.  A character encoding is a
+    specification for how to encode those numeric code point values as a sequence of code units.
+  - Tom asked if any of those definitions were surprising.
+  - PBrett expressed a little surprise with regard to the implied need for a character encoding to have an associated
+    character set since an encoding could specify how to encode abstract characters directly.
+  - Steve stated that, according to Unicode, a coded character set defines a map of characters to numeric code point
+    values, but that a character set in general need not specify such mappings.
+  - Tom asked for confirmation that we should prefer the term coded character set when we explicitly mean a map
+    of characters from a repertoire to numeric code point values.
+  - Steve responded, yes.
+  - PBrett observed that, for ISO/IEC 8859 specifications other than ISO/IEC 8859-1, the specified character
+    repertoire is a subset of the Unicode character repertoire, but the specified character set is not a subset of
+    the Unicode character set since code point assignments differ for some non-ASCII cases.
+  - PBrett also observed that the basic source character set is a repertoire, but the compiler must also define an
+    associated coded character set.
+  - Jens responded that that is true from an implementation perspective, but not with regard to how the standard
+    uses it since the standard permits symbolic evaluation.
+  - Hubert noted that the standard may not be very consistent in how the existing terms are uses, but the use of
+    terms with fewer requirements is useful.
+  - Hubert expressed concern regarding focus on coded character sets because it isn't clear that abstract numeric
+    code point values are helpful from a specification standpoint.
+  - Jens responded that it is convenient to be able to discuss a character having a numeric value, but agreed that
+    it is not germane to the standard.
+  - Jens continued stating that, at the end of the day, we need to encode bytes for a character that was previously
+    abstract; if the use of the character set term is confusing, we can replace it, but that seems like an editorial
+    concern, albeit a useful one to avoid confusion or reduce baggage.
+  - PBrett expressed support for a new term since character set is often confused with encoding.
+  - Corentin provided the historical perspective that most legacy character encodings were trivial encodings of
+    code points from a given coded character set, so the terms were almost always interchangeable prior to Unicode.
+  - Steve stated that numeric code point values for basic source characters are not observeable though, per
+    [[cpp.cond]p12](http://eel.is/c++draft/cpp.cond#12),
+    different values corresponding to them may be observed at different phases of translation.
+  - Hubert observed that, within the standard, discussion of character sets usually corresponds to the Unicode
+    definition of character encoding schemes.
+  - Tom summarized; it sounds like we likely have need for character repertoire and character encoding
+    scheme, but perhaps not for character set or coded character set.
+  - Hubert responded that there may be a need for character set specifically when referring to Unicode.
+  - Tom pondered whether a coded character set is needed for character literals.  The current constraint for the
+    value of a character literal \[ Editor's note: other than for multicharacter literals or literals with no
+    representation in the execution character set. \] is that the abstract character can be encoded in a single
+    code unit.
+  - Jens stated that the only observable character values are code units in Unicode parlance.
+  - PBrett asked whether *unicode-character-name*s fits that picture.
+  - Jens replied that we do associate them with Unicode code points, but from a standard perspective, they are
+    basically text.
+  - Hubert suggested use of generalized terminology for these low level concerns with Unicode terminology reserved
+    specifically for Unicode encodings.
+  - Alisdair noted that encoding matters can't assume octets.
+  - Hubert agreed, but noted that some of the ISO blessed specifications specify octets and provided a source in
+    chat:
+    - "(Source: RFC1866) A function whose domain is the set of sequences of octets, and whose range is the set
+      of sequences of characters from a character repertoire; that is, a sequence of octets and a character
+      encoding scheme determining a sequence of characters."
+    - [ISO/IEC 15445:2000](https://www.iso.org/standard/27688.html), 4.3
+  - Tom suggested we move on to some polls.
+  - **Poll: We should move forward in three phases. 1) define terminology, 2) address core wording, 3) address library use of terms**
+    - Attendance: 12
+    - No objection to unanimous consent.
+  - **Poll: This group generally believes that C++ lexing and parsing behavior through translation phase 4 can be defined in terms of character repertoires and without the need for coded character values.**
+    - Attendance: 12
+
+      |  SF |   F |   N |   A |  SA |
+      | --: | --: | --: | --: | --: |
+      |   3 |   8 |   0 |   0 |   1 |
+
+    - SA: We'll have the issue that we cannot preserve byte values from the source stream; this loses the relation
+      to bytes and is overly abstract.
+    - \[ Editor's note: After the telecon, Hubert
+      [posted to the SG16 mailing list](https://lists.isocpp.org/sg16/2020/06/1489.php) to express agrement with
+      the SA position: "I agree ... that the strict use of abstract characters introduces problems where a coded
+      character set contains multiple values for a single abstract character/contains characters that are
+      canonically the same but assigned different values." \]
+- Tom discussed options for scheduling the next SG16 telecon noting that he will not be available the week of
+  June 22nd which would be the next time we would meet following our usual cadence.  The group agreed to meet in
+  one week, on June 17th, in order to maintain momentum on this topic.
 
 
 # May 27th, 2020
