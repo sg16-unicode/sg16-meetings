@@ -123,7 +123,7 @@ Summaries of past meetings:
     of characters in raw string literals.
   - Corentin opined that the current machinery works and that it is nice to be able to discard the notion of a
     physical source representation after phase 1.
-  - Hubert stated that translation phase 1 does too much right now.
+  - Hubert stated that translation phase 1 does too much for one phase right now.
   - Corentin agreed and stated a preference that translation phase 1 only perform character mapping.
   - Jens described how translation phase 1 could be divided into sub-phases.  Phase 1A would produce logical
     characters and phase 1B would map to *universal-character-name*s.
@@ -152,9 +152,9 @@ Summaries of past meetings:
     requires a character set as opposed to a repertoire.
   - PBrett asked why a character repertoire plus an encoding doesn't suffice.
   - Corentin responded that his explanation was based on Unicode definitions.
-  - Hubert stated that use of the Unicode definitions is fine; the basic execution character set is sometimes
-    used where an encoding is intended unless you subscribe to the belief that `wchar_t` implies a trivial
-    encoding.
+  - Hubert stated that use of the Unicode definitions is fine for discussion purposes; the basic execution character
+    set is sometimes used where an encoding is intended unless you subscribe to the belief that `wchar_t` implies a
+    trivial encoding.
   - Hubert continued noting that the basic execution character set is sometimes used as a repertoire, and at
     other times used as a character set.
   - Tom responded that he thinks of the basic execution character set as defining a restriction on character
@@ -182,7 +182,7 @@ Summaries of past meetings:
     associated coded character set.
   - Jens responded that that is true from an implementation perspective, but not with regard to how the standard
     uses it since the standard permits symbolic evaluation.
-  - Hubert noted that the standard may not be very consistent in how the existing terms are uses, but the use of
+  - Hubert noted that the standard may not be very consistent in how the existing terms are used, but the use of
     terms with fewer requirements is useful.
   - Hubert expressed concern regarding focus on coded character sets because it isn't clear that abstract numeric
     code point values are helpful from a specification standpoint.
