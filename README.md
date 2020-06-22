@@ -27,6 +27,7 @@ The draft agenda is:
     [[intro.defs]](http://eel.is/c++draft/intro.defs).
 
 Summaries of past meetings:
+- [June 17th, 2020](#june-17th-2020)
 - [June 10th, 2020](#june-10th-2020)
 - [May 27th, 2020](#may-27th-2020)
 - [May 13th, 2020](#may-13th-2020)
@@ -41,6 +42,232 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# June 17th, 2020
+
+## Agenda:
+- Continue discussion of terminology updates to strive for in C++23
+  - Resume discussion of relationships between (abstract) character, (character) repertoire,
+    (coded) character set, and character encoding.
+    - Review ISO/IEC 10646:2017 section 3 terms and definitions
+      - https://standards.iso.org/ittf/PubliclyAvailableStandards/c069119_ISO_IEC_10646_2017.zip
+    - Review Unicode section 3.4 terms for characters and encodings
+      - https://www.unicode.org/versions/Unicode13.0.0/ch03.pdf
+    - Review the Unicode glossary
+      - https://www.unicode.org/glossary
+    - Review Corentin's email
+      - https://lists.isocpp.org/sg16/2020/06/1493.php
+    - Compare and contrast terms as described by the above resources.
+  - Determine suitability of ISO/IEC 10646 terms for use in the C++ standard.
+  - Discuss the relationship of the above terms to named entities in the standard.
+  - Identify possible terms to add to
+    [[intro.defs]](http://eel.is/c++draft/intro.defs).
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Marcos Bento
+  - Mark Zeren
+  - Martinho Fernandes
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+- Tom introduced the topic:
+  - The intent is continuation of discussion from the prior telecon.
+  - Polls taken during the prior telecon were presented and it was noted that mailing list discussions following
+    the telecon may have changed opinions.
+- Jens opined that we need more than just a glossary; the mailing list discussion raised examples of characters
+  that can not go through translation phase 1 without information loss.  This means we cannot convert to Unicode
+  universally without loss.
+- Tom raised a qustion that Corentin had asked him during private discussion following the telecon.  Corentin had
+  asked if, given a string literal and a raw string literal where both are specified with the same source input
+  characters (with extended characters but without escape sequences), whether both strings must have the same
+  encoded contents after translation phase 5.
+- PBrett responded that some people assert that raw string literals should effectively copy the byte sequence from
+  the souce input.
+- Corentin disagreed with such an interpretation and noted that conversions are required.
+- Tom presented two possible models for the reversion of *universal-character-name*s (UCNs) in raw string literal
+  during translation phase 5.
+  - The UCN is reverted to the original source input character and that character is then encoded in
+    the appropriate encoding for the kind of string literal.
+  - The UCN is reverted to the code point denoted by the UCN and that code point is then encoded
+    in the appropriate encoding for the kind of string literal.
+- Corentin opined that the reversion can be accomplished via the as-if rule and translation phase 1 and 5
+  shenanigans.
+- Tom asked Jens to comment on Corentin's interpretation of the as-if rule in this context from a core perspective.
+- Jens responded that the question is whether a conforming program could observe the difference.
+- Tom replied that implementation-defined behavior is unavoidable here, so the standard can't fully define the
+  behavior on its own.
+- Corentin stated that, if you have a Unicode character, conversion to Shift-JIS provides a choice of code point
+  values for some characters.
+- PBrett noted that the program can distinuish behavior here.
+- Corentin replied that the original source file encoding can't be observed.
+- Martinho noted that a program can demonstrate the behavior though.
+- Jens stated that programmers have expectations of behavior based on their source file encoding; they expect what
+  they write to be carried through.
+- Tom asked if it would be conforming for an implementation to, given an
+  'Å' (U+00C5, LATIN CAPITAL LETTER A WITH RING ABOVE) or 'Å' (U+212B, ANGSTROM SIGN) in the source input, to
+  always translate both to one or the other in the execution character set.
+- Corentin replied that, for Unicode input, we can require preservation of code points.
+- PBrett asked if the standard currently permits such translation.
+- Steve responded that translation phase 1 is so loose that any imaginable conversion is conforming and
+  provided handling of trigraphs as an example.
+- Jens agreed and elaborated; translation phase 1 states that physical source files are mapped in an
+  implementation-defined manner and that mapping can include recognizing and mutating string literals.
+- Martinho claimed that an implementation can even recognize every source input file as equivalent!
+- Jens agreed, but noted that the implementation has to actually define what it does.
+- PBrett noted the utility of such lenience; for Shift-JIS we only need implementation-defined behavior on the
+  input side.
+- Steve responded that the conversion to execution character set for Shift-JIS could be lossy, but for the
+  Unicode A-with-ring vs Angstrom-sign case, it need not be.
+- Martinho observed that, if a UCN isn't explicitly written in the source, the implementation has freedom to
+  handle the conversion however is desired.
+- Tom replied that the implementation has such freedom regardless of whether the UCN is explicit due to
+  translation phase 1 leniency.
+- Corentin stated that leaving these conversions as implementation-defined for now will allow us to make progress.
+- Jens observed that, for a hypothetical future where Unicode code point pass through is required, the
+  implementation-defined steps in between can be removed.
+- Mark asked if, in that world, whether raw string literals would still have to revert UCNs.
+- Jens responded yes; translation phase 1 could simulate Unicode input.
+- Tom observed that recognition of tokens in translation phase 3 depends on UCNs and asked, when a UCN is reverted,
+  what it is reverted to.
+- Jens responded that it is reverted to an extended character.
+- Tom replied that extended characters are not reflected in the grammar and stated that this has implications for
+  the stringize operator in the case where a macro name spelled with an extended character is stringized.
+- PBrett stated that an extended character is any character in the internal character set that is not a member of
+  the basic source character set.
+- Corentin stated that the mapping from every extended character to a UCN is required.
+- Hubert noted that the internal character set is effectively Unicode and that this differs from the model used
+  for C.
+- Jens agreed and observed that the requirement only exists because extended characters must be representable as
+  a UCN.
+- PBrett asked if this avoids the need to discuss the Unicode character set.
+- Jens responded that that is the status quo; the question is whether we need to carve an exception for extended
+  characters that don't roundtrip through Unicode and whether that is desirable or whether loss of some information
+  is ok.
+- Jens noted that the UCN mechanism permits translation through an ASCII only preprocessor.
+- Jens summarized; there are two reasonable positions:
+  - The status quo; the standard doesn't recognize the existence of characters that don't roundtrip through
+    Unicode, or
+  - The standard should be updated to recognize the possibility of such characters and specify behavior for them.
+- Corentin agreed with Jens' summary, but noted another possible position, The standard could specify conversion
+  via Unicode, but require semantic preservation for extended characters.
+- PBrett asked if the internal character set could be replaced with the Unicode character set since the standard
+  requires it to be isomorphic anyway.
+- Jens expressed concerns about doing so since that would require defining behavior for unassigned code points.
+- Hubert stated that some implementations map characters to a limited internal character set that only supports
+  the current locale; conversion through Unicode is a complicated process to get a simple result for round
+  tripping.
+- Hubert observed that C already adopted a model that doesn't force the internal character set to be Unicode.
+- Jens noted that C supports UCNs and asked how its model avoids these issues.
+- Hubert referenced the
+  ["C99 rationale" document](http://www.open-std.org/jtc1/sc22/wg14/www/docs/C99RationaleV5.10.pdf)
+  and explained that it documents three models for handling UCNs.  C chose one model and C++ chose another.
+- Hubert noted that limitations with regard to eager conversion of extended characters to UCNs in translation
+  phase 1 effectively requiring all extended characters to have representation in Unicode are not discussed in
+  the document.
+- PBrett asked if implementations that support extended characters not represented in Unicode would become
+  non-conforming if the internal character set was defined as being Unicode.
+- Hubert responded that no, the model adopted for C++ that permits observability of UCNs is defective; it seems
+  that C++ failed to specify the intended behavior.
+- \[ Editor's note: The referenced
+  ["C99 rationale" document](http://www.open-std.org/jtc1/sc22/wg14/www/docs/C99RationaleV5.10.pdf)),
+  in section 5.2.1, subsection "UCN models", states:
+  
+      Once this was adopted, there was still one problem, how to specify UCNs in the Standard.  Both
+      the C and C++ committees studied this situation and the available solutions, and drafted three
+      models:
+  
+        A. Convert everything to UCNs in basic source characters as soon as possible, that is, in
+        translation phase 1.
+  
+        B. Use native encodings where possible, UCNs otherwise.
+  
+        C. Convert everything to wide characters as soon as possible using an internal encoding that
+        encompasses the entire source character set and all UCNs.
+      
+      Furthermore, in any place where a program could tell which model was being used, the standard
+      should try to label those corner cases as undefined behavior.
+  \]
+- Jens summarized; the UCN model was chosen by C++ decades ago and it has issues.  C chose a different model, and
+  Hubert suggests that use of that model would not require round trip through Unicode and thus may make more
+  programs well-formed.
+- PBrett asked if the C model retains the notion of an internal character set.
+- Hubert responded that C's model doesn't introduce UCNs in translation phase 1; rather it has extended characters
+  and wording that achieves the same result.  C has explicit wording to handle basic and extended characters.
+- Jens asked how C avoids handling UCNs in a character literal.
+- Hubert responded that C doesn't have to define the special property of what can be encoded in a character literal.
+- Hubert noted that, if we move away from UCNs, it will be necessary to add wording to handle extended characters.
+- PBrett stated that it sounds like the C model permits the internal character set to be a super set of Unicode.
+- Tom noted that Corentin and Steve have both expressed a preference for translating extended characters to Unicode
+  code points that are maintained distinctly from UCNs.
+- Hubert responded that code point is just a term.  If we switch models, then we'll need to add wording to handle
+  these scenarios; it might not be less wording than is needed for UCNs.
+- Corentin agreed, but noted that it would avoid the need for the UCN reversion that currently happens in raw string
+  literals and stringize operations.
+- PBrett asked how the notion of an extended character differs from a code point; code point has an implied character
+  set association, but extended character doesn't.
+- Hubert responded that there is a distinction: extended character excludes basic source characters.  This
+  distinction may not be useful.
+- Jens expressed concern about potentially losing that distinction since extended characters can only appear in
+  a limited number of contexts.
+- Corentin expressed a preference for use of common terminology and that extended characters would make it difficult
+  to discuss behavior in Unicode terms.
+- Hubert noted that extended characters just provide differentiation from basic source characters because the latter
+  have additional requirements placed on them.
+- PBrett observed that code points require correlation with a character set, but that an extended character can have
+  distinct code points in a single character set.
+- Steve noted that code point values don't tend to be observable but that code units are.
+- Hubert stated that the term code point is probably not correct to describe a character that can apply generically
+  to multiple character sets.
+- Steve listed some of the requirements for the members of the basic execution character set; each such character
+  is encoded as a single code unit with a non-negative value, and the code unit values for the digits 0-9 have
+  consecutive values.
+- Jens noted that the term "code point" implies an associated numeric value, but that such a value is not needed
+  within the standard for the source input character set.  Further, on the execution side, it should not be assumed
+  that code points are encoded.  A term that is more abstract than code point is needed here.
+- Hubert agreed that numeric code point values are not needed, but noted that abstract character isn't necessarily
+  the right term either.
+- Corentin stated that code point could imply a numeric value, but that the standard need not discuss it.
+- Tom replied that, in ISO/IEC 10646 and Unicode, code point is primarily defined as a numeric value.
+- Hubert observed that, if the internal character set is specified to be Unicode, then there is no requirement to
+  define what a "chraracter" is, but use of a term like "extended character" will require avoiding discussion of
+  details since they would be implementation-defined.
+- Jens observed that implementations could use code point values above `0x10FFFF` for extended characters.
+- Jens added that there is benefit to being aligned with C if we were to adopt the C99 model.
+- Jens opined that there is no benefit in requiring the internal character set to be isomorphic to Unicode.
+- PBrett stated that the alternative to an internal character set is Unicode and expressed a preference that, if
+  the internal character set is effectively Unicode, that it just be made Unicode.
+- Hubert responded that the goal was to avoid formation of UCNs in translation phase 1 and that doing so results in
+  having to handle extended characters.  That implies that the internal character set must map Unicode or Unicode
+  plus additional implementation-defined characters.
+- **Poll: We generally believe that the internal character set should be Unicode based, but that implementations can support non-Unicode characters.**
+  - Attendees: 10
+
+      |  SF |   F |   N |   A |  SA |
+      | --: | --: | --: | --: | --: |
+      |   2 |   5 |   1 |   2 |   0 |
+
+  - A: If non-Unicode characters are allowed, then we are not encouraging migration to Unicode and portability.
+  - A: People with more expertise than us have been defining characters for all humanity and this poll states
+    that isn't sufficient.
+- Hubert responded to the against positions stating that the intent is not to change the behavior of current
+  programs and the against positions are therefore not consistent with the intent.
+- **Poll: We want to transition away from forming UCNs in phase 1 in favor of plumbing extended characters (perhaps as specified by C99)**
+  - Attendees: 10
+  - No objection to unanimous consent.
+- Tom asked if anyone would be willing to volunteer to summarize the mechanism used in C and post it to the
+  mailing list.
+- Corentin volunteered.
+- Tom confirmed that the next meeting will be on July 8th.
+- PBindels reminded the group that EWG is scheduled to review
+  [P1949R4](https://wg21.link/p1949r4)
+  the following day (Thursday, 2020-06-18).
+
 
 # June 10th, 2020
 
