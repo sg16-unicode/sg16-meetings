@@ -6,25 +6,29 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, June 17th 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200617T193000&p1=1440)).
+Wednesday, July 8th 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200708T193000&p1=1440)).
 The draft agenda is:
 - Continue discussion of terminology updates to strive for in C++23
-  - Resume discussion of relationships between (abstract) character, (character) repertoire,
-    (coded) character set, and character encoding.
-    - Review ISO/IEC 10646:2017 section 3 terms and definitions
-      - https://standards.iso.org/ittf/PubliclyAvailableStandards/c069119_ISO_IEC_10646_2017.zip
-    - Review Unicode section 3.4 terms for characters and encodings
-      - https://www.unicode.org/versions/Unicode13.0.0/ch03.pdf
-    - Review the Unicode glossary
-      - https://www.unicode.org/glossary
-    - Review Corentin's email
-      - https://lists.isocpp.org/sg16/2020/06/1493.php
-    - Compare and contrast terms as described by the above resources.
   - Determine suitability of ISO/IEC 10646 terms for use in the C++ standard.
-  - Discuss the relationship of the above terms to named entities in the standard.
+    - Character
+    - Repertoire
+    - Code point
+    - Coded character
+    - Coded character set
+    - Code unit
+    - Code unit sequence
+    - Encoding form
+    - Encoding scheme
+    - UCS codespace
+    - UCS scalar value
+    - Well-formed code unit sequence
+    - Minimal well-formed code unit sequence
+    - Ill-formed code unit sequence
+    - Ill-formed code unit sequence subset
   - Identify possible terms to add to
     [[intro.defs]](http://eel.is/c++draft/intro.defs).
+
 
 Summaries of past meetings:
 - [June 17th, 2020](#june-17th-2020)
