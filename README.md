@@ -94,7 +94,7 @@ Summaries of past meetings:
 - PBrett responded that some people assert that raw string literals should effectively copy the byte sequence from
   the souce input.
 - Corentin disagreed with such an interpretation and noted that conversions are required.
-- Tom presented two possible models for the reversion of *universal-character-name*s (UCNs) in raw string literal
+- Tom presented two possible models for the reversion of *universal-character-name*s (UCNs) in raw string literals
   during translation phase 5.
   - The UCN is reverted to the original source input character and that character is then encoded in
     the appropriate encoding for the kind of string literal.
@@ -158,7 +158,7 @@ Summaries of past meetings:
   - The status quo; the standard doesn't recognize the existence of characters that don't roundtrip through
     Unicode, or
   - The standard should be updated to recognize the possibility of such characters and specify behavior for them.
-- Corentin agreed with Jens' summary, but noted another possible position, The standard could specify conversion
+- Corentin agreed with Jens' summary, but noted another possible position, the standard could specify conversion
   via Unicode, but require semantic preservation for extended characters.
 - PBrett asked if the internal character set could be replaced with the Unicode character set since the standard
   requires it to be isomorphic anyway.
@@ -179,7 +179,7 @@ Summaries of past meetings:
 - Hubert responded that no, the model adopted for C++ that permits observability of UCNs is defective; it seems
   that C++ failed to specify the intended behavior.
 - \[ Editor's note: The referenced
-  ["C99 rationale" document](http://www.open-std.org/jtc1/sc22/wg14/www/docs/C99RationaleV5.10.pdf)),
+  ["C99 rationale" document](http://www.open-std.org/jtc1/sc22/wg14/www/docs/C99RationaleV5.10.pdf),
   in section 5.2.1, subsection "UCN models", states:
   
       Once this was adopted, there was still one problem, how to specify UCNs in the Standard.  Both
