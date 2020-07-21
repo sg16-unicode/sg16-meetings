@@ -20,6 +20,7 @@ The draft agenda is:
 
 
 Summaries of past meetings:
+- [July 8th, 2020](#july-8th-2020)
 - [June 17th, 2020](#june-17th-2020)
 - [June 10th, 2020](#june-10th-2020)
 - [May 27th, 2020](#may-27th-2020)
@@ -35,6 +36,244 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# July 8th, 2020
+
+## Agenda:
+- Continue discussion of terminology updates to strive for in C++23
+  - Determine suitability of ISO/IEC 10646 terms for use in the C++ standard.
+    - Character
+    - Repertoire
+    - Code point
+    - Coded character
+    - Coded character set
+    - Code unit
+    - Code unit sequence
+    - Encoding form
+    - Encoding scheme
+    - UCS codespace
+    - UCS scalar value
+    - Well-formed code unit sequence
+    - Minimal well-formed code unit sequence
+    - Ill-formed code unit sequence
+    - Ill-formed code unit sequence subset
+  - Identify possible terms to add to [intro.defs].
+
+## Meeting summary:
+- Attendees:
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Walter Brown
+  - Zach Laine
+- Discussion of the suitability of
+  [ISO/IEC 10646:2017](https://www.iso.org/standard/69119.html)
+  terms for use in the C++ standard
+  - Tom introduced the topic:
+    - The intent is to focus on terminology, determine what terms from ISO/IEC 10646 are usable in the
+      C++ standard and for what purposes, and what new terms will be needed.
+  - Zach advised against introducing new terms or redefining existing terms with different meanings.
+  - Hubert agreed that if we try inventing terms, then we risk causing some of the same problems that the
+    Unicode consortium did by making terms overly specific; we want generic terms.
+  - PBrett also agreed and noted that we don't want to create an N+1 specification.
+  - Jens stated that there may not be much reason for concern; the proposed wording for
+    [P2029](https://wg21.link/p2029)
+    illustrates that we can avoid the need for some terms.  For example, we may be able to get rid of execution
+    character set completely by only discussing an execution encoding rather than a character set.
+  - PBrett asked Jens to confirm that only character encodings can be observed, not character sets.
+  - Jens replied, yes.
+  - The group proceeded to discuss terms from ISO/IEC 10646.
+    - **character**:\
+      **"member of a set of elements used for the organization, control, or representation of textual data"**\
+      *note*: **"A graphic symbol can be represented by a sequence of one or several coded characters."**
+      - Jens commented that he used to believe that ISO/IEC 10646 matched the Unicode standard, but the ISO/IEC 10646
+        terms differ from Unicode.
+      - Tom acknowledged and relayed his understanding that we are required to refer to ISO standards when they exist,
+        so we need to first consider the terms from ISO/IEC 10646.
+      - Jens confirmed that understanding.
+      - Hubert asked where we envision using the "character" term from ISO/IEC 10646 in the standard.
+      - Jens replied that we need a term for the members of the basic source character set and for the input source.
+      - Tom added that we may need the term for the entity that is designated by a simple escape sequence.
+      - Jens responded that, since simple escape sequences designate an execution time value, that entity can be a
+        code unit sequence.
+      - Hubert noted that all of the characters designated by simple escape sequences only require a single code unit,
+        not even a code unit sequence.
+      - Hubert noted that the designated code units do have associated semantics however; like BEL for example.
+      - Jens replied that semantics can be established by referring to the character name or to a Unicode code point.
+      - Hubert expressed support for the generality of that approach since it is required that the mapping to execution
+        encoding can't fail.
+      - PBrett asked if there is a need for the concept of a character for locale purposes.
+      - Jens replied that there may be, but that we should just focus on core language for now and locale is all run-time.
+      - Mark observed that `std::basic_string` defines character in its own way.
+      - Zach asked if "character" will be needed in order to define other terms and noted that any dependencies will need
+        to be resolved in the standard.
+      - Tom replied that any dependent terms are already available via the existing reference to ISO/IEC 10646.
+      - Jens stated that the list of terms in the telecon agenda are ones that we should try not to add to
+        [[intro.defs]](http://eel.is/c++draft/intro.defs)
+        as the existing terms that are there are not particularly useful.
+      - Walter agreed and noted that the existing terms are somewhat enemic.
+      - Hubert stated that not putting terms in
+        [[intro.defs]](http://eel.is/c++draft/intro.defs)
+        is concerning unless wording is specific about where used terms come from.
+      - Tom asked if there is a way that we can be explicit about where terms come from.
+      - Hubert responsed that we haven't done that previously.
+      - Walter suggested that can be investigated offline.
+    - **repertoire**:\
+      **"specified set of characters that are represented in a coded character set"**
+      - Tom observed that the definition has an explicit dependency on "coded character set".
+      - Jens stated that the dependency makes that term unusable for our purposes since it isn't sufficiently abstract.
+      - Hubert agreed.
+      - Jens stated that a term is needed for the abstract entities that form the source input.
+      - Tom summarized the observations by stating that this term and its definition can't be used, but we recognize
+        a need for a term that doesn't have a dependency on "coded character set".
+      - Steve noted that we can't adopt terms from the C standard because they have a different character model; we use
+        the same terms to mean different things.  The
+        [C99 rationale document](http://www.open-std.org/jtc1/sc22/wg14/www/docs/C99RationaleV5.10.pdf)
+        exposed this.
+      - Jens agreed and commented that the current C++ model needs to change towards something more like the C model,
+        but the C model wording predates Unicode and doesn't use modern terminology.
+    - **code point**:\
+      **"value in the UCS codespace"**
+      - Tom decreed that the definition is terrible since it requires "UCS codespace".
+      - Jens read the definition of "UCS codespace".
+      - Jens noted that "UCS codespace" includes surrogate code points.
+      - Zach stated that surrogate inclusion is intentional, but people often use code point where scalar value is
+        intended; we'll need more precision in wording.
+      - Tom asked if an analogue of code point for non-Unicode encodings is needed.
+      - Jens replied no, only code units are needed; even for character literals.
+      - Hubert expressed some uncertainty and that something like code point may be needed for
+        *universal-character-name*s (UCNs).
+      - Jens summarized Hubert's concern and stated that UCNs are a sequence of characters that designate a scalar
+        value and that we need to be able to state that the universal character set maps to Unicode code points.
+      - Steve mentioned short-identifier syntax, `U+XXXX`, and noted that, in a UCN, the `XXXX` is the short-identifier.
+      - Jens replied that short-identifier syntax is problematic because of restrictions on leading 0s; Unicode only
+        allows leading 0s to pad to a maximum length of 6 digits, but UCNs require a length of exactly 4 or 8 digits.
+      - Jens noted that the "code point" term and its definition can be used, but only in a Unicode context.
+    - **coded charater**:\
+      **"association between a character and a code point"**
+      - Tom noted the term is Unicode specific due to the use of "code point" in the definition.
+      - Jens agreed and noted the same condition for "coded character set", but emphasized that neither appears to be
+        needed for the C++ standard since only code units and code unit sequences are observable.
+      - PBrett agreed.
+    - **code unit**:\
+      **"minimal bit combination that can represent a unit of encoded text for processing or interchange"**\
+      *note*: **"Examples of code units are octets (8-bit code units) used in the UTF-8 encoding form,**
+      **16-bit code units in the UTF-16 encoding form, and 32-bit code units in the UTF-32 encoding form.**"
+      - Tom excitedly noted that this definition is not Unicode specific.
+      - Hubert agreed and added that it can be used to describe the contents of strings, including wide strings.
+      - Tom asked if there are any places other than strings where code unit sequence would be relevant.
+      - Jens replied that there are definitely use cases in the library.
+      - PBrett asked about the requirement that the values of the characters "0" through "9" in the execution character
+        set be contiguous.
+      - Hubert replied that that requirement can be defined in terms of code units.
+      - Jens commented that in other wording he is involved with, that just integer value suffices since
+        `char`, `wchar_t`, etc... are all integer types.
+      - PBrett recounted claims from others in outside conversations that it may have been a mistake to define the
+        character types as integer types and suggested that, in a rewrite, it may be beneficial to avoid that.
+      - Jens agreed, but noted that for backward compatibility, a rewrite would have to allow conversions.
+      - PBrett suggested that it is useful to be able to distinguish between a code unit and an integer value.
+      - Hubert noted that we would still need to discuss integer values because `char` and `wchar_t` have
+        implementation-defined signedness.
+      - Jens agreed and stated that other such restrictions exist.
+      - Zach stated that, in the library wording, having definitions is very useful since the library environment
+        tends to be less abstract.
+    - **code unit sequence**:\
+      **"element of interchanged information that is specified to consist of a sequence of code units, in**
+      **accordance with one or more identified standards for coded character sets**\
+      *note 1*: **"Such sequence can contain code units associated with any type of code points.**"\
+      *note 2*: **"Since its second edition: ISO/IEC 10646:2011, this International Standard does not use**
+      **implementation levels. Its definition of code unit sequence corresponds to the former unrestricted**
+      **implementation level 3. Other definitions of code unit sequence, previously known as level 1 and 2,**
+      **are deprecated. To maintain compatibility with these previous editions, in the context of identification**
+      **of coded representation in International Standards such as ISO/IEC 8824 and ISO/IEC 8825, the concept of**
+      **implementation level can still be referenced as ‘Implementation level 3’. See Annex N**"
+      - Tom observed that this definition appears to require an association with a standard.
+      - Zach expressed a lack of concern; EBCDIC can be considered a "standard" for this purpose.
+      - PBrett agreed and stated the same is true for WTF-8.
+      - Hubert noted that ISO/IEC 10646 may not have the ability to declare something as "implementation-defined",
+        hence a deference to a standard.
+      - Tom asked for confirmation that this definition is ok for our purposes.
+      - Jens agreed that it is.
+      - Walter expressed frustration with the discussed terms and definitions being so circular and asked where
+        terms and definitions that don't depend on prior knowledge might be found.
+      - Jens responded that, in a standard, definitions should generally be presented at the beginning of the
+        standard and explained by later prose.
+      - Hubert noted that the quality of these definitions is such that expectations of helpful prose later
+        in the document may lead to disappointment.
+      - Zach commented that people end up developing a working knowledge of these terms and processes, but
+        the ability to define them well remains elusive.
+      - Tom lamented a better source of terminology and noted that the reason we are discussing these is exactly
+        because a good agreed upon source of terms is not readily available.
+      - Jens asserted that this is good motivation for reducing usage to as few terms as possible.
+      - PBrett agreed and added that "character" should be especially avoided because it probably has the most
+        fuzzy connotations.
+    - **encoding form**:\
+      **"form that determines how each UCS code point for a UCS character is to be expressed as one or more**
+      **code units used by the encoding form"**\
+      *note*: **"This International Standard specifies UTF-8, UTF-16, and UTF-32."**
+    - **encoding scheme**:\
+      **"scheme that specifies the serialization of the code units from the encoding form into octets"**\
+      *note*: **"Some of the UCS encoding schemes have the same labels as the UCS encoding form. However, they**
+      **are used in different contexts. UCS encoding forms refer to in-memory and application interface**
+      **representation of textual data. UCS encoding schemes refer to octet-serialized textual data."**
+      - Jens stated that encoding scheme is relevant for encoding of octets in big-endian vs little-endian order,
+        and that encoding form is for code units.
+      - Jens added that encoding scheme is unnecessary for our purposes since endian issues are not specified.
+      - Jens further added that encoding form is unnecessary since encodings such as UTF-8, UTF-16, and UTF-32
+        can be referred to by name.
+      - Mark asked if encoding form might be needed for literals.
+      - Jens replied that implementation-defined encoding or mention of a specific encoding name suffices.
+      - Tom noted that specific encoding names will be needed for the implementation-defined encodings for Corentin's
+        [P1885](https://wg21.link/p1885)
+        proposal to expose the encoding used for literals and by the locale, but agreed not for core language.
+      - Tom summarized; consensus seems to be that we don't need encoding form, encoding scheme, or analogues for
+        non-Unicode encodings.
+      - Zach agreed and noted that "encoding" can be used ithout intruding on "encoding form".
+    - **UCS codespace**:\
+      **"codespace consisting of the integers from 0 to 10FFFF (hexadecimal) available for assigning the repertoire**
+      **of the UCS characters."**
+    - **UCS scalar value**:\
+      **"any UCS code point except high-surrogate and low-surrogate code points"**
+      - Tom stated that both "UCS codespace" and "UCS scalar value" are available for use in Unicode contexts.
+      - Jens agreed.
+      - Mark noted that these terms start with "UCS" and that, colloquially, that prefix isn't generally used, but
+        that the standard should specifically use the UCS prefixed terms.
+      - Jens agreed and added these terms don't appear frequently enough to warrant a shorter term.
+      - Jens added that "scalar value" by itself is not specific enough anyway.
+    - **well-formed code unit sequence**:\
+      **"UCS code unit sequence that purports to be in a UCS encoding form which conforms to the specification of that**
+      **encoding form and contains no ill-formed code unit sequence subset"**
+    - **minimal well-formed code unit sequence**:\
+      **"well-formed code unit sequence that maps to a single UCS scalar value"**
+      - Jens stated that neither of the "well-formed" terms are interesting for core language.
+      - Tom countered that these could potentially be useful for a fully specified translation phase 1 for Unicode
+        encoded source files.
+      - PBrett stated that, absent implementation defects, it is not possible for literals to not be well-formed.
+      - Zach expressed uncertainty.
+      - Hubert noted that, for source input, all that exists are characters and UCNs, so yes, well-formedness is assured.
+      - Steve agreed and added that we've previously agreed that ill-formed code unit sequences in literals are possible
+        due to numeric escape sequences, but that the input to the literal encoding is always well-formed.
+      - Mark expressed surprise that these terms are not needed in the code language.
+      - Tom replied that library will eventually need these terms or analogous ones.
+      - Zach agreed that we should revisit these terms for library.
+    - **ill-formed code unit sequence**:\
+      **"UCS code unit sequence that purports to be in a UCS encoding form which does not conform to the specification**
+      **of that encoding form"**\
+      *example*: **"An unpaired surrogate code unit is an ill-formed code unit sequence."**
+    - **ill-formed code unit sequence subset**:\
+      **"non-empty subset of a code unit sequence X which does not contain any code unit which also belong to any**
+      **minimal well-formed code unit sequence subset of X"**\
+      *note*: **"An ill-formed code unit sequence subset cannot overlap with a minimal well-formed code unit sequence."**
+      - Tom stated that the situation is the same for the "ill-formed" cases as for the "well-formed" ones; they can be
+        used in library, but are not needed for core language.
+- Tom stated that this meeting concludes our discussion of terminology for now and that a paper will be needed to make
+  more progress.
+- Tom stated that the next meeting will be on July 22nd and will discuss
+  [P2178](https://wg21.link/p2178).
 
 
 # June 17th, 2020
