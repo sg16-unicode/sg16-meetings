@@ -7,7 +7,7 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
 Wednesday, August 12th 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200812T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_et)).
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200812T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p4=tz_et)).
 The draft agenda is:
 - [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
   - Begin discussions on the various proposals.
