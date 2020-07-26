@@ -6,15 +6,10 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, July 22nd 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200722T193000&p1=1440)).
+Wednesday, August 12th 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200812T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_et)).
 The draft agenda is:
-- [P2139R2: Reviewing Deprecated Facilities of C++20 for C++23](https://wg21.link/p2139r2)
-  - Provide recommendations for D.20-D.23.
-- DXXXXR0: <Jens' paper to make mixed encoding string literal concatenation ill-formed>
-  - https://wiki.edg.com/pub/Wg21summer2020/SG16/concatenation.html
-  - Validate consensus to encourage that this paper be forwarded directly to core.
-- [P2178R0: Misc lexing and string handling improvements](https://wg21.link/p2178r0)
+- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
   - Begin discussions on the various proposals.
   - Possibly begin taking direction polls.
 
