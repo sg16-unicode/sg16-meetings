@@ -15,7 +15,7 @@ The draft agenda is:
 
 
 Summaries of past meetings:
-- [August 12th, 2020](#august-12th-2020)
+- [July 22nd, 2020](#july-22nd-2020)
 - [July 8th, 2020](#july-8th-2020)
 - [June 17th, 2020](#june-17th-2020)
 - [June 10th, 2020](#june-10th-2020)
@@ -34,7 +34,7 @@ Summaries of past meetings:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
-# August 12th, 2020
+# July 22nd, 2020
 
 ## Agenda:
 - [P2139R2: Reviewing Deprecated Facilities of C++20 for C++23](https://wg21.link/p2139r2)
