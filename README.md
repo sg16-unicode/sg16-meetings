@@ -15,6 +15,7 @@ The draft agenda is:
 
 
 Summaries of past meetings:
+- [August 12th, 2020](#august-12th-2020)
 - [July 22nd, 2020](#july-22nd-2020)
 - [July 8th, 2020](#july-8th-2020)
 - [June 17th, 2020](#june-17th-2020)
@@ -32,6 +33,195 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# August 12th, 2020
+
+## Agenda:
+- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
+  - Begin discussions on the various proposals.
+  - Possibly begin taking direction polls.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Mark Zeren
+  - Martinho Fernandes
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Walter Brown
+  - Zach Laine
+- Tom provided an administrative update:
+  - The EWG chair declined forwarding
+    [P2201R0: Mixed string literal concatenation](https://wg21.link/p2201r0)
+    directly to the CWG in order to avoid any possible appearance of unilateral decision making.
+    The paper will be reviewed during the EWG telecon on August 19th.
+- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
+  - Tom stated that the proposals will not be discussed in the order presented in the paper as proposals 1 and 9 are
+    complicated and/or contentious.  The goal is to provide feedback quickly on the proposals that are unlikely to
+    be contentious so that progress can be made on those without being held up by the others.
+  - Hubert asked if support for proposal 1, mandated support for UTF-8 as a source file encoding, could be handled by
+    EWG without SG16 holding it up.
+  - Tom responded that there are technical details and possible points of contention that should be worked out in SG16
+    first.
+  - Corentin provided an overview of the paper.
+    - The paper presents a number of proposals intended to address issues identified with current lexing behavior and
+      wording.
+    - As prior discussion has revealed, lack of consistent terminology leads to confusion; we need to ensure the
+    - underlying model is commonly understood.
+    - Many of the issues address concerns that are especially significant for Unicode support.
+    - The proposals are bundled into a single paper due to interconnected concerns.
+  - Proposal 2: What is a whitespace or a new-line?
+    - Corentin stated that this is intended to align with Unicode specifications for what constitutes whitespace.
+    - Corentin added that the motivation is to move away from implementation-defined behavior in phase 1.
+    - PBrett asked if this proposal is seperable from the others; the introduction argues for considering all of
+      these proposals collectively.
+    - Corentin replied that he would like to have just one paper for wording.
+    - PBrett acknowledged that goal but repeated the question as to whether separation is possible.
+    - Corentin replied that separation is possible, but that the individual proposals have less value, and therefore
+      little urgency to address, when considered individually rather than collectively.
+    - Corentin asked what the semantics should be for a raw string literal and whether the exact line termination
+      sequence should be preserved.
+    - Tom replied that there is a core issue for that.
+    - Corentin acknolwedged and noted that it is mentioned in the paper
+      ([CWG #1655](https://wg21.link/cwg1655)).
+  - Proposal 3: Preserve Normalization forms
+    - Corentin stated that the intent is to standardize existing practice and to persist source information through
+      translation phases 1 and 5.
+    - Tom asked if this proposal is dependent on proposal 1 and then answered his own question in the negative.
+    - Zach noted that there is a dependence on knowing what the source encoding is.
+    - Corentin replied that the compiler knows what encoding is being used.
+    - Zach acknowledged, but noted that the compiler has to be informed, so stating that it knows the encoding is vacuous.
+    - Corentin stated that the intent is that, if the source is UTF-8, that code points are preserved.
+    - Zach responded that we previously determined that we can't reliably determine when the encoding being used does
+      not match; there needs to be a portable way to indicate the source encoding.
+    - \[ Editor's note: that determination was made during discussions of
+      [P1879](https://wg21.link/p1879). \]
+    - Hubert stated that this just requires that the implementation specifies the encoding that is being used for the
+      source input.
+    - Tom asked if normalization form is the right concern; preservation of code points would address the more general
+      concern.
+    - PBrett noted that this proposal is separable from proposal 1 because the implementation knows the encoding that is
+      being used.
+    - PBrett added that this proposal is applicable for all encodings since non-basic source characters are mapped to
+      *universal-character-name*s (UCNs).
+    - Tom requested that the paper address the case where the execution encoding supports é as a combined character
+      (e.g., U+00E9 {LATIN SMALL LETTER E WITH ACUTE}), but not as separate characters
+      (e.g., U+0065 {LATIN SMALL LETTER E} followed by U+0301 {COMBINING ACUTE ACCENT}).
+    - Zach opined that this proposal should still be coupled with proposal 1.
+    - Tom replied that Peter's explanation seems sufficient to describe how this would work in an encoding agnostic way.
+    - Zach stated that requires knowing what the source encoding is.
+    - Hubert noted that discussion of codepoint-by-codepoint translation is challenging without more structure around
+      translation phase 1.
+  - Proposal 4: Making trailing whitespaces non-significant
+    - Corentin stated that this is a lexing concern, but not really a Unicode or text concern.
+    - Corentin explained that gcc defends its removal of trailing white space as part of its translation phase 1 semantics.
+    - Corentin noted that Microsoft Visual C++ behavior diverges from gcc and clang.
+    - Corentin added that editors may implicitly remove trailing whitespace; semantically meaningful trailing whitespace
+      is therefore fragile.
+    - Corentin summarized; the proposal is to align the standard with the behavior exhibited by gcc and Clang and to
+      ignore trailing white space for the purposes of determining line continuation.
+    - Hubert observed that proposal 2 seeks to do the opposite of the intent for this proposal by potentially preserving
+      the form of line endings, at least in raw string literals.
+    - Hubert added that the usual way this elision of trailing whitespace is handled is by claiming that the preceding white
+      space is considered part of the line termination.
+    - Tom asked if there had been any comments from Microsoft implementors given that a change here would presumably require
+      a change to their implementation.
+    - Corentin responded that he had reached out, but didn't hear back.
+  - Proposal 5: Restricting multi-characters literals to members of the Basic Latin Block
+    - Corentin noted that multi-character literals are used and this is not a proposal to removing them.
+    - Corentin explained that multicharacter literals that present as a single character are confusing, for example
+      `'é'` written with a combining character.
+    - Corentin added that implementations diverge in their handling of them.
+    - Corentin stated that the proposal intent is to make such confusing cases ill-formed. 
+    - PBrett expressed support for this direction.
+    - Tom asked why the restriction is to one code point.
+    - Corentin replied that the intent is that each character in the literal be limited to, effectively, ASCII.
+    - Mark asked why the 4th example is not ok given that the 2nd and 3rd examples are.
+    - \[ Editor's note: the 2nd example is `'abc'`, the 3rd is `'\u0080'`, and the 4th is `'\u0080\u0080'`. \]
+    - Corentin responded that the 3rd example is not a multicharacter literal, but the 4th is.  The 4th is excluded
+      because it contains *c-char*s that identify characters outside the Unicode basic Latin block.
+    - PBrett opined that cases like the 2nd example are used, but that cases like the 4th are not and have no known
+      use cases.
+    - Hubert observed that the examples are incomplete without octal and hex escapes.
+    - Tom expressed difficulty trying to understand how to separate between the basic source character and UCN examples.
+    - Hubert suggested that some presentation improvements might make the examples easier to understand.
+    - Hubert expressed support for allowing octal and hex escapes within multicharacter literals.
+    - Tom, still trying to comprehend the examples, expressed a belief that he was reading far too much into the use
+      of UCNs in the example.
+    - PBrett stated that the use of UCNs is intended to make it more clear exactly which character is designated.
+    - PBrett suggested either adding or changing the examples for the next revision.
+    - Mark observed that broken UTF-8 is allowed in string literals, but that this is kind of different.
+    - Tom disagreed and noted that numeric escapes would not get transcoded, but would still contribute a value to the
+      appropriate "slot" in the `int` value.
+    - Tom asked if the size of `int` is relevant.  For example, if `sizeof(int)` was 2, would the number of *c-char*s
+      allowed in the multi-character literal be limited to 2?
+    - Corentin responded that no, that would still be implementation-defined; the intent is just to address the
+      visual confusion.
+    - Mark noted that this is technically a breaking change, but that numeric escapes can be used as a work around.
+    - Corentin responded affirmatively, but noted the concern is mostly theoretical; he hasn't been able to find any
+      examples that would be disallowed by these changes.
+    - Hubert noted that swapping in a numeric escape could change behavior and therefore should not be suggested as a
+      a compiler fixit hint.
+  - Proposal 6: Making wide characters literals containing multiple or unrepresentable c-char ill-formed
+    - Corentin explained that wide multicharacter and non-encodable character literals are inherited from C.
+    - Corentin noted that there is implementation divergence; some compilers produce warnings and some do not.
+    - Mark observed that the paper does not include data from code searches.
+    - Corentin responded with uncertainty whether he had conducted code searches for this proposal.
+    - Tom recalled possibly seeing these used with Visual C++ and `TCHAR`.
+    - Corentin stated that he can't say with certainty that these are not used.
+    - Hubert noted that Corentin's research indicates these don't behave like ordinary multi-character literals.
+    - PBrett stated that the different behavior contradicts Tom's recollections.
+    - Tom suggested that his recollection is likely incorrect.
+    - Tom stated that the motivation for this proposal seems somewhat different than for the previous proposal;
+      this proposal isn't just about avoiding visual confusion.
+    - PBrett replied that it is similar; the motivation for the prior case applies here, but is compounded by
+      the fact that all but one of the *c-char*s in the literal are ignored in this case.
+    - Tom acknowledged but noted that is similar to the previous case too where excess *c-char*s are ignored.
+  - Proposal 7: Making conversion of character and string literals to execution and wide execution encoding ill-formed for unrepresentable c-char
+    - Corentin explained that Clang rejects such conversions and Visual C++ substitutes a '?'.  According to
+      Billy O'Neal, the replacement with a question mark is due to the default behavior of the conversion
+      functions used.
+    - Tom stated that the paper should be updated to add a reference to [P1854](https://wg21.link/p1854).
+    - Tom continued; in Belfast, an example was discussed of checking if a character in a literal is converted
+      to a specific value in order to infer the execution encoding.
+    - Tom provided an example:
+      ```
+       "\u1234" == 0x1234
+      ```
+    - Hubert suggested an alternative syntax for fun:
+      ```
+       __try__("\u1234") == 0x1234 // :)
+      ```
+    - Corentin stated that this seems like a different issue.
+    - Tom agreed, but noted that making non-encodable characters ill-formed means such checks can no longer be
+      performed.  The intent is to allow code to use some characters if available and to fallback otherwise.
+      ```
+       if ('\u1234' == 0x73) {
+         return '\u1234';
+       } else {
+         return 'X';
+       }
+      ```
+    - Pbrett noted that this presents a trade off for a small number of people who care about clever tricks
+      like that vs the many more programmers that might experience surprising behavior.
+    - Zach observed that the code presented presumably doesn't work for gcc and clang.
+    - Tom replied that gcc will accept it depending on whether `-finput-charset` and/or `-fexec-charset`
+      are specified; if gcc has to get `iconv` involved, then an error may be reported.
+    - Tom added that the trade off is the important concern here, not the use case; the use case can be
+      addressed in other ways.
+- [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949):
+  - Tom asked Steve if he had any updates to share since the EWG review.
+  - Steve replied that he was without power for a while but that he would try to get an update into the August
+    mailing.
+- Tom stated that the next meeting will be August 26th and that we'll continue discussing
+  [P2178R1](https://wg21.link/p2178r1) starting with proposal 8.
+- Tom reminded the group that Jen's paper,
+  [P2201R0: Mixed string literal concatenation](https://wg21.link/p2201r0),
+  will be presented to EWG on August 19th.
 
 
 # July 22nd, 2020
