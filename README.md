@@ -15,6 +15,7 @@ The draft agenda is:
 
 
 Summaries of past meetings:
+- [August 26th, 2020](#august-26th-2020)
 - [August 12th, 2020](#august-12th-2020)
 - [July 22nd, 2020](#july-22nd-2020)
 - [July 8th, 2020](#july-8th-2020)
@@ -33,6 +34,222 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+blah
+
+
+# August 26th, 2020
+
+## Agenda:
+- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
+  - Continue discussions on the various proposals in the order 8, 10-12, 1
+    (discussion of proposal 9 will be deferred due to the arrival of P2194R0).
+  - Begin taking direction polls.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
+  - Proposal 8: Enforcing the formation of universal escape sequences in phase 2 and 4
+    - Corentin stated that these cases of undefined behavior are surprising; defining behavior would not appear
+      to present a problem to implementations.
+    - Corentin added that gcc, Clang, Visual C++, and the EDG based Intel C++ compiler all exhibit the same behavior.
+    - Corentin mentioned that SG12 should be consulted.
+    - Corentin asserted that, if defining portable behavior presents a challenge, then the standard should specify
+      that behavior is implementation-defined.
+    - Hubert stated that the undefined behavior is present to accommodate various preprocessor models; early models
+      recognized *universal-character-name*s (UCNs) in translation phase 1 and did not check for them again after
+      translation phase 2 (logical line formation) or translation phase 4 (macro expansion and token pasting); the
+      differences are observable. 
+    - Hubert noted that there are many C implementations, so WG14 may not be interested in defining this behavior.
+    - Jens stated that preprocessor undefined behavior falls under SG12, but he is unaware of any activity addressing
+      this specific issue.
+    - Jens asserted that both SG12 and WG14 should be informed of any efforts here.
+    - Jens noted that defining behavior just for C++ does not impact compatibility with C.
+    - Tom stated that this is not an SG16 concern.
+    - Corentin agreed.
+  - Proposal 10: Make L in \_Pragma ill-formed
+    - Corentin explained that `_Pragma` expressions written with a wide string literal are well-formed in both C and
+      C++, but are semantically identical to an expression written with an ordinary string literal.
+    - Corentin added that C also permits the string literal to be written with `u8`, `u`, and `U` encoding prefixes
+      as well; C++ only allows `L`.
+    - Corentin stated that the intent is to make the presence of an encoding prefix ill-formed since it serves no
+      semantic purpose.
+    - PBrett agreed with the direction and stated that an encoding prefix being present only leads to confusion.
+    - Tom asked if it matters that `_Pragma` is processed in translation phase 4, but that tokenization is performed
+      in translation phase 3.
+    - Hubert responded that it would for raw string literals.
+    - PBrett asked if raw string literals are allowed.
+    - Hubert expressed uncertainty.
+    - Corentin stated that when WG14 adopted support for the `u` and `U` encoding prefixes, they systematically
+      added them everywhere that the `L` encoding was allowed; C++ did not do likewise.
+    - Jens stated that failure to add the additional encoding prefixes in C++ was an oversight.
+    - Jens noted that `_Pragma` accepts a *string-literal* and that includes *raw-string*.
+    - Jens asserted that this is not SG12 territory, but is liaison territory with WG14.
+    - PBrett noted that this is technically evolutionary.
+    - Corentin stated that this is not really an SG16 concern.
+    - Tom agreed; there is no actual encoding here.
+    - PBrett asked for confirmation that these strings are interpreted directly by the compiler.
+    - Mark asked if the compiler observes the source encoded string.
+    - Corentin replied that the compiler observes the string in the internal encoding.
+    - Tom agreed and noted that the observation occurs after translation phase 1 (conversion to internal encoding)
+      and before translation phase 5 (conversion to execution character set).
+    - Jens opined that the use of *string-literal* is a hack to align behavior with `#pragma`.
+    - JeanHeyd asked for confirmation that the goal is to prohibit an encoding prefix as opposed to the current
+      behavior that ignores an encoding prefix.
+    - Corentin replied affirmatively.
+    - JeanHeyd noted that this does create an incompatibility with C then, but it probably isn't a big deal.
+    - Tom asked if Corentin's code survey accounted for string literals produced by macro expansion.
+    - Corentin replied that it did not.
+    - Jens noted that a macro expansion could produce a string literal with an encoding prefix.
+    - PBrett observed that making the presence of an encoding prefix ill-formed doesn't mean an implementation
+      has to reject the code; it just means that a diagnostic is required.
+    - Steve stated that the intent of `_Pragma` is to be an alternative to `#pragma`, one that is friendly to
+      macros, but there is no encoding involved.
+    - Jens agreed; no encoding involved, an encoding prefix serves no purpose.
+    - Jens noted that `_Pragma` is relatively new; it was introduced in C99.
+    - JeanHeyd observed that an `_Pragma` expression written with a wide string literal might show up on Windows
+      due to use of a `TCHAR` aware macro.
+    - JeanHeyd suggested that it might be best to just follow C; but that either all encoding prefixes should be
+      allowed and ignored, or they should all be disallowed.
+    - Corentin stated that programmers don't tend to use a macro with `_Pragma`.
+    - Tom disagreed and noted that `_Pragma` was introduced as a macro friendly alternative to `#pragma`.
+    - Tom then reverted his disagreement by noting that macros can be used with `#pragma` as well (so long as
+      the `#pragma` tokens themselves are not the result of macro expansion).
+    - Mark asked if the grammar for `_Pragma` should be specified using *string-literal*.
+    - Jens replied that that is not an SG16 concern.
+  - Proposal 11: Make character literals in preprocessor conditional behave like they do in C++ expression
+    - Corentin explained that character literal values can be inspected in preprocessor conditional directives
+      during translation phase 4, but the values observed then are not required to match observations for
+      character literal values during translation phase 7.
+    - Corentin stated that the existing specification is presumably intended to support an external preprocessor.
+    - Corentin added that the intent is to reduce the number of implementation-defined encodings in the standard
+      and to match existing practice and existing programmer expectations as determined by code surveys.
+    - Hubert noted that the example is incorrect assuming the intent was to compare against ASCII values; the
+      `\x65` and `0x65` should presumably be `\x41` and `0x41` respectively.
+    - Hubert confirmed that compilers on z/OS use the same character encoding for character literal observations
+      made during translation phase 4 and translation phase 7.
+    - Tom asked about cross compilers; a tool chain that uses an external preprocessor may not have support for,
+      or be aware of, the character encoding observed at translation phase 7.
+    - Hubert responded that, in cross compilation scenarios, headers are highly likely to be consistent between
+      a cross compilation environment and native environment on the target; the observed values therefore need
+      to be consistent in both environments.
+    - Steve agreed; many cross compilation environments require mounting a remote filesystem for access to
+      headers and libraries.
+    - Tom stated that there are two possibilities for the character encoding observed at translation phase 4;
+      either the internal encoding or the execution encoding.
+    - PBrett noted that the internal encoding should never be observable.
+    - Tom stated that this is technically a breaking change.
+    - Jens agreed, but noted that we know of no implementations that would be broken.
+    - Jens added that it would be odd to associate a character encoding with the preprocessor.
+    - Jens stated that, from a wording perspective, we'll need to state that the preprocessor must perform the
+      same conversion for character literals at translation phase 4 that is done at translation phase 5.
+    - PBrett stated that he had been unaware that the preprocessor was potentially using a distinct character
+      encoding; that would likely be a surprise to many programmers.
+    - Tom noted that this potentially has implementation impact since compiler drivers will need to coordinate
+      with the preprocessor and the compiler to ensure a matching character encoding is used.
+    - Steve noted a typo; in the third paragraph, "where" should be "were" in "Of the 50 usages of the pattern,
+      all but one where in C libraries."
+  - Proposal 12: Phase 6 needs fixing
+    - Corentin expressed uncertainty regarding how to address this issue.
+    - Corentin opined that it is odd that the encoding would not be determined by the first string literal.
+    - Corentin stated that, if a time machine were to suddenly materialize, the standard would require the
+      encoding-prefix to be present for the first string literal.  But it is likely too late to make such a
+      change now.
+    - Corentin added that this issue will be less significant if Jens' [P2201](https://wg21.link/p2201) is adopted.
+    - Jens mentioned that a [D2201R1](https://wiki.edg.com/pub/Wg21summer2020/SG16/d2201r1.html) now exists with
+      the EWG requested changes.
+    - Jens added that P2201 isn't fundamentally related to this issue, though.
+    - Jens stated that
+      [core issue 2455](https://wiki.edg.com/pub/Wg21summer2020/CoreWorkingGroup/cwg_active.html#2455)
+      now tracks this issue.
+    - Jens directed the group to
+      [a draft paper](https://wiki.edg.com/pub/Wg21summer2020/SG16/charset.html)
+      that demonstrates one way to address this issue.
+    - Jens opined that this issue is really just a core issue; the wording is defective, but the intent is clear in
+      [[5.13.5]](http://eel.is/c++draft/lex.string#11).
+    - Tom agreed.
+    - Steve reminded the group that there is implementation divergence.
+- Polls on [P2178R1](https://wg21.link/p2178r1) proposals:
+  - Proposal 2: What is a whitespace or a new-line?
+    - Hubert stated that this proposal deals in the formation and replacement of newlines and therefore can not be
+      meaningfully separated from the noted core issue; [core issue 1655](https://wg21.link/cwg1655).
+    - Corentin responded that the intent is that line endings are preserved through translation phase 1.
+    - Tom noted that specifying that intent is difficult since translation phase 1 is so loose.
+    - Corentin suggested that a new grammar term for newline may be needed.
+    - PBrett stated that the current poll should focus on whether we support the proposed direction.
+    - Hubert asserted that an implementation survey should be done since line numbers are observable via
+      `__LINE__` and `std::source_location`.
+    - Hubert added that this proposal introduces challenges for compilers that open source files as "text" files
+      since doing so transparently mutates line endings.
+    - Jens asserted that a wording direction that would suffice as a proposed resolution for
+      [core issue 1655](https://wg21.link/cwg1655) is needed before polling.
+    - Hubert raised concerns about implementations that read source code from datasets with fixed length records.
+    - Tom asked if anyone had a fundamental objection to the general direction.
+    - No objections were raised.
+  - Proposal 3: Preserve Normalization forms
+    - Jens asserted that this proposal needs to address how to tunnel code points through translation phase 1 and
+      translation phase 5.
+    - Hubert noted that an implementation would have to define how it determines whether a source file is Unicode
+      encoded.
+    - Hubert asked what it means to preserve normalization through translation phase 5 if the execution character
+      set is not Unicode.
+    - Corentin replied that the intent is that code point sequences that contain combining characters cannot be
+      composed during translation phase 5.
+    - **Poll: Proposal 3: We agree that, for Unicode source files, that normalization is preserved through translation phases 1 and 5.**
+      - Attendees: 10
+      - No objection to unanimous consent.
+  - Proposal 4: Making trailing whitespaces non-significant
+    - Tom declared that this is not an SG16 concern and that Corentin is free to take this directly to EWG.
+  - Proposal 5: Restricting multi-characters literals to members of the Basic Latin Block
+    - Tom suggested that the restriction be redefined in terms of characters that are encodable as a single code unit
+      since some characters in this block may not be encodable or may not be encodable as a single code unit.
+    - Corentin expressed concern about portability.
+    - PBrett suggest changing the restriction to the basic source character set.
+    - **Poll: Proposal 5: We support this direction modified in terms of the basic source character set.**
+      - Attendees: 10
+      - No objection to unanimous consent.
+  - Proposal 6: Making wide characters literals containing multiple or unrepresentable c-char ill-formed
+    - **Poll: Proposal 6: We support making wide multicharacter literals ill-formed.**
+      - Attendees: 10
+      - No objection to unanimous consent.
+    - **Poll: Proposal 6: We support making wide non-encodable character literals ill-formed.**
+      - Attendees: 10
+      - No objection to unanimous consent.
+  - Proposal 7: Making conversion of character and string literals to execution and wide execution encoding ill-formed for unrepresentable c-char  
+    - Steve asked if a source file containing Unicode 13 characters would be ill-formed if compiled by a
+      compiler that only supports Unicode 12.
+    - PBrett asked for confirmation that a sparkle emoji present in a ordinary string literal in a Unicode encoded
+      source code would be ill-formed if the execution character set is ISO-8859-1.
+    - Corentin replied that it would be.
+    - Jens stated that this restriction could always be worked around by defining ones own execution character set,
+      so this doesn't provide much benefit.
+    - Hubert agreed that the normative impact is dubious.
+    - Jens suggested that polling be postponed since there are concerns that appear to warrant additional discussion.
+    - Tom agreed.
+  - Proposal 8: Enforcing the formation of universal escape sequences in phase 2 and 4
+    - Tom declared that this is not an SG16 concern and that Corentin is free to take this directly to EWG.
+  - Proposal 10: Make L in \_Pragma ill-formed
+    - **Poll: Proposal 10: We agree to make all encoding-prefixes in _Pragma ill-formed.**
+      - Attendees: 10
+      - No objection to unanimous consent.
+  - Proposal 11: Make character literals in preprocessor conditional behave like they do in C++ expression
+    - Hubert asserted that opinions on this should be gathered from WG14.
+    - **Poll: Proposal 11: We agree that the same character encoding should be used for character literal in translation phase 4 and 7.**
+      - Attendees: 10
+      - No objection to unanimous consent.
+  - Proposal 12: Improved wording for phase 6 string concatenation
+    - Tom declared that this is not an SG16 concern.
+- Tom stated that the next telecon will be held on September 9th.
 
 
 # August 12th, 2020
