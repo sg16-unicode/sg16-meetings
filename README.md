@@ -35,8 +35,6 @@ Summaries of past meetings:
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
-blah
-
 
 # August 26th, 2020
 
