@@ -6,13 +6,11 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, September 9th 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200909T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, September 23rd, 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20200923T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 The draft agenda is:
-- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
-  - Discuss proposal 1: Mandating support for UTF-8 encoded source files in phase 1
 - [P2194R0: The character set of C++ source code is Unicode](https://isocpp.org/files/papers/P2194R0.pdf)
-
+- [Boost.Text](https://github.com/tzlaine/text) changes following initial Boost review.
 
 Summaries of past meetings:
 - [August 26th, 2020](#august-26th-2020)
