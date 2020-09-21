@@ -13,6 +13,7 @@ The draft agenda is:
 - [Boost.Text](https://github.com/tzlaine/text) changes following initial Boost review.
 
 Summaries of past meetings:
+- [September 9th, 2020](#september-9th-2020)
 - [August 26th, 2020](#august-26th-2020)
 - [August 12th, 2020](#august-12th-2020)
 - [July 22nd, 2020](#july-22nd-2020)
@@ -32,6 +33,208 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 9th, 2020
+
+## Agenda:
+- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
+  - Discuss proposal 1: Mandating support for UTF-8 encoded source files in phase 1
+- [P2194R0: The character set of C++ source code is Unicode](https://isocpp.org/files/papers/P2194R0.pdf)
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Administrative updates:
+  - Tom provided an update on the WG14 timeline for C2X.
+    - WG14 sent out notification that C2X must be published by August 31st, 2023.
+    - That means C2X must be feature complete by August of 2022.
+    - Any proposals that we want to get in to C for compatibility reasons needs to be done or (close to done)
+      by August of 2022.
+  - PBindels noted that timeline aligns well with C++23.
+- [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1)
+  - Proposal 1: Mandating support for UTF-8 encoded source files in phase 1
+    - Corentin provided an introduction:
+      - The intent of the proposal is to specify that the set of implementation-defined source file encodings
+        shall include UTF-8.
+      - This reflects standard practice amongst the major implementations.
+      - The meachanism used to specify that the source encoding is UTF-8 remains implementation-defined.
+      - Implementations may use any mechanism desired to determine which encoding to use.
+      - Quoting Richard Smith: "If we want C++ to be portable, there must be a portable source file encoding".
+      - This proposal is orthogonal to any hypothetical proposal to allow differently encoded source files
+        in the same translation unit.
+      - Per Unicode guidelines, a UTF-8 BOM would be handled as whitespace.
+    - PBrett asked if Corentin is open to follow up papers that tackle additional issues.
+    - Corentin responded that Tom has work in-progress that is orthogonal to this paper.
+    - PBrett urged adoption; this suffices to compile a source package on any platform.
+    - Tom stated that, in practice, there are at least four sets of source files involved when compiling any
+      non-trivial project.  Those are, 1) the source files for the project, 2) the C standard headers, 3) the
+      C++ standard headers, and 4) the platform header files (POSIX, Win32 SDK, etc...).  The question is how
+      these disparate projects adopt UTF-8 incrementally.
+    - Corentin replied that z/OS is an exception that would require support for a mix of UTF-8 and EBCDIC source
+      files; on other platforms, system headers are limited to ASCII in practice.  Vcpkg currently compiles all
+      packages as UTF-8.
+    - Jens stated that standard headers are below the concern of the standard; they are effectively magic and
+      implementations can provide whatever mechanisms they desire to make them work.
+    - Jens added that it is always ok to restrict oneself to the basic source character set and only use UTF-8
+      when targeting a UTF-8 supporting compiler.
+    - Hubert stated that the standard has separate wording for headers vs source files; the latter are also an
+      abstraction in the standard and we can specify that physical source file characters are composed from
+      code units, but that still leaves open the question of what the container is.  On many platforms a file
+      is a sequence of bytes, but for some implementations, a source file may be a sequential data set of
+      fixed length records.
+    - Hubert added that, with regard to specifying use of a UTF-8 BOM to detect the encoding, some
+      implementations have other means for encoding detection; for example, z/OS allows specifying an encoding
+      via filesystem metadata.
+    - Tom revisited PBrett's scenario of a portable source package on any platform, noted that there are
+      additional source file sets involved if there are third party package dependencies, and stated a desire
+      for a UTF-8 solution to be optimized for deployment and migration across the ecosystem.
+    - Corentin acknowledged that desire but asserted that is not a goal of the current proposal.
+    - PBrett asked the attendant core experts how to word this proposal given that the standard doesn't require
+      actual source files.
+    - Hubert responded that the standard discusses source files but leaves their structure undefined; we can
+      specify a specific form of source file as, e.g., a sequence of UTF-8 code units.
+    - Corentin agreed and stated that direction matches the intent; a network stream of UTF-8 code units should
+      be acceptable as a source file.
+    - Jens added that the standard is hazy about what a source file is; it is an abstraction and must not be
+      required to be something that can, for example, be opened by `fopen()`; compilers can be written in any
+      language and therefore can't rely on the C++ notion of files.  Specifying a UTF-8 encoding will necessarily
+      require punching through the existing abstraction.
+    - Zach expanded on Tom's concern and noted that, for existing projects, the compiler already knows how to
+      perform encoding conversions; if we have to alter the specification for translation phases, that seems ok.
+    - Zach noted that addressing the simple use case where all source files are known to be UTF-8 is important.
+    - Mark stated that C++20 modules potentially provides additional separation between source files.
+    - Corentin agreed and emphasized Mark's point.
+    - Tom responded that exploiting that potential requires the ability to specify encoding options on a per-TU
+      basis, but that is ok; that is an issue for build systems to address.
+    - Hubert noted that the wording for headers may be quite different than for source files.
+    - Corentin asked if translation phases 1 through 3 are processed independently for each header.
+    - Hubert responded that he didn't think we specify that headers (as opposed to source files) are read in
+      this manner.
+    - PBrett noted that this will require digging a tunnel through the implementation-defined behavior currently
+      present in translation phase 1.
+    - Corentin agreed, but noted that there is only so much we can specify happen prior to translation phase 1.
+    - Hubert elaborated on prior comments regarding different wording for headers vs source files; the form of
+      the `#include` directive written with a quoted name is specified to look for a source file and then, if
+      one isn't found, to retry as if the directive were written with a name in angle brackets; headers can be
+      resolved in this form.
+    - Jens expressed a belief that standard library headers are headers and other things are source files.
+    - Hubert agreed, but noted that a source file can interpose on a header.
+    - Tom switched the focus to handling of BOMs and presented a hostile example of not specifying behavior
+      when a BOM is present; one implementation could choose to require a BOM, another could choose not to
+      permit one, and another could choose to allow them optionally and use their presence to inform encoding.
+    - Corentin replied that, in Unicode, BOMs are not whitespace and should be ignored; they can be used to
+      detect the encoding, but not to reject a code unit stream assumed to be UTF-8.
+    - Hubert stated that wording is definitely required to express that.
+    - PBrett stated that a BOM can only appear at the start of a source file; a BOM code unit sequence at the
+      start of a string literal is not a BOM.
+    - Hubert responded that there may not be agreement on that; there could be special cases for raw-string
+      literals.
+    - Corentin asserted that a BOM is a non-breaking white space; U+FEFF is "ZERO WIDTH NO-BREAK SPACE".
+    - PBindels provided a linke to https://www.unicode.org/faq/utf_bom.html#bom6 which states:
+      - Q: What should I do with U+FEFF in the middle of a file?
+      - A: In the absence of a protocol supporting its use as a BOM and when not at the beginning of a text
+        stream, U+FEFF should normally not occur. For backwards compatibility it should be treated as
+        ZERO WIDTH NON-BREAKING SPACE (ZWNBSP), and is then part of the content of the file or string. The
+        use of U+2060 WORD JOINER is strongly preferred over ZWNBSP for expressing word joining semantics
+        since it cannot be confused with a BOM. When designing a markup language or data protocol, the use of
+        U+FEFF can be restricted to that of Byte Order Mark. In that case, any U+FEFF occurring in the middle
+        of a file can be treated as an unsupported character.
+    - PBindels noted that the old use of U+FEFF as a zero-width non-breaking space character was deprecated
+      in Unicode 3.
+    - Tom replied that U+FEFF is only white space when present somewhere other than the beginning of the input;
+      it should be ignored when present as the first code unit sequence.
+    - Hubert stated that there is a distinction from a source code column perspective, but that there is nothing
+      in C or C++ that requires a token to appear at the start of a line.
+    - Hubert clarified that there are cases in C++ where adding a space matters.
+    - PBrett suggested that handling of BOMs be a subject of further work.
+    - Tom explained that gcc and Visual C++ conflict with regard to handling of BOMs.  Gcc will ignore one when
+      directed to compile as UTF-8, but will emit an error otherwise.  Visual C++ uses a BOM to inform encoding.
+    - Hubert raised a question regarding whether a BOM is or is not part of the source file content.
+    - Jens restated Hubert's question in more concrete terms by asking if a BOM is visible during translation
+      phases 1 and 2.
+    - Corentin replied that standard practice is inconsistent because tools are not consistent; if we don't want
+      to break existing tools then we can't require a BOM.
+    - Tom agreed and asserted that no one has suggested a BOM should be required.
+    - PBrett summarized recent discussion; there is implementation divergence regarding whether a BOM is honored
+      as indicating an encoding vs being ignored.
+    - PBrett suggested a survey of existing tools is needed.
+    - Hubert noted that, with respect to Corentin's last statement; we haven't taken a position.  It is likely not
+      controversial to ignore a BOM when processing as UTF-8; but we know we don't want to require a BOM.
+    - Hubert added that it sounds like gcc doesn't use a BOM for encoding detection; in which case the BOM is not
+      a BOM.  It sounds like existing compilers effectively ignore it.
+    - Tom stated that he doesn't know of any experiments that can reveal whether a BOM is handled as white space
+      or removed as file content.
+    - PBindels asked if that is observable.
+    - Hubert responded that it is via compiler diagnostics.
+    - Zach stated that he prefers the approach of a source annotation or command line option to select encoding as
+      BOMs are kind of magical.
+    - Zach suggested tabling further discussion of BOM handling until/unless we have a separate proposal.
+    - Corentin observed that current web browsers will prioritize source encoding tags over a BOM.
+    - PBrett expressed support for not specifying any BOM behavior for an initial proposal.
+    - Hubert asserted that something must be specified regarding BOM allowance in order for wording to not otherwise
+      reject source files with a BOM.
+    - **Poll: All implementations should be required to provide an implementaion-defined mechanism to support the
+      scenario in which all source files used within a translation unit are UTF-8 encoded whether or not they have
+      a UTF-8 BOM.**
+      - Attendees: 10
+      - No objection to unanimous consent.
+    - Tom asked if we should poll whether files must consistently have a BOM.
+    - Zach asked if that isn't already covered by separate processing of translation phases 1 through 3.
+    - Jens replied that it is.
+    - Zach stated that we should not do that poll then.
+    - Tom agreed.
+    - **Poll: It should be implementation-defined whether a UTF-8 BOM is used to inform the encoding of a source file.**
+      - Mark clarified that voting in favor is a vote for implementation divergence.
+      - Attendees: 10
+
+          |  SF |   F |   N |   A |  SA |
+          | --: | --: | --: | --: | --: |
+          |   4 |   3 |   1 |   2 |   0 |
+          
+      - Consensus is in favor.
+      - A: I would prefer well-defined behavior over implementation-defined behavior.
+      - Hubert responded that implementation-defined behavior is needed for z/OS in order for filesystem based
+        meta-data to be consulted; requiring 100% conformance with a BOM would be problematic.
+    - **Poll: The presence or absence of a BOM is a reasonable portable mechanism for detecting UTF-8 source file encoding.**
+      - Attendees: 10
+
+          |  SF |   F |   N |   A |  SA |
+          | --: | --: | --: | --: | --: |
+          |   0 |   1 |   0 |   3 |   6 |
+          
+      - No consensus; or rather, consensus is that a BOM is not a reasonable portable mechanism for detection of
+        source file encoding.
+      - PBrett explained that his position is weakly held because there may be obscure implementation circumstances
+        where only an unreasonable mechanism exists.
+      - Hubert noted that programmers can add a BOM themselves.
+      - F: BOMs are used within the Microsoft ecosystem to inform encoding and appear to be useful there.
+      - Hubert responded that such a scenario is reasonable for Windows, but that doesn't suffice to claim it as a
+        reasonable portable mechanism.
+      - Mark noted that the first poll taken leaves this option available.
+      - Corentin stated that the source annotation approach is a superior solution.
+- Tom stated that the next meeting will be in two weeks, on September 23rd, and will focus on
+  [P2194](https://isocpp.org/files/papers/P2194R0.pdf).
+- Tom asked Jens to confirm that he has a competing paper.
+- Jens responded affirmatively, but that he is waiting for
+  [P2029](https://wg21.link/p2029) to land.
+- Jens reminded the group that there is need to progress
+  [P1949](https://wg21.link/p1949); it appears to be stuck in EWG.
+- Tom asked Steve if [P1949](https://wg21.link/p1949) was ready for another round in EWG.
+- Steve confirmed that it is, has been submitted for the mailing, and that he will prepare slides.
+- Tom promised to ping JF.
+- \[Editor's note: Tom did so and JF put it on the EWG schedule for Thursday, September 24th. \]
+- Hubert reminded the group that there will be a plenary in November and that papers made tentatively ready
+  by EWG will require another meeting to be approved.
 
 
 # August 26th, 2020
