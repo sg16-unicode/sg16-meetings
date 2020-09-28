@@ -113,7 +113,7 @@ Summaries of past meetings:
   - Jens requested the use of lowercase letters in the examples of English words that can't be used as identifiers
     in order to maintain focus on the punctuation characters.
   - Tom suggested that the "ZWJ AND ZWNJ" slide make it more clear what is being illustrated; that `یاھمان` is a
-    valid identifier, but that `یاھمان` is not because it includes a ZWNJ.
+    valid identifier, but that `نامه‌ای` is not because it includes a ZWNJ.
   - Hubert suggested updating spacing to make the ZWNJ presence more clear.
   - Hubert noted that UAX #31 doesn't prescribe handling of ZWJ and ZWNJ, but rather provides a recommendation;
     it would be disengenuous to claim disallowance of these characters based on UAX #31.
