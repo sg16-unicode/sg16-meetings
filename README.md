@@ -11,10 +11,11 @@ Wednesday, October 14th, 2020, from 19:30-21:00 UTC
 The draft agenda is:
 - [Boost.Text](https://github.com/tzlaine/text)
   - Review changes made following the initial Boost review.
-- [P2194R0: The character set of C++ source code is Unicode](https://isocpp.org/files/papers/P2194R0.pdf)
+- [P2194R0: The character set of C++ source code is Unicode](https://wg21.link/p2194r0)
   - Continue discussion.
 
 Summaries of past meetings:
+- [September 23rd, 2020](#september-23rd-2020)
 - [September 9th, 2020](#september-9th-2020)
 - [August 26th, 2020](#august-26th-2020)
 - [August 12th, 2020](#august-12th-2020)
@@ -35,6 +36,213 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 23rd, 2020
+
+## Agenda:
+- [P1949R6: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949r6)
+  - Ensure we are collectively prepared for presentation to EWG on Thursday.
+- [P2194R0: The character set of C++ source code is Unicode](https://isocpp.org/files/papers/P2194R0.pdf)
+- Review [Boost.Text](https://github.com/tzlaine/text) changes following initial Boost review.
+
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Martinho Fernandes
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P1949R6: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949r6)
+  - Tom explained that the goal of this review is to ensure we are collectively prepared for the presentation to EWG
+    on Thursday.  Specifically:
+    - To perform a run-through of Steve's slides and provide feedback.
+    - To play devil's advocate in anticipation of questions or concerns that may be raised at the EWG telecon.
+  - Steve presented:
+    - \[ Editor's note: Steve's draft slides are available in the SG16 mailing list archive at
+      https://lists.isocpp.org/sg16/2020/09/1866.php. \]
+    - The slides present a brief summary of the proposal, challenges with emoji support, script impact, uses of
+      [UAX #31](https://unicode.org/reports/tr31) by other languages, and wording overview.
+    - Summary slides present the identifier syntax, requirements for
+      [NFC normalization](https://unicode.org/reports/tr15), and that this proposal addresses C++20 NB comment NL029.
+    - The status quo is that identifiers can be surprising as they may look like symbols or incorporate characters
+      that look like operators.
+    - The proposed identifiers are closed over normalization and are guaranteed stable by the Unicode standard.
+    - The status quo for emoji support in identifiers is that it is accidental, incomplete, and broken.
+    - Emoji are not guaranteed stable by the Unicode standard.  Supporting emoji could introduce instability to
+      identifiers over time; what was once an identifier may cease to be one in the future.
+    - Some characters categorized as emoji are surprising; for example, `#`, `*`, and the decimal digits
+      `0` through `9` are all categorized as emoji since they may begin an emoji keycap sequence.
+    - Supporting emoji would require being inventive; there is no standard for use of emojis in identifiers.
+    - Support for emoji in identifiers could be added later with an appropriate proposal.
+    - The proposal does not exclude any scripts.
+    - Some scripts, including English, contain words that are not valid as identifiers.  English examples include
+      `can't`, `won't`, and `mother-in-law`.  Likewise, some scripts require use of invisible characters like
+      ZWJ (U+200D) and ZWNJ (U+200C) to spell some words and, in some cases, these characters are all that
+      differentiate some words.  For example, the Farsi words
+      `نامهای` (U+0646 U+0627 U+0645 U+0647 U+0627 U+06CC) and
+      `نامه‌ای` (U+0646 U+0627 U+0645 U+0647 U+200C U+0627 U+06CC)
+      differ only by the presence of a ZWNJ.
+    - Other languages, including at least Java, Python, Erlang, Rust, and ECMAScript have adopted UAX #31.
+    - Wording has been provided by a CWG expert.
+  - Jens suggested that the 'OTHER "WEIRD IDENTIFIER CODE POINTS"' slide be updated to make it clear that the
+    content reflects the C++20 status quo.
+  - Zach suggested being more specific about the end result of allowing unassigned code points in identifiers;
+    that choice enabled some emoji to be incorporated in an unprincipled fashion.
+  - Jens suggested increasing the font size for examples.
+  - PBrett requested updates to slides with examples to make it clear whether they reflect the C++20 status quo or
+    proposed behavior.
+  - Jens questioned the motivation behind some of the presented examples; if the challenge faced by supporting emoji
+    is algorithmic complexity, then it would make sense to present the complicated examples first.
+  - Zach suggested that it might be productive to include the grapheme cluster rules on a slide.
+  - Steve responded that the paper includes a complicated regular expression copied from
+    [UTS #51](https://www.unicode.org/reports/tr51)
+    that can be used to match a possible, but not necessarily valid, emoji sequence; that could be added.
+  - Tom commented on the "SOME SURPRISING THINGS ARE EMOJI" slide; that example demonstrates that lexing would be
+    made more challenging because emoji sequences can begin with members of the basic source character set.
+  - Steve agreed and presented a related concern; whether `1` followed by U+20E3 (COMBINING ENCLOSING KEYCAP), a
+    valid emoji, would be allowed to start an identifier.
+  - PBrett noted that a standard that addressed how to incorporate emoji support into identifiers would benefit
+    other languages.
+  - Jens requested the use of lowercase letters in the examples of English words that can't be used as identifiers
+    in order to maintain focus on the punctuation characters.
+  - Tom suggested that the "ZWJ AND ZWNJ" slide make it more clear what is being illustrated; that `یاھمان` is a
+    valid identifier, but that `یاھمان` is not because it includes a ZWNJ.
+  - Hubert suggested updating spacing to make the ZWNJ presence more clear.
+  - Hubert noted that UAX #31 doesn't prescribe handling of ZWJ and ZWNJ, but rather provides a recommendation;
+    it would be disengenuous to claim disallowance of these characters based on UAX #31.
+  - Steve acknowledged and noted that script analysis could be performed, but that doing so would be difficult.
+  - Corentin asserted that we are not qualified to make decisions that affect, for example, Farsi; such decisions
+    should be driven by domain experts.
+  - Martinho requested adding rationale for why ZWJ and ZWNJ characters should be rejected in identifiers.
+  - Hubert responded that the reason for rejection is that their presence may not affect presentation.
+  - Corentin noticed Rust listed on the "OTHER ADOPTERS" page and stated that Rust hasn't adopted UAX #31 yet.
+  - PBrett expressed a belief that Rust had adopted UAX #31.
+  - Martinho provided a link to the Rust tracking issue, https://github.com/rust-lang/rust/issues/55467, and
+    explained that, though the issue is not yet resolved, the proposal has been accepted and is implemented in the
+    development tree; there just hasn't been a new release of Rust that includes it yet.
+  - Tom suggested that C# could be added to the list of adopters
+  - Corentin disagreed and noted that the C# specification is still based on category properties, not the
+    XID properties.
+  - Tom opined that it sounds like C# was an early adopter of UAX #31 and still uses the older properties; C#
+    presumably has identifier stability issues as a result.
+  - Corentin suggested that the wording slide isn't helpful and could be dropped.
+  - Jens requested that, if the wording slide is retained, that the text be left-align.
+  - Jens noted that there is a formal step that EWG affirm wording, but that it isn't necessary to dive into
+    details.
+  - Jens recollected that, during the last EWG review, the major concerns were about emoji and script support.
+  - Tom and Steve both confirmed that recollection.
+  - Zach commented that the script restrictions involving Farsi was just an example; the point is that some
+    scripts have similar limitations as English with respect to some words not being valid identifiers.
+    Steve agreed and noted that some words in some scripts require white space.
+  - Jens added that we know of no script that is completely excluded.
+  - PBrett asked if a poll to forward the paper to CWG should be expected in the EWG telecon.
+  - Tom and Jens described the tentatively ready process adopted in Prague; that the paper can be made
+    tentatively read at the next plenary, and then adopted at the following plenary.
+  - Tom asked if any other languages are known to support emoji in identifiers.
+  - Corentin replied that Swift does.
+  - Tom responded that Swift currently uses the same approach that C++20 does, so Swift's emoji support is just
+    as broken as that in C++20.
+  - Corentin added that Swift also allows some emoji as operators.
+  - Corentin opined that emoji are generally considered like symbols and therefore shouldn't appear in identifiers.
+  - Martinho noted that CSS allows just about any character in an identifier.
+  - Tom discussed an additional complication faced by supporting emoji; the text and emoji presentation styles.
+    Emoji characters have a default presentation style that can be changed by a presentation selector; the
+    question is whether an emoji sequence with a presentation selector that matches the default presentation
+    style and an emoji sequence without a presentation selector should be considered valid spellings of the
+    same identifier.
+  - Tom noted that the slides don't present what would be required in order to support emoji well.
+  - Tom asked if there is a fast path option such that the complexity needed to support emoji is only paid if
+    emoji are used.
+  - Corentin replied that lexing behavior would have to become EGC based.
+  - Tom asked how much of the Unicode property DB would be required for emoji support and noted that the
+    emoji data text files are about 67K.
+  - Corentin noted that other data may be required depending on design decisions.
+- [P2194R0: The character set of C++ source code is Unicode](https://wg21.link/p2194r0)
+  - PBrett presented, assisted by Corentin.
+    - This paper forked from proposal 9 of
+      [P2178R1: Misc lexing and string handling improvements](https://wg21.link/p2178r1).
+    - SG16 has had several passionate discussions about this in the past.
+    - The ideas presented are Corentin's, PBrett provided the prose.
+    - Key points:
+      - This is not a proposal to change the standard.
+      - This is not a proposal to change any implementations.
+      - This is about how we think about lexing and parsing.
+    - C++20 is, perhaps accidentally, correct as is by requiring all source input characters to be representable
+      by either basic source characters or Universal Character Names (UCNs).
+    - Taking a dependency on Unicode is reasonable.
+    - In C++20, translation phase 1 is effectively limited to Unicode scalar values by the requirement that
+      translation phase 1 produce only basic source characters and UCNs.
+    - Only UTF encodings produce scalar values without requiring a character set map.
+    - \[ Editor's note: presentation was cut short at this point by discussion and time constraints. \]
+  - Hubert asked why the paper contains proposed wording if it is not intended to change the standard.
+  - PBrett responded that the Proposed Wording section will be removed in the next revision and additional
+    content added to clarify the difference between Unicode scalar value and character.
+  - \[ Editor's note: the following discussion concerns the difference between a Unicode scalar value
+     (a Unicode code point that is not a surrogate code point) and a Unicode assigned character
+     (a Unicode code point that represents an abstract character). \]
+  - Jens wondered about the ramifications of supporting Unicode scalar values as opposed to assigned characters
+    and when character properties become relevant; the Unicode of 1993 differs substantially from Unicode today.
+  - Martinho noted that Unicode has not always maintained backwards compatibility.
+  - Hubert agreed and noted that the Unicode code space shrunk in Unicode 2.0 when UTF-16 and surrogate code points
+    were defined.  
+  - Jens observed that UCNs can be explicitly written to produce arbitrary scalar values, including scalar values
+    corresponding to unassigned code points.
+  - PBrett responded that explicit UCNs are rarely seen outside of compiler test suites.
+  - PBrett added that, conceptually, post translation phase 1, only scalar values remain.
+  - Jens expressed uncertainty; that it isn't clear that newly assigned Unicode characters have meaning for an
+    existing C++ standard.
+  - PBrett responded that such meaning is immaterial since explicit UCNs are allowed to name unassigned code points.
+  - Jens acknowledged that we have to define behavior for all possible Unicode scalar values whether assigned or not.
+  - PBrett agreed and noted that such behavior impacts the set of allowed identifiers as proposed in
+    [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949).
+  - Jens wondered if character properties are actually relevant for translation phase 1.
+  - Hubert stated that it is important to understand whether there would be a benefit to insisting that
+    code points correspond to assigned characters in particular contexts.
+  - Hubert added that stating that lexing and parsing are in terms of assigned characters would be distracting
+    in general.
+  - Martinho returned discussion to the example Jens provided of an implementation being behind the current
+    Unicode standard; there are motivating use cases for use of a UCN for a code point that has not yet been
+    assigned by Unicode in a published standard.  For example, in anticipation of a new Japanese calendar era,
+    U+32FF (SQUARE ERA NAME REIWA) was reserved before the new era began though the new character did not appear
+    in a published Unicode standard until after the era began.
+  - Corentin noted that there is no intent to remove support for explicit UCNs.
+  - Corentin aded that, whether a code point is assigned or not only matters during translation phase 1
+    conversions.
+  - Hubert asserted that it would be undesirable to specify constraints on translation phase 1 conversions;
+    some implementations use `iconv`, implementors may not want to validate `iconv` and instead document their
+    implementation-defined behavior as, "whatever `iconv` does".
+  - Corentin stated that there is no intent to restrict implementation-defined character mapping in translation
+    phase 1.
+  - PBrett responded that, in principle, requiring Unicode characters post translation phase 1 would require
+    rejecting Unicode scalar values corresponding to unassigned code points.
+  - Jens reflected on earlier terminology discussions and joking about what "character" means because it is
+    hazy and strange.
+  - Jens opined that, unless "character" is defined in such a way that any benefits it offers over "scalar value"
+    are made apparent, we should avoid it.
+  - PBrett disagreed.
+  - Jens noted that the telecon was about to end and stated that it may be useful to expand on that at a future
+    telecon.
+  - PBrett asked if more time should be dedicated to this topic.
+  - Tom expressed support for more time as different perspectives suggest we would benefit from increasing
+    understanding.
+  - Hubert noted that there will be a competing paper partially motivated by a desire for the standard to remain
+    abstract and not tied too heavily to Unicode.
+  - Corentin expressed little interest in the distinction between characters and scalar values; that character
+    properties are what matters.
+  - Corentin added that LEWG will be backed up in C++23, so it is good to focus on these core language issues
+    now.
+  - Mark agreed; this is fundamental work.
+- Tom stated that the next meeting will be in three weeks, on October 14th, and that we'll probably start
+  discussion with a review of recent updates to
+  [Boost.Text](https://github.com/tzlaine/text),
+  and then continue discussion of this paper.
 
 
 # September 9th, 2020
