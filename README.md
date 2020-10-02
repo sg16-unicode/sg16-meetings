@@ -232,8 +232,12 @@ Summaries of past meetings:
   - PBrett asked if more time should be dedicated to this topic.
   - Tom expressed support for more time as different perspectives suggest we would benefit from increasing
     understanding.
-  - Hubert noted that there will be a competing paper partially motivated by a desire for the standard to remain
-    abstract and not tied too heavily to Unicode.
+  - Hubert noted that the competing paper mentioned at the end of the last telecon is partially motivated by a
+    desire for the standard to remain abstract and not tied too heavily to Unicode.
+  - \[ Editor's note: That paper would align the C++ standard with the C standard model of extended characters.
+    It remains in draft status pending CWG approval of
+    [P2029](https://wg21.link/p2029)
+    due to wording dependencies. \]
   - Corentin expressed little interest in the distinction between characters and scalar values; that character
     properties are what matters.
   - Corentin added that LEWG will be backed up in C++23, so it is good to focus on these core language issues
