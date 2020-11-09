@@ -14,6 +14,7 @@ The draft agenda is:
 - [P2093R2: Formatted output](https://wg21.link/p2093r2)
 
 Summaries of past meetings:
+- [October 28th, 2020](#october-28th-2020)
 - [October 14th, 2020](#october-14th-2020)
 - [September 23rd, 2020](#september-23rd-2020)
 - [September 9th, 2020](#september-9th-2020)
@@ -36,6 +37,197 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 28th, 2020
+
+## Agenda:
+- [P2194R0: The character set of C++ source code is Unicode](https://isocpp.org/files/papers/P2194R0.pdf)
+  - Continue discussion.
+- [P1885R3: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r3)
+  - Review updates since the [review of D1885R2 in Prague](https://wiki.edg.com/bin/view/Wg21prague/SG16D1885R2).
+
+## Meeting summary:
+- Attendees:
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- Tom provided an update on the possibility of a WG21 hosted chat service.
+  - Discussion at the recent pre-meeting administrative telecon ended with an action item for Tom to submit
+    a paper to be reviewed and discussed at a to-be-scheduled administrative telecon.
+- Tom announced that we'll discuss [https://wg21.link/p2093](P2093: Formatted Output) at our next telecon
+  assuming we complete review of
+  [https://wg21.link/p1885r3](P1885R3: Naming Text Encodings to Demystify Them).
+- [P2194R0: The character set of C++ source code is Unicode](https://isocpp.org/files/papers/P2194R0.pdf):
+  - PBrett introduced:
+    - Continuing discussion from prior telecons; we need to follow up with regard to how important it is that
+      all inputs be mappable to Unicode scalar values.
+    - This is not a proposal to require use of Unicode scalar values as the internal encoding; rather, that
+      the observable behavior be as-if the implementation used a Unicode encoding internally.  This approach
+      eases specification.
+    - Arguments of "someone might do some crazy thing" are not persuasive.
+  - Hubert suggested there isn't actually significant opposition to this view; it was pointed out during the
+    last meeting that the wording differences would be minimal.
+  - Hubert added that the key difference is the addition of a restriction; that all characters be mappable
+    through the Unicode code space.
+  - PBrett agreed and noted that much of the current specification is already described in terms of Unicode.
+  - Tom asked to what degree existing implementations reflect adherence to a Unicode-only model.
+  - PBrett responded that the paper's "Current implementation practice" section notes that most existing
+    implementations use UTF-8 as the internal encoding, but that IBM's xlC for z/OS and EDG are exceptions
+    that use EBCDIC and ASCII based code pages instead.
+  - PBrett added that Clang on z/OS uses UTF-8 as the internal encoding and converts source files from
+    EBCDIC when they are read.
+  - Hubert clarified that Clang on z/OS only supports the IBM-1047 character set.
+  - Hubert added that there has been consideration for use of `iconv` to convert source files, but there are
+    concerns about encoding names not being portable.
+  - PBrett added that gcc can also be built to use UTF-EBCDIC as its internal encoding.
+  - PBrett returned to Tom's original question and stated that EDG and IBM's xlC are the only implementations
+    that do not use a Unicode encoding as the internal encoding, but the difference is not observable.
+  - Tom asked if a universal-character-name (UCN) that names an unassigned character still constitutes a
+    Unicode scalar value.
+  - Jens responded that it does; Unicode scalar values include all valid Unicode code points except for the
+    surrogate code points used for UTF-16.
+  - Tom stated that, at our last telecon, Hubert asserted that implementations should not be required to
+    diagnose invalid characters in string literals, at least not when the source file encoding matches the
+    execution encoding.
+  - Jens noted that such a diagnostic only requires a simple range check.
+  - PBrett brought up prior discussions regarding source files containing ill-formed code unit sequences.
+  - Tom opined that that concern does not fall under the scope of this paper.
+  - PBrett replied that it is relevant for the scenario where ill-formed code unit sequences are present in
+    string literals and where the implementation copies the code units.
+  - PBrett added that this only seems to occur in mojibake scenarios; when compiling ISO-8859-1 encoded source
+    files as UTF-8 for example.
+  - Steve stated that it is preferable to use explicit escape sequences when ill-formed code unit sequences
+    are actually desired than to rely on the implementation failing to diagnose such sequences.
+  - PBrett agreed and noted that such cases are now being found in projects he works on due to increased use
+    of tools that expect UTF-8 and diagnose an ISO-8859-1 encoded copyright symbol as an ill-formed code unit
+    sequence.
+  - PBrett added that these projects are migrating source files to UTF-8 in response.
+  - Tom asked where we stand as a group on this paper.
+  - Jens provided a summary of the three UCN models described in the C99 rationale.  WG21 chose model A for
+    C++, WG14 chose model B for C.
+  - \[ Editor's note: The referenced
+    ["C99 rationale" document](http://www.open-std.org/jtc1/sc22/wg14/www/docs/C99RationaleV5.10.pdf),
+    in section 5.2.1, subsection "UCN models", states:
+    
+        Once this was adopted, there was still one problem, how to specify UCNs in the Standard.  Both
+        the C and C++ committees studied this situation and the available solutions, and drafted three
+        models:
+    
+          A. Convert everything to UCNs in basic source characters as soon as possible, that is, in
+          translation phase 1.
+    
+          B. Use native encodings where possible, UCNs otherwise.
+    
+          C. Convert everything to wide characters as soon as possible using an internal encoding that
+          encompasses the entire source character set and all UCNs.
+        
+        Furthermore, in any place where a program could tell which model was being used, the standard
+        should try to label those corner cases as undefined behavior.
+    \]
+  - Jens stated that, in the C++ model, after translation phase 1, all source input is described in terms
+    of the basic source character set; this model is supposed to be indistinguishable from the other models,
+    but is not because only Unicode scalar values may be representable.  This is arguably a defect of the
+    model.
+  - Jens noted that the other models allow extended characters.
+  - Jens expressed agreement with moving away from the current model as it produces more specification
+    issues, at least in part due to confusion with explicit UCNs, than a model based on code points or
+    scalar values would.
+  - PBrett noted that implementations convert explicit UCNs lazily.
+  - Jens expressed support for requiring that compilers be able to represent all Unicode scalar values
+    with support for extended characters; this would suffice to avoid cases of accidental UCN formation
+    by token pasting.
+  - Jens expressed skepticism regarding being able to meaningfully prohibit edge cases like distinct
+    Shift-JIS characters that map to the same Unicode character, but this could be acknowledged.
+  - Hubert stated that Unicode suffices for round tripping of almost all characters; exceptions are
+    mostly theoretical.  An implementation can map such characters to code points in the Unicode
+    Private Use Area (PUA) to support round-tripping of such special cases if desired; this is a
+    QoI issue.
+  - Hubert added that another choice would be to make such cases explicitly ill-formed thereby requiring
+    a diagnostic warning of non-portable code.
+  - PBrett opined that the standard should not normatively acknowledge a Unicode+X model; implementations
+    can still offer extensions.
+  - Jens asked Hubert, as an authoritative source of requirements for EBCDIC-based implementations, whether
+    a Unicode+X model in the standard is required, perhaps for control characters that are not semantics
+    preserving in Unicode.
+  - Hubert replied that the status quo is that semantics in terms of how the character is written are not
+    preserved.
+  - Steve noted that some programmer somewhere will therefore be relying on that.
+  - Jens asked Hubert if a Unicode-only model is a concern for his implementations.
+  - Hubert replied that he does not believe it to be problematic; there is a mapping to Unicode from almost
+    every character and for any special cases, there is an escape hatch via translation phase 1.
+  - Tom stated that he has now been persuaded that a Unicode+X model is not necessary for legacy code and
+    that a diagnostic for non-portable code is desirable.
+  - PBrett stated that the unobservability of the encoding of the source code is an important principle.
+  - Mark reflected on the past two years and how our thoughts regarding how to write simpler libraries have
+    lead us to this conclusion.
+  - Steve added that our prior discussions regarding character and string literals encountered challenges
+    with the translation phases; the current wording made it challenging to talk about such concerns.
+  - Jens stated that the last time we took away latitude in the standard was when we standardized on
+    2s-complement; research conducted found that there were no modern machines that were not 2s-complement.
+  - Jens added that, assuming we have sufficiently scrutinized the concerns here, and we have Hubert here to
+    argue for one of the outlier platforms, it would still be nice to have more input from other implementors.
+  - PBrett responded that there is no intention to remove behavioral lattitude here.
+  - Jens stated that he finds the mapping of control characters to something that isn't semantics preserving
+    in EBCDIC concerning, but if Hubert is ok with it, then he trusts that it is not a problem in practice.
+  - Hubert responded that the wording presented continues to allow both models.
+  - PBrett elaborated; there exists a mapping from EBCDIC to Unicode and it is indistinguishable whether the
+    input was mapped to Unicode and then magically reverted.
+  - Hubert noted that this model does not permit different behavior for a physical character vs use of a UCN.
+  - Tom replied that, per previous discussion, an implementation can differentiate behavior there as if it had
+    mapped the character through the PUA; a programmer could encode a PUA character using a UCN.
+  - PBrett added that an escape sequence could also be used.
+  - Hubert stated that previous discussion raised concerns that had rather weak arguments and suggested that
+    the paper could be revised to deemphasize those concerns.
+  - PBrett responded that this is a defensive paper written with the goal of defending the status quo.
+  - Tom stated that his impression had been that this paper would move in the direction of removing the
+    introduction of implicit UCNs in translation phase 1.
+  - PBrett replied that that would be a different paper; perhaps the one Jens has in mind.
+  - Jens stated that that paper still awaits [P2029](https://wg21.link/p2029) adoption in the standard.
+  - Hubert suggested a goal; we want to affirm this paper as a way of ensuring the portability of source code
+    across environments.
+  - Hubert added that characters that don't map to Unicode are mostly theoretical and not of practical
+    significance.
+  - Hubert stated that the last point we need to address is preservation of the potentially non-semantics
+    preserving behavior of translation phase 1.
+  - PBrett countered that he and Corentin want to ensure that, if a source file is encoded as UTF-8, that
+    semantics are preserved.
+  - PBrett added that there isn't really a future for this paper;  The next direction would be a paper to
+    remove implicit introduction of UCNs.
+  - Jens noted that the status quo is that the standard does not directly support characters outside of Unicode
+    today and that it would be helpful to reaffirm that the status quo is sufficient for EBCDIC; that would
+    leave us just needing motivation sufficient for changing the translation description in the standard.
+  - Jens added that he would like to have a poll that we are happy to transition to a model specified in terms
+    of Unicode scalar values.
+  - Hubert expressed support for that poll.
+  - Tom asked for a summary of what we consider to be the motivation for changing the model in the standard.
+  - Jens replied that most implementations use the extended character model internally; switching from the UCN
+    model to the Unicode scalar value model better reflects implementation practice and avoids some of the
+    specification issues that arise with the UCN model.
+  - PBrett asked if this change would be evolutionary given that no implementations would be affected.
+  - Jens replied that it may not be, but that EWG would likely prefer to discuss it.
+  - Hubert noted that there may be implementation impact because the move away from implicit UCNs may make some
+    behavior well-defined that is currently undefined behavior.
+  - **Poll: The model of description in the C++ language standard should be switched from basic source character set + UCNs to Unicode scalar values.**
+    - Mark clarified that a vote in favor is a vote for implementation divergence.
+    - Attendees: 8
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   5 |   2 |   1 |   0 |   0 |
+          
+    - Consensus is in favor.     
+  - Hubert raised a question of when explicitly written UCNs are translated.
+  - Jens acknowledged that as a concern; we'll need to determine what the status quo is and what behavior is
+    desired.
+  - Hubert added that we'll need to determine whether it makes sense to preserve undefined behavior in existing
+    cases.
+- Tom stated that the next meeting will be November 11th.
 
 
 # October 14th, 2020
