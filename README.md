@@ -60,9 +60,9 @@ Summaries of past meetings:
 - Tom provided an update on the possibility of a WG21 hosted chat service.
   - Discussion at the recent pre-meeting administrative telecon ended with an action item for Tom to submit
     a paper to be reviewed and discussed at a to-be-scheduled administrative telecon.
-- Tom announced that we'll discuss [https://wg21.link/p2093](P2093: Formatted Output) at our next telecon
+- Tom announced that we'll discuss [P2093: Formatted Output](https://wg21.link/p2093) at our next telecon
   assuming we complete review of
-  [https://wg21.link/p1885r3](P1885R3: Naming Text Encodings to Demystify Them).
+  [P1885R3: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r3).
 - [P2194R0: The character set of C++ source code is Unicode](https://isocpp.org/files/papers/P2194R0.pdf):
   - PBrett introduced:
     - Continuing discussion from prior telecons; we need to follow up with regard to how important it is that
