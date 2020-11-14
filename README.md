@@ -6,12 +6,11 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, November 11th, 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20201111T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, December 9th, 2020, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20201209T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [P1885R3: Naming Text Encodings to Demystify Them](https://wg21.link/p1885)
-  - Review updates since the [review of D1885R2 in Prague](https://wiki.edg.com/bin/view/Wg21prague/SG16D1885R2).
 - [P2093R2: Formatted output](https://wg21.link/p2093r2)
+  - Continue discussion.
 
 Summaries of past meetings:
 - [October 28th, 2020](#october-28th-2020)
