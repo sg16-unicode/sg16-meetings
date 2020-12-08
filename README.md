@@ -144,8 +144,8 @@ Summaries of past meetings:
     - The ability is provided to print via C streams (e.g., `stdout`) or C++ streams (e.g., `std::cout`).
     - There are multiple options for printing a newline; the most flexibile option is to allow the
       programmer to specify the newline sequence themselves.
-    - C++ iostreams doesn't work as expected with UTF-8 now, especially when printing to the Windows 
-      onsole.
+    - C++ iostreams don't work as expected with UTF-8 now, especially when printing to the Windows 
+      console.
     - On Windows, the run-time locale and terminal character set are distinct and separately managed
       in practice.
     - The reference implementation works portably on Windows and POSIX systems and does not require
