@@ -6,11 +6,14 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, December 9th, 2020, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20201209T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, January 13th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210113T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [P2093R2: Formatted output](https://wg21.link/p2093r2)
-  - Continue discussion.
+- [P2246R0: Character encoding of diagnostic text](https://wg21.link/p2246r0)
+  - And companion paper: [WG14 N2563: Character encoding of diagnostic text](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2563.pdf)
+- SG16, SG22, and WG14 coordination.
+  - Priority and owners for [SG16's open WG14 issues](https://github.com/sg16-unicode/sg16/issues?q=is%3Aissue+is%3Aopen+label%3Awg14)
+- [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm)
 
 Summaries of past meetings:
 - [November 11th, 2020](#november-11th-2020)
