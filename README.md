@@ -16,6 +16,7 @@ The draft agenda is:
 - [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm)
 
 Summaries of past meetings:
+- [December 9th, 2020](#december-9th-2020)
 - [November 11th, 2020](#november-11th-2020)
 - [October 28th, 2020](#october-28th-2020)
 - [October 14th, 2020](#october-14th-2020)
@@ -40,6 +41,195 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 9th, 2020
+
+## Agenda:
+- [P2093R2: Formatted output](https://wg21.link/p2093r2):
+  - Continue discussion. 
+
+## Meeting summary:
+- Attendees:
+  - Hubert Tong
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Tom provided some administrative updates:
+  - A reminder that SG16 telecons operate under the WG21 code of conduct as described in the
+    ["Code of conduct" section of WG21 Standing Document #4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures#code-of-conduct)
+    and, by extension, the
+    [ISO Code of Conduct](https://www.iso.org/publication/PUB100397.html) and
+    [IEC Code of Conduct](https://basecamp.iec.ch/download/iec-code-of-conduct-for-delegates-and-experts).
+  - A reminder that SG16 is a public group and that minutes of SG16 telecons are made publicly available.
+    Participants may request that sensitive information not be minuted.
+  - A draft paper calling for the creation of a WG21 managed chat service will be submitted for the
+    December 15th mailing.
+  - \[ Editor's note: the submitted paper is
+    [P2263R0: A call for a WG21 managed chat service](https://wg21.link/p2263r0).
+    An administrative telecon will be scheduled in early January to discuss it with the intent to
+    have a draft revision addressing any feedback prepared for the February pre-meeting administrative
+    telecon. \]
+  - The deadline for initial proposals of new features to be included in C2x is 2021-08-27.
+  - The next C2x meeting is scheduled for March 8-12, 2021.
+  - Tom asked to clarify the next steps following our recent discussion of
+    [P2194R0](https://wg21.link/p2194r0) and asked who is planning to write the paper to re-word
+    translation phase 1 in terms of Unicode scalar values rather than basic source characters and
+    universal-character-names (UCNs).
+  - Jens stated he will write that paper, but noted some complications:
+    - Not all string literals should be transcoded into the execution encoding because literals that
+      appear in contexts such as `static_assert` and language linkage are evaluated at compile-time
+      and have different encoding implications.
+    - The issue of translation phase 5/6 confusion regarding string literal concatenation and conversion
+      to the execution encoding remains.
+    - It may become necessary to move string literal conversions and concatenation to translation phase 7.
+    - Care will be required to ensure concatenation of string literals does not result in construction or
+      extension of escape sequences.
+- [P2093R2: Formatted output](https://wg21.link/p2093r2):
+  - PBrett provided an introduction:
+    - It has been a month since we last reviewed.
+    - There has been some good discussion on the mailing list.
+    - Victor will continue his presentation.
+  - Victor presented:
+    - The intent of the proposal is to integrate formatting facilities with output streams.
+    - A survey of current Java, Python 3, and Rust releases was conducted to ascertain their behavior
+      on a Russian Windows system (Active Code Page (ACP) set to Windows-1251; console encoding set
+      to CP868) when a string containing Russion and Greek characters is written to stdout with stdout
+      directed to a console and again with stdout redirected to a file.
+      - For Java, `java.lang.System.out` was used.
+      - For Python, `print` was used.
+      - for Rust, `std::print` was used. 
+      - For each language, redirection of stdout to a file was done using the `cmd.exe` shell.
+    - Java failed to display the correct characters to the Windows console; UTF-8 output was produced
+      when stdout was redirected to a file.
+    - \[ Editor's note: See further discussion below regarding the Java behavior. \]
+    - Python threw an exception when trying to convert the Greek characters to Windows-1251.
+    - Rust displayed the correct characters to the console and UTF-8 output was produced when stdout
+      was redirected to a file.
+  - PBrett noted a difference from C++ that each of these languages shares; they each always use a
+    UTF encoding for strings.
+  - PBrett added that both Python and Rust appear to behave in an arguably correct manner.
+  - PBrett stated that he has many tools that operate in ISO-8859 encodings and where generation of
+    UTF-8 output would not produce the expected behavior.
+  - PBrett noted that this is a new facility, so it could behave differently.
+  - Tom expressed surprise that the Java test produced UTF-8 when stdout was directed to a file as
+    that does not match his understanding of Java's behavior.
+  - Steve noted that such surprising behavior can be the result of mismatched encoding expectations
+    and asked if the source file encoding was correct.
+  - Steve added that this is an easy thing to get wrong.
+  - Victor replied that all source files were UTF-8 encoded.
+  - Tom stated that the Java compiler uses the locale to determine souce file encoding unless invoked
+    with the `-encoding` option; similar to how Microsoft Visual C++ behaves.
+  - Zach asked if source file encoding could influence the encoding used for file redirection.
+  - Victor replied that he would conduct additional tests.
+  - \[ Editor's note: later tests revealed that the reported behavior for Java was incorrect.  The
+    Java compiler had been invoked without a `-encoding` option, so the UTF-8 encoded source file was
+    misinterpreted as being Windows-1251 encoded and the compiler converted string literals from
+    Windows-1251 to UTF-16.  When the strings were then written via `java.lang.System.out`, the prior
+    conversion was reversed when `java.io.PrintStream` converted the string to print from UTF-16 back
+    to Windows-1251.  The result was that the original bytes from the source file encoding of the
+    string literal were written to stdout.  This produced mojibake on the Windows console and gave the
+    appearance that the program had (intentionally) generated UTF-8 in the file redirection scenario.
+    Note that all valid UTF-8 code unit sequences are also valid Windows-1251 code unit sequences. \]
+  - Tom asked Victor if he could extend his testing to cover cases where stdout was redirected to a
+    pipe that was connected to stdin of another process.
+  - Victor replied that he would look into that.
+  - PBrett recalled that, in prior discussion, we had started discussing the association of the execution
+    encoding and run-time encoding and how that influences behavior.
+  - Victor summarized the proposed behavior and some of the prior discussion:
+    - Decisions are based solely on execution encoding (known at compile time).
+    - Use of locale settings would be challenging due to the involvement of multiple encodings.
+    - The encoding of the format string must be consistent.
+    - Tom had raised the question of a z/OS implementation using UTF-8 as the execution encoding, but
+      operating in an EBCDIC environment.
+  - PBrett observed that use of Microsoft's `/utf-8` option would cause UTF-8 output to be generated
+    and asked about what should happen when that option isn't used.
+  - Victor replied that the behavior depends on the system configuration and that the proposal specifies
+    that bytes be passed through unmodified in that case.
+  - Steve relayed experience with tools that end up writing ANSI terminal escape sequences into a file
+    when output is redirected and noted the difficulty that would be encountered when attempting to
+    determine what kind of device receives the final output; examples may involve multiple ssh hops.
+  - Tom opined that the only case he is aware of where writing directly to the device instead of to the
+    file stream makes sense is on Windows where it can be known definitively that the file stream is
+    attached to a console.
+  - Hubert explained that z/OS supports two modes:
+    1) ASCII: interfaces are provided that perform conversion from an internal encoding when writing to
+       a stream; this is commonly used for simple encodings.
+    2) EBCDIC: this is a byte pass through mode.
+  - Jens commented that the proposed feature appears to be centered around a special facility for
+    Windows and expressed uncertain skepticism regarding driving a design around it.
+  - Jens added that, in the z/OS scenario as Hubert described it, there appears to be uncertainty that
+    the facility would handle variable length encodings adequately.
+  - Jens stated that, given the wide array of platforms supported by the C++ standard, that he would
+    prefer to craft a design around an abstract console stream.
+  - PBrett expressed concern that this facility might not be used much on Windows because use of
+    Microsoft's `/utf-8` option is not common.
+  - Victor disagreed with the notion that the design is centered around Windows and a particular
+    corner case; the goal is to fix the general problem of producing correct output.
+  - Victor stated that, with respect to use of the `/utf-8` option, that he is open to the changes Tom
+    suggested to transcode as necessary and write directly to the console when output is directed there
+    regardless of what the execution encoding is.
+  - Tom agreed with Victor that the concerns are more fundamental and not a special case; the goal is to
+    improve support for an internal encoding distinct from the external encoding.
+  - Tom asked about coexistence with other formatting facilities and what concerns arise due to potentially
+    divergent behavior; programs won't be rewritten over night to migrate all `printf()` uses to
+    `std::print()`.
+  - Zach asked what the tradeoffs in design options are, what gets broken based on design choices, and how
+    much of this can be left implementation-defined.
+  - Zach expressed support for the approach described in the paper.
+  - Hubert stated that encompasing the console in a separate facility would pose challenges.
+  - Hubert added that an important concern is encoding of string literals vs encoding of strings received
+    from the environment.  For example, regex libraries tend to use a possibly pre-compiled pattern encoded
+    in the execution encoding, but operate on strings provided by the environment; it is necessary to
+    differentiate these.
+  - PBrett agreed with Hubert's concerns.
+  - Steve stated that the proposed feature is at least partly QoI and that, if we can specify this with
+    sufficient latitude for Microsoft to make their customers happy, great; the Windows console capabilities
+    are not portable.
+  - Steve added that locale information is input to the program and used to interpret bytes received as input.
+  - Steve raised the concern that the proposed approach may enclose transcoding behavior too deeply where it
+    can't be fixed if there is a problem.
+  - Tom agreed with Steve's concern and noted parallels with Jens' previous request to separate transcoding
+    features.
+  - PBrett asked how encoding errors should be handled.
+  - Victor replied that the current implementation throws an exception, but that there has been a
+    recommendation to use U+FFFD character substitution instead.
+  - Zach noted that use of subtitution characters matches Unicode recommendations.
+  - Victor noted that, when writing to the console, substitution is safe since it is known that the output
+    would be incorrect anyway.
+  - PBrett acknowledged that perception; the text gets converted to photons.
+  - Victor added that the Console font is typically limited in what can be displayed as well.
+  - PBrett asked if there were any objections to use of substitution characters in error handling scenarios.
+  - No objections were raised.
+  - Jens stated that the proposed feature is effectively a large hammer being aimed at more nails than is
+    really desired.  For example, in safety critical scenarios, a programmer may need to be notified of
+    errors; displaying a Unicode replacement character to an aircraft pilot is less than helpful.
+  - Jens reflected that, on the other hand, perhaps this is a tool intended for common users where such
+    substitutions are not an issue.
+  - Jens expressed support for transcoding operations being explicit at program boundaries and noted that
+    there are a number of encodings involved; execution encoding, locale dependent input, locale dependent
+    output (potentially multiple; e.g., Windows ACP and console encoding).
+  - Jens opined that we should promote a programming model that puts more control in the hands of the
+    programmer.
+  - Victor replied that `std::format()` doesn't do any transcoding at present; that the encodings must match
+    and that programmers must get data into the right encoding first.
+  - Hubert noted the law of unintended consequences; that trying to ensure a behavior in one case can result
+    in undesired behavior in another.
+  - Steve agreed and noted that use of `isatty()` tends to be problematic as it can be surprising when
+    behavior changes based on redirection.
+  - PBrett asked Tom what polls should be conducted.
+  - Tom responded that he did not think discussion had progressed to a point where we all hold well-informed
+    positions.
+  - Tom stated that the additional work Victor has agreed to do should help strengthen our understanding and
+    positions; we should therefore wait for this additional information before conducting any polling.
+- Tom stated that the next meeting will be on January 13th and the agenda will include:
+  - [P2246R0: Character encoding of diagnostic text](https://wg21.link/p2246r0)
+  - SG16, SG22, and WG14 coordination; we'll discuss how to make forward progress on
+    [SG16 issues labeled with the WG14 tag](https://github.com/sg16-unicode/sg16/issues?q=is%3Aissue+is%3Aopen+label%3Awg14).
+  - [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm)
 
 
 # November 11th, 2020
