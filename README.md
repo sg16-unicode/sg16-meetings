@@ -97,7 +97,7 @@ Summaries of past meetings:
     - The intent of the proposal is to integrate formatting facilities with output streams.
     - A survey of current Java, Python 3, and Rust releases was conducted to ascertain their behavior
       on a Russian Windows system (Active Code Page (ACP) set to Windows-1251; console encoding set
-      to CP868) when a string containing Russion and Greek characters is written to stdout with stdout
+      to CP866) when a string containing Russion and Greek characters is written to stdout with stdout
       directed to a console and again with stdout redirected to a file.
       - For Java, `java.lang.System.out` was used.
       - For Python, `print` was used.
