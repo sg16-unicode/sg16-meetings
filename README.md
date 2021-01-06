@@ -155,10 +155,9 @@ Summaries of past meetings:
   - Tom opined that the only case he is aware of where writing directly to the device instead of to the
     file stream makes sense is on Windows where it can be known definitively that the file stream is
     attached to a console.
-  - Hubert explained that z/OS supports two modes:
-    1) ASCII: interfaces are provided that perform conversion from an internal encoding when writing to
-       a stream; this is commonly used for simple encodings.
-    2) EBCDIC: this is a byte pass through mode.
+  - Hubert explained that, on z/OS, an application can internally be in ASCII or EBCDIC mode, open file
+    handles can be imbued with the property of being ASCII or EBCDIC, and the C-level I/O APIs can
+    automatically translate between them for, at least, single-byte encodings.
   - Jens commented that the proposed feature appears to be centered around a special facility for
     Windows and expressed uncertain skepticism regarding driving a design around it.
   - Jens added that, in the z/OS scenario as Hubert described it, there appears to be uncertainty that
@@ -180,7 +179,8 @@ Summaries of past meetings:
   - Zach asked what the tradeoffs in design options are, what gets broken based on design choices, and how
     much of this can be left implementation-defined.
   - Zach expressed support for the approach described in the paper.
-  - Hubert stated that encompasing the console in a separate facility would pose challenges.
+  - Hubert stated that encompasing the console in a separate facility would pose challenges because it
+    assumes the presence of a unique "console" in the environment.
   - Hubert added that an important concern is encoding of string literals vs encoding of strings received
     from the environment.  For example, regex libraries tend to use a possibly pre-compiled pattern encoded
     in the execution encoding, but operate on strings provided by the environment; it is necessary to
