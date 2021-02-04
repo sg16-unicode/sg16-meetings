@@ -86,8 +86,8 @@ Summaries of past meetings:
   - Hubert responded that there is a requirement if the standard states one; the implementation must have some means to
     present a message.
   - Aaron asked if a change to the prose was desired.
-  - Hubert responded affirmatively; that he would like to see a change of rationale to require some representation of
-    the text.
+  - Hubert responded affirmatively; that he would like to see a change of the rationale to clarify that there is no
+    increase in requirement for some representation of the text in comparison to the status quo. 
   - Aaron agreed to make such a change.
   - Corentin recalled earlier discussions regarding translation phase 1, string literals always being in execution
     encoding, and whether `static_assert` might require special handling.
