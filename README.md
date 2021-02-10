@@ -15,11 +15,229 @@ The draft agenda is:
   - Review Victor's updates since our review of P2093R2 on 2020-12-09. 
 
 Summaries of past meetings:
+- [January 27th, 2021](#january-27th-2021)
 - [January 13th, 2021](#january-13th-2021)
 - [Meetings held in 2020](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2020.md)
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 27th, 2021
+
+## Agenda:
+- Presentation and discussion with Jonathan Müller regarding his
+  [lexy parser combinator library](https://github.com/foonathan/lexy)
+  ([Tutorial](https://foonathan.net/lexy/tutorial.html), [Reference](https://foonathan.net/lexy/reference.html)),
+  and the text and Unicode related challenged he faced, how he solved them, and what C++ standard
+  language or library features he would have benefitted from.
+- [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm)
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Daniela Engert
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Jonathan Müller
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tomasz Kamiński
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Presentation on lexy’s text and Unicode challenges by Jonathan Müller:
+  - Jonathan's presentation slides are avilable
+    [here](presentations/2021-01-27-lexy-presentation.pdf).
+  - Part 1: Inputs and Encodings:
+    - Jonathan presented:
+      - Several classes are provided to handle input via ranges, strings, and buffers, each of which provides a
+        reader class.
+      - The reader class provides access to the input data independent of the specific input class.
+      - Encoding classes provided for each of the supported encodings define traits and operations for an
+        encoding.
+      - The encoding classes are superficially similar to `std::char_traits`; they define a character type, an
+        integer type to be used as an EOF sentinel, conversion operations from the character type to the integer
+        type, secondary types that may be used with the encoding, and encode operations.
+      - The supported encodings are:
+        - Default: uses `char` as the character type, `int` as the integer type, and `-1` as the EOF value.
+        - Raw: uses `unsigned char` as the character type, `int` as the integer type, and `-1` as the EOF value.
+          `char` and `std::byte` can be used as secondary character types.
+        - ASCII: uses `char` as the character type, `char` as the integer type, and `0xff` as the EOF value.
+        - UTF-8: uses `char8_t` as the character type, `char8_t` as the integer type, and `0xff` as the EOF value.
+          `char` can be used as a secondary character type.
+        - UTF-16: uses `char16_t` as the character type, `std::int_least32_t` as the integer type, and `-1` as
+          the EOF value.
+          `wchar_t` can be used as a secondary character type if it has the same size as `char16_t`.
+        - UTF-32: uses `char32_t` as the character type, `char32_t` as the integer type, and `0xffffffff` as the
+          EOF value.
+          `wchar_t` can be used as a secondary character type if it has the same size as `char32_t`.
+      - Wish list:
+        - The ability to determine the encoding of ordinary string literals.
+        - The ability to convert between the original character types (`char`, `wchar_t`) and the newer types
+          (`char8_t`, `char16_t`, `char32_t`) without the spectre of undefined behavior.
+        - A library function to heuristically determine or guess the encoding for some input.
+    - \[ Editor's note: Right at the start of Jonathan's presentation, one of the editor's sons showed up
+      bleeding from having fallen while climbing over a fence.  Recovery was quick, and the editor was
+      appreciative of the excellent slides that enabled him to fill in what he missed of the presentation. \]
+    - Hubert noted that use of `0xFF` as the EOF value for the ASCII encoding could be problematic since `char`
+      may be a signed type, but is probably ok if it is just an internal implementation detail.
+    - PBrett observed that, for encodings with a larger integer type, buffer space may not be used efficiently.
+    - Jonathan replied that buffers always store values in the character type, not the integer type.
+    - Victor asked how ill-formed input that might have a character value that matches the EOF value is handled.
+    - Jonathan replied that processing of such input will end prematurely.
+    - PBrett stated that it seems reasonable for the library to require well-formed input.
+    - PBrett asked if a library solution that provides a "blessed" cast operation for handling input in the
+      secondary character types would suffice.
+    - Jonathan replied that it would.
+    - Corentin mentioned having discussed such a possibility with Richard Smith in the past, particularly with
+      regard to the possibility of `constexpr` support.
+    - Jonathan confirmed that `constexpr` support would be useful.
+    - Steve stated that there is a need for that feature for historical interfaces that have `char*` parameters.
+    - Jonathan acknowledged the need and explained that these interfaces accept either the primary or secondary
+      type and use `reinterpret_cast` internally.
+    - Hubert asked if these conversions are needed only in one direction or in both.
+    - Jonathan replied that they are one directional; the user will not modify the text after handing it off and
+      the library does not hold on to input beyond a call.
+    - Jonathan added that, if a buffer is provided, the data is copied.
+    - Jens explained that the reason that the `reinterpret_cast` results in undefined behavior is because the
+      compiler can assume no aliasing of most types.
+    - Corentin asked if a bless function could work at `constexpr` time.
+    - Hubert replied that this is different than the `std::bless` that has been discussed in the past; to bless
+      means to start the lifetime of an object.
+    - Jens stated that there are two approaches we can consider:
+      - Changing the alias rules and thereby prohibit related optimizations.
+      - Extending the memory model in some way to enable such magic.
+    - Mark noted that the anti-aliasing features of `char8_t` were a motivator for adopting the type.
+    - Jens added that this is a research opportunity.
+    - Jonathan obseved that undefined behavior seems to be ok for users for now.
+    - Zach stated that he has also written a parser combinator library, but did so in a way that did not require
+      use of `reinterpret_cast`.
+    - Corentin noted from chat that [P1885](https://wg21.link/p1885) exposes the encoding of ordinary string
+      literals.
+  - Part 2: Unicode-Aware Rules:
+    - Jonathan presented:
+      - Parsing requires converting character input to integer input to check for EOF.
+      - Comparing input to literal values also requires conversions.
+      - The allowed conversions depend on the encoding in use.
+      - Transcoding support is limited to conversion from ASCII to other encodings and assumes that the code
+        point value in the target encoding matches the ASCII character code and is representable with a single
+        code unit.
+      - Matching of literal values is restricted to ASCII unless the literal has a `char8_t`, `char16_t`, or
+        `char32_t` based type or if an explicit encoding is specified.
+      - A rule is provided for matching a Unicode BOM.
+      - A rule is provided for reading a code point for encodings other than default and raw.
+      - Input is assumed to be well formed; no validation is performed.
+      - Wish list:
+        - Unicode character classification functions.
+        - A `std::code_point` type.
+        - Support for validating encoded input.
+      - Features not actually needed for this part:
+        - Decoding facilities.
+        - Transcoding facilities.
+    - \[ Editor's note: The editor's internet connection decided to take some time off just as Jonathan started
+      presenting part 2.  It came back fairly quickly, but a few minutes of presentation were lost.  Gaps were
+      again filled in thanks to the excellent slides. \]
+    - Hubert asked what features would be desirable in a `std::code_point` type.
+    - Jonathan presented lexy's `code_point` type and its `is_valid()`, `is_surrogate()`, `is_scalar()`,
+      `is_ascii()`, and `is_bmp()` members.
+    - PBrett observed that the desire is for something like Unicode properties.
+    - Jens noted the much simpler requirements.
+    - PBrett asked if higher level features are provided that could handle Unicode normalization.
+    - Jonathan replied that there are not currently, but that adding such support seems feasible.
+    - Zach noted that there are normalization equivalences, but also equivalence for collation purposes and
+      that a lot of effort is required to get that working.
+    - Corentin noted from chat that [P1628](https://wg21.link/p1628) provides support for Unicode character
+      classification and that an implementation is available at
+      https://github.com/cor3ntin/ext-unicode-db/blob/master/generated_includes/cedilla/properties.hpp.
+  - Part 3: File Input:
+    - Jonathan presented:
+      - Buffers have an associated encoding.
+      - Endian concerns, including handling of BOMs, are addressed when filling a buffer.
+      - A function is provided for populating a buffer from a file.
+      - File reading is done in binary mode and without encoding validation.
+      - Wish list:
+        - `std::read_file()`.
+        - Endian conversion facilities.
+        - Facilities to heuristically identify the encoding of arbitrary input.
+    - Tom noticed that, if a BOM is not present, that big endian is assumed and asked if the default shouldn't
+      be the native endian order for data in memory.
+    - PBrett agreed that, for data in memory, yes, but for data at rest, big endian is the default.
+    - Jonathan explaind that BOM assumptions are only used for files at present, so assuming big endian seems
+      correct.
+    - PBrett agreed that a `std::read_file()` function would be useful.
+    - Jens stated in chat that support for endian conversions is in progress; [P1272R3](https://wg21.link/p1272).
+  - Part 4: The `as_string` callback:
+    - Jonathan presented:
+      - When a production rule is matched, the parsed lexeme is passed to a functor that can receive it as
+        a string-like type, a C string, or as a lexeme with associated reader class.
+      - A lexeme is a range over the input.
+      - Wish list:
+        - Encoding facilities.
+        - Transcoding facilities.
+  - PBrett noted that Zach's [Boost.text](https://github.com/tzlaine/text) library does some of this.
+  - Zach agreed and noted support for transcoding.
+  - PBrett asked if support for grapheme rules had been considered.
+  - Jonathan replied that he has considered such rules, but that such support requires the Unicode DB.
+  - Mark asked if grapheme interfaces were available in the standard, whether they would be used.
+  - Jonathan replied, yes and stated that he intends to implement more Unicode rules, but they are work.
+  - Tom summarized one of his big take aways from the presentation is how encodings were handled; that
+    support was limited to ASCII unless there was evidence in the type system for a more capable encoding.
+  - PBrett stated that one of his big take aways is that a number of the items in the wish lists are
+    already in the pipeline.
+  - Jens agreed and noted that these are some of the easier items to address.
+  - Jens noted that there would be clear benefit from access to Unicode DB character properties.
+  - PBrett asked if Jonathan would make the slides available.
+  - Jonathan agreed to do so.
+  - \[ Editor's note: Jonathan did so and they are linked above. \]
+  - Corentin stated that the ability to provide conversions between `char` and `char8_t` is something
+    that we might be able to do for C++23.
+  - PBrett suggested that one way to do that might be to take a span and return another span.
+  - Steve agreed that the ability to perform such conversions would be useful, but wondered if it can
+    be done without losing aliasing benefits.
+  - Jens suggested postponing how to alias `char` and `char8_t` until a proposal is provided.
+  - Zach commented that he and Jonathan made many similar choices in their implementations, but noted
+    one point of difference; Zach tried to deduce the encoding all the time.
+  - JeanHeyd observed that, with Corentin's [P1885](https://wg21.link/p1885), the literal encoding
+    will be known.
+  - JeanHeyd added that gcc trunk already has support for the predefined macro and that Clang and MSVC
+    are making progress.
+- [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm):
+  - JeanHeyd presented:
+    - The paper was presented to WG14 in November.
+    - WG14 requested that additional conversion functions be provided to convert between UTF encodings.
+    - The paper proposes conversion functions from the locale sensitive MB/wide encodings to UTF encodings.
+    - Converters are provided that perform per-code-unit translation and per-string translation.
+    - These functions avoid the historical issues with variable length encodings.
+    - MAX macros are provided to avoid having to check for and handle insufficient output errors.
+    - These functions differ from `iconv` because C doesn't have a locale or encoding tag suitable for
+      specifying an encoding.
+  - PBrett asked to verify that sizes are always expressed in code units in the paper.
+  - JeanHeyd replied that they are.
+  - PBrett observed that the historical designs returned a positive value to indicate the number of
+    code units that were written.
+  - JeanHeyd acknowledged and explained that a different design is proposed here because of ambiguities
+    that arise with a return value of 0.
+  - Steve asked how the number of code units that were consumed and written are returned.
+  - JeanHeyd replied that the provided pointers are updated, so the caller can calculate.
+  - Jens observed that the proposed interface always requires two modifications when some input is
+    consumed and output is produced; an alternative would be a range where only the input is bumped.
+  - JeanHeyd replied that convenience functions that provide that simpler interface could potentially
+    be provided.
+  - Jens asked for more explanation for the use of a pointer/size pair as opposed to a pointer/pointer pair.
+  - JeanHeyd replied that null can be passed for the size.
+  - Jens expressed concerns about security issues.
+  - Tom stated that a null could be passed for an end pointer to accomplish the same goals; and the same
+    security concerns.
+  - PBrett suggested postponing further discussion until the next meeting.
+- Tom stated that the next meeting will be February 10th and that
+  [WG14 N2620](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm) will be top of the list.
+- Tom thanked Jens for his recent draft paper proposing changes to the UCN model and that he would put
+  that paper on the agenda soon.
+- Tom added that he is thinking about dedicating an upcoming telecon to discussion of what we want to
+  try and complete for C++23.
 
 
 # January 13th, 2021
