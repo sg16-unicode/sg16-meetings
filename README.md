@@ -9,16 +9,215 @@ The next SG16 meeting is scheduled for
 Wednesday, February 24th, 2021, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210224T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [P2314R0: Character sets and encodings](https://isocpp.org/files/papers/P2314R0.html)
-- [P2297R0 Wording improvements for encodings and character sets](https://isocpp.org/files/papers/P2297R0.pdf)
+- [P2314R0: Character sets and encodings](https://wg21.link/p2314r0)
+- [P2297R0 Wording improvements for encodings and character sets](https://wg21.link/p2297r0)
 
 Summaries of past meetings:
+- [February 10th, 2021](#february-10th-2021)
 - [January 27th, 2021](#january-27th-2021)
 - [January 13th, 2021](#january-13th-2021)
 - [Meetings held in 2020](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2020.md)
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 10th, 2021
+
+## Agenda:
+- [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm)
+  - Continue discussion started at the last telecon and in
+    [recent email discussion](https://lists.isocpp.org/sg16/2021/01/2049.php).
+- [P2093R3: Formatted output](https://wg21.link/p2093r3)
+  - Review Victor's updates since our
+    [review of P2093R2 on 2020-12-09](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2020.md#december-9th-2020).
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+
+## Meeting summary:
+- [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm):
+  - JeanHeyd stated that he has not yet completed the benchmarks requested in the email discussion.
+  - JeanHeyd shared code and demonstrated three possible signatures for the conversion functions:
+    1) The form proposed in the paper.
+       - `mcerr_t(const charX** ibegin, size_t* isize, charY** obegin, size_t* osize)`
+       - Con: Each call requires writes to `*ibegin`, `*isize`, `*obegin`, and `*osize`.
+    2) Iterator pairs passed by reference.
+       - `mcerr_t(const charX** ibegin, const charX** iend, charY** obegin, charY** oend)`
+       - Pro: Each call only requires writes to `*ibegin` and `*obegin`.
+    3) Iterator pairs, begin passed by reference, end passed by value.
+       - `mcerr_t(const charX** ibegin, const charX* iend, charY** obegin, charY* oend)`
+       - Pro: Each call only requires writes to `*ibegin` and `*obegin`.
+       - Con: No support for unbounded reads and writes.
+  - Zach asked if, for #3, both `ibegin` and `iend` are required to be non-null.
+  - JeanHeyd replied that they are.
+  - Zach stated that, if null is passed for `oend`, that should allow unbounded writes, and if null is passed
+    for `obegin`, that should allow counting code units.
+  - JeanHeyd acknowledged and added that passing null for both would support counting and validation.
+  - Tom noted the assumption that the count is returned via the return value in that case.
+  - JeanHeyd agreed and noted that would require special error return values ike `(size_t)-3`.
+  - PBrett asked if named constants would be provided for such error values.
+  - JeanHeyd replied yes and that they already exist.
+  - Jens requested that the paper clearly illustrate the three modes of operation (counting, validation,
+    and conversion) and provide examples of each.
+  - Jens noted that `iconv` does not support unbounded buffers.
+  - Jens added that support for unbounded buffers would be novel and carries significant risk.
+  - Jens observed that the arguments in the signatures presented differ from what is proposed in the paper.
+  - JeanHeyd acknowledged and noted there is a lack of consistency in existing interfaces.
+  - Jens suggested letting WG14 choose the argument order.
+  - Tom noted that returning `size_t` with special error values makes for verbose call sites since
+    there is no simple way to test for an error.
+  - JeanHeyd agreed and noted that the proposed signature was designed to avoid that issue.
+  - JeanHeyd added that a caller could check to see if all input was consumed to determine if an error
+  - occurred.
+  - Tom noted that these signatures don't include an `mbstate_t` parameter and therefore cannot support
+    processing text one byte at a time as might be required to advance through buffer boundaries; for
+    the `mbstate_t` taking variants, all bytes could be consumed without ensuring that an error condition
+    is not present.
+  - Tom suggested that optional parameters could be used to return counts of processed code units.
+  - Corentin expressed a preference for the design in the paper for usability reasons and noted a dislike
+    for using a return value to indicate both errors and counts.
+  - Corentin stated that performance concerns should be subject to benchmarks indicating a problem, and
+    that he is reluctant to compromise usability for small gains.
+  - JeanHeyd noted that the design in the paper avoids using the return value for multiple purposes.
+  - Zach wondered if the challenge with this interface is trying to do too many things and violating the
+  - single purpose guideline; perhaps it would be worth having separate interfaces for validation and
+    counting.
+  - Zach added that examples of real world code would help to guide the design.
+  - Zach asked if the interface offered a mechanism to request replacement characters for ill-formed input.
+  - JeanHeyd replied that there are multiple possibilities for handling errors, but that WG14 felt the best
+    approach is to leave error handling policy to the programmer.
+  - JeanHeyd added that these interfaces are intended to be basic low level functionality and that more
+    complex functionality can be added at a higher level.
+  - Zach acknowledged that simplified wrappers could provide higher level error handling.
+  - Jens asserted that interface choice should be based on informed performance behaviors and acknowledged
+    that a complicated return value is undesirable.
+  - Jens added that many C interfaces feel awkward from a C++ perspective due to the use of pointers and
+    the need for manual error checking, and suggested that the focus be on getting the interface working
+    and functional; ergonomics can be secondary.
+  - Jens requested that the paper reflect opinions regarding separate validation and counting functions.
+  - JeanHeyd stated that he would update the paper and bring back a revision for further review.
+  - Corentin asked JeanHeyd what additional feedback he would like, what feedback WG14 might appreciate,
+    and whether we should expect WG14 to consider our feedback.
+  - JeanHeyd replied that WG14 will take WG21 feedback seriously.
+  - JeanHeyd stated that the feedback provided so far has been useful; examples of usage will be a good
+    addition to the paper.
+  - JeanHeyd added that he'll take any questions or advice that he can't answer himself to WG14.
+  - JeanHeyd noted that WG14 is open to adding potentially many functions, so separate interfaces could be
+    a possibility.
+  - Corentin expressed confidence that whatever interface is decided on will likely be reasonably usable
+    and useful for C++, but that a dependency on WG14 is not required since WG21 can specify its own
+    interfaces.
+  - JeanHeyd agreed and noted that part of his intent in working with WG14 is to ensure that WG21
+    implementors have the tools they need to implement future WG21 libraries.
+  - Tom asked if the intent is that these interfaces be efficiently implementable using existing interfaces
+    like `iconv` and `MultiByteToWideChar`.
+  - JeanHeyd replied, yes.
+  - Tom noted that optimizing these interfaces to work with little or no overhead over those interfaces
+    should be a goal.
+  - JeanHeyd agreed.
+  - Tom asked how to seek to the next valid lead code unit when an error is encountered.
+  - JeanHeyd replied that the simplest solution is to increment the input by one byte and to try again.
+  - Tom observed that doing so would result in many error actions taken for a contiguous sequence of
+    ill-formed code units, e.g., issuing many replacement characters; that conforms with Unicode, but
+    Unicode guidance is to substitute a single replacement character for such sequences.
+  - JeanHeyd replied that the caller could track consecutive errors and wait to apply an error policy until
+    the ill-formed sequence has been fully consumed.
+  - Tom agreed that would work and noted that we don't need to optimize for the error case.
+- [P2093R3: Formatted output](https://wg21.link/p2093r3):
+  - Victor presented:
+    - Feedback provided during the last SG16 review was incorporated:
+      - Additional motivation for `stdout` as the default output stream was added.
+      - Appendix A was added with a comparison of behavior in other languages.
+      - Other fixes and minor changes.
+    - Six languages have been evaluated on Linux, macOS, and Windows.
+      - The interesting case is Windows due to its use of a console encoding distinct from the system
+        encoding.
+      - Go, JavaScript, Python, and Rust were all able to produce correctly rendered output to the
+        Windows console; C and Java did not.
+      - When output was redirected to a file, Java and Python both tried to transcode to Windows-1251.
+        - Java substituted replacement characters for unrepresentable characters.
+        - Python threw an exception when attempting to convert unrepresentable characters.
+    - The paper proposes following the behavior exhibited by C, Go, JavaScript, and Rust.
+    - The only difference compared to `printf()` is special handling when writing to the console on Windows.
+  - PBrett noted that, for Java, JavaScript, Python, and Rust, the internal encoding is always Unicode, but
+    that is not the case for C and C++; this may indicate different behavior is warranted.
+  - Victor agreed that there is a difference, but the proposal is to only special case writing to the
+    Windows console when the execution encoding is UTF-8.
+  - Corentin commented that, when writing to the console, the output is necessarily text, but when writing
+    to a file, the output could be binary.
+  - Jens noted how JeanHeyd's transcoding facilities could be used here; we can transcode so long as a
+    target encoding is known.
+  - Jens reiterated his desire for lower level functionality to be exposed such that general programmers
+    would be able to implement similar functionality.  For example:
+    - A facility to determine if output will be directed to a console; Tom showed how that can be done on
+      several platforms and it is common for such customization to be done on POSIX systems for paging and
+      color highlighting purposes.
+    - Facilities to enable transcoding.  [P1885](https://wg21.link/p1885) enables identifying the execution
+      character set; the remaining missing functionality is how to write directly to the console on Windows.
+  - PBrett noted that we've discussed the desire to expose the low level functionality before.
+  - Jens indicated that he is strongly opposed to forwarding this paper on without those independent lower
+    level facilities.
+  - Victor responded that he is willing to propose those lower level interfaces, but would prefer to focus
+    on the text issues within SG16; the other facilities can be LEWG concerns.
+  - Tom stated that functionality to write directly to a console is arguably an SG16 concern; though also
+    arguably an SG13 concern.
+  - Jens expressed concern about writing to the console being library black magic; he would like to be able
+    to perform such writes without having to use formatting facilities, if desired.
+  - Steve suggested that use of the Windows console is becoming more rare; software developers are probably
+    the biggest users of it.
+  - Steve asserted that the don't pay for what you aren't using principle applies; transcoding overhead may
+    be undesirable, especially if it corrupts output.
+  - Victor agreed and stated that he doesn't want to break anything; he just wants to do what `printf()`
+    does with the one exception of writing directly to the Windows console in order to avoid Windows' builtin
+    mojibake.
+  - Steve suggested that direct writing could be considered QoI; the standard should not be specifically
+    concerned with the Windows console.
+  - Steve rephrased; we want to give Windows implementors permission, not a mandate.
+  - Tom raised the question from the agenda email asking about future direction to integrate support for
+    other character types.
+  - Victor replied that it is straight forward for `char16_t` and `char32_t` since they can be simply
+    transcoded to UTF-8, but that support for `wchar_t` is more complicated due to the need to actually
+    transcode.
+  - Tom replied that it isn't straight forward what the behavior should be when the executin character
+    set is not UTF-8; consider EBCDIC.
+  - PBrett opined that we don't have to solve this issue now.
+  - Tom agreed, but expressed concern that design decisions made now might result in missed opportunities
+    to do better than `printf()` in the future.
+  - Zach commented that he does not want this paper delayed while awaiting proposals for the lower level
+    interfaces encouraged by Jens.
+  - Corentin stated that LEWG is busy and urgency is required if the proposal is to make C++23.
+  - Corentin added that more features can be added later and that many desired features are not Unicode
+    concerns.
+  - Hubert claimed that the usefulness of a simple interface is nice and that the special cases needed
+    here are not so disimilar to those required for `std::filesystem`.
+  - Hubert observed that the proposal is both over specified and under specified; it is over specified
+    for Windows, but under specified otherwise.
+  - Hubert noted that the literal encoding and the locale encoding are distinct, but that
+    [P1885](https://wg21.link/p1885) would allow differentiating them.
+  - **Poll: Forward P2093R3 to LEWG..**
+    - Attendance: 9
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   4 |   2 |   2 |   0 |   1 |
+
+    - Consensus is in favor.
+    - SA stated opposition to progression without the lower level facilities also being made available.
+    - Victor asked if it would still be helpful to propose those facilities separately.
+    - SA responded, yes.
+- Tom stated that the next telecon will be on February 24th and that the tentative topics are Jens'
+  [P2314](https://wg21.link/p2314) and discussion of priorities for C++23.
 
 
 # January 27th, 2021
