@@ -203,10 +203,13 @@ Summaries of past meetings:
     here are not so disimilar to those required for `std::filesystem`.
   - Hubert observed that the proposal is both over specified and under specified; it is over specified
     for Windows, but under specified otherwise.
-  - Hubert noted that the literal encoding and the locale encoding are distinct, but that
-    [P1885](https://wg21.link/p1885) would allow differentiating them.
+
+  - Hubert noted that the literal encoding and the locale encoding are distinct, and although
+    [P1885](https://wg21.link/p1885)
+    would allow differentiating them, we still have not standardized (in C or C++) facilities to transcode
+    from the literal encoding.
   - **Poll: Forward P2093R3 to LEWG..**
-    - Attendance: 9
+    - Attendance: 9 (Hubert was present for discussion, but was not able to be present for the poll)
 
         |  SF |   F |   N |   A |  SA |
         | --: | --: | --: | --: | --: |
