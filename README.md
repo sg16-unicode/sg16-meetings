@@ -136,6 +136,8 @@ Summaries of past meetings:
   - Tom agreed that would work and noted that we don't need to optimize for the error case.
 - [P2093R3: Formatted output](https://wg21.link/p2093r3):
   - Victor presented:
+    - Victor's presentation slides are avilable
+      [here](presentations/2021-02-10-p2093r3-presentation.key).
     - Feedback provided during the last SG16 review was incorporated:
       - Additional motivation for `stdout` as the default output stream was added.
       - Appendix A was added with a comparison of behavior in other languages.
