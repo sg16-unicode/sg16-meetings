@@ -14,6 +14,7 @@ The draft agenda is:
   - [D2297R1: Wording improvements for encodings and character sets](https://isocpp.org/files/papers/D2297R1.pdf)
 
 Summaries of past meetings:
+- [February 24th, 2021](#february-24th-2021)
 - [February 10th, 2021](#february-10th-2021)
 - [January 27th, 2021](#january-27th-2021)
 - [January 13th, 2021](#january-13th-2021)
@@ -21,6 +22,142 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 24th, 2021
+
+## Agenda:
+- [P2314R0: Character sets and encodings](https://wg21.link/p2314r0)
+- [P2297R0: Wording improvements for encodings and character sets](https://wg21.link/p2297r0)
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- Tom provided an introduction.
+  - [P2314R0](https://wg21.link/p2314r0) and [P2297R0](https://wg21.link/p2297r0) overlap and compete
+    in several ways.
+  - The authors have been communicating with each other offline to ensure that their respective positions
+    and the differences between the papers are understood.
+  - Since the scope of [P2314R0](https://wg21.link/p2314r0) is smaller than
+    [P2297R0](https://wg21.link/p2297r0), Jens will present first, we'll keep discussion to clarifying
+    questions, then Corentin will present, then we'll open the floor to general discussion.
+- [P2314R0: Character sets and encodings](https://wg21.link/p2314r0):
+  - Jens presented.
+    - C++ support for source code with characters outside the basic source character set uses model A
+      from the "UCN models" subsection of section 5.2.1 in the
+      [C99 rationale document](http://www.open-std.org/jtc1/sc22/wg14/www/docs/C99RationaleV5.10.pdf).
+    - In model A, characters not in the basic source character set are implicitly converted to
+      _universal-character-names_ (UCNs).
+    - The (revised) paper proposes switching to a modified model C in which characters are converted
+      to an internal encoding that is able to represent all supported characters as well as UCNs.
+    - The model A approach is not reflective of how compilers work in practice.
+    - The ISO requires that, when an ISO standard exists and suffices for a particular purpose, that
+      it be used.  As a result, the proposed wording references ISO 10646 rather than the Unicode standard.
+    - The terminology used in ISO 10646 differs from the terminology in the Unicode standard.
+    - The C++ standard does not contain a normative reference to the Unicode standard today.
+    - The standard conflates character sets and character encodings and this makes defining multibyte
+      encodings problematic.
+    - The wording is intended to separate the ideas of character sets vs character encoding.
+    - Character sets are not mentioned except where normatively needed; their existence can be otherwise
+      inferred from encodings.
+    - The wording introduces a new _literal encoding_ term.
+    - The literal encoding may not be compatible with the locale dependent execution encoding; this is
+      consistent with the status quo.
+    - An earlier revision of the paper removed _execution character set_ in proposed wording, but the
+      term was revived for C compatibility.
+    - Not all string literals denote the same thing; some denote an object, but others are used only at
+      translation time.  For example, header names, `extern "C"`, and `_Pragma` directives.
+    - Terminology changes:
+      - _Basic source character set_ is renamed to _basic character set_.
+      - _Basic literal character set_ describes aditional characters that are required to be representable
+        in all literal encodings.
+      - _Ordinary literal encoding_ specifies the encoding used to encode ordinary string literal objects.
+      - _Wide literal encoding_ specifies the encoding used to encode wide string literal objects.
+      - _Translation character set_ specifies the set of abstract characters corresponding to all possible
+        characters encountered during translation; these map to UCS scalar values.
+      - _Extended character set_ is removed.
+    - The wording avoids the notion of a character being dependent on what Unicode version is used.
+    - There are no intended behavioral changes other than one case involving stringizing extended
+      characters; in that case, the standard currently specifies that a UCN is stringized, but that
+      doesn't match existing behavior.
+    - During translation phase 1, source characters are mapped to the translation character set.
+    - In translation phase 3, UCNs outside of a header name or literal are converted to the translation
+      character set.
+    - There are a few questions regarding header names.
+      - Implementations appear to replace UCNs in header names.
+      - Extended characters don't work portably in header names.
+    - Translation phases 5 and 6 could be collapsed, but are preserved to avoid renumbering translation
+      phase 7.
+    - The _translation character set_ members include both named characters and abstract characters for
+      unassigned UCS scalar values.
+    - The _basic character set_ is defined in terms of UCS scalar values and names.
+    - The _basic literal character set_ consists of the _basic character set_ plus characters for
+      alert, backspace, carriage return, and null.
+    - Questions remain regarding the relationship between the literal encodings and the locale dependent
+      execution encodings.
+    - The C standard wording appears to require that characters used in a character or string literal
+      must correspond to their encoding in the locale dependent execution encoding.
+  - PBrett asked if the standard would be more clear if it referred to the Unicode standard instead of
+    ISO 10646.
+  - Hubert replied that the editorial standards that the ISO imposes is salient for use in C++ and that
+    the Unicode method of terminology doesn't meet those standards.
+  - Jens added that when we reviewed Unicode terminology a while back, we didn't find the Unicode terms
+    very palatable.
+  - Jens noted that references to the Unicode standards will be required at some point to satisfy
+    dependencies that are not present in ISO standards.
+  - PBrett observed that we don't have a guarantee that requirements don't change with new Unicode
+    standards because of our planned dependence on [UAX #31](https://unicode.org/reports/tr31).
+  - Jens agreed.
+  - PBrett commented that the noted behavioral change regarding stringizing a UCN appears to be a bug
+    fix and standardizes existing behavior.
+  - Hubert expressed concern that the new wording for _basic literal character set_ may strengthen
+    requirements to prohibit the same code unit value from meaning different things when it appears as
+    a lead byte vs a trail byte.
+  - PBrett stated that the core language is not dependent on locale, so discussion of execution character
+    sets should be moved to library wording.
+- [P2297R0: Wording improvements for encodings and character sets](https://wg21.link/p2297r0):
+  - Corentin presented:
+    - Jens' paper is good, but there are some areas of disagreement.
+    - We agree on removing implicit production of UCNs in translation phase 1.
+    - We should strive to better use terminology compatibile with Unicode.
+    - It isn't clear that we all have the same mental model of translation.
+    - There is disagreement with regard to Jens' _translation character set_ and that translation is not
+      expressed using Unicode terminology.
+    - Translation can be defined in terms of UCS scalar values; characters are not necessary.
+    - An abstract translation character set solves a problem that doesn't exist if the right terminology is used.
+    - The output of translation phase 1 should be a sequence of UCS scalar values.
+    - UCS scalar value may not a great term; we can use an alias, but it should not denote a character or
+      abstract character.
+    - We agree on renaming _basic source character set_ to _basic character set_.
+    - We disagree on the need for _basic literal character set_; we should pursue other means of handling
+      the special requirements for alert, backspace, carriage return, and null.
+    - The relationship between the literal encodings and locale dependent execution encodings have
+      interesting ramifications:
+      - `isalpha('a') // Can this ever return false?`
+      - `isalpha('é') // Can this ever return false?`
+    - It is ok to retain the status quo, but execution encoding concerns should be moved to library wording.
+    - Raw string literal delimiters are restricted to the basic character set; perhaps that should be changed.
+  - Hubert stated that EBCDIC code pages can't meet a requirement that all members of the basic character
+    set are encoded the same in all supported locale encodings.
+  - Jens noted the implication that we cannot even rely on a correspondence between the literal encoding and
+    the execution encoding even for members of the basic character set.
+  - Hubert stated that reducing the restrictions for raw literal delimiters would complicate tokenization.
+  - Jens expressed a desire to poll a preference for abstract characters vs UCS scalar values.
+  - Mark stated that header names effectively need to specify a sequence of bytes and it isn't clear that
+    these should be called characters.
+  - Steve noted that there is plenty of implementation-defined behavior involved in processing header names.
+  - Jens stated that, with the current phrasing, a lone surrogate code point cannot be represented in a
+    program since they are rejected as UCNs; but an implementation could allow that as an extension.
+  - Jens opined that we should allow extended characters in header names.
+  - Corentin noted that the status quo is maintained by both papers.
+- Tom stated that the next telecon will be on March 10th and will continue this discussion.
 
 
 # February 10th, 2021
@@ -45,8 +182,6 @@ Summaries of past meetings:
   - Tom Honermann
   - Victor Zverovich
   - Zach Laine
-
-## Meeting summary:
 - [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm):
   - JeanHeyd stated that he has not yet completed the benchmarks requested in the email discussion.
   - JeanHeyd shared code and demonstrated three possible signatures for the conversion functions:
