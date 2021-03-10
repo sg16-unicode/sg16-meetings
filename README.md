@@ -124,6 +124,8 @@ Summaries of past meetings:
     sets should be moved to library wording.
 - [P2297R0: Wording improvements for encodings and character sets](https://wg21.link/p2297r0):
   - Corentin presented:
+    - Corentin's presentation slides are available
+      [here](https://docs.google.com/presentation/d/1PlCX8-0DbBXIr4OJU2jlec0Bwmd662udPP1tuENuTlI).
     - Jens' paper is good, but there are some areas of disagreement.
     - We agree on removing implicit production of UCNs in translation phase 1.
     - We should strive to better use terminology compatibile with Unicode.
