@@ -348,7 +348,7 @@ Summaries of past meetings:
     [P1885](https://wg21.link/p1885)
     would allow differentiating them, we still have not standardized (in C or C++) facilities to transcode
     from the literal encoding.
-  - **Poll: Forward P2093R3 to LEWG..**
+  - **Poll: Forward P2093R3 to LEWG.**
     - Attendance: 9 (Hubert was present for discussion, but was not able to be present for the poll)
 
         |  SF |   F |   N |   A |  SA |
