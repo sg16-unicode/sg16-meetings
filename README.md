@@ -6,12 +6,13 @@ alternative scheduling.  Meeting invitations are sent to the mailing list and pr
 attendees.  To request an invitation, please contact tom@honermann.net.
 
 The next SG16 meeting is scheduled for
-Wednesday, March 10th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210310T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, March 24th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210324T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cet)).
 The draft agenda is:
-- Continue discussion from the last telecon with updated draft paper revisions:
-  - [D2314R1: Character sets and encodings](https://wiki.edg.com/pub/Wg21virtual2021-02/SG16/d2314r1.html)
+- Continue discussion from the last telecon concerning:
+  - [D2314R1: Character sets and encodings](https://wiki.edg.com/pub/Wg21telecons2021/SG16/d2314r1.html)
   - [D2297R1: Wording improvements for encodings and character sets](https://isocpp.org/files/papers/D2297R1.pdf)
+- Discuss priorities and goals for C++23.
 
 Summaries of past meetings:
 - [February 24th, 2021](#february-24th-2021)
