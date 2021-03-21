@@ -15,6 +15,7 @@ The draft agenda is:
 - Discuss priorities and goals for C++23.
 
 Summaries of past meetings:
+- [March 10th, 2021](#match-10th-2021)
 - [February 24th, 2021](#february-24th-2021)
 - [February 10th, 2021](#february-10th-2021)
 - [January 27th, 2021](#january-27th-2021)
@@ -23,6 +24,217 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# Match 10th, 2021
+
+## Agenda:
+- Continue discussion from the last telecon with updated draft paper revisions:
+  - [D2314R1: Character sets and encodings](https://wiki.edg.com/pub/Wg21virtual2021-02/SG16/d2314r1.html)
+  - [D2297R1: Wording improvements for encodings and character sets](https://isocpp.org/files/papers/D2297R1.pdf)
+
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- [D2314R1](https://wiki.edg.com/pub/Wg21virtual2021-02/SG16/d2314r1.html) vs [D2297R1](https://isocpp.org/files/papers/D2297R1.pdf):
+  - Peter provided an introduction.
+  - Corentin initiated discussion:
+    - The primary disagreement concerns the introduction of "translation character set" instead of using Unicode
+      terminology directly.
+    - The proposed wording uses "abstract character" in a way that is explicitly prohibited by the Unicode standard.
+    - \[ Editor's note: ISO 10646 does not define "abstract character"; it is only defined by the Unicode standard. \]
+    - \[ Editor's note: Unicode 13, chapter 3.2, "Conformance Requirements", conformance clause C2 states:
+      
+          C2 A process shall not interpret a noncharacter code point as an abstract character.
+          -  The noncharacter code points may be used internally, such as for sentinel values or delimiters, but
+             should not be exchanged publicly.
+      \]
+    - \[ Editor's note: Later revisions of
+      [D2314R1](https://wiki.edg.com/pub/Wg21virtual2021-02/SG16/d2314r1.html)
+      replaced "abstract character" with "character" in the proposed wording. \]
+    - We should prefer well known terminology and, in this case, not divert from the Unicode standard.
+    - We should avoid using ambiguous terminology like "character".
+    - The technically correct term is UCS scalar value.
+    - The distinction between a character and a scalar value is not relevant for a lexer; lexing can be described
+      using either form.
+    - Thinking of lexing in terms of code units or scalar values may feel unintuitive, but that reflects how
+      implementations actually work.
+  - Hubert stated that his impression of Jens' intent in using character terminology is that source code is considered
+    text.
+  - Hubert continued; we tend to think of text as a sequence of characters, so it is not clear if a sequence of UCS
+    scalar values constitutes text.
+  - PBrett noted prior discussions that questioned whether C++ source code constitutes text since preservation of
+    unassigned UCS scalar values, which do not correspond to characters, is required.
+  - PBrett stated that the desired model is one that describes translation in terms of UCS scalar values.
+  - Corentin agreed with Pter.
+  - Steve also agreed with Peter and added that even a pedantic reading of lexing in the C++ standard should not depend
+    on Unicode version.
+  - Jens agreed with regard to avoiding dependence on Unicode version with the exception of recognizing
+    identifiers since that requires
+    [UAX #31](https://unicode.org/reports/tr31);
+    translation must not otherwise be affected by Unicode version.
+  - Jens disagreed that it is otherwise beneficial to expose UCS scalar values more widely in the standard.
+  - Jens acknowledged the perspective that, due to the possibility of unassigned scalar values, C++ source may not be
+    text, but opined that such cases will largely be introduced by _universal-character-name_s (UCNs).
+  - Jens added that concerns regarding unassigned scalar values can be addressed in a foot note.
+  - PBrett asked if there is a technical concern that motivates introducing "translation character set".
+  - Jens replied that he did not think there is a technical requirement and acknowledged that translation could be
+    described in the standard using UCS scalar values.
+  - PBrett asked if Jens considers _universal-character-name_ an unattractive term and, if not, why UCS scalar
+    value should be disfavored.
+  - Jens replied that UCNs are used for a limited purpose and do not appear frequently in the standard; use of
+    UCS scalar value for translation would require many more uses of that term..
+  - Jens added that UCS scalar values denote an integer value and that is inconsistent with how lexing is described
+    elsewhere.
+  - Jens noted an example; proliferation of UCS scalar value leads to specifying "reinterpret_cast" as a sequence
+    of numberic values.
+  - Jens concluded that this debate concerns a presentation issue in the C++ standard.
+  - Tom noted that it is not possible to distinguish between assigned and unassigned UCS scalar values without
+    consulting a specific version of the Unicode standard.
+  - Tom added that there are cases where a single abstract character is mapped to more than one UCS scalar value
+    but where the standard must define behavior based on the UCS scalar value, not the character.
+  - \[ Editor's note: Examples include compatibility characters such as
+    the angstrom character (Å, mapped to U+00C5 and U+212B) and
+    the ohm character (Ω, mapped to U+03A9 and U+2126). \]
+  - Corentin summarized some of the concerns; Tom and Jens are concerned about describing translation in terms of
+    UCS scalar values because those denote an integer.
+  - Zach expressed uncertainty with regard to how use of UCS scalar value leads to having to describe lexing in
+    terms of integers; implementations always represent characters using numbers.
+  - Tom replied that source code read from a napkin or a blackboard doesn't go through a numeric translation; we
+    think about lexing in terms of characters, not numbers.
+  - Hubert stated that the goal is to require a mapping for translation without having to explicitly specify it.
+  - Hubert added that there is less friction if UCS scalar values are used; that means that improving presentation
+    in the standard should be the goal.
+  - Zach asked to clarify how presentation would be confusing.
+  - Hubert replied that translation is described assuming textual representation in the standard.
+  - Zach asked if that could be addressed in some front matter text.
+  - Hubert replied that he thinks it could be.
+  - Corentin asked Jens if Hubert's suggestion would alleviate his concerns.
+  - Hubert stated that, in terms of front matter, context matters; what would be needed is to state that the glyphs
+    used in the specification are a proxy for UCS scalar values.
+  - Zach suggested including such a statement with the description of the basic character set.
+  - Jens replied that the basic character set concerns character sets rather than tokens and lexing.
+  - Jens suggested that [[lex.pptoken]p2](http://eel.is/c++draft/lex.pptoken#2) may be a more appropriate location.
+  - Jens acknowledged that there should be a blanket statement somewhere noting how the glyphs used in the standard
+    are to be interpreted.
+  - Tom returned discussion to Corentin's question regarding whether Hubert's suggestion would alleviate his concerns.
+  - Jens replied that he finds it to be a useful clarification, but that he continues to believe that general readers
+    are better served by use of an abstraction.
+  - Jens added that use of UCS scalar value raises the question of assigned vs unassigned characters where we don't
+    want to make a distinction and just state that some character is denoted here.
+  - Jens again acknowledged that this is purely a presentation concern, not a semantic one.
+  - Corentin stated that use of UCS scalar value may cause confusion for readers not familiar with the term, but
+    noted that is exactly why character is not a good term; people have different ideas of what a character is, so
+    use of UCS scalar value will force such readers to look up the definition in order to understand the intent.
+  - PBrett noted that he knows of colleagues that think of code point as a character.
+  - Hubert stated that his impression of Jens' perspective is that we don't want people paying attention to
+    something that might be distracting if we can gloss over it.
+  - Hubert expressed support for Corentin's perspective, implementors can't afford to gloss over such specification
+    and must deep dive to determine intended behavior; UCS scalar value may be simpler.
+  - Jens replied that he defined translation character set as precisely as he could.
+  - Jens provided [[lex.pptoken]p2](http://eel.is/c++draft/lex.pptoken#2) as an example where there is mention of
+    white-space characters that would require replacement written in terms of UCS scalar values, but where we do
+    not have a specification.
+  - Jens noted that he has been replacing use of colloquial names of characters with ISO 10646 U+XXXX short names.
+  - PBrett suggested this paragraph requires an update regardless then.
+  - Jens agreed and added that a definition of white-space should precede it.
+  - Jens provided [[lex.pptoken]p3](http://eel.is/c++draft/lex.pptoken#3), as an additional example where there
+    are many uses of "character".
+  - PBrett asked to clarify that the concern is the many pre-exising uses of "character" in these clauses.
+  - Jens replied that migrating away from "character" in this section would damage presentation.
+  - Jens added that it feels like a category error to say, "if the next three UCS scalar values are ..."
+  - Zach asked if colloquial terms could continue to be used with the previously suggested front matter.
+  - Jens replied that doing so is ok normatively, but still feels like a category error.
+  - Zach noted that in mathematical descriptions, an alternate notation is sometimes used because it is thought
+    to be more convenient.
+  - Zach noted that the proposed wording doesn't replace newline.
+  - Jens replied that newline is special since it does not necessarily denote `\n`, it could be `\r\n`.
+  - Tom added that it could also represent the end of a record in a z/OS data set.
+  - Corentin suggested that the pre-existing concerns regarding newlines not be addressed in this paper.
+  - Jens agreed and stated that he did not intend to address those.
+  - Zach expressed a preference for retaining glyphs rather than swapping them out for U+XXXX short names and
+    noted that "U+005C REVERSE SOLIDUS" is unambiguously less clear than "backslash `\`".
+  - Tom suggested that both could be presented; "U+005C REVERSE SOLIDUS (\)".
+  - Corentin agreed that "REVERSE SOLIDUS" is not a great name, but that including the U+XXXX short name removes
+    ambiguity.
+  - Steve expressed sympathy for Zach's point; people don't read this part of the standard because they think
+    they know what it means and then end up surprised; you have to know what it means before you can understand
+    the wording.
+  - Steve agreed that, in terms of presentation, and as is seen in other standards, the redundancy of glyph,
+    the U+XXXX short name, and the full name is helpful; if the glyph is known, the names can be skipped and if
+    the glyph is unknown or ambiguous, then the names unambiguously identify the character.
+  - Tom noted that we've discussed this question for an hour and suggested we poll it and then proceed to
+    another topic.
+  - Mark asked Jens if his concerns have been addressed.
+  - Jens replied that he is still concerned about presentation.
+  - Tom wondered if we might get inspiration from other language standards that describe lexing in Unicode terms.
+  - PBrett responded that they all describe it in terms of characters, but that they are able to define character
+    in a reasonable way.
+  - Zach suggested adding a definition of "character".
+  - Jens indicated no intention of renaming "character literal" and noted that, outside of lexing, translation
+    is only concerned with tokens.
+  - Zach asked what the ramifications would be if core language used "character" differently than library.
+  - Jens opined that defining "character" and then not using it consistently would be worse than the status
+    quo.
+  - Hubert stated that defining "character" to suit this specific purpose is not a good idea and that it would
+    be a drafting violation to use an inconsistent definition.
+  - Steve observed that use of "character" in the library is equally as bad as in the core language.
+  - **Poll: Introduce the concept of a 'translation character set' which synthesizes characters for unassigned UCS scalar values.**
+    - Attendance: 9
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   1 |   4 |   0 |   2 |   2 |
+
+    - No consensus.
+
+  - Corentin asked for clarification regarding the desire for "translation character set"; specifically as to whether
+    the term is useful or because UCS scalar value is an unattractive term.
+  - Mark replied that "translation character set" allows existing implementations to remain conforming.
+  - Hubert responded that both approaches have no impact on conformance and that this concerns a presentation issue.
+  - Corentin agreed with Hubert.
+  - Tom attempted to clarify Mark's point, that the abstraction acknowledges the possibility of multiple implementation
+    techniques.
+  - Tom expressed appreciation for that level of abstraction.
+  - Hubert stated that whether implementations operate on scalar values or an isomorphic equivalent is observable;
+    the C99 rationale was flawed.
+  - Hubert added that it took us a long time to recognize the C99 model A limitations.
+  - Tom asked what might lead people to change their vote.
+  - PBrett replied that the sticking point for him is the materialization of characters.
+  - Jens asked if that concern is more about the name "translation character set", or the use of "character" in the
+    definition.
+  - Jens asked if substituting "element" or another abstract term for "character" would help.
+  - PBrett asked for an example of another character set that doesn't contain characters.
+  - Jens replied that most character sets contain something like bell that isn't really a character.
+  - Corentin opined that "element" would be an improvement, but since the elements would be equivalent to UCS scalar
+    values, makes "translation character set" an unnecessary abstraction.
+  - Tom asked if there is a way to avoid UCS scalar values that represent unassigned character from coming into play.
+  - Corentin replied that he didn't think that was necessary; the mechanism described in Jens' paper is correct.
+  - Hubert observed that discussion so far has been concentrated on objections to the proposed abstraction and asked
+    what might help improve the case for UCS scalar values.
+  - PBrett stated that he would prefer to have this paper with the proposed wording, than to not have it at all.
+  - Jens suggested a poll to forward the paper with direction that core resolve the wording concerns and noted that,
+    between himself and Hubert, they would be able to represent both sides of the issue.
+  - Tom expressed support for that idea.
+  - Mark agreed and noted that it may just be necessary for more people to weigh in on the matter.
+  - Corentin stated that it seems kind of unfair to put that burden on core.
+  - Tom asked if Corentin would be willing to research what additional wording changes would be necessary for Jens'
+    paper to switch to use of UCS scalar values.
+  - Corentin agreed to look into it.
+  - \[ Editor's note: Corentin posted
+    [suggested changes to the SG16 mailing list](https://lists.isocpp.org/sg16/2021/03/2182.php). \]
+- Tom announced that the next telecon will be help March 24th.
+- Tom noted that, due to daylight savings time changes, the next telecon will start an hour later for those in
+  North America timezones.
 
 
 # February 24th, 2021
