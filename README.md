@@ -15,7 +15,7 @@ The draft agenda is:
 - Discuss priorities and goals for C++23.
 
 Summaries of past meetings:
-- [March 10th, 2021](#match-10th-2021)
+- [March 10th, 2021](#march-10th-2021)
 - [February 24th, 2021](#february-24th-2021)
 - [February 10th, 2021](#february-10th-2021)
 - [January 27th, 2021](#january-27th-2021)
@@ -26,7 +26,7 @@ Summaries of past meetings:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
-# Match 10th, 2021
+# March 10th, 2021
 
 ## Agenda:
 - Continue discussion from the last telecon with updated draft paper revisions:
