@@ -581,7 +581,7 @@ Summaries of past meetings:
 ## Agenda:
 - Presentation and discussion with Jonathan Müller regarding his
   [lexy parser combinator library](https://github.com/foonathan/lexy)
-  ([Tutorial](https://foonathan.net/lexy/tutorial.html), [Reference](https://foonathan.net/lexy/reference.html)),
+  ([Tutorial](https://lexy.foonathan.net/tutorial), [Reference](https://lexy.foonathan.net/reference)),
   and the text and Unicode related challenged he faced, how he solved them, and what C++ standard
   language or library features he would have benefitted from.
 - [WG14 N2620: Restartable and Non-Restartable Functions for Efficient Character Conversions | r4](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2620.htm)
