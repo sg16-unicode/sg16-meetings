@@ -205,7 +205,7 @@ Summaries of past meetings:
   - Tom attempted to clarify Mark's point, that the abstraction acknowledges the possibility of multiple implementation
     techniques.
   - Tom expressed appreciation for that level of abstraction.
-  - Hubert stated that whether implementations operate on scalar values or an isomorphic equivalent is observable;
+  - Hubert stated that whether implementations operate on scalar values or an "in-band transport" is observable;
     the C99 rationale was flawed.
   - Hubert added that it took us a long time to recognize the C99 model A limitations.
   - Tom asked what might lead people to change their vote.
