@@ -1,9 +1,11 @@
-# SG16 Meeting Summaries
+# SG16 meetings
 
 SG16 meetings are typically held on Wednesdays from 19:30-21:00 UTC on the 2nd and 4th
 weeks of each month, but scheduling conflicts or other time pressures sometimes force
 alternative scheduling.  Meeting invitations are sent to the mailing list and prior
 attendees.  To request an invitation, please contact tom@honermann.net.
+
+# Future SG16 meetings
 
 The next SG16 meeting is scheduled for
 Wednesday, April 14th, 2021, from 19:30-21:00 UTC
@@ -11,7 +13,8 @@ Wednesday, April 14th, 2021, from 19:30-21:00 UTC
 The draft agenda is:
 - [P2295R0: Correct UTF-8 handling during phase 1 of translation](https://wg21.link/p2295r0)
 
-Summaries of past meetings:
+# Past SG16 meetings
+
 - [March 10th, 2021](#march-10th-2021)
 - [February 24th, 2021](#february-24th-2021)
 - [February 10th, 2021](#february-10th-2021)
@@ -21,7 +24,6 @@ Summaries of past meetings:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
-
 
 # March 10th, 2021
 
