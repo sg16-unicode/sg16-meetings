@@ -15,6 +15,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [March 24th, 2021](#march-24th-2021)
 - [March 10th, 2021](#march-10th-2021)
 - [February 24th, 2021](#february-24th-2021)
 - [February 10th, 2021](#february-10th-2021)
@@ -25,13 +26,259 @@ The draft agenda is:
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
+# March 24th, 2021
+
+## Agenda:
+- Continue discussion from the last telecon concerning:
+  - [D2314R2: Character sets and encodings](https://wiki.edg.com/pub/Wg21telecons2021/SG16/d2314r2.html)
+  - [D2297R1: Wording improvements for encodings and character sets](https://isocpp.org/files/papers/D2297R1.pdf)
+- Discuss priorities and goals for C++23.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+- [D2314R2](https://wiki.edg.com/pub/Wg21telecons2021/SG16/d2314r2.html) vs [D2297R1](https://isocpp.org/files/papers/D2297R1.pdf):
+  - PBrett introduced the topic:
+    - We are continuing discussion from the last telecon, but limiting discussion to new information.
+    - Corentin posted
+      [an email](https://lists.isocpp.org/sg16/2021/03/2182.php)
+      that proposed a wording approach he hoped might bring consensus.
+  - Corentin summarized the email.
+  - Jens noted that the email proposed using "universal character set", but that term is not defined in
+    ISO 10646, so a different term or a definition would be needed.
+  - Jens added that a later reply suggested use of "Universal Coded Character Set" instead; that term is
+    defined in ISO 10646 and appears to be isomorphic to the proposed "translation character set".
+  - PBrett asked if there is consensus for this direction.
+  - Corentin replied that there is an additional proposed change to replace use of "abstract character"
+    with "element" in the definition of _universal-character-name_ (UCN).
+  - Jens replied that he had already discontinued use of "abstract character" and that the members of
+    the "translation character set" are denoted as "elements".
+  - Tom asked for confirmation that the universal coded character set includes members corresponding to
+    unassigned code points and was informed that it does.
+  - Hubert noted that ISO 10646 uses "UCS" as an abbreviation for "Universal Coded Character Set".
+  - Hubert reported an issue with the ISO 10646 specification of the UCS; it doesn't actually state
+    what the UCS elements are.
+  - Hubert added that the closest it comes to stating what those elements are is in "coded character".
+  - \[ Editor's note: ISO 10646:2020 defines "coded character" in 3.8:
+    
+        coded character
+        association between a character and a code point
+    \]
+  - Steve stated in chat: "code points seem to be elements of the UCS codespace. Coded characters would
+    be elements of the UCS, but there aren't 'characters' that correspond to unassigned codepoints. IIUC."
+  - Jens shared ISO 10646:2020, chapter 6, "General Structure of the UCS" and noted that the description
+    includes a "canonical form" of the UCS that __uses__ the UCS codespace.
+  - \[ Editor's note: ISO 10646:2020, chapter 6, "General Structure of the UCS" states:
+    
+        ...
+        The canonical form of this coded character set – the way in which it is to be conceived – uses
+        the UCS codespace which consists of the integers from 0 to 10FFFF.
+        ...
+    \]
+  - PBrett observed that we don't seem to have consensus that the UCS can be used as Corentin proposed.
+  - Hubert confirmed and stated that, if we went forward with this, CWG would likely have to change
+    it; probably to what Jens has proposed.
+  - Jens reiterated that, due to ISO rules, we are required to work with ISO 10646.
+  - Corentin asked if Jens' latest draft still uses "character" in the definition of translation
+    character set or if that had ben switched to "element".
+  - Hubert confirmed that "character" is still used and shared the definition from the latest revision.
+  - \[ Editor's note: that definition is:
+    
+        The translation character set consists of the following elements:
+        - each character named by ISO/IEC 10646, as identified by its unique UCS scalar value, and
+        - a distinct character for each UCS scalar value where no named character is assigned.
+    \]
+  - Jens stated that "character" had to be preserved for compatibility with existing wording that
+    uses "character".
+  - Hubert stated that we can't expect Jens to publish a paper that glosses over inconsistencies in
+    the use of "character".
+  - PBrett and Jens both agreed.
+  - **Poll: Introduce the concept of a 'translation character set' which synthesizes characters for unassigned UCS scalar values.**
+    - Attendance: 9
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   2 |   4 |   1 |   0 |   1 |
+
+    - Consensus is in favor.
+    - SA: The "translation character set" abstraction is unnecessary and the definition uses terminology
+      incorrectly.
+  - **Poll: Forward D2314R2 as presented on 2021-03-24 to EWG for inclusion in C++23.**
+    - Attendance: 9
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   3 |   5 |   0 |   0 |   0 |
+
+    - Consensus is in favor.
+  - Jens stated that he will include poll results, note the objection, populate the revision section, and
+    then submit the paper for the next mailing.
+  - Corentin asked if a request for escalatation to quickly progress this paper could be made to the
+    EWG chair since other papers will depend on it.
+  - Tom replied that more motivation is needed to do so since no dependent papers have been forwarded from
+    SG16 yet.
+- Priorities and goals for C++23:
+  - PBrett inroduced the topic:
+    - A number of items were shared in the
+      [agenda reminder email](https://lists.isocpp.org/sg16/2021/03/2200.php)
+      that are candidates for prioritization for C++23.
+    - We'll briefly review each; those that are nominated as a target for C++23 and for which a champion
+      is identified will be added to the prioritization poll.
+  - PBindels asked if we have a discrete vision for C++23.
+  - Tom replied that that question is part of the motivation for this exercise.
+  - [P1628: Unicode character properties](https://wg21.link/p1628):
+    - Corentin stated that he does not plan to progress this paper for C++23.
+    - Not nominated.
+  - [P1629: Standard Text Encoding](https://wg21.link/p1629):
+    - JeanHeyd stated that the scope could be reduced for C++23.
+    - Steve reported good experience experimenting with the reference implementation and nominated it as
+      a strong candidate for C++23.
+    - Steve added that he would want to have the support for ranges included.
+    - JeanHeyd replied that range support would probably be pursued via a different paper in order
+      to avoid impeding progress on the core components.
+    - Corentin stated that this paper would be ambitious for C++23.
+    - Nominated; champion is JeanHeyd.
+  - [P1729: Text Parsing](https://wg21.link/p1729):
+    - Tom stated that he does not know Victor's plans for this paper.
+    - Corentin opined that this paper isn't really an SG16 concern until encodings are involved.
+    - PBrett responded that text processing in general is in the scope of SG16.
+    - Not nominated; Victor was not present.
+  - [P1854: Source to Execution encoding conversion should not lead to loss of information](https://wg21.link/p1854):
+    - Corentin reported a request to include the wide literal encoding in the paper.
+    - Corentin added that we voted to make this contingent on [P1855](https://wg21.link/p1855), but that
+      paper is still making its way through LEWG.
+    - Tom stated that we don't have to wait on
+      [P1855](https://wg21.link/p1855)
+      to be accepted to make progress on this.
+    - Nominated; champion is Corentin.
+  - [P1859: Standard terminology for execution character set encodings](https://wg21.link/p1859):
+    - Steve stated that this paper has been mostly subsumed by other work.
+    - PBrett asked if we should continue tracking this paper.
+    - Steve replied that we should; at least until things in flight land.
+    - Jens asked that the paper be reviewed to determine when/if it can be closed.
+    - Not nominated.
+  - [P1953: Unicode Identifiers And Reflection](https://wg21.link/p1953):
+    - Corentin stated that priority of this paper depends on what SG7 does for C++23.
+    - Not nominated.
+  - [P2071: Named universal character escapes](https://wg21.link/p2071):
+    - Jens noted that a paper revision is needed.
+    - Tom acknowledged and reported plans to complete a revision soon.
+    - Not nominated since this paper has already been forwarded out of SG16.
+  - [P2295: Correct UTF-8 handling during phase 1 of translation](https://wg21.link/p2295):
+    - Corentin nominated.
+    - Nominated; champion is Corentin.
+  - [Requiring wchar_t to represent all members of the execution wide character set does not match existing practice](https://github.com/sg16-unicode/sg16/issues/9):
+    - Hubert noted that this will require corresponding changes for WG14.
+    - JeanHeyd stated that other work he is doing in WG14 will help with this.
+    - Nominated; champions are Tom and Corentin.
+  - [std::to_chars/std::from_chars overloads for char8_t](https://github.com/sg16-unicode/sg16/issues/38):
+    - Tom reported that this issue was raised from someone outside the committee.
+    - Corentin stated that the concept of a number is complicated in Unicode.
+    - PBindels noted that there are many different numbering systems.
+    - PBrett suggested that the scope of `from_chars()` should be restricted to only parsing text that
+      could be produced by `to_chars()`.
+    - Jens stated that he had not considered other numbering systems, but had considered exposing the
+      same functionality as for `char` for `char8_t` and UTF-8; this would suffice to provide portable
+      ASCII support.
+    - Nominated; champion is Peter Bindels.
+  - [Publish an SG16 library design guidelines paper](https://github.com/sg16-unicode/sg16/issues/53):
+    - PBrett suggested removing this from the candidate list since it doesn't target the standard.
+    - Not nominated.
+  - [Deprecate std::regex](https://github.com/sg16-unicode/sg16/issues/57):
+    - PBrett noted that some NBs may object to such deprecation.
+    - Nominated; champions are Peter Bindels and Peter Brett.
+  - [Make wide multicharacter character literals ill-formed](https://github.com/sg16-unicode/sg16/issues/65):
+    - Nominated; champion is Peter Brett.
+  - [Improve portable ingestion of command-line arguments](https://github.com/sg16-unicode/sg16/issues/66):
+    - JeanHeyd recalled discussion of
+      [P1275](https://wg21.link/p1275)
+      in San Diego.
+    - Tom asked if anyone knew if Isabella is planning a revision.
+    - JeanHeyd replied that further work is semi-dependent on his own transcoding work.
+    - Tom noted that an alternate design sketch is present in the issue comments.
+    - PBindels suggested a C++26 target due to lack of underlying existing functionality.
+    - Not nominated.
+  - [Alias barriers; a replacement for the ICU hack](https://github.com/sg16-unicode/sg16/issues/67):
+    - Tom volunteered and summarized recent off-list discussion;
+      [P0593](https://wg21.link/p0593) describes a `start_lifetime_as()` function that looks suitable
+      for this, but it wasn't formally proposed.
+    - Nominated; champions are Tom and Mark.
+  - [Support for UTF encodings in std::format() and std::print()](https://github.com/sg16-unicode/sg16/issues/68):
+    - PBrett proposed only addressing the easy cases; the ones that don't require implicit transcoding.
+    - Corentin agreed and noted that Victor recently indicated intention to write such a paper.
+    - Nominated; champions are Victor and Peter Brett.
+  - [Specify what constitutes white-space characters](https://github.com/sg16-unicode/sg16/issues/69):
+    - Tom stated that [P2295](https://wg21.link/p2295) intends to address this.
+    - Corentin reported that he removed that section of the paper in a yet-to-be published revision
+      to ensure it wouldn't delay progress on the core portion of the paper.
+    - PBindels offered a comparison with [P1949](https://wg21.link/p1949) and noted this shouldn't be
+      a difficult paper, though it may not be very important.
+    - Hubert stated that there may be consensus issues with this since deferring to a Unicode definition
+      of white-space character would introduce a lexing dependency on Unicode version.
+    - Steve opined that this isn't terribly important until we have portable Unicode encoded source files.
+    - Steve stated that it might help to clean up the specification though;
+      [P1949](https://wg21.link/p1949) may have helped by stabilizing identifiers.
+    - Corentin offered to send a message to the SG16 mailing list arguing for why this shouldn't be a
+      priority.
+    - \[ Editor's note: Corentin did follow up with
+      [an email](https://lists.isocpp.org/sg16/2021/03/2207.php).
+      \]
+    - Not nominated.
+  - [Specify what constitutes a new-line](https://github.com/sg16-unicode/sg16/issues/70):
+    - Not nominated for the same reasons as the previous item.
+  - [A portable mechanism to specify source file encoding](https://github.com/sg16-unicode/sg16/issues/71):
+    - Tom expressed intent to work on this.
+    - Jens asked that Tom prioritize [P2071](https://wg21.link/p2071) first.
+    - Tom agreed to do so.
+    - Corentin opined that this need not be a priority.
+    - Nominated; champion is Tom.
+  - Clarify the relationship between the literal and execution encodings:
+    - Corentin proposed this additional candidate.
+    - \[ Editor's note: An SG16 issue was
+      [filed](https://github.com/sg16-unicode/sg16/issues/72)
+      to track this addition. \]
+    - Nominated; champions are Corentin and Jens.
+  - PBrett summarized the polling method Tom described in the agenda email.
+  - Tom suggested a simpler polling method; that everyone raise their hand for items that they felt most
+    feasible and desirable for C++23.
+  - \[ Editor's note: the poll results shown below have been reordered such that those that received the
+    most votes are listed first. \]
+  - **Poll: C++23 priorities.**
+    - Attendance: 9
+
+        | Votes | Candidate |
+        | ----: | :-------- |
+        |     6 | [P1854: Source to Execution encoding conversion should not lead to loss of information](https://wg21.link/p1854) |
+        |     6 | [P2295: Correct UTF-8 handling during phase 1 of translation](https://wg21.link/p2295) |
+        |     6 | [std::to_chars/std::from_chars overloads for char8_t](https://github.com/sg16-unicode/sg16/issues/38) |
+        |     6 | [Make wide multicharacter character literals ill-formed](https://github.com/sg16-unicode/sg16/issues/65) |
+        |     5 | [P1629: Standard Text Encoding](https://wg21.link/p1629) |
+        |     5 | [Requiring wchar_t to represent all members of the execution wide character set does not match existing practice](https://github.com/sg16-unicode/sg16/issues/9) |
+        |     5 | [Support for UTF encodings in std::format() and std::print()](https://github.com/sg16-unicode/sg16/issues/68) |
+        |     4 | [Deprecate std::regex](https://github.com/sg16-unicode/sg16/issues/57) |
+        |     4 | [Alias barriers; a replacement for the ICU hack](https://github.com/sg16-unicode/sg16/issues/67) |
+        |     4 | [A portable mechanism to specify source file encoding](https://github.com/sg16-unicode/sg16/issues/71) |
+        |     4 | [Clarify the relationship between the literal and execution encodings](https://github.com/sg16-unicode/sg16/issues/72) |
+- Tom announced that the next telecon will be April 14th and the agenda will include
+  [P2295: Correct UTF-8 handling during phase 1 of translation](https://wg21.link/p2295).
+- Tom reminded participants from Europe of the pending switch to summer time and that the next telecon
+  will be held an hour later than this one.
+
+
 # March 10th, 2021
 
 ## Agenda:
 - Continue discussion from the last telecon with updated draft paper revisions:
   - [D2314R1: Character sets and encodings](https://wiki.edg.com/pub/Wg21virtual2021-02/SG16/d2314r1.html)
   - [D2297R1: Wording improvements for encodings and character sets](https://isocpp.org/files/papers/D2297R1.pdf)
-
 
 ## Meeting summary:
 - Attendees:
@@ -195,7 +442,6 @@ The draft agenda is:
         |   1 |   4 |   0 |   2 |   2 |
 
     - No consensus.
-
   - Corentin asked for clarification regarding the desire for "translation character set"; specifically as to whether
     the term is useful or because UCS scalar value is an unattractive term.
   - Mark replied that "translation character set" allows existing implementations to remain conforming.
