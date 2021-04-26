@@ -143,7 +143,7 @@ The draft agenda is:
   - PBrett asked PBindels if he is satisfied with the BOM design following prior discussion.
   - PBindels responded that he is, so long as we don't intentionally or unintentionally create the situation where
     UTF-8 source files end up requiring a BOM in practice.
-  - PBrett asked if we should add a normative note to discourage use of a BOM.
+  - PBrett asked if we should add normative encouragement not to require a BOM.
   - Hubert noted that, as wording updates are done, care must be taken to ensure we don't lose the wording that
     requires an implementation to accept a UTF-8 encoded source file whether it does, or does not, contain a BOM.
   - Tom asked about handling of differently encoded source files.
