@@ -72,7 +72,7 @@ The draft agenda is:
   - Jens asked why the note added to \[lex.phases\]p1 is just a note; the preceding prose provides a definition, but
     does not impose any requirements.
   - PBrett responded that, if an invalid sequence is present, then there is no sequence of Unicode scalar values.
-  - PBrett asked if moving the note after the following setence would resolve the concern.
+  - PBrett asked if moving the note after the following sentence would resolve the concern.
   - Jens replied that it would not; that would define a UTF-8 source file and state that a well-formed UTF-8 source
     file must be accepted, but would impose no requirements on an ill-formed UTF-8 source file.
   - PBrett acknowledged that further wording work is needed.
@@ -83,7 +83,7 @@ The draft agenda is:
   - PBindels suggested placing a requirement for well-formed input with the character set definitions.
   - Jens indicated no objection to clarification, but that he would like to see the ISO 10646 definition of
     "well-formed".
-  - Steve observed that the note is stating that invalid UTF-8 sequences can not happen in a well-formed UTF-8 
+  - Steve observed that the note is stating that invalid UTF-8 sequences cannot happen in a well-formed UTF-8 
     source file.
   - Jens responded that there is a normative difference between something that cannot happen and something that is
     ill-formed; the latter requires a diagnostic.
@@ -188,7 +188,7 @@ The draft agenda is:
   - Hubert responded that (standard library) headers are not source files; source files are those things that
     are included by `#include` directives that do not name standard headers.
   - PBrett asked if the wording should be modified do discuss "input" as opposed to "files".
-  - Hubert responded that such a chance is not necessary.
+  - Hubert responded that such a change is not necessary.
   - Corentin pledged to bring back a revised paper.
 - Tom stated the next telecon will be April 28th.
 
