@@ -8,11 +8,12 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, April 28th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210428T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, May 12th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210512T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
 - [P2093R5: Formatted output](https://wg21.link/p2093r5)
-- [P2348R0: Whitespaces Wording Revamp](https://isocpp.org/files/papers/P2348R0.pdf)
+- [P2295R2: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r3)
+- [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
 
 # Past SG16 meetings
 
