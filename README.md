@@ -129,7 +129,9 @@ The draft agenda is:
   - Corentin requested review of the proposed resolution.
   - Hubert noted that the wording requires that the "C" locale be used for field formats that do
     not include the `L` specifier regardless of whether a `std::locale` argument is passed.
-  - Hubert suggested that it makes sense to respect the locale parameter.
+  - Hubert noted that under the C++20 wording, implementations trying to accomodate this tentative
+    future direction may be more able to ignore the global locale than an explicit locale argument.
+    So, a change that maintains respecting the locale parameter is more compatible with C++20.
   - Tom responded that doing so would not be consistent with the other standard format specifiers.
   - Victor agreed and added that he would be strongly opposed to implicit use of a `std::locale`
     parameter.
