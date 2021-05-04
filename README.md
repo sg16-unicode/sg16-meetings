@@ -11,8 +11,12 @@ The next SG16 meeting is scheduled for
 Wednesday, May 12th, 2021, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210512T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
+- [D2372R1: Fixing locale handling in chrono formatters](https://isocpp.org/files/papers/D2372R1.html)
+  - Affirm or rebut LEWGs position.
 - [P2093R5: Formatted output](https://wg21.link/p2093r5)
+  - Discuss locale dependent character encoding concerns.
 - [P2295R3: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r3)
+  - Review updates intended to address prior SG16 feedback.
 - [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
 
 # Past SG16 meetings
