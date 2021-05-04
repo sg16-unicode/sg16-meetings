@@ -113,7 +113,7 @@ The draft agenda is:
   - Hubert responded that this goes further; we may potentially have to specify behavior in terms of
     `asctime()`.
   - Charlie commented that the text provided by the locale facet is currently produced by the
-    operating system on the system; changing that behavior may not be problematic.
+    operating system; changing that behavior may not be problematic.
   - Charlie added that adding new format specifiers will result in incompatibilities if code that
     uses those specifiers is run with an older library implementation that doesn't support them.
   - Charlie noted that, if support for compile-time format string checking is adopted via
