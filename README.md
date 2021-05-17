@@ -80,9 +80,9 @@ The draft agenda is:
     - Consensus: Strong consensus in favor.
   - \[Editor's note: D2372R1 contains the LEWG requested update to preserve locale dependent formatting for
     ostreams.\]
-  - \[Editor's note: The chairs perception is that SG16's change in consensus is attributable to two factors:
+  - \[Editor's note: The chair's perception is that SG16's change in consensus is attributable to two factors:
     1) New information that arrived after the initial poll.
-    2) SG16's original poll targeted C++23 while LEWG's poll target's C++23 and C++20 as a DR; some concerns
+    2) SG16's original poll targeted C++23 while LEWG's poll targets C++23 and C++20 as a DR; some concerns
        had been expressed regarding backward compatibility and migration.
 
     \]
@@ -180,7 +180,7 @@ The draft agenda is:
     - For some, `std::print()` is a simple tool that enables a better Hello World.
     - For others, it is a high-performance I/O facility.
     - For yet others, it is a way to format bytes.
-  - Tom suggsted that an error handling facility might move us towards more consensus.
+  - Tom suggested that an error handling facility might move us towards more consensus.
   - PBrett noted that something like JeanHeyd's transcoding facilities could provide that.
   - Charlie agreed that integration of a familiar transcoding facility could work.
 - Tom stated that the next telecon will be May 26th and that the agenda will again include
