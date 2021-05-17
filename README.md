@@ -18,6 +18,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [May 12th, 2021](#may-12th-2021)
 - [April 28th, 2021](#april-28th-2021)
 - [April 14th, 2021](#april-14th-2021)
 - [March 24th, 2021](#march-24th-2021)
@@ -30,6 +31,161 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 12th, 2021
+
+## Agenda:
+- [P2295R3: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r3)
+- [P2372R1: Fixing locale handling in chrono formatters](https://wg21.link/p2372r1)
+- [P2093R6: Formatted output](https://wg21.link/p2093r6)
+- [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
+
+## Meeting summary:
+- Attendees:
+  - Charlie Barto
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Tom Honermann
+  - Steve Downey
+  - Victor Zverovich
+  - Zach Laine
+- [P2295R3: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r3)
+  - No discussion as the author was not present.
+- [P2372R1: Fixing locale handling in chrono formatters](https://wg21.link/p2372r1)
+  - \[ Editor's note: D2372R1 was the active paper under discussion at the telecon.  That paper
+    was later published as P2372R1 without further modification.  The agenda and links used here
+    reference P2372R1 since the links to the draft paper were ephemeral. \]
+  - PBrett introduced the topic:
+    - LEWG reached consensus for the direction proposed by
+      [P2372R0](https://wg21.link/p2372r0) at its
+      [2021-05-03 telecon](https://wiki.edg.com/bin/view/Wg21telecons2021/P2372#2021-05-03)
+      with additional refinement to preserve locale dependent formatting for iostreams.
+    - Since SG16 polls conduced at its
+      [2021-04-28 telecon](https://github.com/sg16-unicode/sg16-meetings#april-28th-2021)
+      did not agree with this direction, LEWG requested that SG16 review and conform or rebut
+      the LEWG consensus.
+  - Victor presented slides lightly updated from his prior LEWG presentation.
+    - Victor's presentation slides are available
+      [here](https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2021-05-12-p2372-presentation.pdf).
+  - **Poll 1: Forward D2372R1 to LEWG for inclusion in C++23 and with the intent that it be applied retroactively to C++20.**
+    - Attendance: 8
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   5 |   2 |   1 |   0 |   0 |
+
+    - Consensus: Strong consensus in favor.
+  - \[Editor's note: D2372R1 contains the LEWG requested update to preserve locale dependent formatting for
+    ostreams.\]
+  - \[Editor's note: The chairs perception is that SG16's change in consensus is attributable to two factors:
+    1) New information that arrived after the initial poll.
+    2) SG16's original poll targeted C++23 while LEWG's poll target's C++23 and C++20 as a DR; some concerns
+       had been expressed regarding backward compatibility and migration.
+
+    \]
+- [P2093R6: Formatted output](https://wg21.link/p2093r6)
+  - Victor presented:
+    - `std::print()` integrates `std::format()` with I/O.
+    - R6 addresses recent LEWG feedback:
+      - The proposed `std::print()` header was changed from `<io>` to `<print>`.
+      - Additional rationale and clarifications were added regarding:
+        - Substitution of replacement characters.
+        - The choice to base behavior on the compile-time literal encoding.
+        - ANSI escape sequences do not constitute a native device API.
+        - Existing practice in Rust.
+  - PBrett asked how substitutions would be performed for different kinds of ill-formed scenarios.
+  - Zach stated that the Unicode standard documents recommended practice for substitution of
+    replacement characters.
+  - \[ Editor's note:
+    [Unicode 13](http://www.unicode.org/versions/Unicode13.0.0)
+    discusses substitution of replacement characters in
+    section "U+FFFD Substitution of Maximal Subparts" of chapter 3.9, "Unicode Encoding Forms" and in
+    chapter 5.22, "U+FFFD Substitution in Conversion". \]
+  - Zach expressed a preference for implementations to be consistent in how replacement characters are
+    substituted.
+  - Hubert stated that an example should be added to the paper.
+  - Hubert expressed a preference for `vprint_unicode()` to substitute replacement characters even
+    when the output device is not Unicode.
+  - Victor asked if that could be done as implementation-defined behavior.
+  - Hubert responded, no; the goal is for the substitution behavior to be determinstic for
+    `vprint_unicode()` regardless of the output device.
+  - Victor replied that he would prefer that behavior to be optional.
+  - Hubert replied that he would like to ensure that ill-formed inputs are not presented with
+    no indication that something went wrong.
+  - PBrett stated that, when writing to a Unicode device, a `U+FFFD` replacement character should
+    be substituted and the device should then handle it as its designers intended.
+  - Victor agreed with the substitution rationale for the device case since transcoding may be
+    necessary, but disagreed for files due to a desire to avoid the validation overhead.
+  - Hubert expressed a preference for the behavior of `vprint_unicode()` to be consistent across
+    files and devices.
+  - PBrett suggested that what Hubert desires is some kind of noisy failure, like a trap.
+  - Hubert agreed and restated the goal as some kind of signal that encoding issues were
+    encountered.
+  - Steve stated that C++ programs do not typically interact directly with a device and that it
+    is difficult to diagnose problems where the data can't be inspected en route.
+  - PBrett asked if Steve had a suggestion.
+  - Steve responded with a preference for a programatic error handling facility.
+  - Zach stated that, in the case where UTF-8 source is copied to a UTF-8 sink, introduction of
+    replacement characters could be surprising, but when transcoding is required, e.g., when the
+    sink is UTF-16, then replacement characters are expected.
+  - Zach suggested decomposing the problem; validate and handle errors first, then convert.
+  - Charlie explained that, on Windows, the only ways to write Unicode to the console are to change
+    the console encoding and write using the ANSI APIs, or to convert to UTF-16 and write using the
+    wide APIs.
+  - Charlie noted that, since the console encoding is a global property of the process, changing it
+    within `std::print()` would require synchronization.
+  - Zach suggested that it is reasonable to get mojibake in the ANSI case if the console encoding
+    hasn't been correctly set.
+  - Hubert responded that the global console encoding condition seems to be particular to Windows
+    and worth addressing.
+  - Charlie pondered the ramifications of writing to a stream opened in text mode.
+  - Victor reiterated his stance on not wanting to pay validation costs except in cases where
+    transcoding is necessitated.
+  - **Poll 2: When \<print\> facilities must transcode formatting results for display on a device**
+    **and, during that process, invalidly-encoded text is encountered, `std::print()` should replace**
+    **the erroneously-encoded code units with U+FFFD REPLACEMENT CHARACTER.**
+    - Attendance: 9
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   3 |   3 |   1 |   2 |   0 |
+
+    - Consensus is in favor.
+    - A: Not convinced that silently substituting replacement characters is always the right policy;
+      an exception could be appropriate.  There are parallels with integer overflow.
+    - A: Testing is difficult if substitution is device sensitive.
+  - Charlie expressed support for a direction that would allow explicitly inhibiting use of the
+    native device API but noted that, on Windows, that would mean the console encoding would have to
+    be correctly set and the application would have to take care of buffering concerns.
+  - **Poll 3: When \<print\> facilities need not transcode their formatting results for display**
+    **on a device and invalidly-encoded text is encountered, `std::print()` should nevertheless**
+    **replace the erroneously-encoded code units with U+FFFD REPLACEMENT CHARACTER.**
+    - Attendance: 9
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   1 |   0 |   2 |   2 |   3 |
+
+    - N: Undecided due to uncertainty; more consideration is needed.
+    - A: Would prefer a UB approach that would enable sanitizers to diagnose these cases and remain
+      conforming.
+    - SA: There is lack of implementation experience for this direction, it imposes overhead, and there
+      are terminals that accept bytes.
+    - SA: A wide contract with validation does not make sense for high-performance I/O.
+  - PBrett stated that there appear to be different audiences for `std::print()` and these audiences
+    have different ideas of what is "obviously" correct:
+    - For some, `std::print()` is a simple tool that enables a better Hello World.
+    - For others, it is a high-performance I/O facility.
+    - For yet others, it is a way to format bytes.
+  - Tom suggsted that an error handling facility might move us towards more consensus.
+  - PBrett noted that something like JeanHeyd's transcoding facilities could provide that.
+  - Charlie agreed that integration of a familiar transcoding facility could work.
+- Tom stated that the next telecon will be May 26th and that the agenda will again include
+  [P2295R3](https://wg21.link/p2295r3) and
+  [P2093R6](https://wg21.link/p2093r6).
 
 
 # April 28th, 2021
