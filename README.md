@@ -8,13 +8,26 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, May 26th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210526T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, June 9th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210609T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [P2295R3: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r3)
-  - Review updates intended to address prior SG16 feedback.
+- [D2295R4: Support for UTF-8 as a portable source file encoding](https://isocpp.org/files/papers/D2295R4.pdf)
+  - Review updated wording produced through collaboration between Corentin, Jens, and Hubert
+    to resolve earlier feedback at https://lists.isocpp.org/sg16/2021/04/2353.php.
 - [P2093R6: Formatted output](https://wg21.link/p2093r6)
-  - Discuss locale dependent character encoding concerns.
+  - Continue discussion and poll for consensus on answers to the following questions:
+    - How should invalidly encoded text be handled when transcoding for the purpose of
+      writing directly to a device interface?
+    - Is use of UTF-8 as the literal encoding a sufficient indicator that all input fed
+      to `std::format()` and `std::print()` (including the format string, programmer
+      supplied field arguments, and locale provided text) will be UTF-8 encoded?
+    - Is the literal encoding a sufficient indicator in general that all input fed to
+      `std::format()` and `std::print()` (including the format string, programmer
+      supplied field arguments, and locale provided text) will be provided in an encoding
+      compatible with the literal encoding?
+    - What are the implications for future support of
+     `std::print("{} {} {} {}", L"Wide text", u8"UTF-8 text", u"UTF-16 text", U"UTF-32 text")`?
+
 
 # Past SG16 meetings
 
