@@ -31,6 +31,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [May 26th, 2021](#may-26th-2021)
 - [May 12th, 2021](#may-12th-2021)
 - [April 28th, 2021](#april-28th-2021)
 - [April 14th, 2021](#april-14th-2021)
@@ -44,6 +45,131 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+# May 26th, 2021
+
+## Agenda:
+- [D2295R4: Support for UTF-8 as a portable source file encoding](https://isocpp.org/files/papers/D2295R4.pdf)
+  - Review updates intended to address prior SG16 feedback.
+- [P2093R6: Formatted output](https://wg21.link/p2093r6)
+  - Discuss locale dependent character encoding concerns.
+
+## Meeting summary:
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [D2295R4: Support for UTF-8 as a portable source file encoding](https://isocpp.org/files/papers/D2295R4.pdf)
+  - PBrett provided an introduction.
+  - Corentin presented and described the changes from R3 to the draft R4.
+  - PBrett observed that the wording updates removed the prior definition for a *UTF-8 file* and added a new
+    definition for a *UTF-8 source file*.
+  - Tom recalled prior discussion that suggested there was no need to provide such a definition at all.
+  - Jens confirmed and explained that the prior suggestion was to instead specify translation phase 1 in terms
+    of a sequnce of characters instead.
+  - Jens noted that there will be merge conflicts with
+    [P2314](https://wg21.link/p2314).
+  - Corentin asked if the merge conflicts can be dealt with after CWG reviews P2314.
+  - Jens confirmed that they can be.
+  - PBrett asked if progress can be made before P2314 is adopted into the working paper.
+  - Jens confirmed that progress can be made.
+  - PBrett asked Jens if he would like to see additional wording changes reviewed in SG16.
+  - Jens replied that he would and noted that he had not received a response to all of the suggestions
+    previously provided in his message to the mailing list available at
+    https://lists.isocpp.org/sg16/2021/04/2353.php.
+  - Jens observed that the proposed wording results in existing wording no longer applying to all source
+    files.  For example, "Any source file character not in the basic source character set is replaced by
+    the _universal-character-name_ that designates that character" now appears in a paragraph that doesn't
+    apply to UTF-8 source files.
+  - Corentin responded that this paper doesn't make sense without the changes from P2314.
+  - Tom asked if the wording could be rebased on P2314 with a noted dependency on P2314.
+  - Jens replied that it could be.
+  - Hubert noted that the definition of a UTF-8 source file is problematic since the definition could apply
+    to a file that just so happens to decode as UTF-8, but is not intended as a UTF-8 file.
+  - PBrett responded that the following sentence specifies that encoding determination is
+    implementation-defined.
+  - Hubert acknowledged and suggested it might be helpful to reorder the sentences.
+  - Hubert added that wording is still required to reflect intent that a file be interpreted as UTF-8.
+  - PBrett agreed by way of an example; an implementation invoked without such intent may analyze a file,
+    determine that it does not decode successfully as UTF-8, and then interpret it as, for example,
+    Windows-1252, and do so without issuing a diagnostic.
+  - Jens observed that the wording states that,
+    "An implementation shall support UTF-8 source files",
+    but there is no wording to require diagnosis of ill-formed UTF-8 source files.
+  - Corentin responded that there is no such thing as an invalid UTF-8 file; either a file is valid UTF-8
+    or it is not UTF-8.
+  - Mark responded that there is a desire to have implementations produce a diagnostic if source files that
+    are purported to be encoded as UTF-8 are not, in fact, valid UTF-8.
+  - PBrett stated that there are three distinct requirements:
+    - A requirement to support UTF-8 encoded source files.
+    - A requirement for means to inform the implementation that all source files are to be assumed to be
+      UTF-8 encoded.
+    - A requirement that the implementation diagnose files that were assumed to be UTF-8 encoded but that
+      contain (some) non-UTF-8 content.
+  - Hubert offered some suggested wording in chat:
+    - "An implementation shall provide for processing physical source files as having a UTF-8 encoding
+      scheme without restriction, other than resource limits ([implimits]), upon the content of the
+      physical source file."
+  - Jens pasted previously suggested wording from the mailing list in chat:
+    - "The encoding scheme of a physical source file is determined in an implementation-defined manner.
+      An implementation shall support (possibly among others) the UTF-8 encoding scheme."
+    - "If the encoding scheme of a physical source file is determined to be UTF-8, the physical source
+      file shall consist of a well-formed sequence of UTF-8 code units as specified by ISO/IEC 10646."
+  - Hubert expressed support for that wording but thought some additional updates would still be
+    required to ensure diagnostics.
+  - Corentin disagreed with removal of wording that requires that the scalar value of source file
+    characters be preserved.
+  - Jens responded that the scalar value preservation wording isn't required because the mapping to the
+    translation character set already preserves characters.
+  - Steve noted the existence of wording that uses the phrase "known to the implementation" and asked if
+    that could be used to specify how source file encoding is determined.
+  - Tom suggested that implementation-defined is preferred since that reflects a documentation requirement.
+  - Hubert added that the "known to the implementation" wording is not intended to reflect that
+    implementations can be wrong.
+  - PBrett observed that Jens and Hubert would presumably like to see updated wording.
+  - Hubert expressed a belief that the required wording has been identified and that he is onboard with the
+    goal of preserving scalar value sequences from UTF-8 source files.
+  - Corentin responded that he will bring back a revised paper with the suggested wording.
+  - Steve informed the group that the EWG chair is considering dedicating a telecon to SG16 papers in the
+    next month or so.
+- [P2093R6: Formatted output](https://wg21.link/p2093r6)
+  - PBrett reported a previous conversation with Victor in which Victor expressed that he felt he has the
+    guidance he needs regarding handling of substitution characters and locale.
+  - Victor presented slides:
+    - The next question to be answered is whether it is ok to base behavior on the literal encoding.
+    - Use of the literal encoding avoids race conditions with locale settings.
+  - Discussion ensued regarding current dependencies on the choice of literal encoding and it was observed
+    that, though the wording provided by
+    [P1868](https://wg21.link/p1868)
+    to specify estimated format field widths is not based on the literal encoding, at least one implementation
+    is planning to only use the specified estimated widths when the literal encoding is UTF-8.
+  - Hubert observed that field width estimation can apply to content from other than string literals.
+  - PBrett provided an example; when `gettext()` is used, a literal is used for the message catalog lookup,
+    but the result is not a string literal.
+  - Hubert acknowledged the provided rationale, but noted that it does not address concerns raised and that
+    he has seen many cases where use of locales works fine on UNIX systems.
+  - Hubert added that this has the potential to bite existing users since code may appear to work correctly
+    until it suddenly doesn't.
+  - Victor replied that his goal is to make UTF-8 cases work as expected and that he is willing to accept
+    some surprises in other scenarios.
+  - Victor stressed that the intention is that, on UNIX systems, bytes are simply passed through.
+  - Tom directed discussion towards the example code from the
+    [telecon announcement](https://lists.isocpp.org/sg16/2021/05/2389.php).
+  - Victor stated that he will request a LWG issue or author a paper to address handling of locale provided
+    text.
+  - \[ Editor's note: Victor requested an LWG issue that is now tracked as
+    [LWG issue 3565](https://wg21.link/lwg3565). \]
+  - Corentin stated that he is content with undefined behavior for cases where UTF-8 input is expected, but
+    the input is not actually UTF-8 encoded.
+  - Hubert responded that the format locale situation is rather urgent for EBCDIC environments.
+  - PBrett stated that he is ok with the proposal because it won't break anything worse than it already is.
+- Tom stated that the next telecon will be held on June 9th.
 
 
 # May 12th, 2021
