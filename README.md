@@ -5,28 +5,21 @@ weeks of each month, but scheduling conflicts or other time pressures sometimes 
 alternative scheduling.  Meeting invitations are sent to the mailing list and prior
 attendees.  To request an invitation, please contact tom@honermann.net.
 
+
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
 Wednesday, June 9th, 2021, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210609T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [D2295R4: Support for UTF-8 as a portable source file encoding](https://isocpp.org/files/papers/D2295R4.pdf)
-  - Review updated wording produced through collaboration between Corentin, Jens, and Hubert
-    to resolve earlier feedback at https://lists.isocpp.org/sg16/2021/04/2353.php.
 - [P2093R6: Formatted output](https://wg21.link/p2093r6)
-  - Continue discussion and poll for consensus on answers to the following questions:
-    - How should invalidly encoded text be handled when transcoding for the purpose of
-      writing directly to a device interface?
-    - Is use of UTF-8 as the literal encoding a sufficient indicator that all input fed
-      to `std::format()` and `std::print()` (including the format string, programmer
-      supplied field arguments, and locale provided text) will be UTF-8 encoded?
-    - Is the literal encoding a sufficient indicator in general that all input fed to
-      `std::format()` and `std::print()` (including the format string, programmer
-      supplied field arguments, and locale provided text) will be provided in an encoding
-      compatible with the literal encoding?
-    - What are the implications for future support of
-     `std::print("{} {} {} {}", L"Wide text", u8"UTF-8 text", u"UTF-16 text", U"UTF-32 text")`?
+  - Finish polling begun at the last telecon.
+- [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
+  - Discuss and poll the proposed resolution.
+- [P2295R4: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r4)
+  - Review updated wording produced through collaboration between Corentin, Jens, Hubert, and Peter.
+    - https://lists.isocpp.org/sg16/2021/04/2353.php.
+    - https://lists.isocpp.org/sg16/2021/06/2429.php
 
 
 # Past SG16 meetings
@@ -45,6 +38,7 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
 
 # May 26th, 2021
 
