@@ -24,6 +24,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [June 9th, 2021](#june-9th-2021)
 - [May 26th, 2021](#may-26th-2021)
 - [May 12th, 2021](#may-12th-2021)
 - [April 28th, 2021](#april-28th-2021)
@@ -40,10 +41,186 @@ The draft agenda is:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# June 9th, 2021
+
+## Agenda:
+- [P2093R6: Formatted output](https://wg21.link/p2093r6)
+  - Continue discussion and poll for consensus on answers to the following questions:
+    1) How should invalidly encoded text be handled when transcoding for the purpose of writing directly to
+       a device interface?
+    2) Is use of UTF-8 as the literal encoding a sufficient indicator that all input fed to `std::format()`
+       and `std::print()` (including the format string, programmer supplied field arguments, and locale
+       provided text) will be UTF-8 encoded?
+    3) Is the literal encoding a sufficient indicator in general that all input fed to `std::format()`
+       and `std::print()` (including the format string, programmer supplied field arguments, and locale
+       provided text) will be provided in an encoding compatible with the literal encoding?
+    4) What are the implications for future support of
+       `std::print("{} {} {} {}", L"Wide text", u8"UTF-8 text", u"UTF-16 text", U"UTF-32 text")`?
+- [LWG 3565: Handling of encodings in localized formatting of `chrono` types is underspecified](https://wg21.link/lwg3565)
+
+## Meeting summary:
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2093R6: Formatted output](https://wg21.link/p2093r6)
+  - No initial discussion was held; the meeting proceded directly to candidate polls previously
+    [communicated to the mailing list](https://lists.isocpp.org/sg16/2021/06/2430.php).
+  - Poll 1 discussion:
+    - Zach stated that programmers will expect `std::format()` and `std::print()` to behave the same way.
+    - Victor stated that `std::print()` can be implemented using `std::format()`;
+      `std::print()` is intended to be just `std::format()` with additional device dependent transcoding.
+  - **Poll 1: P2093R6: `<format>` and `<print>` facilities should have consistent behavior with respect to encoding expectations for the format string.**
+    - Attendance: 8
+    - No objection to unanimous consent.
+  - Poll 2 discussion:
+    - \[ Editor's note: the original poll was "P2093R6: `<format>` and `<print>` facilities should have
+      consistent behavior with respect to encoding expectations for the output of formatters. \]
+    - Victor asked for confirmation that the "formatters" term in the poll refers to formatter specializations.
+    - Tom confirmed that it does.
+    - Zach asked for confirmation that formatters can be user provided.
+    - Victor confirmed that they can be.
+    - Hubert stated that a desire to bypass encoding constraints will require a concept for binary formatters
+      and a corresponding proposal.
+    - Jens expressed a belief that formatters are allowed to be agnostic with respect to use with `std::format()`
+      vs `std::print()`.
+    - \[ Editor's note: Jens observation prompted the addition of poll 2.2 to confirm matching design intent. \]
+    - Victor stated that there is currently no mechanism proposed for a formatter to be informed as to whether
+      it is being used with `std::format()` or `std::print()`.
+    - Zach expressed confusion about the poll.
+    - Hubert suggested this poll be deferred until after later polls concerned with the consequences of violating
+      encoding expectations. 
+  - **Poll 2.1: P2093R6: `<format>` and `<print>` facilities should have consistent behavior with respect to encoding expectations for the output of formatters.**
+    - Per discussion; poll deferred until after later polls.
+  - **Poll 2.2: P2093R6: formatters should not be sensitive to whether they are being used with a `<format>` or `<print>` facility.**
+    - Attendance: 8
+    - No objection to unanimous consent.
+  - Poll 3 discussion:
+    - \[ Editor's note: the original poll was "P2093R6: Regardless of format string encoding assumptions,
+      `<format>` facilities (but not `<print>` facilities) may be used to format binary data." \]
+    - Victor stated that support for binary data is a nice capability to have and is needed to match existing
+      uses of `printf()`.
+    - Steve noted that this poll is relevant for cases where transcoding is required.
+    - Tom agreed and noted that the code author may not be aware of implementation performed transcoding.
+    - Jens asked for reasons that a text facility would be used for binary data.
+    - Victor responded that `printf()` is often used with binary data and noted that the format string does not
+      necessarily contain text; it might solely contain field specifiers.
+    - Tom noted that filenames may be formatted, but might not conform to encoding expectations.
+    - Steve mentioned having also seen ostreams used with binary data.
+    - Hubert noted again that additional design work would be needed for binary data to be transported through
+      any implicit transcoding performed by `std::print()`.
+    - Hubert added that control characters can be another source of binary data.
+    - Zach suggested splitting the poll to address `<format>` and `<print>` separately so as to remove the
+      parenthetical text.
+    - Zach suggested that there may be a use case for standard formatters for binary data or for a "raw" print
+      interface.
+    - Victor suggested there may be some misunderstanding; that `std::print()` may be used with binary data
+      with the result that garbage is displayed on the console.
+    - Hubert politely disagreed due to the lack of an escape mechanism for binary data.
+    - Jens agreed that some form of a non-text in-band signalling mechanism would be needed.
+    - Victor clarified that his argument for preserving binary data is for the case where output is directed
+      to a file.
+    - Hubert noted that poll 3 and poll 10 are related and that concensus for poll 10 will require facilities
+      related to poll 3.
+  - **Poll 3.1: P2093R6: Regardless of format string encoding assumptions, `<format>` facilities may be used to format binary data.**
+    - Attendance: 8 (1 abstention)
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   5 |   1 |   1 |   0 |   0 |
+
+    - Consensus: Strong consensus in favor.
+  - **Poll 3.2: P2093R6: Regardless of format string encoding assumptions, `<print>` facilities may be used to format binary data.**
+    - Attendance: 8 (1 abstention)
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   2 |   1 |   3 |   1 |   0 |
+
+    - Consensus: Weak consensus in favor.
+    - A: No comment
+  - Poll 4 discussion:
+    - \[ Editor's note: the original poll was "P2093R6: `<print>` facilities exhibit undefined behavior when
+      a format string or formatter output does not match encoding expectations. \]
+    - Steve expressed a desire for behavior less severe than undefined behavior.
+    - Victor expressed discomfort with undefined behavior as well, particularly that the poll applies to all
+      `std::print()` invocations regardless of where the output is directed.
+    - Hubert spoke in favor of the poll and noted that this establishes that an implementor or code reviewer
+      can diagnose these cases; that can't happen if behavior is defined.
+    - Jens agreed with Hubert, noted the existence of the precondition, and that a violation is "library UB"
+      amd therefore less consequencial than core language UB.
+    - Steve stated in chat: "OK, based on Hubert and Jens's comments, I'll withdraw my objections about UB.
+      I'd like better terminology but this isn't the forum."
+    - Jens stated that the paper would benefit from some prose that explains the intended model and that
+      inconsistently encoded data can be stitched together.
+    - Jens expressed distaste for preconditions being so specific to a corner case and professed desire for
+      a good programming model.
+    - Zach noted similarities with [P1868](https://wg21.link/p1868); the worst case outcome is mojibake
+      displayed on the terminal; the damage is limited.
+    - Zach stated that either UB or implementation-defined behavior would be fine for now, but that we may
+      desire another failure mode where the behavior is more contained in the future; a behavior mode that
+      reflects that something went wrong, but where the damage is localized.
+    - Victor stated that he feels this poll overreaches; that the only concern is with regard to writing to
+      a file vs a terminal and that, in practice, all that should happen is that the data is passed through
+      or that replacement characters are substituted.
+    - Hubert noted that files may correspond to special devices; e.g., /dev/tty.
+    - Hubert stated that UB is a specification tool and noted that implementors are in a position to
+      distinguish between polls 4 and 5, but that a code reviewer generally cannot.
+  - **Poll 4: P2093R6: `<print>` facilities exhibit undefined behavior when an encoding expectation is present and a format string or formatter output does not match those expectations.**
+    - Attendance: 8 (1 abstention)
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   2 |   4 |   0 |   0 |   1 |
+
+    - Consensus: Strong consensus in favor.
+    - SA: I think this is too broad and the impact is larger than necessary.
+  - **Poll 5: P2093R6: `<print>` facilities exhibit undefined behavior when an encoding expectation is present and a format string or formatter output does not match those expectations and output is directed to a device that has encoding expectations.**
+    - Attendance: 8 (1 abstention)
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   6 |   0 |   1 |   0 |   0 |
+
+    - Consensus: Stronger consensus in favor relative to poll 4.
+  - Poll 6 discussion:
+    - \[ Editor's note: the original poll was "P2093R6: `<print>` facility implementors are encouraged
+      to provide a run-time means for diagnosing format strings and formatter output that does not
+      match encoding expectations. \]
+    - Tom noted that this is not dependent on UB.
+    - Hubert agreed.
+    - Corentin expressed skepticism that this is implementable.
+    - Hubert responded that the binary case is not well supported, but can be done and probably with 
+      a reasonable result.
+    - Hubert noted that it may be difficult for an implementation of this extension to distinguish the
+      escaped binary data case.
+    - Charlie noted that invalidly encoded data can be detected, but that mojibake cannot be.
+    - Steve expressed desire for diagnostics for when the data doesn't match the encoding, but not for
+      attempts to match mixed encodings.
+    - Zach noted that heuristic warnings can result in false positives and false negatives.
+    - Hubert observed that qualitative determination of good vs bad output may require a human.
+  - **Poll 6: P2093R6: `<print>` facility implementors are encouraged to provide a run-time means for diagnosing format strings and formatter output that is not well-formed according to the expected encoding.**
+    - Attendance: 8 (1 abstention)
+
+        |  SF |   F |   N |   A |  SA |
+        | --: | --: | --: | --: | --: |
+        |   4 |   0 |   2 |   1 |   0 |
+
+    - Consensus: Consensus in favor.
+    - A: I don't want double validation and this falls outside the standard.
+- Tom stated that the next meeting will be in two weeks on June 23rd and that we will complete polling
+  and discuss [LWG 3565](https://wg21.link/lwg3565).
+
+
 # May 26th, 2021
 
 ## Agenda:
-- [D2295R4: Support for UTF-8 as a portable source file encoding](https://isocpp.org/files/papers/D2295R4.pdf)
+- [P2295R4: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r4)
   - Review updates intended to address prior SG16 feedback.
 - [P2093R6: Formatted output](https://wg21.link/p2093r6)
   - Discuss locale dependent character encoding concerns.
@@ -59,7 +236,10 @@ The draft agenda is:
   - Tom Honermann
   - Victor Zverovich
   - Zach Laine
-- [D2295R4: Support for UTF-8 as a portable source file encoding](https://isocpp.org/files/papers/D2295R4.pdf)
+- [P2295R4: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r4)
+  - \[ Editor's note: D2295R4 was the active paper under discussion at the telecon.  The agenda and links
+    used here reference P2295R4 since the links to the draft paper were ephemeral.  The published document may
+    differ from the reviewed draft revision. \]
   - PBrett provided an introduction.
   - Corentin presented and described the changes from R3 to the draft R4.
   - PBrett observed that the wording updates removed the prior definition for a *UTF-8 file* and added a new
