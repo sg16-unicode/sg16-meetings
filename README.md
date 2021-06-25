@@ -9,13 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, June 9th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210609T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, July 14th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210714T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [P2093R6: Formatted output](https://wg21.link/p2093r6)
-  - Finish polling begun at the last telecon.
 - [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
   - Discuss and poll the proposed resolution.
+- [P2093R6: Formatted output](https://wg21.link/p2093r6)
+  - Further discussion and polling pending offline discussion.
 - [P2295R4: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r4)
   - Review updated wording produced through collaboration between Corentin, Jens, Hubert, and Peter.
     - https://lists.isocpp.org/sg16/2021/04/2353.php.
