@@ -19,6 +19,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [July 14th, 2021](#july-14th-2021)
 - [June 23rd, 2021](#june-23rd-2021)
 - [June 9th, 2021](#june-9th-2021)
 - [May 26th, 2021](#may-26th-2021)
@@ -35,6 +36,91 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# July 14th, 2021
+
+## Agenda:
+- [P2295R5: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r5)
+  - Review updated wording produced through collaboration between Corentin, Jens, Hubert, and Peter.
+    - https://lists.isocpp.org/sg16/2021/04/2353.php
+    - https://lists.isocpp.org/sg16/2021/06/2429.php
+- [P2362R0: Make obfuscating wide character literals ill-formed](https://wg21.link/p2362r0)
+- [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
+  - Discuss and poll the proposed resolution.
+
+## Meeting summary:
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2295R5: Support for UTF-8 as a portable source file encoding](https://wg21.link/p2295r5)
+  - \[ Editor's note: D2295R5 was the active paper under discussion at the telecon.  The agenda and links
+    used here reference P2295R5 since the links to the draft paper were ephemeral.  The published document
+    is expected to differ from the reviewed draft revision as noted below. \]
+  - PBrett presented.
+    - The wording was revised based on feedback received from the SG16 mailing list.
+    - Any wording changes approved today will appear in the revision of the paper that will be submitted for
+      tomorrow's mailing deadline.
+  - Tom noted that the existing wording regarding the introduction of new-line characters for end-of-line
+    indicators only applies to non-UTF-8 encoding schemes with the proposed changes.
+  - PBrett and Corentin explained that this is intentional; that end-of-line indicators are relevant for
+    structured text (e.g., data sets), not for source files expressed as a sequence of code units.
+  - PBrett and Corentin noted that new-line character sequences will be revisited with
+    [P2348](https://wg21.link/p2348).
+  - \[ Editor's note: A note was added to the final P2295R5 wording to explain that end-of-line indicators are
+    not applicable to UTF-8 encoded source files and that new-line characters separate lines. \]
+  - Hubert observed that some of the wording suggestions from the mailing list discussion had not been
+    incorporated.
+  - \[ Editor's note: Live editing of the proposed wording ensued, the discusion of which is not captured
+    verbatim here.  Concerns discussed included use of "encoding scheme" vs "encoding", whether a plural form
+    of "source file" should be used, methods to avoid use of the term "determined", and how to equate the
+    sequence of UTF-8 code units with the elements of the translation character set. \]
+  - Mark asked if the proposed wording handles CR/LF new-line sequences.
+  - Hubert responded that [P2348](https://wg21.link/p2348) will address that concern.
+  - **Poll: Forward D2295R5 with wording modifications as discussed to EWG for C++23.**
+    - Attendance: 9
+    - No objection to unanimous consent.
+- [P2362R0: Make obfuscating wide character literals ill-formed](https://wg21.link/p2362r0)
+  - PBrett provided an introduction.
+  - Tom noted that the execution wide-character set is not necessarily Unicode; non-encodable characters are
+    possible even when `wchar_t` is 32-bit.
+  - Charlie noted that Visual C++ is technically not conformant since its 16-bit `wchar_t` is not able to
+    store every possible locale dependent character in a unique `wchar_t` value.
+  - Hubert explained that ISO C++ does not permit use of a multi-code-unit encoding for wide character and
+    string literals.
+  - Charlie asked what warning level Visual C++ requires for a warning to be issued for the cases proposed
+    to become ill-formed.
+  - Corentin responded, W2.
+  - Tom asked Hubert how his implementation handles the multicharacter case.
+  - Hubert reported that xlC encodes the last character (like gcc and Clang).
+  - Wording review ensued.
+  - Tom requested that the use of "character literal" removed in the proposed wording for \[lex.ccon\]p2
+    be restored so that the note states, "... but does not determine the value of non-encodable
+    **character literals** or multicharacter literals. ..."
+  - PBrett agreed to do so.
+  - Jens expressed a preference towards revising the paper title to remove the word "obfuscating" in order
+    to avoid projecting bias.
+  - Tom responded that the title is the author's prerogative, but reported having had a similar reaction to
+    the current title.
+  - Charlie asked if there is also motivation to make non-encodable character literals and multicharacter
+    literals ill-formed as well.
+  - PBrett stated that there is and that writing a paper to do so is on his todo list, but that the motivation
+    for ordinary literals is different because they are used and do not suffer some of the problems that
+    the wide variety do.
+  - **Poll: Forward P2362R0 with title and wording modifications as discussed to EWG for C++23.**
+    - Attendance: 9
+    - No objection to unanimous consent.
+- [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
+  - Deferred to the next telecon due to time constraints.
+- Tom announced that the next telecon will be held 2021-07-28 and that the agenda will include
+  [LWG 3565](https://cplusplus.github.io/LWG/issue3565) and then [P2348](https://wg21.link/p2348).
 
 
 # June 23rd, 2021
