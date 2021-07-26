@@ -65,6 +65,8 @@ The draft agenda is:
     used here reference P2295R5 since the links to the draft paper were ephemeral.  The published document
     is expected to differ from the reviewed draft revision as noted below. \]
   - PBrett presented.
+    - Peter's presentation slides are available
+      [here](https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2021-07-14-p2295r5-p2362r0-presentations.pdf).
     - The wording was revised based on feedback received from the SG16 mailing list.
     - Any wording changes approved today will appear in the revision of the paper that will be submitted for
       tomorrow's mailing deadline.
@@ -88,7 +90,9 @@ The draft agenda is:
     - Attendance: 9
     - No objection to unanimous consent.
 - [P2362R0: Make obfuscating wide character literals ill-formed](https://wg21.link/p2362r0)
-  - PBrett provided an introduction.
+  - PBrett presented.
+    - Peter's presentation slides are available
+      [here](https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2021-07-14-p2295r5-p2362r0-presentations.pdf).
   - Tom noted that the execution wide-character set is not necessarily Unicode; non-encodable characters are
     possible even when `wchar_t` is 32-bit.
   - Charlie noted that Visual C++ is technically not conformant since its 16-bit `wchar_t` is not able to
