@@ -40,9 +40,202 @@ The draft agenda is:
 # July 28th, 2021
 
 ## Agenda:
-- 
+- [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
+  - Discuss and poll the proposed resolution.
+- [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
 
 ## Meeting summary:
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+
+- [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
+  - PBrett presented
+    - The standard is underspecified in terms of what happens with localized
+      chrono substitutions
+    - Proposed resolution is very narrow; limited to UTF-8 scenarios
+  - Hubert: The direction makes sense, but the conversion to UTF-8 may not
+    always be successful given the diversity of possible deployments.
+  - Hubert: There should be some form of error handling policy; which one
+  - Tom: The assumption is that there may not be characters that are in Unicode?
+  - Hubert: No, the implementation may not have a map from the source charset to
+    Unicode.
+  - Charlie: Our implementation has `MultiByteToWideChar`, but it behaves in
+    surprising ways for some encodings; some multibyte characters in some 
+    encodings may not convert correctly.
+  - Charlie: This doesn't permit requesting a non-UTF-8 encoding be used.
+  - Victor: If 'L' is not specified, then the "C" locale is used and there is no
+    issue.
+  - Victor: The proposed wording only applies when `{:L}` is used.
+  - PBrett: To clarify, there would be no way to preserve a non-UTF-8 encoding
+    through `std::format()`.
+  - Victor: Correct.
+  - Charlie: The convention that the literal encoding affect `std::format()`
+    behavior is currently limited; this widens that.
+  - Charlie: The other place literal encoding is used is parsing the format
+    string; which makes perfect sense.
+  - Charlie: Widening this dependency on the literal encoding is concerning.
+  - Charlie: I expect some Windows users to write code with UTF-8 literal
+    encoding but to produce non-UTF-8 output.
+  - Charlie: This may occur when logging text, the format string may just
+    consist of format specifiers.
+  - Victor: We also depend on the literal encoding for the "mu" character.
+  - Victor: Even if text looks like ASCII, it may not be; confusables may be
+    present or line drawing characters.
+  - Steve: How does the library figure out what the literal encoding is?
+  - PBrett: Implementation magic; the compiler knows and can communicate it to
+    the library.
+  - PBrett: Can we just specify that the locale text be transcoded to the
+    literal encoding?
+  - Charlie: The UTF-8 only solution avoids the need for a large transcoding
+    library.  The non-UTF-8 case may not support representation and therefore
+    require/request transliterating.
+  - PBrett: In an implementation that supports CP1251 as locale, conversion to
+    UTF-8 at least will be needed.
+  - PBrett: We should allow implementations the flexibility to provide the right
+    result if they know how to.
+  - Charlie: This is mandating conversion in a specific circumstance; what
+    happens when conversion is lossy?  We can't ensure convertibility to all
+    code pages.
+  - PBrett: The proposed resolution forbids doing the right thing for GB18030,
+    which is able to represent all the characters.
+  - Charlie: Right, the only encodings that support non-lossy conversion are
+    Unicode ones.
+  - Charlie: It is reasonable to support EBCDIC here.
+  - Charlie: With regard to special characters like "mu", you can get mixed
+    encodings regardless.
+  - Charlie: This differs from width estimation which is always best effort
+    since GUI presentation is not usually known.
+  - Mark: This does pose a payload requirement on the implementation; not just
+    implementation effort.
+  - Mark: The overload on locale could be limited to 1; each locale could be
+    required to provide UTF-8 translations.
+  - Mark: The proposed resolution effectively requires a general purpose
+    transcoding facility.
+  - Mark: This might be best left to implementation-defined.
+  - Hubert: There is a desire to allow conversion, but there is also a desire to
+    avoid dependency on the output that locale facilities provide.
+  - Hubert: The pre-computation method could be intrusive for deployment;
+    limiting localedef to character sets with mapping to Unicode available.
+  - Hubert: Perhaps guidance is to transcode when encoding information is known.
+  - Charlie stated in chat: "if you support both `Russian.UTF-8` and
+    `Russian.1251` then this is essentially saying that `format` will treat
+    `Russian.1251` as `Russian.UTF-8` (assuming the actual content of the local
+    facets is the same)"
+  - PBrett: This is what I was trying to suggest in email.
+  - PBrett: Only a burden on implementations if they support locale-specific
+    encoding and if the locale specific encoding can be different from the
+    literal encoding.
+  - PBrett: Implementations that already support many encodings are already
+    burdened with the transcoding facilities.
+  - Victor: Agree with Peter; the "else" clause in the proposed wording should
+    be relaxed; we should allow, but not require transcoding.
+  - Steve: For most POSIX system, locales are an open system and may be extended
+    by users (in potentially broken ways).
+  - Steve: Implementations don't generally own the locale systems, so adding
+    requirements there may not be implementable.
+  - Steve: But, yes, we should allow implementations to do the best they can; we
+    shouldn't mandate brokenness.
+  - Charlie: Not a burden if transcoding is only needed for currently supported
+    locales.
+  - Charlie: Would be a burden if an implementation had to convert between two
+    non-Unicode encodings.
+  - Charlie: From an overhead perspective, probably not a big deal.
+  - Charlie: A note may suffice.
+  - PBrett stated in chat: "'L' = I want to be correct, not fast"
+  - Corentin: Agree with Peter; avoid specifying transcoding
+  - Corentin: options are to get output in locale specified, then convert to
+    UTF-8, or to get UTF-8 directly.
+  - Corentin: Implementations can hack this for `chrono` types; there aren't
+    that many strings involved.
+  - PBrett: Concerned about implementability since locales may be user-defined;
+    implementations shouldn't have to engage in heroics.
+  - Hubert: Locale systems have allowances; users can compile their own.
+  - PBrett: Perhaps limit requirements to locales known by the implementation.
+  - Hubert: Wording to an implementation-defined set of locales may work here.
+  - Corentin: There is a limited amount of usefulness that can be extracted
+    here; don't want to put too much effort here.
+  - Corentin: `std::format()` isn't a great tool for localization; real
+    localization requires swapping the order of fields.
+  - Jens: Would like to ensure wording is more precise; need to specify which
+    string literal encoding.
+  - PBrett: Summarizing:
+    1. Limit the requirement to implementation provided locales.
+       - Locales with an implementation-defined set of strings.
+    2. Permit implementation to "do the right thing"
+    3. Require "as if" transcoding when the literal encoding is UTF-8.
+    4. Permit "as if" transcoding when the ordinary literal encoding is not
+       UTF-8.
+  - Hubert: That seems to reflect consensus, but falls under "as if" rules.
+  - Tom: Uncertain that we have consensus on dependency of UTF-8 literal
+    encoding.
+  - Victor: I thought we had consensus on that.
+  - Mark: Am mildly infavor of requiring this when the literal encoding is
+    UTF-8.
+  - Hubert: That isn't implementable.
+  - PBrett: Right, only implementable for locales the implementation provides.
+  - Charlie: Implementations should be prohibited from transcoding to an
+    encoding that is not Unicode (UCS-2 is not a Unicode encoding in this case).
+  - Charlie: We don't want transliteration here.
+  - Charlie: Should require UTF-8, permit UTF-7, UTF-EBCDIC, etc..., prohibit
+    others.
+  - Hubert: Prior polls had consensus for UTF-8, but not for others. Consensus
+    would likely be similar for other Unicode encodings.
+  - Tom: Concerned about that consensus.
+  - PBrett: Concerned about consistency here; trying to rationalize the UTF-8
+    focus.
+  - \[ Editor's note: Some discussion of poll wording ensued \]
+  - Corentin: Charlie, why the prohibition to "as if" conversion to other
+    encodings?
+  - Charlie: The goal is to avoid lossy conversions.
+  - Corentin: Can we just prohibit lossy conversions?
+  - Charlie: We could allow cases where the target encoding is not Unicode, but
+    all of the characters are representable.
+  - Charlie: The concern is wanting to avoid transliteration.
+  - Corentin: I agree with that.
+  - **Poll 1: Require implementations to make `std::chrono` substitutions with `std::format` as if transcoded to UTF-8 when the literal ecoding *E* associated with the format string is UTF-8, for an implementation-defined set of locales.**
+    - Attendance: 9
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   6 |   2 |   0 |   0 |
+    
+    - Consensus: Consensus in favour.
+    - Poll bikeshedding; Tom wants to apply to `wchar_t` cases.
+  - **Poll 2: Permit such substitutions when the encoding *E* is any Unicode encoding form.**
+    - Attendance: 9
+
+        | SF  | F   | N   | A   | SA  |
+        | --: | --: | --: | --: | --: |
+        |   0 |   7 |   2 |   0 |   0 |
+
+    - Consensus: Consensus in favour
+
+  - **Poll 3: Prohibit such substitutions otherwise.**
+    - Attendance: 9
+
+        | SF  | F   | N   | A   | SA  |
+        | --: | --: | --: | --: | --: |
+        |   1 |   3 |   3 |   1 |   1 |
+
+    - Consensus: No consensus
+    - SA: This is an over constraint; should permit implementations to do best
+      effort work.
+    - Hubert: This requires invention for the case where a locale is defined
+      outside the implementation without a mapping to the target locale.
+- [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
+   - Ran out of time.
+- Tom: Next meeting in two weeks, will revisit
+  [LWG 3565](https://cplusplus.github.io/LWG/issue3565) if a paper is 
+  available; [P2348R0](https://wg21.link/p2348r0) otherwise.
+
 
 # July 14th, 2021
 
