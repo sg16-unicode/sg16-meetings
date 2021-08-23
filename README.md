@@ -9,16 +9,16 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, July 28th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210728T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, August 25th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210825T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
-  - Discuss and poll the proposed resolution.
 - [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
-
+- [P2419R0: Clarify handling of encodings in localized formatting of chrono types](https://wg21.link/p2419r0)
+- [LWG 3576: Clarifying fill character in std::format](https://cplusplus.github.io/LWG/issue3576)
 
 # Past SG16 meetings
 
+- [July 28th, 2021](#july-28th-2021)
 - [July 14th, 2021](#july-14th-2021)
 - [June 23rd, 2021](#june-23rd-2021)
 - [June 9th, 2021](#june-9th-2021)
@@ -37,6 +37,12 @@ The draft agenda is:
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
+# July 28th, 2021
+
+## Agenda:
+- 
+
+## Meeting summary:
 
 # July 14th, 2021
 
