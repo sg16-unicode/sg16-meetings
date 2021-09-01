@@ -9,15 +9,16 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, August 25th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210825T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, September 8th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210908T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
-- [P2419R0: Clarify handling of encodings in localized formatting of chrono types](https://wg21.link/p2419r0)
-- [LWG 3576: Clarifying fill character in std::format](https://cplusplus.github.io/LWG/issue3576)
+- [D2348R1: Whitespaces Wording Revamp](https://isocpp.org/files/papers/D2348R1.pdf)
+- [P2093R8: Formatted output](https://wg21.link/p2093r8)
+- [P2361R2: Unevaluated string literals](https://wg21.link/p2361r2)
 
 # Past SG16 meetings
 
+- [August 25th, 2021](#august-25th-2021)
 - [July 28th, 2021](#july-28th-2021)
 - [July 14th, 2021](#july-14th-2021)
 - [June 23rd, 2021](#june-23rd-2021)
@@ -36,6 +37,131 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+# August 25th, 2021
+
+## Agenda
+- [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
+- [P2419R0: Clarify handling of encodings in localized formatting of chrono types](https://wg21.link/p2419r0)
+- [LWG 3576: Clarifying fill character in std::format](https://cplusplus.github.io/LWG/issue3576)
+
+## Meeting summary
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Victor Zverovich
+
+- [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
+  - Corentin presented
+  - Steve: Is "basic source character set" a bug in comment grammar?
+  - Corentin: maybe
+  - Peter and Steve: Form feeds are used in sources
+  - Corentin: no change proposed
+  - Hubert: VT and FF don't end comments in clang or gcc.  Status quo is they
+    may not be line breaks, although they may be whitespace
+
+  - **Poll 1: Acknowledging that we have limited time available, we support the  direction for P2348R0 and encourage further work.**
+    - Attendance: 7
+    - No objections to unanimous consent
+  - Peter: Please bring back the paper rebased on
+    [P2314: Character sets and encodings](https://wg21.link/p2314), and add
+    implementation notes.
+
+- [P2419R0: Clarify handling of encodings in localized formatting of chrono types](https://wg21.link/p2419r0)
+  - Charlie: Does this permit new things? If so it's appropriate to update
+    feature test macro
+  - Peter: Would have liked to include recommended practice in the wording
+  - Charlie: Current wording is 'fine' because it has enough implementation
+    defined wiggle room.
+  - Hubert: If we are to improve the wording, it might just need to be a note
+    rather than normative
+  - Victor: Implementation coulde be in terms of `codecvt` facet, so it should
+    work
+  - Charlie: Concern if there's a list of locales, it might be a problemb if
+    users customize facets of a locale derived from a system locale.
+
+  - **Poll 2: Forward P2419 to LEWG as the recommended resolution of LWG 3565 and with a recommended ship vehicle of C++23.**
+    - Attendance: 7
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   2 |   1 |   0 |   0 |
+    
+    - Consensus: Strong consensus in favour.
+
+- [LWG 3576: Clarifying fill character in std::format](https://cplusplus.github.io/LWG/issue3576)
+  - Charlie: MSVC processes codepoint, preserving the code unit sequence. libc++
+    stores a code unit. Error handling in MSVC deals with ill-formed sequences
+    transcoding later.
+  - Hubert: Clarify as a note grapheme whether a cluster could include `{` or
+    `}`
+  - Charlie: Implementation difficult, as finding `{}` is straightforward,
+    parsing a grapheme cluster is hard.
+  - Peter: Doesn't like codepoint as it means combining characters are confusing
+    in source.
+  - \[ Editor's note: Contribution by Steve not recorded here \]
+  - Victor stated in chat: We already talk about grapheme clusters in width
+    estimation
+  - Charlie: If we fill with a grapheme cluster, it's the first normative use of
+    EGCs.  Some implementation difficulty. Varies over Unicode standard versions
+    in some cases. Users have the ability to customize using formatters. Outside
+    the normal range of use cases. A different format spec/library for multibyte
+    fills? OK with etiher code unit or codepoint.
+  - Corentin: Agree with Charlie, maybe use emoji, but rendering of that is
+    complicated.  Doesn't see a use case for combined characters either.
+  - Victor: Concerned about implementation experience with grapheme clusters as
+    fill characters. Has had no requests for this functionality. Has had
+    requests for codepoints. Code units would disallow box drawing characters.
+  - Peter: We allow EGCs now for width, why shouldn't we allow them as fill
+    characters?
+  - Mark: We base on first character of cluster, specified as a heuristic. It's
+    not a layout engine.
+  - Charlie: Width is 'should' not 'must' (not mandatory)
+  - Victor: We have to restrict the set of fill characters in any case. It might
+    be theoretically better to use grapheme cluster, but has implementation
+    concerns.  Way forward is to have a new facility for filling with grapheme
+    clusters.
+  - Corentin: Question for Charlie and Victor: If we say codepoint now, can we
+    change to grapheme cluster later?
+  - Charlie: Ict would probably break ABI. Heroic and disgusting hacks would be
+    involved.
+  - Victor: It would be a break for libfmt.
+  - Hubert: Are we in agreement that there is an issue with the resolution as
+    presented with it allowing `{}`? Do we need to discuss combining characters?
+  - Charlie: I don't think so. Not a common use case and not actually totally
+    unreasonable. Could use a *universal-character-name*.
+  - Corentin: No value in protecting user from themselves in something they ask
+    for.
+  - Peter: Will, "Play stupid games, win stupid prizes," make it into the
+    minutes?
+  - Victor: Need to prevent characters disallowed by the grammar, but more than
+    that is not necessary.
+  - Mark: Clarify poll for non-Unicode encoding?
+  - Charlie: MSVC doesn't treat UCS-2 properly, treats it as UTF-16. Do
+    implementations have to deal with nonsense?
+  - Peter: This happens after all the other phases of translation
+  - \[ Editor's note: There was some discussion of polling options. \]
+  - **Poll 3.1: Recommend that the proposed resolution for LWG3576 should be adopted, with the modification that the fill character must not contain '{' or '}' as part of the extended grapheme cluster.**
+    - Attendance: 7
+    
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   1 |   1 |   3 |   2 |
+
+    - Consensus against.
+
+  - **Poll 3.2: The format fill character should be defined as "any codepoint of the literal encoding other than '{' or '}'".**
+    - Attendance: 7
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   3 |   1 |   0 |   0 |
+
+    - Strong consensus in favour.
 
 # July 28th, 2021
 
