@@ -19,6 +19,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [September 8th, 2021](#september-8th-2021)
 - [August 25th, 2021](#august-25th-2021)
 - [July 28th, 2021](#july-28th-2021)
 - [July 14th, 2021](#july-14th-2021)
