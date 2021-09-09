@@ -9,12 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, September 8th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210908T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, September 15th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210915T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [D2348R1: Whitespaces Wording Revamp](https://isocpp.org/files/papers/D2348R1.pdf)
-- [P2093R8: Formatted output](https://wg21.link/p2093r8)
+- Reconciling [P2286R2: Formatting ranges](https://wg21.link/p2286r2) and
+  [P1636R2: Formatters for library types](https://wg21.link/p1636r2)
 - [P2361R2: Unevaluated string literals](https://wg21.link/p2361r2)
+- Revision of P2348: Unevaluated string literals
 
 # Past SG16 meetings
 
@@ -37,6 +38,183 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+# September 8th, 2021
+
+## Agenda
+- [D2348R1: Whitespaces Wording Revamp](https://isocpp.org/files/papers/D2348R1.pdf)
+- [P2093R8: Formatted output](https://wg21.link/p2093r8)
+- [P2361R2: Unevaluated string literals](https://wg21.link/p2361r2)
+
+## Meeting summary
+
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- Tom: Thank you to Peter and Steve for filling in during my absence.
+- PBrett: Consensus from the polls taken during the last telecon held 
+2021-08-25 and as posted to the mailing list are no longer tentative; no 
+new dissenting opinions were raised.
+- [D2348R1: Whitespaces Wording Revamp](https://isocpp.org/files/papers/D2348R1.pdf)
+  - Corentin: Introduction:
+    - Reversed prior intention to classify vertical tab and form feed
+      as new lines.
+    - Rebased on top of [P2314R2: Character sets and encodings](https://wg21.link/p2314r2).
+    - Would like feedback about support for `\n\r` sequences; support can 
+      be provided under implementat-defined behavior.
+    - Jonathan Wakely would prefer not to use grammar terms in prose, 
+      but unsure how to do that; perhaps Jens can advise.
+    - Removed the restriction that non-space characters following a 
+      vertical tab and form feed in a single-line comment render the code 
+      ill-formed, no diagnostic required; addresses
+      [CWG2002: Whitespace within preprocessing directives](https://wg21.link/cwg2002).
+  - PBrett: The goal for now is that the wording reflect the design, it 
+    doesn't need to be perfect.
+  - Jens: In the new section \[lex.whitespaces\] there is a 
+    horizontal-whitespace that has infinite recursion.
+  - Corentin: The intent is to support a sequence of whitespace.
+  - Jens: There is a general rule that we use a separate production for 
+    sequences of characters.
+  - Tom: *h-char-sequence* is such an example.
+  - Jens: Yes, and *q-char-sequence*.
+  - Jens: The lexical specification for *comment* is problematic due to 
+    max munch; nothing prohibits `*/` appearing in the comment.  Something 
+    is needed to address the intent previously expressed in the removed prose.
+  - Jens: In the specification of *d-char*, line-break is not a single 
+    character; it may be a sequence and therefore doesn't work following 
+    "except".
+  - Jens: *basic-s-char* has the same issue.
+  - PBrett: Can we use a sequence of *line-break* characters?
+  - Jens: No; order matters.
+  - Jens: \[lex.pptoken\] hits a conflict between the requirement to 
+    capitalize the first word of a sentence and sentences that start with a 
+    grammar term; capitalizing the grammar term yields a different term, so 
+    the prose must be modified to avoid grammar terms at the beginning of a 
+    sentence.
+  - Jens: Perhaps we should introduce a formal definition of *new-line* 
+    to map to the grammar term.
+  - Jens: There is a general substitution of the *line-break* grammar 
+    term for *new-line* in the proposed wording.  Can we use *new-line* as the 
+    grammar term and not introduce a *line-break* production?
+  - Corentin: There is a desire to be able to discuss *new-line* 
+    abstractly, like in simple escape sequences.
+  - Jens: I'm wondering if we can avoid that in order to reduce the 
+    wording churn.
+  - Jens: P2314 intentionally did not touch *new-line*; it does update 
+    places where a single new-line character is designated; like for simple 
+    escape sequence.
+  - PBrett: Other than for churn; is there motivation to avoid 
+    replacing *new-line* with the grammar term?
+  - Jens: Yes, the changes remove a definition for *new-line* which we 
+    assume is needed by library, though I would be happy to be proven wrong.
+  - Corentin: Library use of *new-line* must refer to the single Unicode 
+    new-line character.
+  - Jens: If *new-line* always designates Unicode new-line, then we can 
+    keep *new-line* and use *line-break* for the grammar term.
+  - Steve: Time format spec supports a `%n` for new-line character.
+  - Jens: Could say it is equivalent to `\n`.
+  - Jens: There may be interaction with references to the C standard 
+    library.
+  - Corentin: C uses "new-line" as a grammar and library term.
+  - **Poll 1: Prefer to use the term *new-line* rather than *line-break* in the whitespace grammar production.**
+    - Attendance: 10
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   0 |   4 |   3 |   1 |
+      
+    - No consensus for a change.
+  - Hubert: With respect to EWG impact; the changes remove a 
+    diagnosable issue involving vertical tab and form feed in preprocessor 
+    directives.
+  - Jens: That means we're removing a restriction and that is 
+    evolutionary; the changes to [cpp.pre] on page 12 of the paper removes 
+    the restriction.
+  - Corentin: There is no place in the grammar to have a new-line in a 
+    preprocessor directive.
+  - PBrett: Let's have Corentin to resolve this issue and come back 
+    with a revised paper.
+- [P2093R8: Formatted output](https://wg21.link/p2093r8)
+  - Victor presented slides:
+    - Slides at 
+      https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2021-09-08-p2093r8-presentation.pdf .
+    - LLVM's `raw_ostream` uses a similar approach.
+    - Added UB where SG16 requested it if invalid code units are 
+produced by `std::print()`.
+    - With [P2216: std::format improvements](https://wg21.link/p2216), the
+      format string must be known at compile-time and therefore is
+      associated with the literal encoding.
+    - [LWG3576: Clarifying fill character in std::format](https://wg21.link/lwg3576)
+      was recently resolved through use of the literal encoding.
+    - If the format string does not match the literal encoding, it could
+      fail to parse.
+    - Consistency with `std::format` requires locale-independence.
+    - Consistent with the
+      [P2419: Clarify handling of encodings in localized formatting of chrono types](https://wg21.link/p2419)
+      resolution for [LWG3565](https://wg21.link/lwg3565) where
+      transcoding is performed if the literal encoding is a UTF.
+  - PBrett: Use of P2419 as a wedge is questionable here since its 
+    changes granted permission rather than mandating behavior.
+  - Victor: We went with more relaxed wording due to concerns over user 
+    provided locales; we could strengthen the behavior.
+  - Hubert: Yes, we had weak concensus for use of literal encoding for 
+    UTF-8, but that doesn't imply consensus for more general use.
+  - Tom: I don't buy the argument that because the format string needs 
+    to match literal encoding for compile time processing that that implies 
+    the formatted result must be in the same encoding; though production in 
+    a different encoding would impose overhead.
+  - Tom: Use of the literal encoding as required for compile-time 
+    parsing of the format string limits this being a precedent for similar 
+    use of the literal encoding elsewhere.
+  - PBrett: We discussed GB18030 recently and wide strings. Victor, are 
+    you wedded to this being UTF-8 specific?
+  - Victor: No.  UTF-8 is problematic in practice.  Different problems 
+    occur for other encodings.  Worried about increasing scope though.
+  - **Poll 2: Use of UTF-8 as the literal encoding is sufficient for \<print\> facilities to establish encoding expectations.**
+    - Attendance: 9
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   3 |   2 |   1 |   0 |
+
+    - Consensus in favor.
+    - A: Against rationale: Still concerned that people are not going to use
+      the faciility correctly, i.e. end up with mojibake anyway in corner
+      cases that they won't find until later.  Would prefer solution that
+      provides a stronger way to associate an encoding with the output, but
+      there isn't an extant proposal to do that.
+  - Charlie: I abstained for similar reasons.
+  - Hubert: We did not read through the minor wording changes in 
+    paragraph 31 and it would be good to do so quickly.
+  - Hubert: Looks pretty good; are we clear that the UB only applies 
+    after the first if?
+  - Hubert: The order of the if statements is not correct; there are 
+    subordination issues.
+  - PBrett: In "If this requires transcoding", it is unclear what 
+    "this" refers to.
+  - Jens: Strike "then" in favor of a comma in "If this requires 
+    transcoding then ..."
+  - Jens: Remove the trademark symbol.
+  - **Poll 3: Correct the P2093R8 wording for \[print.syn\].31 to remove ambiguities, and forward P2093 as revised to LEWG with a recommended ship vehicle of C++23.
+    - Attendance: 9
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   4 |   2 |   0 |   0 |
+
+    - Consensus in favor.
+- [P2361R2: Unevaluated string literals](https://wg21.link/p2361r2)
+   - Ran out of time; will discuss next time.
+- Next telecon on 9/22 will review D2348R1 subject to a new revision, 
+  [P1636 Formatters for library types](https://wg21.link/p1636), and
+  [P2361 Unevaluated strings](https://wg21.link/p2361).
 
 # August 25th, 2021
 
