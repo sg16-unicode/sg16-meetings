@@ -9,13 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, September 22nd, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20210922T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, October 6th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211006T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- Reconciling [P2286R2: Formatting ranges](https://wg21.link/p2286r2) and
-  [P1636R2: Formatters for library types](https://wg21.link/p1636r2)
-- [P2361R2: Unevaluated string literals](https://wg21.link/p2361r2)
-- Revision of P2348: Unevaluated string literals
+- [P1885R7: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r7)
+  - Discuss and poll issues recently raised on the LEWG and SG16 mailing lists.
+- [D2460R0: UTF-16 is standard practice](https://isocpp.org/files/papers/D2460R0.pdf)
+
 
 # Past SG16 meetings
 
@@ -39,6 +39,7 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
 
 # September 8th, 2021
 
@@ -217,6 +218,7 @@ produced by `std::print()`.
   [P1636 Formatters for library types](https://wg21.link/p1636), and
   [P2361 Unevaluated strings](https://wg21.link/p2361).
 
+
 # August 25th, 2021
 
 ## Agenda
@@ -341,6 +343,7 @@ produced by `std::print()`.
       |   3 |   3 |   1 |   0 |   0 |
 
     - Strong consensus in favour.
+
 
 # July 28th, 2021
 
