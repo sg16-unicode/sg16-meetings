@@ -19,6 +19,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [September 22nd, 2021](#september-22nd-2021)
 - [September 8th, 2021](#september-8th-2021)
 - [August 25th, 2021](#august-25th-2021)
 - [July 28th, 2021](#july-28th-2021)
@@ -39,6 +40,192 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 22nd, 2021
+
+## Agenda
+- [D2348R2: Whitespaces Wording Revamp](https://wg21.link/p2348r2)
+- [P1636R2: Formatters for library types](https://wg21.link/p1636r2)
+- [P2361R2: Unevaluated strings](https://wg21.link/p2361r2)
+
+## Meeting summary
+
+- Attendees:
+  - Aaron Ballman
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Marina Oliveira
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Tomasz Kamiński
+  - Victor Zverovich
+- [D2348R2: Whitespaces Wording Revamp](https://wg21.link/p2348r2)
+  - \[ Editor's note: D2348R2 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P2348R2 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Corentin stated that there are no design change between the R1 and R2 revisions.
+  - Tom asked for confirmation that the only known behavioral change is that the VT and FF characters
+    would be well-formed in comments rather than ill-formed no diagnostic required.
+  - Hubert responded that the proposal also expands the set of allowed horizontal space characters
+    in preprocessing directives.
+  - Aaron asked if there is desire to recommend the proposal as a DR.
+  - PBrett responded that there is no need to do so since the changes are effectively specification
+    improvement.
+  - Tom asked Hubert if all of the concerns he had raised on the mailing list have been addressed to
+    his satisfaction?
+  - Hubert responded that they have been.
+  - **Poll 1: Forward D2348R2 to EWG as the recommended resolution of CWG2002 and CWG1655 and with
+    a recommended ship vehicle of C++23.**
+    - Attendance: 12
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   6 |   1 |   0 |   0 |
+      
+    - Strong concensus in favor.
+- [P1636R2: Formatters for library types](https://wg21.link/p1636r2)
+  - PBrett stated that SG16 is reviewing this paper due to concerns Tomasz raised regarding
+    quoting and localization in the formatting of `std::filesystem::path`.
+  - Victor stated that we currently lack the tools to adequately address these concerns now.
+  - Victor recommended removing support for `std::filesystem::path` from the paper for now.
+  - Victor noted that planned range related enhancements will enable the desired quoting support.
+  - PBrett observed that, if explicit support for `std::filesystem::path` is removed, then objects
+    of that type will end up getting formatted as a comma separated list since it models a range.
+  - Victor reported plans in place elsewhere to reject use of `std::filesystem::path` as a range.
+  - PBrett noted that information can be lost when formatting a path as text.
+  - Victor replied that transcoding is possible and that a quoted escape mechanism could be used for
+    portions of a path that would not round trip through a transcoder losslessly.
+  - Victor noted that use of the classic locale is a red herring as it has no effect on the output.
+  - Tomasz noted the existence of two papers that overlap on these design questions.
+  - Corentin expressed agreement with Victor that support should wait until there is an escaping
+    mechanism available to losslessly preserve path contentss in formatted text.
+  - Charlie noted that there may be cases where replacement characters might be preferred over of
+    of an escaping mechanism that might interfere with further processing of the output.
+  - Charlie cautioned against including `<format>` in lots of standard library headers since doing
+    so could result in ABI problems if formatter templates are separately compiled.
+  - Victor opined that `std::format` is effectively a generalized `to_string()` and that every type
+    should be formattable.
+  - PBindels noted that platform specific knowledge may be required to format paths.
+  - Charlie remarked that confusion between the literal encoding and the system code page remain
+    possible.
+  - Charlie noted that Java has the benefit of only needing to compile the code that implements
+    its string type once, but that C++ must do so for every TU that uses it.
+  - Charlie added that, for Microsoft's implementation, the `<thread>` header includes `<format>`
+    for chrono support.
+  - Tomasz remarked that it is strange that including `<thread>` results in portions of `<format>`
+    being included, but noted that the standard doesn't require that direct inclusion and that
+    implementations should avoid it.
+  - Charlie responded that `<thread>` including `<format>` is a quality of implementation issue,
+    but noted that, for formatters, an extern template would be required. However, for
+    `std::format`, the first argument is the format context and it probably can't be declared
+    as an extern template.
+  - PBindels asked why a platform wouldn't know what encoding is used by the filesystem.
+  - Charlie responded that file names don't necessarily have an explicitly associated encoding.
+  - Tom added that a path may have multiple associated encodings if it spans filesystems.
+  - Charlie further added that additional problems occur with network filesystems that substitute
+    characters for reserved character like `:` on Windows.
+  - PBrett stated that, if the literal encoding is UTF-8, then the associated encoding of
+    `std::string` is nominally UTF-8 and that the `string()` and `u8string()` members of
+    `std::filesystem::path` should return the same content.
+  - Victor responded that, on Windows, the `string()` member of `std::filesystem::path` returns
+    a string encoded according to the system code page.
+  - PBrett asked if a similar concern exists for `wchar_t`.
+  - Steve responded affirmatively; Windows paths are a sequence of 16-bit code units, not UTF-16.
+  - PBrett suggested a solution like the one adopted for locale dependent chrono fields; if the
+    literal encoding is a UTF, then implementations can convert as best they know how.
+  - Victor responded that the same resolution can be used and is simpler because
+    `std::filesystem::path` already offers the necessary encoding conversion functionality.
+  - PBrett presented a poll option that specifed conversion in terms of
+    [[fs.path.fmt.cvt]](http://eel.is/c++draft/fs.path.fmt.cvt).
+  - Charlie strongly agreed that formatting as if by the `u8string()` member of `std::filesystem::path`
+    is the right thing to do.
+  - Victor expressed a preference for a solution that preserves all information.
+  - Tom proposed considering solutions from a text vs binary perspective with a goal to preserve
+    binary representation so as to avoid data loss; programmers can perform conversion to text
+    with their own preferred substitution when desired.
+  - Victor agreed and noted a desire for a solution that maintains round tripping.
+  - Tomasz suggested the possibility of multiple formatting options.
+  - Charlie noted that use of an escape mechanism would solve the problem of conversions between
+    libraries that work in narrow vs wide characters.
+  - PBrett opined that it sounds like we need an actual proposal for how to format paths.
+  - PBrett repeated the earlier advice to remove support for `std::filesystem::path` from the paper
+    and encouraged the creation of a new proposal to support it before
+    [P2286](https://wg21.link/p2286) is adopted.
+  - Tomasz stated there is no urgency so long as
+    [P2286](https://wg21.link/p2286) precludes handling `std::filesystem::path` as a range.
+  - **Poll 1: Recommend removing the filesystem::path formatter from P1636 "Formatters for library types",
+    and specifically disabling filesystem::path formatting in P2286 "Formatting ranges", pending a proposal
+    with specific design for how to format paths properly.**
+    - Attendance: 12
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   5 |   1 |   0 |   0 |
+      
+    - Strong concensus in favor.
+  - PBrett asked for a volunteer to write the suggested paper.
+  - Victor volunteered.
+  - PBrett: volunteered to help with wording.
+  - Mark asked rhetorically if solving the escaping problem also solves the unescaping problem.
+- [P2361R2: Unevaluated strings](https://wg21.link/p2361r2)
+  - Corentin presented:
+    - Previously, all string literals were converted to the literal encoding in translation phase 5
+      whether they corresponded to lexical strings or string literal objects.
+    - The goal is to prohibit numeric escape sequences and conditional escape sequences in lexical
+      strings, but not in string literals that initialize string literal objects. 
+    - Support for UCNs and other character escapes is retained for all string literals.
+    - There is currently implementation divergence regarding when encoding prefixes are or are not
+      allowed.
+  - Jens noted that the list of unevaluated string literals is missing the literal operator ID case.
+  - Jens stated that, following [P2314](https://wg21.link/p2314), conversion and addition of a null
+    character is now performed during translation phase 7.
+  - Hubert noted that other proposals are changing nearby wording and that a rebase will likely be needed.
+  - Hubert observed that wording is missing with regard to how to compare strings in cases for `extern "C"`.
+  - Corentin replied that he will update the wording.
+  - Hubert noted that the wording will need to address cases like `extern "\u0043"`.
+  - Corentin acknowledged that the proposed wording will need some updates.
+  - Corentin added that SG22 will review the paper soon and that he would like to target C++23.
+  - Jens identified a grammar ambiguity; *unevaluated-string* and *string-literal* both match *s-char-sequence*.
+  - Hubert noted that a similar case occurs with *header-name*.
+  - Jens replied that the *header-name* case can be disambiguated by a preceding `#include` but that
+    the preprocessor cannot disambiguate *unevaluated-string* and *string-literal* in, e.g., `static_assert()`.
+  - Corentin replied that he'll find a way to address this without modifying the grammar.
+  - Jens suggested retaining *string-literal* as the lexical term and then handling the different cases
+    where the uses diverge.
+  - Hubert stated that there are non-diagnostic concerns; for example with `asm` statements.
+  - Corentin replied that an implementation can do whatever it likes with `asm` strings, such as passing
+    them to an external assembler; the standard doesn't have to address such cases.
+  - Hubert responded that the proposed change does reduce what the programmer can express, but that an
+    implementation could, for example, do something different with an encoding prefix, issue a warning,
+    and continue.
+  - Hubert noted that following the introduction of `char8_t`, `u8""` string literals may no be accepted
+    in some contexts they previously were.
+  - Jens remarked that, for string literals, there is a distinct place where encoding conversion is
+    specified; when initializing a string object.  For unevaluated string literals, there is no single
+    location.
+  - Corentin replied that he would work with Aaron to identify a wording solution.
+  - PBindels asked if the proposal should be recommended as a DR.
+  - Corentin stated no opinion on the matter.
+  - Aaron replied that consideration as a DR is questionable.
+  - PBindels clarified that doing so could make the life of an implementor easier by avoiding any need
+    to fix conformance issues with rejection of encoding prefixes in earlier standard conformance modes.
+  - **Poll 3: Acknowledging that we have limited time available, we support the direction for P2361R2
+    and encourage further work.**
+    - Attendance: 12
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   6 |   5 |   0 |   0 |   0 |
+      
+    - Strong concensus in favor.
+- Tom announced that the next meeting will be on October 13th.
+- \[ Editor's note: The next meeting ended up getting moved to October 6th due to scheduling conflicts. \]
 
 
 # September 8th, 2021
