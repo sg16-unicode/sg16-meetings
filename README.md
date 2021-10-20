@@ -29,6 +29,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [October 6th, 2021](#october-6th-2021)
 - [September 22nd, 2021](#september-22nd-2021)
 - [September 8th, 2021](#september-8th-2021)
 - [August 25th, 2021](#august-25th-2021)
@@ -51,7 +52,145 @@ The draft agenda is:
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
+# October 6th, 2021
 
+## Agenda
+- [D2460R0: Relax requirements on wchar_t to match existing practices](https://wg21.link/p2460r0)
+- [D1885R8: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r8)
+  - Discuss and poll issues recently raised on the LEWG and SG16 mailing lists.
+
+## Meeting summary
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [D2460R0: Relax requirements on wchar_t to match existing practices](https://wg21.link/p2460r0)
+  - \[ Editor's note: D2460R0 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P2460R0 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Corentin presented:
+    - Writing this paper was necessary to make progress on P1885.
+    - The standard has been out of sync with at least one major implementation for many years.
+    - The proposed wording transitions prior core language requirements to library preconditions.
+  - PBrett commented that maintaining preconditions in the library wording seems correct, but that the
+    wording should be changed to introduce library UB for characters that are not encodeable in a
+    single code unit.
+  - Corentin replied with a desire to agree on the design first and then address wording.
+  - Hubert objected to the original paper title ("UTF-16 is standard practice") since UCS-2 is also
+    non-conforming when used as the execution wide-character set if the execution character set
+    contains more characters as happens when UTF-8 is the execution encoding.
+  - Hubert agreed with the direction that PBrett suggested.
+  - PBrett summarized; the direction is good, some refinement is needed, and some prose is needed to
+    explain why claiming UCS-2 instead of UTF-16 does not suffice to avoid issues.
+  - Jens and Hubert clarified that the prose should make it clear that the changes also allow use of
+    UCS-2 when, e.g., UTF-8 is used as the execution encoding.
+  - PBrett asserted that the prose should explain how the wording change accomplishes the goals of
+    the paper.
+  - PBrett asked if there is an existing core issue for concerns addressed by the paper.
+  - Corentin replied that he was unable to find one.
+  - Mark verified that there are no active CWG issues that mention UCS-2 or UTF-16.
+  - **Poll 1: Add expanded motivation to D2460R0 and forward the paper so revised to EWG
+    with a recommended ship vehicle of C++23.**
+    - Attendance: 10
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   3 |   1 |   0 |   0 |
+      
+    - Strong concensus in favor.
+  - Hubert asked if a feature test macro is warranted and noted the existence of `__STDC_MB_MIGHT_NEQ_WC__`.
+  - PBrett suggested that SG10 (the feature test study group) review the need for a macro.
+  - Tom noted that LEWG should review the paper since it adds library UB where none was possible
+    previously.
+  - Tom asked if anyone felt the need to review a revision of this paper in SG16 again.
+  - No such desires were raised.
+  - Corentin indicated that he will start a mailing list discussion for LEWG.
+- [D1885R8: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r8)
+  - \[ Editor's note: D1885R8 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P1885R8 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Corentin presented:
+    - The paper goals are limited to tagging known encodings used for interchange, not every possible
+      encoding.
+    - There is considerable history, some of it contradictory, mistakes have been made.
+    - There are multiple encoding kinds; fixed width vs variable width, single byte vs double byte.
+    - Wide interfaces are provided mostly for consistency with `char`-based interfaces.
+    - There are few wide character encodings.
+  - Hubert disputed the statement that there are few wide character encodings and indicated there are at
+    least as many wide encoding variants as there are ISO-8859 variants.
+  - Corentin expressed a desire for more information.
+  - Hubert replied that, for every IBM documented CCSID encoding, there is one two byte and one four byte
+    encoding; the narrow encoding is the odd one that uses a shift-state encoding.
+  - Hubert noted that documentation is written in terms of character sets that are trivially encoded;
+    encoding schemes are therefore not explicitly documented.
+  - Tom recommended IBM's "Character Data Representation Architecture" documentation.
+  - \[ Editor's note: Hubert later posted links to related IBM documentation to the SG16 mailing list in
+    an email thread sith subject, "Structure of EBCDIC MBCS and wide EBCDIC"; an archive of that message
+    thread is available at
+    https://lists.isocpp.org/sg16/2021/10/2719.php. \]
+  - Hubert noted that he usually consults ICU's converter explorer rather than IBM documentation.
+  - \[ Editor's note: ICU's converter explorer is available at
+    https://icu4c-demos.unicode.org/icu-bin/convexp. \]
+  - Hubert noted that, for `iconv()`, use of the UTF-16 encoding results in BOMs being produced and
+    consumed.
+  - Jens presented:
+    - An octet is not the same as a byte.
+    - The cncoding form concept is applicable to non-Unicode encodings.
+    - An encoding scheme encodes the output of an encoding form into a series of octets.
+    - The "UTF-16" identifier is ambiguous because it may refer to either the encoding form or the
+      encoding scheme.
+    - The IANA registry specifies encoding schemes.
+  - Tom asked if the use case presented for `iconv()` has defined behavior since it involves writing
+    to objects of type `wchar_t` using pointers to `\[unsigned\] char`.
+  - PBrett responded that objects of type `wchar_t` can be allocated and then passed to `iconv()` to
+    read or write them.
+  - Corentin asserted that the encoding form concept is not useful for users.
+  - Tom stated that he remains unclear with regard to behavior for, e.g., UTF-16 in `char` when
+    `CHAR_BIT` is 16.
+  - Hubert replied that we take the hand wavy approach and avoid BOMs.
+  - Zach stated that, as long as the encoding matches the bits produced, that he is satisfied; there
+    needs to be a 1x1 corespondence between bytes.
+  - Jens asserted that UTF-16LE or UTF-16BE should be returned.
+  - PBrett replied that programmers won't expect that.
+  - Tom suggested that we decide the behavior we want, and then make the wording match that.
+  - Jens noted the desire to return UTF-16, but that the definitions in our normative references don't
+    permit that.
+  - **Poll 2: The values returned by the `literal()` and `wide_literal()` functions must indicate
+    the encoding scheme associated with the object representation of ordinary and wide string
+    literals respectively; UTF-16 & UTF-32 are interpreted as having native endianness, and the
+    LE and BE forms are never returned.**
+    - Attendance: 10
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   6 |   0 |   0 |   0 |
+      
+    - Strong concensus in favor.
+  - **Poll 3: Notwithstanding the specification in ISO10646, we suggest to return UTF-{16,32}
+    from `literal()` or `wide_literal()` with the understanding that string literals in the
+    compiled program may not actually begin with a BOM and that library facilities
+    \[e.g. `iconv()`\] may consume a BOM if present.**
+    - Attendance: 10
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   8 |   1 |   0 |   0 |
+      
+    - Strong concensus in favor.
+  - **Poll 4: Forward P1885 as revised to incorporate SG-16 feedback on object representation
+    interpretation to LEWG with a recommended ship vehicle of C++23.**
+    - Attendance: 8
+    - No objection to unanimous consent.
+- Tom stated that the next telecon will be October 20th.
+
+  
 # September 22nd, 2021
 
 ## Agenda
@@ -60,7 +199,6 @@ The draft agenda is:
 - [P2361R2: Unevaluated strings](https://wg21.link/p2361r2)
 
 ## Meeting summary
-
 - Attendees:
   - Aaron Ballman
   - Charlie Barto
@@ -246,7 +384,6 @@ The draft agenda is:
 - [P2361R2: Unevaluated string literals](https://wg21.link/p2361r2)
 
 ## Meeting summary
-
 - Attendees:
   - Charlie Barto
   - Corentin Jabot
@@ -432,7 +569,6 @@ produced by `std::print()`.
   - Peter Brett
   - Steve Downey
   - Victor Zverovich
-
 - [P2348R0: Whitespaces Wording Revamp](https://wg21.link/p2348r0)
   - Corentin presented
   - Steve: Is "basic source character set" a bug in comment grammar?
@@ -560,7 +696,6 @@ produced by `std::print()`.
   - Steve Downey
   - Tom Honermann
   - Victor Zverovich
-
 - [LWG 3565: Handling of encodings in localized formatting of chrono types is underspecified](https://cplusplus.github.io/LWG/issue3565)
   - PBrett presented
     - The standard is underspecified in terms of what happens with localized
