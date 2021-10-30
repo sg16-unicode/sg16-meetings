@@ -9,22 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, October 20th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211020T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, November 3rd, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211103T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cet)).
 The draft agenda is:
-- D2071R1: Named universal character escapes
-  - Add named escape sequences to universal-character-name to match delimited escape sequences.
-  - Use Unicode rules for matching names rather than requiring exact case-sensitive names.
-- [P1885R8: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r8)
-  - Continue discussions of issues raised on the LEWG and SG16 mailing lists.
-    - Prohibit mapping to IANA encodings when `CHAR_BIT` is not 8?
-    - Address special cases for IANA mapping purposes:
-      - Is UTF-16 valid for ordinary strings when `CHAR_BIT` is >= 16?
-      - Is UTF-16 valid for wide strings when `CHAR_BIT` is >= 16 and `sizeof(wchar_t)` is 1?
-      - Is the underlying representation of a wide string required to match an encoding scheme for
-        the encoding form when `sizeof(wchar_t)` is not 1?
-      - Limit mapping of wide strings when `sizeof(wchar_t)` is not 1 to `other`, `unknown`, and
-        the UCS/UTF variants.
+- [P1854R1: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r1)
+  - New revision review.
+- [P2361R3: Unevaluated strings](https://wg21.link/p2361r3)
+  - New revision review.
 
 
 # Past SG16 meetings
