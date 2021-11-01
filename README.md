@@ -22,6 +22,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [October 20th, 2021](#october-20th-2021)
 - [October 6th, 2021](#october-6th-2021)
 - [September 22nd, 2021](#september-22nd-2021)
 - [September 8th, 2021](#september-8th-2021)
@@ -44,6 +45,205 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 20th, 2021
+
+## Agenda
+- D2071R1: Named universal character escapes
+  - Add named escape sequences to *universal-character-name* so that these escape sequences can be
+    used everywhere, not just in string literals.
+  - Use Unicode rules for matching names rather than requiring exact case-sensitive names.
+- [P1885R8: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r8)
+  - Continue discussions of issues raised on the LEWG and SG16 mailing lists.
+  - Prohibit mapping to IANA encodings when `CHAR_BIT` is not 8?
+  - Address special cases for IANA mapping purposes:
+    - Is UTF-16 valid for ordinary strings when `CHAR_BIT` is >= 16?
+    - Is UTF-16 valid for wide strings when `CHAR_BIT` is >= 16 and `sizeof(wchar_t)` is 1?
+    - Is the underlying representation of a wide string required to match an encoding scheme for the
+      encoding form when `sizeof(wchar_t)` is not 1?
+    - Limit mapping of wide strings when `sizeof(wchar_t)` is not 1 to `other`, `unknown`, and the
+      UCS/UTF variants?
+
+## Meeting summary
+- Attendees:
+  - Charlie Barto
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- D2071R1: Named universal character escapes
+  - Steve presented:
+    - The most significant change is to make `\N{...}` a *universal-character-name* (UCN); this maintains
+      consistency with the recent addition of `\u{...}` proposed in
+      [P2290 (Delimited escape sequences)](https://wg21.link/p2290).
+    - Implementation experience exists with both Clang and Circle.
+    - Both implementations use Corentin's name lookup code.
+    - \[ Editor's note: That code is presumably from Corentin's ext-unicode-db repository available at
+      https://github.com/cor3ntin/ext-unicode-db/tree/name_to_cp. \]
+    - Sean Baxter reported a 272K increase in the size of the Circle compiler binary following implementation.
+    - EWG requested exact name matching.
+    - Unicode recommends loose matching.
+    - \[ Editor's note: where can one find a citation for this recommendation? \]
+  - PBrett noted that the paper does not include the rationale for EWG's prior preferences.
+  - Hubert stated that
+    [P2290 (Delimited escape sequences)](https://wg21.link/p2290)
+    was discussed in WG14 and noted feedback that curly braces are problematic on EBCDIC systems; though
+    these characters are represented in all EBCDIC code pages customarily used for source code, these
+    characters are not encoded the same way in all such code pages.
+  - PBrett asked if a replacement syntax would be necessary.
+  - Hubert replied that an additional syntax would suffice.
+  - PBrett asked if multiple syntaxes is desirable.
+  - Jens replied negatively.
+  - Hubert noted that digraphs can't be used within string literals and that C++ removed support for
+    trigraphs.
+  - PBrett asked if there is experience in other languages using parenthesis, or perhaps both curly braces
+    and parenthesis.
+  - PBrett noted that all implementations will be required to support UTF-8 in C++23.
+  - Hubert acknowledged the UTF-8 requirement and noted that UTF-8 support is useful for source transfer
+    but not so much for native editing since local editors may not support it.
+  - PBrett observed that an alternate escape syntax could be used in non-UTF-8 encoded source code.
+  - Hubert acknowledged, but stated that doing so compromises readability.
+  - Mark asked from chat: "how did format solve this?"
+  - Hubert responded that `std::format()` is another such problematic case, though even more problematic
+    because of the requirement to process the string according to the literal encoding.
+  - PBrett noted that, if multiple syntaxes are supported, then people will use what they are most familiar
+    with, probably curly braces due to use in other languages, and end up with non-portable code anyway.
+  - PBrett opined that supporting a single syntax is the preferred trade off.
+  - Hubert agreed that, if only one syntax is supported, that it should use curly braces.
+  - Hubert stated that he was raising the issue because there are programmers that expect code
+    to "just work" even when there are subtle mojibake issues.
+  - Zach was relieved that there was not a request for a syntax that used only parenthesis.
+  - Zach commented that we constantly struggle with available syntax, so we should not consume more than
+    is necessary.
+  - Jens opined that curly braces are members of the basic character set and used in strings elsewhere,
+    so spending extra effort in this case seems unwarranted.
+  - Jens requested that the paper be updated to note the concern.
+  - Hubert noted that, in other cases of curly braces in string literals, other escape sequences can be used;
+    that isn't an option for UCNs in string literals though.
+  - Jens acknowledged and added that UCNs are also restricted to specifying characters that are not members
+    of the basic character set outside of literals.
+  - Jens suggested that the escape hatch is to not use this feature.
+  - Tom noted that IBM can continue to use trigraphs.
+  - Jens agreed with the added observation that such use makes the code non-portable.
+  - **Poll 1: We should support both `\u{xxxx}` and `\u(xxxx)` (resp. `\N{ABCD}` and `\N(ABCD)`)
+    for better support on EBCDIC systems and others where `{` and `}` are not consistently encoded
+    in the character sets customarily used for source code.**
+    - Attendance: 9
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   0 |   2 |   4 |   2 |
+      
+    - Consensus against.
+  - Hubert requested that the SG16 chair inform the SG22 chair of this poll result for its
+    relation to
+    [P2290 (Delimited escape sequences)](https://wg21.link/p2290)
+    and the corresponding proposal for WG14.
+  - Jens requested that multiple wording options not be present in the paper going forward.
+  - Steve stated that there are two remaining issues to poll, use of the
+    UAX44-LM2 name matching algorithm and named escape sequences as UCNs.
+  - Discussion turned to loose name matching.
+  - Zach commented that code searches become more complicated when loose matching is allowed.
+  - Jens stated that strong rationale is needed to justify a change of EWG's prior position.
+  - Tom shared slides presented in Belfast that may have influenced EWG's position on loose
+    matching.
+  - \[ Editor's note: those slides illustrated that matching would succeed with cases like:
+
+        ”\N{NOBREAKSPACE}”
+        ”\N{NO BREAK SPACE}”
+        ”\N{NO_BREAK_SPACE}”
+        ”\N{NO-B_R-E-A_K-S P A C E}”
+    \]
+  - **Poll 2: Despite previous EWG feedback, we recommend the use of the UAX44-LM2 name
+    matching algorithm.**
+    - Attendance: 9
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   3 |   3 |   1 |   1 |
+      
+    - No consensus.
+    - SA: I want to be able to easily grep for names; most other languages don't support
+      loose matching.
+  - Steve stated that he will change the paper to remove the recommendation for UAX44-LM2.
+  - Tom interpreted this poll result as indicating that the compiler size concerns are
+    not motivating.
+  - Discussion turned to named escape sequences as UCNs.
+  - Hubert noted that specifying named escapes as a form of UCN raises the issue that formation
+    of a UCN via token pasting results in UB.
+  - **Poll 3: Named escape sequences should be specified in the language as an alternative
+    form of universal-character-name.**
+    - Attendance: 9
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   3 |   0 |   0 |   0 |
+      
+    - Strong consensus in favor.
+  - Tom requested that any wording review feedback be sent to the mailing list in advance of
+    the next telecon.
+- [P1885R8: Naming Text Encodings to Demystify Them](https://wg21.link/p1885r8)
+  - PBrett introduced the topics for discussion:
+    - Whether the encoding querying functions should return `unknown` when `CHAR_BIT` is not 8.
+    - How to handle wide strings for various values of `sizeof(wchar_t)` and `CHAR_BIT`.
+  - Hubert suggested that decisions regarding how to handle `CHAR_BIT` when it is not 8 may have to
+    be deferred to SG14 for embedded implementations.
+  - Zach stated that `sizeof(wchar_t)==1` is problematic when `CHAR_BIT` is 8.
+  - PBrett replied that there is a proposal to lift the restriction that currently requires that
+    `wchar_t` be able to represent all characters of all implementation supported character sets;
+    [P2460 (Relax requirements on wchar_t to match existing practices)](https://wg21.link/p2460).
+  - Jens noted that we have discussed encoding schemes in the context of `wide_literal()` and that
+    BE/LE appropriate results would be expected in that case, but we currently have consensus for
+    a native endian result with no BOM semantics.
+  - Jens raised a consistency concern; the paper currently erases the encoding endianness information
+    for the UTF cases, but not for the UCS cases.
+  - Jens stated that there are questions about wide-EBCDIC and endianness, but that those encodings
+    don't currently exist in the IANA registry.
+  - Jens noted that, at present, the only permissible IANA registered wide encodings when
+    `sizeof(wchar_t)` is not 1 are UTF-16, UTF-32, UCS-2, and UCS-4.
+  - PBrett asked Charlie for his impression of what the impact would be of returning UTF-16BE on
+    Windows assuming a bigendian platform.
+  - Charlie responded that Windows doesn't support any bigendian platforms, so it wouldn't matter
+    right now; Windows programmers just assume UTF-16LE.
+  - PBrett expressed concern about unexpected encoding names being returned and compared using
+    other APIs.
+  - Hubert observed that programmers may, or may not, want to see UTF-32LE vs UTF-32BE be returned
+    for one Linux system vs another.
+  - Steve raised the concern of a program externalizing an encoding name as UTF-16 and then providing
+    UTF-16LE text instead of (the expected default of) UTF-16BE.
+  - Steve mentioned in chat: "UTF-16 generally is supposed to imply BE. In practice it doesn't but,
+    that's an inconsistency."
+  - Charlie asked in chat: "isn't that just because the network byte order is BE?"
+  - Jens replied in chat: "Steve: No. ISO 10646 encoding scheme "UTF-16" says
+    "interpret BOM; if none is found, use big-endian"."
+  - Jens continued in chat: "Steve: iconv does "interpret BOM; if none is found, use host endianness"."
+  - Tom observed that, in the standard, the wording for string literals is written in terms of
+    code units and encoding form and expressed a belief that programmers tend to work on code units
+    rather than bytes; except for interfaces like `iconv()`.
+  - Jens replied that previous polls supported an encoding scheme approach in order to support the
+  - `iconv()` use case.
+  - Jens stated that switching to encoding form would be a no-op for ordinary strings.
+  - Jens added that concern about object representation seems wrong since it is so implementation specific.
+  - PBrett expressed a desire to work with bytes and that object representation therefore matters for
+    wide strings.
+  - Hubert acknowledged the present inconsistency and noted the friction with encoding scheme.
+  - Charlie stated that it is difficult to conceive of cases where the object representation encoding
+    would differ from the native encoding.
+  - Jens noted that proper byte access would currently require querying native endianness when presented
+    with UTF-16; if the special case for UTF-16 were to be dropped, then behavior would be consistent.
+  - Tom noted the benefit of being able to use UTF-16BE on little endian systems for encoding tagging purposes.
+  - Jens observed that friction could be reduced by dropping support for wide strings.
+  - Tom stated that we should re-poll the special case for UTF-16.
+- Tom stated that the next telecon will be November 3rd and that we will plan to poll the special case
+  for UTF-16 for P1885, and possibly look at updated wording for P2071.
+- \[ Editor's note: since LEWG will be preceding with electronic polling of P1885R9 as is, SG16 will table
+  further discussion of that proposal pending a new paper that argues for changes. \]
+
 
 # October 6th, 2021
 
@@ -97,7 +297,7 @@ The draft agenda is:
       | --: | --: | --: | --: | --: |
       |   5 |   3 |   1 |   0 |   0 |
       
-    - Strong concensus in favor.
+    - Strong consensus in favor.
   - Hubert asked if a feature test macro is warranted and noted the existence of `__STDC_MB_MIGHT_NEQ_WC__`.
   - PBrett suggested that SG10 (the feature test study group) review the need for a macro.
   - Tom noted that LEWG should review the paper since it adds library UB where none was possible
@@ -165,7 +365,7 @@ The draft agenda is:
       | --: | --: | --: | --: | --: |
       |   4 |   6 |   0 |   0 |   0 |
       
-    - Strong concensus in favor.
+    - Strong consensus in favor.
   - **Poll 3: Notwithstanding the specification in ISO10646, we suggest to return UTF-{16,32}
     from `literal()` or `wide_literal()` with the understanding that string literals in the
     compiled program may not actually begin with a BOM and that library facilities
@@ -176,7 +376,7 @@ The draft agenda is:
       | --: | --: | --: | --: | --: |
       |   0 |   8 |   1 |   0 |   0 |
       
-    - Strong concensus in favor.
+    - Strong consensus in favor.
   - **Poll 4: Forward P1885 as revised to incorporate SG-16 feedback on object representation
     interpretation to LEWG with a recommended ship vehicle of C++23.**
     - Attendance: 8
@@ -229,7 +429,7 @@ The draft agenda is:
       | --: | --: | --: | --: | --: |
       |   2 |   6 |   1 |   0 |   0 |
       
-    - Strong concensus in favor.
+    - Strong consensus in favor.
 - [P1636R2: Formatters for library types](https://wg21.link/p1636r2)
   - PBrett stated that SG16 is reviewing this paper due to concerns Tomasz raised regarding
     quoting and localization in the formatting of `std::filesystem::path`.
@@ -309,7 +509,7 @@ The draft agenda is:
       | --: | --: | --: | --: | --: |
       |   5 |   5 |   1 |   0 |   0 |
       
-    - Strong concensus in favor.
+    - Strong consensus in favor.
   - PBrett asked for a volunteer to write the suggested paper.
   - Victor volunteered.
   - PBrett: volunteered to help with wording.
@@ -364,7 +564,7 @@ The draft agenda is:
       | --: | --: | --: | --: | --: |
       |   6 |   5 |   0 |   0 |   0 |
       
-    - Strong concensus in favor.
+    - Strong consensus in favor.
 - Tom announced that the next meeting will be on October 13th.
 - \[ Editor's note: The next meeting ended up getting moved to October 6th due to scheduling conflicts. \]
 
@@ -493,7 +693,7 @@ produced by `std::print()`.
     changes granted permission rather than mandating behavior.
   - Victor: We went with more relaxed wording due to concerns over user 
     provided locales; we could strengthen the behavior.
-  - Hubert: Yes, we had weak concensus for use of literal encoding for 
+  - Hubert: Yes, we had weak consensus for use of literal encoding for 
     UTF-8, but that doesn't imply consensus for more general use.
   - Tom: I don't buy the argument that because the format string needs 
     to match literal encoding for compile time processing that that implies 
@@ -1251,7 +1451,7 @@ produced by `std::print()`.
     - Jens agreed that some form of a non-text in-band signalling mechanism would be needed.
     - Victor clarified that his argument for preserving binary data is for the case where output is directed
       to a file.
-    - Hubert noted that poll 3 and poll 10 are related and that concensus for poll 10 will require facilities
+    - Hubert noted that poll 3 and poll 10 are related and that consensus for poll 10 will require facilities
       related to poll 3.
   - **Poll 3.1: P2093R6: Regardless of format string encoding assumptions, `<format>` facilities may be used to format binary data.**
     - Attendance: 8 (1 abstention)
