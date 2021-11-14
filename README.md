@@ -9,11 +9,9 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, November 3rd, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211103T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cet)).
+Wednesday, November 17th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211117T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- D2071R1: Named universal character escapes
-  - Continue review pending a revision update.
 - [P1854R1: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r1)
   - New revision review.
 - [P2361R3: Unevaluated strings](https://wg21.link/p2361r3)
