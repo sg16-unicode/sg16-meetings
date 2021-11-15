@@ -20,6 +20,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [November 3rd, 2021](#october-3rd-2021)
 - [October 20th, 2021](#october-20th-2021)
 - [October 6th, 2021](#october-6th-2021)
 - [September 22nd, 2021](#september-22nd-2021)
@@ -45,6 +46,139 @@ The draft agenda is:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# November 3rd, 2021
+
+## Agenda
+- [D2071R1: Named universal character escapes](https://lists.isocpp.org/sg16/att-2805/d2071r1.html)
+  - Continue review pending a revision update.
+- [P1854R1: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r1)
+  - New revision review.
+- [P2361R3: Unevaluated strings](https://wg21.link/p2361r3)
+  - New revision review; we last reviewed this proposal during the
+    [2021-09-22 telecon](https://github.com/sg16-unicode/sg16-meetings#september-22nd-2021).
+
+## Meeting summary
+- Attendees:
+  - Hubert Tong
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [D2071R1: Named universal character escapes](https://lists.isocpp.org/sg16/att-2805/d2071r1.html):
+  - Tom noted that green highlight is missing in the wording for the feature test macro.
+  - Jens stated that the Unicode standard divides name aliases into five types named
+    *correction*, *control*, *alternate*, *figment*, and *abbreviation*, but that ISO 10646
+    doesn't reflect this partitioning.
+  - Steve reported that the aliases described in ISO 10646 appear to be mechanically produced from
+    the Unicode standard's
+    [NamesList.txt](https://www.unicode.org/Public/UCD/latest/ucd/NamesList.txt)
+    file.
+  - Steve noted that the names in
+    [NamesList.txt](https://www.unicode.org/Public/UCD/latest/ucd/NamesList.txt)
+    are distinguishable elsewhere in the Unicode DB which is why they are listed in capital letters
+    in ISO 10646; additional names are listed in
+    [NameAliases.txt](https://www.unicode.org/Public/UCD/latest/ucd/NameAliases.txt).
+  - Jens stated that the ISO 10646 PDF does not retain some information from the Unicode files; for
+    example, ISO 10646 specifies "NO BREAK HERE" as an informative alias for character code point
+    0083, but omits the "NBH" abbreviation specified in
+    [NameAliases.txt](https://www.unicode.org/Public/UCD/latest/ucd/NameAliases.txt).
+  - \[ Editor's note: The aliases present for character code point 0083 in the Unicode names files are:
+
+        NamesList.txt: "NO BREAK HERE"
+        NameAliases.txt: "NO BREAK HERE" (control)
+        NameAliases.txt: "NBH" (abbreviation)
+      ISO/IEC 10646:2020 contains (the "=" introducer indicates an informative alias):
+
+        <control>
+        = NO BREAK HERE
+    \]
+  - Steve suggested that it may be necessary to refer to the Unicode standard for name aliases.
+  - PBrett asked what the process would be for requesting changes to the ISO 10646 standard.
+  - Jens replied that the process is the same for any ISO standard; contact the project editor.
+  - Hubert suggested that an NB representative could provide contacts for filing an issue with ISO 10646.
+  - Jens stated that the paper does not make it clear which Unicode name aliases are intended to be
+    usable in these escape sequences.
+  - Steve stated that ISO 10646 retains some of the Unicode name alias types as normative aliases,
+    but that the rest are informative.
+  - Steve added that the intended usable names from ISO 10646 are the
+    *associated character name* and each *character name alias* preceded by ※.
+  - \[ Editor's note: See ISO/IEC 10646:2020 section 34.3, "Character names list". It is currently
+    assumed, but has not been verified, that the normative name aliases (those preceded by ※) correspond
+    to the aliases present in NameAliases.txt with type *correction*. \]
+  - Steve asked if there is an expectation to be able to use the name aliases listed in NameAliases.txt
+    with type *control* since the relevant characters do not otherwise have an associated character name.
+  - \[ Editor's note: All control characters are listed in NamesList.txt with "\<control\>" as the
+    associated character name. \]
+  - PBrett replied that names for some control characters already appear in the standard and provided
+    "LINE FEED", "SPACE", and "BELL" as examples.
+  - Jens noted that "SPACE" matches a normative name in ISO 10646, but that the others are problematic;
+    "LINE FEED" is not present though "LINE FEED (LF)" is present as an informative alias, and "BELL" is
+    only present as an informative alias.
+  - Steve observed that the desired name for control characters might be the first alias listed in ISO 10646.
+  - Steve asserted that the Unicode *alternate*, *figment*, and *abbreviation* alias types are not stable.
+  - Tom observed that ISO 10646 appears to combine the Unicode control and abbreviation names to produce
+    informative aliases like "LINE FEED (LF)", "new line (NL)", and "end of line (EOL)" and noted the
+    inconsistent use of case.
+  - Steve directed the group to the contents of
+    [NamesList.txt](https://www.unicode.org/Public/UCD/latest/ucd/NamesList.txt).
+  - Jens reported that the names listed in NamesList.txt match those in ISO 10646; it contains the same
+    "LINE FEED (LF)", "new line (NL)", and "end of line (EOL)" aliases noted earlier.
+  - Steve suggested that NamesList.txt may be parseable; an EBNF specification is present in
+    [Unicode® NamesList File Format](http://www.unicode.org/Public/UNIDATA/NamesList.html).
+  - Tom discovered that section 12 of ISO/IEC 10646:2020 has a list of names for control characters.
+  - Jens observed that those names are present in a note and are therefore not normative.
+  - Jens noted that these discoveries indicate that some of the names currently being used in the C++
+    standard are not correct; "FORM FEED" should be used instead of "FORM FEED (FF)".
+  - PBrett asked if the note in ISO 10646 can be normatively referenced from the standard.
+  - Jens replied that a note can be added that matches the note in ISO 10646 for control names.
+  - Tom noted that ISO/IEC 10646:2020 section 7.4 contains a reference to NamesList.txt; that introduces
+    the possibility of referring to it via ISO 10646.
+  - Jens stated that the desired names from ISO 10646 are the *associated character name* and
+    *character name aliases* names.
+  - Tom asked if the issue with missing names is limited to control characters.
+  - Steve replied that it is.
+  - PBrett volunteered to take care of getting an issue filed with ISO 10646 so long as someone is
+    available to help define the concern.
+  - Hubert asked what names other languages support.
+  - Steve replied that he would research further.
+  - Tom suggested that we should check what names the existing C++ implementations in Clang and Circle
+    are actually using; those implementations may need refinement.
+  - Steve replied that both use Corentin's name lookup implementation from
+    https://github.com/cor3ntin/ext-unicode-db/tree/name_to_cp.
+  - Discussion turned to other specification concerns.
+  - Jens expressed concern about the standard having a floating reference to ISO 10646 and explained
+    that this is problematic in this case since publication of a new ISO 10646 edition that contains
+    new names would immediately render all implementations non-conforming.
+  - Steve responded that the standard needs to specify a minimum ISO 10646 edition.
+  - Jens agreed.
+  - PBrett asked if the adoption of
+    [P1949 (C++ Identifier Syntax using Unicode Standard Annex 31)](https://wg21.link/p1949)
+    has this same issue since the introduction of new characters potentially makes new identifiers
+    possible.
+  - Steve replied that identifiers are at least guaranteed to be stable.
+  - Tom replied that the character names and name aliases we want are likewise guaranteed to be stable.
+  - Steve reported that there was originally a desire for a floating reference so that implementations
+    could adopt newer ISO 10646 editions than is specified.
+  - Jens confirmed that specifying a minimum edition with allowance for implementations to support
+    newer editions is needed and possible thanks to stability guarantees.
+  - Tom stated that, given that the paper is in line with prior guidance from both SG16 and EWG and that
+    EWG is already scheduled to discuss the new revision on 2021-11-10, that he believes consensus for
+    the revision exists in SG16 and that no further polls are needed.
+  - Tom asked for dissenting concerns.
+  - No such concerns were raised.
+- [P1854R1: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r1):
+  - Hubert suggested that the paper title should be changed to reflect the change the paper actually proposes.
+  - Tom asked if Hubert would be willing to submit that feedback to the mailing list and the author.
+  - Hubert agreed to do so.
+  - \[ Editor's note: Hubert did so; the relevant email thread is archived at
+    https://lists.isocpp.org/sg16/2021/11/2809.php. \]
+- [P2361R3: Unevaluated strings](https://wg21.link/p2361r3):
+  - No discussion due to lack of time.
+- Tom stated that the next telecon will be 2021-11-17 and will continue discussion of P1854R1 and P2361R3.
+
+  
 # October 20th, 2021
 
 ## Agenda
