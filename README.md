@@ -9,13 +9,14 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, November 17th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211117T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, December 1st, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211201T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [P1854R1: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r1)
-  - New revision review.
-- [P2361R3: Unevaluated strings](https://wg21.link/p2361r3)
-  - New revision review.
+- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)
+  - Discuss the ramifications of fill characters that have an estimated width other than 1.
+- [P2286R3: Formatting Ranges](https://wg21.link/p2286r3)
+  - Discuss the ramifications for support of user defined delimiters and support for quoted and escapes
+    for `std::string`, `std::string_view`, and arrays of `char`/`wchar_t`.
 
 
 # Past SG16 meetings
