@@ -151,9 +151,9 @@ The draft agenda is:
     (NFD; `é` is U+0065 {LATIN SMALL LETTER E} followed by U+0301 {COMBINING ACUTE ACCENT}), then the
     expression would be a multicharacter literal. The proposal seeks to avoid such visual ambiguity by
     restricting the individual written characters in multicharacter literals to those that only contribute
-    a single code unit in the ordinary literal encoding. Combined with the removal of non-encodeable
-    character literals, this suffices to reject the code in the NFD case (U+0301 isn't encodeable as a
-    single code unit in any encodings that are used as the ordinary literal encoding in practice. \]
+    a single code unit in the ordinary literal encoding. This suffices to reject the code in the NFD case
+    (U+0301 isn't encodeable as a single code unit in any encodings that are used as the ordinary literal
+    encoding in practice. \]
   - Corentin agreed to remove the restriction on UCNs from the wording added to the first paragraph of
     \[lex.ccon\] since use of a UCN does not produce visual ambiguity.
   - \[ Editor's note: Thus, the NFD case above can be explicitly written as `'e\u0301'`. \]
