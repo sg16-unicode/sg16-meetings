@@ -21,6 +21,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [November 17th, 2021](#november-17th-2021)
 - [November 3rd, 2021](#november-3rd-2021)
 - [October 20th, 2021](#october-20th-2021)
 - [October 6th, 2021](#october-6th-2021)
@@ -45,6 +46,120 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# November 17th, 2021
+
+## Agenda
+- [D1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
+  - New revision review.
+- [P2361R3: Unevaluated strings](https://wg21.link/p2361r3)
+  - New revision review; we last reviewed this proposal during the
+    [2021-09-22 telecon](https://github.com/sg16-unicode/sg16-meetings#september-22nd-2021).
+
+## Meeting summary
+- Attendees:
+  - Aaron Ballman
+  - Charlie Barto
+  - Corentin Jabot
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- \[ Editor's note: The agenda order was revised to accommodate scheduling conflicts. \]
+- [P2361R3: Unevaluated strings](https://wg21.link/p2361r3)
+  - Corentin introduced the recent wording changes and noted that the *unevaluated-string*
+    production is not matched until after lexing, but is referenced from the wording for the
+    preprocessor line control directive and the `_Pragma` operator as a means to impose
+    constraints on their *string-literal* elements.
+  - Corentin added that, for `asm` declarations, the only change now is to prohibit an
+    encoding prefix.
+  - PBrett requested confirmation that this represents a design change.
+  - Corentin confirmed that it does.
+  - PBrett asked what the ramification would be if EWG rejected such a change.
+  - Corentin responded that there is no current implementation experience involving `asm`
+    declarations that use an encoding prefix.
+  - Corentin added that numeric escape sequences are still allowed in `asm` declarations
+    but that their effect is unknown.
+  - Aaron noted another change from the prior revision that was inspired by implementation
+    experience; the paper now addresses user-defined literals (UDLs).
+  - Jens observed that the change to the grammar for the preprocessing line control directive
+    introduces an allowance for use of raw string literals.
+  - Aaron stated this appears to be an oversight.
+  - Corentin agreed.
+  - Jens stated that use of *string-literal* should be avoided for the preprocessing line
+    control directive if the grammar term doesn't apply.
+  - Aaron noted that this is a pre-existing issue and asked how it should be repaired.
+  - Jens asked how the C standard handles this.
+  - Aaron replied that the C standard defines *string-literal* with an optional encoding
+    prefix.
+  - Corentin stated that the intent was not to enable new syntax, but asked if an allowance
+    for raw strings would be problematic.
+  - Jens responded that raw strings can contain new lines, but preprocessing directives are
+    line based.
+  - PBrett noted that such an allowance would introduce a new divergence from C.
+  - PBrett observed that the current wording discusses *string-literal*.
+  - Jens agreed that there is an existing issue in that the line control wording discusses
+    *string-literal* where no such production is used.
+  - Jens suggested retaining the current grammar so as to avoid an unintended change in meaning.
+  - Corentin agreed to revert the use of *string-literal* in the proposed line control wording
+    and to note the existing issue.
+  - Jens requested that be included as an editorial note in the wording to ensure CWG considers
+    it during wording review.
+  - Jens requested that the proposed wording be rebased on the current draft so as to avoid the
+    need for updates to \[lex.phases\] and \[lex.string\].
+  - Jens requested that "encoding prefix" be styled as a grammar term in \[dcl.asm\].
+  - Jens observed that the user-defined literal operator wording also allows use of raw string
+    literals.
+  - Jens noted that, in \[dcl.link\], the comparison of the recognized language linkages includes
+    the quotes thereby requiring that a declaration be written as `extern "\"C\""`.
+  - Corentin reported that Hubert also had a concern that it was not stated how to compare the
+    literal contents in the wording.
+  - Jens noted that *universal-character-names* (UCNs) can appear in an *unevaluated-string*, but
+    that it isn't clear with respect to the comparison in \[dcl.link\] when that replacement
+    occurs; `"\u0043"` and `"C"` should be handled equivalently.
+  - Jens stated that it is unclear why the wording for \[cpp.pragma.op\] has been updated to strike
+    handling of escape sequences.
+  - Jens admitted a need to translate UCNs for string literals, but noted that doesn't happen here.
+  - PBrett observed that doing so could change the meaning of existing code.
+  - Jens agreed and noted that restoring handling of escape sequences will achieve the desired
+    result; the preprocessing of the destringized string will expand UCNs.
+- [D1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
+  - \[ Editor's note: D1854R2 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P1854R2 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Corentin provided an introduction.
+  - PBrett requested that the abstract be updated to summarize the problem the paper addresses, how it
+    is solved, and what the impact is.
+  - PBrett suggested that the proposed wording for \[lex.ccon\] consistently state,
+    "in the literal's associated character encoding".
+  - Corentin responded that there is no need to do so since multicharacter literals are no longer subject
+    to use of an encoding prefix; their associated encoding is always the narrow literal encoding.
+  - Jens agreed that indirection through an association is not required, but observed that the correct
+    encoding is the "ordinary literal encoding", not the "narrow literal encoding".
+  - Jens requested that "encoding prefix" be styled as a grammar term.
+  - Discussion ensued regarding the goals of the paper and concluded with the following clarifications:
+    - The proposal does **not** intend to prohibit a `c-char` from contributing more than one code unit to
+      the calculation of a multicharacter literal value.
+    - The proposal **does** intend to prevent a character literal from being **unintentionally** parsed as a
+      multicharacter literal in visually ambiguous situations.
+  - \[ Editor's note: Consider `'é'` in a UTF-8 encoded source file. If the source file is in Normalization
+    Form C (NFC; `é` is U+00E9 {LATIN SMALL LETTER E WITH ACUTE}), then the expression would be an ordinary
+    character literal. However, if the source file is in Normalization Form D
+    (NFD; `é` is U+0065 {LATIN SMALL LETTER E} followed by U+0301 {COMBINING ACUTE ACCENT}), then the
+    expression would be a multicharacter literal. The proposal seeks to avoid such visual ambiguity by
+    restricting the individual written characters in multicharacter literals to those that only contribute
+    a single code unit in the ordinary literal encoding. Combined with the removal of non-encodeable
+    character literals, this suffices to reject the code in the NFD case (U+0301 isn't encodeable as a
+    single code unit in any encodings that are used as the ordinary literal encoding in practice. \]
+  - Corentin agreed to remove the restriction on UCNs from the wording added to the first paragraph of
+    \[lex.ccon\] since use of a UCN does not produce visual ambiguity.
+  - \[ Editor's note: Thus, the NFD case above can be explicitly written as `'e\u0301'`. \]
+- Tom announced that the next telecon will be held on 2021-12-01 and that the agenda will include
+  LWG3639 (Handling of fill character width is underspecified in std::format) and further review of
+  P2361 and P1854 pending the availability of new revisions.
 
 
 # November 3rd, 2021
