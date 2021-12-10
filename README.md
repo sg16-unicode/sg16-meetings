@@ -9,14 +9,15 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, December 1st, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211201T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, December 15th, 2021, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211215T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)
-  - Discuss the ramifications of fill characters that have an estimated width other than 1.
-- [P2286R3: Formatting Ranges](https://wg21.link/p2286r3)
-  - Discuss the ramifications for support of user defined delimiters and support for quoted and escapes
-    for `std::string`, `std::string_view`, and arrays of `char`/`wchar_t`.
+- [P2361R4: Unevaluated strings](https://wg21.link/p2361r4)
+  - Poll forwarding to EWG for C++23.
+- [P1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
+  - Discuss and poll forwarding to EWG for C++23.
+- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)<br/>[LWG3576: Clarifying fill character in std::format](https://wg21.link/lwg3576)
+  - Pending an updated proposed resolution from Tom, review and poll forwarding to LWG.
 
 
 # Past SG16 meetings
