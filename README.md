@@ -16,8 +16,8 @@ The draft agenda is:
   - Poll forwarding to EWG for C++23.
 - [P1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
   - Discuss and poll forwarding to EWG for C++23.
-- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)<br/>[LWG3576: Clarifying fill character in std::format](https://wg21.link/lwg3576)
-  - Pending an updated proposed resolution from Tom, review and poll forwarding to LWG.
+- [P2286R4: Formatting Ranges](https://brevzin.github.io/cpp_proposals/2286_fmt_ranges/p2286r4.html)
+  - Review updates since the last telecon.
 
 
 # Past SG16 meetings
