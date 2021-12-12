@@ -22,6 +22,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [December 1st, 2021](#december-1st-2021)
 - [November 17th, 2021](#november-17th-2021)
 - [November 3rd, 2021](#november-3rd-2021)
 - [October 20th, 2021](#october-20th-2021)
@@ -47,6 +48,223 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 1st, 2021
+
+## Agenda
+- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)
+- [P2286R3: Formatting Ranges](https://wg21.link/p2286r3)
+
+## Meeting summary
+- Attendees:
+  - Barry Revzin
+  - Charlie Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- \[ Editor's note: The agenda order was revised to accommodate attendee schedules. \]
+- [P2286R3: Formatting Ranges](https://wg21.link/p2286r3)
+  - Barry provided an introduction.
+    - The goal is to add formatting support for types like tuple, pair, and vector.
+    - A sed-like delimiter syntax is proposed to allow for unambiguous formatting of
+      pair and tuple elements.
+    - The delimiter syntax may be dropped for now in order to focus on fill and alignment.
+    - The delimiter syntax could still be added for a future standard.
+  - Zach mentioned that the Unicode Bidirectional Algorithm document defines a set of paired
+    brackets that could potentially be used as matched delimiters.
+  - \[ Editor's note: The Unicode Bidirectional Algorithm document is
+    [UAX #9](https://unicode.org/reports/tr9).
+    Paired brackets are defined via the UCD `Bidi_Paired_Bracket` and `Bidi_Paired_Bracket_Type`
+    properties in
+    [BidiBrackets.txt](https://www.unicode.org/Public/UCD/latest/ucd/BidiBrackets.txt). \]
+  - Zach provided a brief introduction to how the term "character" gets used. Within the
+    C++ standard, "character" generally means an object of type `char`, a "code point" represents
+    some part of what we notionally think of as a character, and an "extended grapheme cluster" (EGC)
+    represents a "glyph" or what we visually perceive to be a character.
+  - Zach stated that we might be able to get away with specifying delimiters as "characters",
+    but noted that such interfaces tend to become regarded as broken later.
+  - Victor stated that, if the goal is to add some support in C++23, then custom delimiters should
+    be dropped for now given concerns like how use of a digit as a delimiter could lead to problems.
+  - Corentin agreed with Barry and Victor that custom delimiter support can be postponed in favor
+    of a more comprehensive solution later.
+  - Charlie argued strongly in favor of use of code points as delimiters given the lack of
+    experience using EGCs in C++20.
+  - Charlie noted that EGCs do not necessarily correspond to what you might navigate through in a
+    word processor.
+  - Charlie added that combining code points can be combined with bracket characters.
+  - Charlie stated that most other languages just use code points for delimiters.
+  - PBrett expressed concern about the choice of delimiters leading to format strings that are
+    indistinguishable from line noise.
+  - Barry noted that, without custom delimiters, the only newly required character is `:`.
+  - PBrett acknowledged, but noted that a sequence of such characters is needed to navigate
+    range hierarchies.
+  - Barry agreed, but noted that subrange formatting wouldn't otherwise be possible.
+  - PBrett suggested that a required custom formatter may be an improvement.
+  - Barry asked for feedback on two questions.
+    - Is everyone happy with use of `?` for the debug specifier?
+    - Is everyone happy with the described quoting and escaping mechanism for string and
+      character data?
+  - Victor responded that `?` seems ok for the debug specifier.
+  - PBrett asked if there are other use cases for which `?` might be desirable.
+  - Tom noted that `?` is often used in conjunction with optional data.
+  - Tom asked why the proposed specifier is called the "debug" specifier.
+  - Barry responded that "debug" is consistent with Rust's description of its equivalent
+    functionality.
+  - Barry noted that Python uses "repr" for its equivalent.
+  - Jens observed that `std::quoted()` already exists for use with iostreams.
+  - Barry replied that using it would require an additional specifier like `Q`.
+  - PBindels agreed that the "debug" name for the new specifier is confusing.
+  - PBrett noted that the "debug" name would not be reflected in written format strings.
+  - Charlie expressed a preference for "debug" over "repr" so that the latter can be
+    preserved for compiler generated representations.
+  - Jens asked for a summary of the escaping proposal.
+  - Barry replied that the intent is to do what
+    [{fmt}](https://github.com/fmtlib/fmt)
+    does and deferred to Victor.
+  - Victor stated that the escaping done by {fmt} was recently described in an email to
+    the SG16 mailing list.
+  - \[ Editor's note: that email is archived at
+    https://lists.isocpp.org/sg16/2021/12/2874.php. \]
+  - Victor noted that the paper should be updated to describe what {fmt} currently does.
+  - Jens mentioned that the email states that code points in the range 0 through 0x100
+    are formatted as hex escape of the form `\xhh`.
+  - Victor clarified that this substitution only applies to non-printable characters.
+  - Jens asked what characters are considered non-printable.
+  - Victor replied that Unicode specifies a non-printable property and that Rust has a
+    non-printable concept.
+  - \[ Editor's note: Unicode does not specify a printable or non-printable property, but
+    does specify many properties from which such properties could be derived. \]
+  - Tom stated that there appear to be two specification questions:
+    - What characters in the code point range 0 through 0x100 are considered non-printable?
+    - How are non-printable characters escaped?
+  - Tom expressed a preference for use of UCN notation for non-printable characters.
+  - Corentin agreed; use hex escapes for invalid code units and UCN notation for characters.
+  - Corentin suggested it might make sense to use hex escapes for non-Unicode encodings.
+  - PBrett asked if it would be a problem to specify UCN notation now, but then switch to
+    [P2290](https://wg21.link/p2290) delimited escape sequences later.
+  - Jens stated that depends on other factors.
+  - PBrett replied that it therefore seems quite important to make the right decision now.
+  - Corentin indicated that there is no need to tie the choice of output format to the
+    delimited escape sequences specified in P2290.
+  - Corentin stated that P2290 will appear in the next EWG eletronic voting cycle.
+  - Victor expressed reluctance towards P2290 delimited escape sequences due to increased
+    verbosity and inconsistency with Rust.
+  - Victor added that use of brace delimiters with `\x` is unusual.
+  - PBrett encouraged use of delimited escape sequences for readability benefits.
+  - Jens asked if it is intended that copy/paste work to produce a string literal that
+    matches the formatted output.
+  - Barry stated that would be a worthwhile goal.
+  - Jens noted that it is therefore necessary to avoid potential munging with `\x`; this
+    might require spliced strings.
+  - Tom noted that such munging is a concern for human consumption as well.
+  - \[ Editor's note: With regard to munging, consider `\xdeface`. Is that a single hex
+    escape, a `\xde` escape followed by `face`, or something in between? \]
+  - Jens agreed, but noted that a human might expect that only hex escapes with two digits
+    will be produced.
+  - Jens asserted that the ability to re-parse strongly suggests use of delimited escapes.
+  - Jens pondered whether the escape mechanism might require an EBCDIC based implementation
+    to transcode to Unicode in order to produce a UCN.
+  - Jens stated that care is needed that deference to the Unicode DB for a non-printable
+    property not result in a large dependency on the Unicode UCD.
+  - Jens suggested an implementation should be permitted to escape all non-ASCII characters.
+  - PBrett suggested that escape sequences could be limited to control characters.
+  - Corentin reported experience with implementing an `isprintable()` function and noted that
+    it does not require a large table.
+  - Tom suggested that round tripping of an escaped string output should be possible with
+    use of the `std::scan()` function proposed in [P1729](https://wg21.link/p1729).
+  - Victor posted a link to an `is_printable()` implementation used in {fmt} and noted the
+    small size of the tables used.
+    - https://github.com/fmtlib/fmt/blob/master/include/fmt/ranges.h#L268-L395
+  - Victor noted that limiting hex escapes to two digits avoids round trip concerns without
+    requiring extra delimiters.
+  - PBrett requested that the next revision of the paper include discussion of these concerns.
+  - Corentin asked if the escape mechanism should be exposed as an independent facility.
+  - Barry suggested that independent facility could just be `std::format()`.
+  - PBrett observed that a standalone facility could be added later.
+  - PBrett asked if SG16 should review an updated revision of this paper again.
+  - Corentin replied affirmatively.
+  - Jens agreed and noted a need to understand the escape mechanism.
+  - Jens stated that the paper should also address non-Unicode platforms.
+  - Corentin noted that, for `wchar_t`, a hex escape with only two digits is insufficient.
+  - Tom noted that two digits is insufficient for `char` when `CHAR_BIT` is greater than 8.
+  - Mark observed that the escape facility would be useful for dealing with file names.
+  - Victor agreed.
+  - **Poll 0: We recommend using universal character name escape sequences rather than
+    numerical escape sequences for the debug representation of all non-printable characters.**
+    - Attendance: 12
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   6 |   2 |   2 |   0 |   0 |
+      
+    - Consensus in favor
+  - **Poll 1: We recommend using brace-delimited numerical escape sequences as described in
+    P2290 "Delimited Escape Sequences" for 'debug' formatting of invalid codeunits
+    (including lone surrogates).**
+    - Attendance: 12
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   4 |   1 |   1 |   0 |
+      
+    - Consensus in favor
+    - A: Delimited hex escape sequences do not exist in C++ yet and are not used elsewhere;
+      but since they will only appear in cases of invalid code units, not SA.
+  - **Poll 2: We recommend using brace-delimited universal character name escape sequences
+    as described in P2290 "Delimited Escape Sequences" for 'debug' formatting of strings.**
+    - Attendance: 12
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   3 |   4 |   0 |   0 |
+      
+    - Consensus in favor
+- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)
+  - Tom provided an introduction.
+  - Victor stated that the proposed resolution is somewhat novel and doesn't match what has
+    been implemented in {fmt}.
+  - Victor noted the absence of a known use case.
+  - Victor added that there is no good solution for when alignment is not possible.
+  - Victor noted that option 3 allows changing behavior later.
+  - Victor recommended proceeding with option 3; if the estimated width is not 1 then an exception may
+    be thrown or some other UB may occur.
+  - Tom asked what current implementations do.
+  - Victor responded that {fmt} assumes an estimated width of 1.
+  - PBrett argued against option 3 and provided U+3000 {IDEOGRAPHIC SPACE} as an example of a useful
+    fill character with width other than 1.
+  - PBrett suggested that an exception could be thrown if alignment requests cannot be met.
+  - Zach recommended requiring an estimated width of 1 such that violations are diagnosed as ill-formed
+    at compile-time and result in UB at run-time.
+  - Zach expressed a desire to avoid paying the cost of checking the estimated width when it will
+    virtually never matter.
+  - Corentin expressed appreciation for PBrett's use case.
+  - Corentin stated that the estimated width approach is known not to produce perfect results in general
+    and that he is therefore not very concerned with how this issue is resolved.
+  - Hubert expressed support for PBrett's use case.
+  - Hubert noted the current absence of a wording mechanism to determine the number of fill characters
+    to insert.
+  - Corentin suggested we get implementation experience before proceeding and emphasized that option 3
+    provides time to do so with the goal of doing better in a future standard.
+  - PBindels agreed with restriction to an estimated width of 1 now, but with violations resulting in
+    UB so that behavior can be changed later.
+  - Victor agreed that PBrett's use case is interesting, but asserted that we should not hand wave a
+    solution for it; we should properly explore support for it.
+- Tom stated that the next SG16 telecon will be held on 2021-12-15 and will likely revisit LWG3639.
+- Tom requested "+1" responses to
+  [Corentin's post](https://lists.isocpp.org/sg16/2021/11/2862.php)
+  to the SG16 mailing list with updates to his
+  [P1854](https://wg21.link/p1854) and [P2316](https://wg21.link/p2316) papers by anyone that feels
+  these papers are ready to poll forwarding to EWG.
+- \[ Editor's note: such "+1" responses were provided in response to a
+  [new post](https://lists.isocpp.org/sg16/2021/12/2888.php). \]
 
 
 # November 17th, 2021
