@@ -16,7 +16,7 @@ The draft agenda is:
   - Poll forwarding to EWG for C++23.
 - [P1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
   - Discuss and poll forwarding to EWG for C++23.
-- [P2286R4: Formatting Ranges](https://brevzin.github.io/cpp_proposals/2286_fmt_ranges/p2286r4.html)
+- [D2286R4: Formatting Ranges](https://brevzin.github.io/cpp_proposals/2286_fmt_ranges/d2286r4.html)
   - Review updates since the last telecon.
 
 
