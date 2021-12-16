@@ -9,15 +9,18 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, December 15th, 2021, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20211215T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, January 12th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220112T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [P2361R4: Unevaluated strings](https://wg21.link/p2361r4)
-  - Poll forwarding to EWG for C++23.
-- [P1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
-  - Discuss and poll forwarding to EWG for C++23.
-- [D2286R4: Formatting Ranges](https://brevzin.github.io/cpp_proposals/2286_fmt_ranges/d2286r4.html)
-  - Review updates since the last telecon.
+- D2286R5: Formatting Ranges
+  - Review pending availability of proposed wording and continued targeting of C++23.
+- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)<br/>[LWG3576: Clarifying fill character in std::format
+](https://wg21.link/lwg3576)
+  - Review pending availability of an updated proposed resolution.
+- [P2491R0: Text encodings follow-up](https://wg21.link/p2491r0)
+  - Initial review.
+- [P2498R0: Forward compatibility of text_encoding with additional encoding registries](https://wg21.link/p2498r0)
+  - Initial review.
 
 
 # Past SG16 meetings
