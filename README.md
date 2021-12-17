@@ -25,6 +25,7 @@ The draft agenda is:
 
 # Past SG16 meetings
 
+- [December 15th, 2021](#december-15th-2021)
 - [December 1st, 2021](#december-1st-2021)
 - [November 17th, 2021](#november-17th-2021)
 - [November 3rd, 2021](#november-3rd-2021)
@@ -51,6 +52,238 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 15th, 2021
+
+## Agenda
+- [P2361R4: Unevaluated strings](https://wg21.link/p2361r4)
+  - Poll forwarding to EWG for C++23.
+- [P1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
+  - Discuss and poll forwarding to EWG for C++23.
+- [D2286R4: Formatting Ranges](https://wg21.link/p2286r4)
+  - Review updates since the last telecon.
+
+## Meeting summary
+- Attendees:
+  - Barry Revzin
+  - Charlie Barto
+  - Corentin Jabot
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tim Song
+  - Tom Honermann
+  - Zach Laine
+- [P2361R4: Unevaluated strings](https://wg21.link/p2361r4)
+  - PBrett explained that SG16 had previously reviewed this paper and that all prior feedback has
+    been addressed.
+  - PBrett thanked Corentin for quickly updating the paper in response to the prior review and for
+    soliciting new feedback on the mailing list.
+  - PBrett asked if there were any new comments.
+  - Tom requested that a table be added to the prose section that summarizes the intended changes;
+    though the effects can be determined from the wording, the impact is subtle with regard to
+    things like where raw string literals are now allowed or disallowed.
+  - Corentin agreed to do so.
+  - Jens expressed a belief that there are no changes with regard to where raw string literals
+    are and are not allowed.
+  - Corentin agreed and noted that there were such changes in a previous revision, but that those
+    changes have been removed.
+  - **Poll 0: Forward P2361R4 "Unevaluated strings" to EWG with a recommended ship vehicle of C++23.**
+    - Attendance: 9
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   4 |   0 |   0 |   0 |
+      
+    - Consensus (though with a smaller quorum than is usual due to abstention from late arrivals).
+- [P1854R2: Conversion to literal encoding should not lead to loss of meaning](https://wg21.link/p1854r2)
+  - Corentin summarized recent changes to improve the motivation and wording and to correct typos.
+  - Corentin recalled that this paper was discussed in Belfast and in a recent telecon, but that the
+    paper has not been polled since Belfast.
+  - \[ Editor's note: Two polls were taken in Belfast as documented in the
+    [minutes for the discussion of P1885](https://wiki.edg.com/bin/view/Wg21belfast/SG16P1885R0).
+    The first was a poll to confirm the direction of the paper and the second was to make it dependent on
+    [P1885 (Naming Text Encodings to Demystify Them)](https://wg21.link/p1885). Both polls had consensus.
+    P1885 was recently approved via electronic polling by LEWG and is expected to be voted on during the
+    next WG21 plenary. \]
+  - Corentin explained that the paper proposes two changes:
+    - Making non-encodable character literals ill-formed.
+    - Adding restrictions to the characters that may syntactically appear in multicharacter literals.
+  - Charlie asked if the proposal will break currently used methods to probe the literal encoding during
+    constant evaluation.
+  - PBrett replied that we now have a facility that avoids the need for such probing.
+  - Charlie acknowledged the new facility and that its existence does reduce concerns, but that he still
+    wanted to be sure about what the expectation is.
+  - Corentin confirmed that such code may be broken and stated that this concern was discussed in Belfast
+    and was the motivation for blocking this paper on adoption of P1885.
+  - \[ Editor's note: Whether such code is broken in practice will depend on what implementors choose to
+    do. The changes require a diagnostic to be produced, but implementors are free to implement that as
+    a warning in which case compilation failure would only occur if warnings are elevated to errors. \]
+  - Tom noted that P1885 recently passed LEWG electronic polling.
+  - Corentin asked if the macros added to recent Microsoft Visual C++ releases to reflect the
+    literal encoding are defined regardless of which `/std` options are passed.
+  - Charlie confirmed that they are.
+  - \[ Editor's note: As of Microsoft Visual C++ version 19.30, the `_MSVC_EXECUTION_CHARACTER_SET` macro
+    is predefined to indicate the code page being used for the literal encoding. \]
+  - Corentin noted that character probing mechanisms are not particularly reliable.
+  - PBrett stated that only one implementation is expected to have to change behavior if this proposal
+    is adopted and noted that the implementor in question is aware of the proposal and has so far not
+    objected to the proposed change.
+  - PBrett reported that prior wording feedback has been addressed.
+  - Jens read the following proposed addition to \[lex.ccon\].
+    - "If a multicharacter literal contains a *basic-c-char* representing a codepoint that is not
+      encodable as a single code unit in the ordinary literal encoding, the program is ill-formed"
+  - Jens noted that the difference between *basic-c-char* and *c-char* is that the former excludes escape
+    sequences and asked if the prohibition against escape sequences was intended to apply to
+    *universal-character-names* (UCNs) as well.
+  - Corentin replied that the design is intended only to apply to visually ambiguous scenarios and that
+    use of a UCN does not create visual ambiguity.
+  - Jens noted that a UCN is not an escape sequence and that the paper prose discusses escape sequences,
+    but not UCNs.
+  - Corentin replied that he will update the prose to make it explicit that UCNs are not prohibited.
+  - Jens pondered whether the previously read wording should state "UCS scalar value" in place of
+    "codepoint".
+  - Corentin replied that the distinction is not relevant after translation phase 1.
+  - Jens opined that neither is actually needed and suggested rephrasing as,
+    "... contains a *basic-c-char* that is not encodable as a single code unit ...".
+  - Corentin agreed to make a change.
+  - Tom pondered whether the parts of the note removed from \[lex.ccon\] that continue to be applicable
+    to multicharacter literals should be preserved.
+  - PBrett pointed out that the note is non-normative and that the relevant parts of it, that
+    multicharacter literals have an implementation-defined value, are normatively specified elsewhere.
+  - **Poll 1: Modify P1854R2 "Conversion to literal encoding should not lead to loss of meaning" to address
+    wording feedback and forward the paper as revised to EWG with a recommended ship vehicle of C++23.**
+    - Attendance: 10
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   5 |   0 |   0 |   0 |
+      
+    - Strong consensus in favor.
+- [D2286R4: Formatting Ranges](https://wg21.link/p2286r4)
+  - \[ Editor's note: D2286R4 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P2286R4 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Corentin reported that the LEWG chair is skeptical that there is sufficient time available for this
+    proposal to be reviewed and adopted for C++23.
+  - Tom reported that both SG9 and SG16 have planned time for review and that, assuming that both SGs
+    forward the paper, further scheduling will be up to the LEWG chair.
+  - PBrett reminded the group that SG16 had previously advocated for adding an explicitly deleted
+    format specialization for `std::filesystem::path` to this paper and dropping the support proposed in
+    [P1636R2 (Formatters for library types)](https://wg21.link/p1636r2) pending a future paper that
+    addresses `std::filesystem::path` specifically.
+  - PBrett stated that he wasn't sure if a later revision of the latter paper actually dropped that
+    support.
+  - \[ Editor's note: SG16 reviewed P1636R2 during its
+    [2021-09-22 telecon](https://github.com/sg16-unicode/sg16-meetings/blob/master/README.md#september-22nd-2021);
+    that revision remains the current revision.
+    The poll taken then is recorded in
+    [a comment in the related GitHub tracking issue](https://github.com/cplusplus/papers/issues/425#issuecomment-938167118). \]
+  - Barry introduced the changes made since the last revision.
+    - Hex escapes are now only used for ill-formed code unit sequences.
+    - Hex escapes now use delimited escape sequence notation.
+    - UCNs are now used for non-printable characters.
+  - Jens asked if there is any further intention of reducing scope in order to maintain a target of C++23.
+  - Barry replied that the intended scope is what is presented in this revision and that there are no
+    current plans to further reduce scope.
+  - PBrett asked if consideration was given towards dropping support for the debug format.
+  - Barry replied affirmatively.
+  - Jens stated that the escaping behavior needs to address the possibility of lone surrogates.
+  - Tom asked if the expectation is that lone surrogates would be encoded in UCN notation.
+  - Jens replied that UCN notation does not permit specifying surrogate code points.
+  - Jens noted that the escaping behavior is described in terms of code points and that this differs from
+    how string literals are specified; the latter is described in terms of code unit sequences.
+  - Jens added that specifying escape behavior in terms of code points requires the ability to reconstruct
+    code points from code unit sequences and noted that shift encodings may not have a clearly defined
+    code point space.
+  - Tom replied that translation to a UCS scalar value would still be possible, but may face implementation
+    challenges.
+  - Jens noted the dependency on Unicode properties and pondered how that applies to non-Unicode encodings.
+  - Jens stated that "an implementation-defined equivalent of Unicode properties" could impose a
+    documentation burden.
+  - PBrett suggested that requirement could be met by documenting a methodology as opposed to an explicit
+    table of equivalent Unicode properties for other character sets.
+  - Corentin wondered whether newline characters should always be escaped.
+  - Corentin noted that there are design questions regarding whether unassigned code points and private
+    use area (PUA) characters should be escaped.
+  - Corentin suggested that PUA characters should probably be escaped but that it is less clear how unassigned
+    code points should be handled.
+  - Corentin wondered what the performance cost would be for the requirement to check the `Grapheme_Extend`
+    property for characters at the start of a string.
+  - Corentin suggested that it may be desirable to specify escape behavior in terms of conversion to Unicode
+    to ensure consistent behavior across implementations.
+  - Tom asked how it was determined that the `Z` (`Separator`) and `C`(`Other`) values of the `General_Category`
+    property suffice to define printable characters.
+  - Corentin replied that those properties exclude all control, separator, and unassigned characters.
+  - Corentin noted that there is a design decision to be made regarding which separators should be considered
+    printable.
+  - Corentin added that there is a trade off between getting a "right" result and potentially requiring a
+    possibly large table of character properties.
+  - Tom asked if the lookup for the `Grapheme_Extend` property is intended to identify combining characters
+    for which a base character is not available to combine with.
+  - Corentin confirmed that is the intent.
+  - Charlie asserted a need for further elaboration of what is meant by "a code unit that is not a part of a
+    valid code point".
+  - Zach asserted that PUA characters should not be escaped and that they should be usable in the same manner
+    as any other printable character.
+  - Zach stated that Unicode specifies how sequences of invalid code units should be handled and that processing
+    them should be left to QoI.
+  - \[ Editor's note: See the
+    "Constraints on Conversion Processes" and
+    "U+FFFD Substitution of Maximal Subparts"
+    sections of 3.9, "Unicode Encoding Forms", in
+    [chapter 3 of Unicode 14.0](https://www.unicode.org/versions/Unicode14.0.0/ch03.pdf)
+    for Unicode recommendations regarding handling of ill-formed code unit sequences. \]
+  - Tom stated that his understanding is that the intent is to preserve the values of all bytes that contribute
+    to an invalid code unit sequence.
+  - Charlie mentioned that the Unicode standard refers to the
+    [WhatWG encoding standard](https://encoding.spec.whatwg.org)
+    for handling of ill-formed code unit sequences.
+  - \[ Editor's note: It does so in the "U+FFFD Substitution of Maximal Subparts" section mentioned in the
+    previous note. \]
+  - Charlie noted a design question; how are invalid code unit sequences delimited?
+  - Charlie suggested that it might be ok to discontinue consuming text after an invalid code unit sequence.
+  - Charlie asserted a requirement for wording to prohibit considering code units following an invalid code unit
+    sequence as themselves being part of the invalid code unit sequence if they could signify the start of a
+    potentially valid code unit sequence.
+  - \[ Editor's note: This is consistent with guidance in the
+    "Constraints on Conversion Processes" section mentioned in a previous note. \]
+  - Corentin asserted that replacement characters are not particularly helpful when trying to diagnose
+    unexpected output; the actual byte or code unit values are needed.
+  - Corentin stated that further discussion regarding handling of ill-formed code unit sequences is needed.
+  - PBrett indicated that consensus for how to handle invalid code unit sequences is not yet clear and that
+    there exists a design question of whether to emit replacement characters or preserve code unit values via
+    hex escapes.
+  - PBrett suggested it may be worth stating in
+    [SD-8](https://isocpp.org/std/standing-documents/sd-8-standard-library-compatibility)
+    that debug formatting is not stable.
+  - Corentin noted that, because Unicode character properties are not stable, that we can't commit to stability anyway.
+  - PBrett requested that Barry submit the draft revision as a P paper.
+  - Barry agreed to do so, but reported that he had already edited it in response to the discussion.
+  - Corentin asked if the group has concerns regarding handling of non-Unicode encodings.
+  - PBrett replied that he would like to see wording, but that we are short on time.
+  - **Poll 2: Modify D2286R4 to address design feedback, and forward the published paper as revised to LEWG with a
+    recommended ship vehicle of C++23.**
+    - Attendance: 10
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   3 |   2 |   0 |   1 |
+      
+    - Consensus.
+    - N: Lack of wording.
+    - SA: Lack of wording; concerned that there will be subtle issues that won't become apparent until wording
+      is available.
+- Tom announced that the next telecon will be held 2022-01-12 and that the agenda is expected to
+  include review of an updated revision of
+  [P2286 (Formatting Ranges)](https://wg21.link/p2286),
+  review of an updated proposed resolution for
+  [LWG3639 (Handling of fill character width is underspecified in std::format)](https://wg21.link/lwg3639) and
+  [LWG3576 (Clarifying fill character in std::format)](https://wg21.link/lwg3576), and/or initial review of
+  [P2491R0 (Text encodings follow-up)](https://wg21.link/p2491r0) and
+  [P2498R0 (Forward compatibility of text_encoding with additional encoding registries)](https://wg21.link/p2498r0).
 
 
 # December 1st, 2021
@@ -264,7 +497,7 @@ The draft agenda is:
 - Tom requested "+1" responses to
   [Corentin's post](https://lists.isocpp.org/sg16/2021/11/2862.php)
   to the SG16 mailing list with updates to his
-  [P1854](https://wg21.link/p1854) and [P2316](https://wg21.link/p2316) papers by anyone that feels
+  [P1854](https://wg21.link/p1854) and [P2361](https://wg21.link/p2361) papers by anyone that feels
   these papers are ready to poll forwarding to EWG.
 - \[ Editor's note: such "+1" responses were provided in response to a
   [new post](https://lists.isocpp.org/sg16/2021/12/2888.php). \]
@@ -982,7 +1215,7 @@ The draft agenda is:
     - Strong consensus in favor.
   - PBrett asked for a volunteer to write the suggested paper.
   - Victor volunteered.
-  - PBrett: volunteered to help with wording.
+  - PBrett volunteered to help with wording.
   - Mark asked rhetorically if solving the escaping problem also solves the unescaping problem.
 - [P2361R2: Unevaluated strings](https://wg21.link/p2361r2)
   - Corentin presented:
