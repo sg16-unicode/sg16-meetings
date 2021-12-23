@@ -994,6 +994,8 @@ Meeting summaries for meetings held more recently than 2021 are available at
     The agenda and links used here reference P1885R8 since the links to the draft paper were ephemeral.
     The published document may differ from the reviewed draft revision. \]
   - Corentin presented:
+    - Corentin's presentation slides are available
+      [here](https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2021-10-06-p1885r8-presentation-corentin.pdf).
     - The paper goals are limited to tagging known encodings used for interchange, not every possible
       encoding.
     - There is considerable history, some of it contradictory, mistakes have been made.
@@ -1018,6 +1020,8 @@ Meeting summaries for meetings held more recently than 2021 are available at
   - Hubert noted that, for `iconv()`, use of the UTF-16 encoding results in BOMs being produced and
     consumed.
   - Jens presented:
+    - Jens' presentation slides are available
+      [here](https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2021-10-06-p1885r8-presentation-jens.pdf).
     - An octet is not the same as a byte.
     - The cncoding form concept is applicable to non-Unicode encodings.
     - An encoding scheme encodes the output of an encoding form into a series of octets.
@@ -1200,6 +1204,8 @@ Meeting summaries for meetings held more recently than 2021 are available at
   - Mark asked rhetorically if solving the escaping problem also solves the unescaping problem.
 - [P2361R2: Unevaluated strings](https://wg21.link/p2361r2)
   - Corentin presented:
+    - Corentin's presentation slides are available
+      [here](https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2021-09-22-p2361r2-presentation.pdf).
     - Previously, all string literals were converted to the literal encoding in translation phase 5
       whether they corresponded to lexical strings or string literal objects.
     - The goal is to prohibit numeric escape sequences and conditional escape sequences in lexical
