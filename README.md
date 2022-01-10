@@ -14,9 +14,6 @@ Wednesday, January 12th, 2022, from 19:30-21:00 UTC
 The draft agenda is:
 - D2286R5: Formatting Ranges
   - Review pending availability of proposed wording and continued targeting of C++23.
-- [LWG3639: Handling of fill character width is underspecified in std::format](https://wg21.link/lwg3639)<br/>[LWG3576: Clarifying fill character in std::format
-](https://wg21.link/lwg3576)
-  - Review pending availability of an updated proposed resolution.
 - [P2491R0: Text encodings follow-up](https://wg21.link/p2491r0)
   - Initial review.
 - [P2498R0: Forward compatibility of text_encoding with additional encoding registries](https://wg21.link/p2498r0)
