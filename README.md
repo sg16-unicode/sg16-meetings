@@ -54,7 +54,7 @@ The draft agenda is:
     procedural error and asked whether that warranted follow up with LEWG.
   - PBrett asked what it means in practice for the wording to mandate `CHAR_BIT == 8`.
   - Jens replied that it requires a call to a function specified with that wording to be ill-formed if
-    the requirement is validated.
+    the requirement is violated.
   - Jens explained that implementors can conform with this requirement by defining such functions as
     deleted, implementing them as a function template with an appropriate `static_assert`, or similar.
   - PBrett asked for more details regarding implementation as a function template and whether the
