@@ -214,10 +214,10 @@ The draft agenda is:
   - General discussion ensued regarding the ramification of distinct classes.
   - Tom pondered what name would be returned by `name()` if multiple registries are supported.
   - PBrett responded that his proposal intended to avoid that question.
-- Tom stated that the next telecon will be held on 2022-01-26 and that the agenda will include
+- Tom stated that the next telecon will be held on 2022-01-26 and that the agenda will include:
   - [P2286R5 (formatting ranges)](https://wg21.link/p2286r5),
-    the LWG issues concerning `std::format` fill characters, and/or
-    a new revision of
+  - the LWG issues concerning `std::format` fill characters, and/or
+  - a new revision of
     [P2498 (Forward compatibility of text_encoding with additional encoding registries)](https://wg21.link/p2498).
 
 
