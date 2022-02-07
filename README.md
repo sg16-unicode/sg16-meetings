@@ -9,11 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, January 26th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220126T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, February 9th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220209T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [P2286R6: Formatting Ranges](https://wg21.link/p2286r6)
-  - Review proposed wording for new SG16 concerns and consistency with prior guidance.
+- [P2498R1: Forward compatibility of text_encoding with additional encoding registries](https://wg21.link/p2498r1)
+  - Continue prior discussion and poll.
+- [P2513R0: char8_t Compatibility and Portability Fixes](https://wg21.link/p2513r0)
+  - Initial review.
 
 
 # Past SG16 meetings
