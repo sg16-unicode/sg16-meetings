@@ -19,12 +19,194 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [January 26th, 2022](#january-26th-2022)
 - [January 12th, 2022](#january-12th-2022)
 - [Meetings held in 2021](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2021.md)
 - [Meetings held in 2020](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2020.md)
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 26th, 2022
+
+## Agenda
+- [P2286R6: Formatting Ranges](https://wg21.link/p2286r6)
+  - Review proposed wording for new SG16 concerns and consistency with prior guidance.
+
+## Meeting summary
+- Attendees:
+  - Charlie Barto
+  - Hubert Tong
+  - Jens Maurer
+  - Mark de Wever
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- Tom informed the group of tentative plans for a SSRG and SG16 joint telecon to discuss the
+  security aspects of
+  [P2528R0 (C++ Identifier Security using Unicode Standard Annex 39)](https://wg21.link/p2528r0)
+  and asked for feedback or concerns about such a meeting.
+- [P2286R6: Formatting Ranges](https://wg21.link/p2286r6):
+  - Tom informed the group that Barry was unable to be in attendance but that we are ok to
+    discuss the wording and gather feedback for him.
+  - Victor explained that he had assisted with the wording related to escape handling, but that
+    Barry authored the rest.
+  - Jens stated that it is generally not advised to discuss a paper without the author present.
+  - Tom acknowledged the guidance and reported that he had communicated with Barry and that Barry
+    was content with Victor being present to discuss any issues that are raised.
+  - Jens asked for confirmation that LEWG has already approved the design.
+  - Victor responded that the paper is present in the currently active electronic polling cycle.
+  - Victor shared the paper and reviewed the revision history.
+  - Victor began reviewing the wording.
+  - PBrett asked if the `formattable` concept has semantic constraints that cannot be expressed
+    in the concept definition.
+  - Victor replied that it does not.
+  - Jens noted that, in section 5.1 of the paper, \[format.formattable\] paragraph 2 states the
+    semantic requirements.
+  - Zach asked if the concept has been implemented as specified.
+  - Victor expressed uncertainty regarding the concept definition, but assured the group that the
+    rest of the design has been implemented.
+  - Mark asked, with regard to section 5.2, why '?' appears as a type.
+  - Victor explained a requirement for mutual exclusivity.
+  - PBrett asked if there is intent to standardize the use of '?' to enable a debug representation
+    generally; e.g., for non-standard types.
+  - Victor replied that doing so is outside the scope of the standard, but expressed support for
+    that direction.
+  - PBrett noted that the paper introduces a `set_debug_format()` member function and asked if it
+    would be desirable to add generic support for invoking it.
+  - Jens replied that the parser for the formatted type would presumably have to be responsible for
+    recognizing the '?' character and invoking the member function.
+  - Jens noted that calls to `set_debug_format()` must activate the debug format regardless of
+    whether a '?' is present in the format string.
+  - Jens suggested that adding generic facilities to support the '?' specifier would be ok, but
+    probably best addressed by a different paper.
+  - Hubert noted that, in the proposed wording for \[format.string.escaped\], subparagraph 2.4.1,
+    that the "Other" ("C") value of `General_Category` is an abbreviation for a set of categories
+    and requested that the wording specify the individual categories.
+  - \[ Editor's note: The values for `General_Category` are specified in
+    [table 12 of section 5.7.1 of Unicode 14 UAX#44](https://www.unicode.org/reports/tr44/tr44-28.html#General_Category_Values). \]
+  - \[ Editor's note: The wording also refers to the `General_Category` value of "Separator" ("Z")
+    that is likewise an abbreviation for a set of categories and should presumably be expanded
+    as well. \]
+  - Hubert noted that format stability cannot be guaranteed and that output will change when
+    newer Unicode standards are adopted.
+  - Tom asked for confirmation that stability will only be lacking for currently unassigned characters.
+  - Steve replied that this should be further researched and noted that the "Unassigned" ("Cn")
+    property is not stable.
+  - Hubert noted that the wording does not address non-Unicode text and asked if `isprint()` and
+    `iswprint()` should be used to identify non-printable characters in those cases.
+  - Jens replied that doing so warrants further discussion.
+  - Hubert pondered whether it would be preferable to map non-Unicode characters to Unicode and then
+    proceed with using the Unicode character properties.
+  - Tom noted that, for implementations that support user defined encodings, the implementation may
+    not know how to map to Unicode.
+  - Hubert noted that such user defined definitions must define categories to be used for `isprint()`
+    and other character classification functions, but acknowledged that a mapping to Unicode may not
+    be present.
+  - PBrett stated that \[format.string.escaped\] paragraph 2 does not state how to determine if the
+    string to be escaped is in a Unicode encoding.
+  - PBrett noted that he believes such wording to be present in the wording related to field width
+    and suggested it may be desirable to generalize that and move it to a central location.
+  - Steve asked if the determination might be locale dependent.
+  - PBrett noted that previous guidance was that `std::format()` may be used for binary data and that
+    any associated encoding is therefore tenuous.
+  - Jens suggested that, in those cases, a programmer might be advised not to use the '?' formatting
+    type.
+  - Tom suggested it may be reasonable to, again, use the literal encoding as a proxy for the
+    potentially locale dependent encoding.
+  - Victor agreed.
+  - Hubert stated that, for the non-Unicode case, determining printability would require either locale
+    dependence or preservation of the compile-time literal encoding.
+  - Charlie noted that, historically, the latter would have been difficult and that, for Microsoft,
+    the active code page (ACP) was used in the past.
+  - Hubert noted that, in a cross-compilation scenario, it is possible that the literal encoding is
+    not a defined encoding for the target environment.
+  - Tom suggested that, at some point, we will need to poll whether the non-Unicode behavior should
+    be locale dependent or not.
+  - Hubert expressed acceptance of non-locale dependent behavior for the non-Unicode case so long as
+    there is no requirement to match the behavior for the Unicode case with regard to emitting hex
+    vs UCN notation.  
+  - Hubert noted that, if locale dependence is avoided, it will be necessary to assume an
+    encoding for characters that are not consistently encoded for all locales; like '\' in EBCDIC
+    environments.
+  - Hubert added that doing so might be ok if the choice is determined by the literal encoding.
+  - PBrett suggested it may be useful to support opt-in to locale dependence via the 'L' modifier.
+  - Victor stated that the 'L' modifier could be reserved for now.
+  - Mark noted that the 'L' modifier is currently supported for character type.
+  - Jens pointed out that the changes to \[format.formatter.spec\] paragraph 2 appear to indicate
+    that a declaration of the `set_debug_format()` member function in any one of the specializations
+    will affect all of them.
+  - Victor agreed that this wording requires more work.
+  - Mark asked when a formatter object for which `set_debug_format()` was called is reset or what
+    happens when the '?' specifier is not applicable to the type.
+  - Victor replied that it should be an error to specify mutually exclusive options or that the last
+    option overrides prior ones but that further consideration is required.
+  - Jens stated that the order of the interior bullets in \[format.string.escaped\] subparagraph
+    2.2 need to be revised to address two issues:
+    1) The algorithm must process the contents of string `S` in order.
+    2) `S` consists of a sequence of code units, not UCS scalar values.
+  - Jens suggested trying to factor out the code unit and UCS scalar value cases to avoid the
+    exceptions.
+  - Charlie stated that the handling of invalid code unit sequences needs to be specified since
+    recovery may not always be possible; failure to recover could result in output containing a long
+    sequence of values in hex notation.
+  - Jens acknowledged the scenario and agreed that the specification must be made clear about that.
+  - Jens asked what "universal character name escape sequence" is intended to mean in
+    \[format.string.escaped\] subparagraph 2.4.2 and noted that a definition does not exist for
+    "universal character name" though one does exist for *universal-character-name*.
+  - Jens noted that this wording probably should not refer to *universal-character-name* since it
+    describes a grammar nonterminal and suggested replacing "its universal character name escape sequence"
+    with "a sequence of scalar values".
+  - PBrett agreed.
+  - Steve pointed out that similar uses of grammar nonterminals appear in the wording.
+  - Jens agreed and suggested that the various "escape sequence" uses should be replaced with
+    "a sequence of scalar values in the form ...".
+  - Jens pointed out a grammar issue in the first line of \[format.string.escaped]\ paragraph 3;
+    "... is equivalent to the escaped string representation a string of `C` ...".
+  - Hubert requested that a note be added to \[format.string.escaped\] paragraph 4 to indicate that
+    behavior is not locale dependent but that the encoding may be informed by the literal encoding.
+  - Jens reported that the expected output noted in the comment for example `s3` in
+    \[format.string.escaped\] paragraph 4 is incorrect; there should be two ranges and therefore two
+    sets of brackets.
+  - Tom observed that the examples that follow \[format.string.escaped\] paragraph 4 depict the
+    expected Unicode behavior, but appear to be part of paragraph 4 which is specific to non-Unicode
+    behavior.
+  - Victor agreed there is a presentation issue that needs to be addressed there.
+  - Jens advised moving paragraphs 2 through 6 of \[format.range\] after the `range_formatter` class
+    definition.
+  - Victor noted that "exposition only" should appear in italics.
+  - Mark asked why, in the last row of the table associated with \[format.range\] paragraph 6, "?s"
+    is required as opposed to just "?".
+  - PBrett stated that requiring "?s" is inconsistent with the string case where "?" can be specified
+    by itself.
+  - Victor explained that "s" indicates that a range is intended to be formatted as a string; "?s" is
+    therefore needed to format the range as a string in debug mode.
+  - PBrett pointed out the "this is equivalent to invoking set_brackets({}, {})" note in \[format.range\]
+    paragraph 5 and asked if a programmer is permitted to make such a call.
+  - Victor replied that the wording is intended for implementors.
+  - PBrett asked if, when implementing a range formatter, whether it is required to implement member
+    functions like `set_brackets()`.
+  - Victor replied that LEWG had discussed this and that the member functions are intended to help
+    avoid ABI issues.
+  - Mark asked if `set_separator()` and `set_brackets()` should be restricted to characters and how
+    characters outside the basic character set need to be handled in various scenarios such as
+    applicability to estimated field width determination.
+  - Victor replied that the functions accept strings as input.
+  - Tom reviewed the list of previously discussed design points that were noted in the
+    [email announcing the agenda for the telecon](https://lists.isocpp.org/sg16/2022/01/2956.php).
+  - Tom noted the need for wording to address recovery from encoding errors.
+  - Charlie stated that recovery should follow the processes described in the
+    [WHATWG Encoding Standard](https://encoding.spec.whatwg.org).
+  - \[ Editor's note: See
+    [section 4.1, "Encoders and decoders"](https://encoding.spec.whatwg.org/#encoders-and-decoders). \]
+  - Tom noted the need to ensure that `std::filesystem::path` is rejected as a formattable range.
+  - Victor replied that it is rejected by the constraints on the `formatter` partial specialization
+    specified in the \[format.syn\] updates; those constraints reject recursive ranges.
+  - Victor suggested it might be helpful to add a note that `std::filesystem::path` is rejected there.
+- Tom announced that the next telecon will be February 9th.
 
 
 # January 12th, 2022
