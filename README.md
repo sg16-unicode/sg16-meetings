@@ -19,6 +19,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [February 9th, 2022](#february-9th-2022)
 - [January 26th, 2022](#january-26th-2022)
 - [January 12th, 2022](#january-12th-2022)
 - [Meetings held in 2021](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2021.md)
@@ -26,6 +27,174 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 9th, 2022
+
+## Agenda
+- [P2498R1: Forward compatibility of text_encoding with additional encoding registries](https://wg21.link/p2498r1)
+  - Continue prior discussion and poll.
+- [D2513R1: char8_t Compatibility and Portability Fixes](https://wg21.link/p2513r1)
+  - Initial review.
+
+## Meeting summary
+- Attendees:
+  - Charlie Barto
+  - Hubert Tong
+  - JeanHeyd Meneide
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [P2498R1: Forward compatibility of text_encoding with additional encoding registries](https://wg21.link/p2498r1)
+  - PBrett presented:
+    - The R0 revision was reviewed by SG16 a few weeks ago.
+    - The R1 revision rebases the wording on the latest P1885 revision.
+    - The wording was reworked to decouple IANA IDs from the exposition only data members.
+  - Victor noticed an unnecessary trailing semicolon following the closing brace of the
+    `std` namespace declaration in the proposed updates to \[text.encoding\].
+  - Hubert noted that Corentin's recently added response to P2498R1 in
+    [P1885R10](https://wg21.link/p1885r10)
+    noted unnecessary use of an enum for the proposed internal details of the `text_encoding`
+    class and asked if it was necessary for it to be an enum.
+  - PBrett responded that it is exposition only.
+  - Jens pointed out an existing `using enum id` declaration in the `text_encoding` synopsis
+    that should presumably have been changed to `using enum iana_id`.
+  - Jens noted similar renaming updates needed in the postcondition for the
+    `text_encoding(iana_id)` constructor where comparisons against `id::unknown` and
+    `id::other` are currently present.
+  - Jens observed that the `text_encoding(iana_id)` constructor does not state that
+    its argument is stored.
+  - PBrett explained that such storage is implied by the postcondition requirements on
+    the result of calls to `iana_mib()`.
+  - Jens suggested that there should be some wording that relates the exposition only `id`
+    type to `iana_id`.
+  - PBrett agreed that could be better specified.
+  - PBrett indicated that some positive guidance is needed before spending further effort on
+    this proposal.
+  - Tom suggested polling support for the concerns the paper purports to address.
+  - Discussion regarding polls ensued.
+  - **Poll 1A: It should be more explicit in the identifiers used by the `text_encoding`
+    interface that the facility is tied to the IANA character sets database.**
+    - Attendance: 8
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   3 |   1 |   2 |   0 |
+
+    - Weak consensus in favor.
+  - **Poll 1B: The `text_encoding` class design should be modified to facilitate potential
+    future association with additional encoding registries without retaining a bias towards
+    the IANA registry.**
+    - Attendance: 8 (one abstention)
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   3 |   2 |   0 |   1 |
+
+    - No consensus.
+    - SA: I think IANA is a reasonable default and others can be added; we shouldn't slow
+      down progress.
+  - **Poll 1C: The `text_encoding` class should be renamed to `iana_text_encoding`.**
+    - Attendance: 8
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   2 |   2 |   3 |   0 |
+
+    - No consensus.
+  - **Poll 1D: Address feedback on wording in P2498R1 "Forward compatibility of text_encoding
+    with additional encoding registries", and forward the paper as revised to LEWG as a bug
+    fix for P1885 "Naming text encodings to demystify them" with a recommended ship vehicle
+    of C++23.**
+    - Attendance: 8 (one abstention)
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   4 |   0 |   2 |   0 |
+    - Weak consensus in favor.
+  - Jens requested that the changes regarding exposition only data members be removed if the
+    intent is just to rename some identifiers as opposed to changing the original design intent.
+- [D2513R1: char8_t Compatibility and Portability Fixes](https://wg21.link/p2513r1)
+  - \[ Editor's note: D2513R1 was the active paper under discussion at the telecon. The agenda
+    and links used here reference P2513R1 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - JeanHeyd presented:
+    - The `char8_t` related changes in C++20 made it more difficult to write code that works
+      in both C and C++.
+    - The proposal is intended to improve compatibility with C.
+    - The proposal provides an escape hatch in C++ to restore some uses of UTF-8 string literals
+      with `char`, `signed char`, and `unsigned char`.
+    - The proposal only relaxes array initialization; pointer behavior is not changed.
+    - The changes are intended as a DR against C++20 so that common code can be written for
+      C++17, C++20, C++23, and C.
+  - Victor stated that relaxing initialization for arrays but not for pointers creates an
+    inconsistency and that he prefers an error.
+  - Victor added that `signed char` and `unsigned char` are commonly used for `int8_t` and
+    `uint8_t` and the proposed changes would allow arrays of these types to now be initialized
+    by UTF-8 string literals.
+  - JeanHeyd acknowledged this would be the case and is consistent with C++11 through C++17.
+  - Hubert presented a backward compatibilty concern involving overload resolution and
+    initialization of parameters of aggregate type using list initialization syntax; the
+    following example is well-formed in C++20, but would become ill-formed with the proposed
+    change.
+
+        struct A { char8_t s[5]; };
+        struct B { char s[5]; };
+        void f(A);
+        void f(B);
+        void foo() {
+          f({u8"text"}); // Resolves to f(A) in C++20, ambiguous with the proposed changes.
+        }
+
+  - PBrett observed that the overload resolution issue currently exists with `signed char`
+    and `unsigned char`.
+  - Tom asked for confirmation that binding to a reference to an array would still be
+    ill-formed.
+  - JeanHeyd replied affirmatively.
+  - Jens explained that there is an existing special case that permits initialization of
+    arrays of `signed char` or `unsigned char` by an ordinary string literal.
+  - PBrett summarized; the overload scenario already exists for `char`, `signed char`,
+    and `unsigned char`.
+  - Jens agreed and suggested adding an annex C entry with the above example to note the
+    new ambiguity.
+  - JeanHeyd reviewed the wording.
+    - The value of the `__cpp_char8_t` feature test macro is updated.
+    - The subsitution of "may" for "can" in \[dcl.init.string\] is a drive by fix done
+      to maintain consistency with the other changes to the paragraph.
+  - JeanHeyd noted that, with the changes, a program that passes a UTF-8 string literal
+    as an argument for a function parameter of type `const char*` remains ill-formed.
+  - JeanHeyd stated that the ability to initialize `char`-based arrays with a UTF-8
+    string literal addresses constexpr concerns in a much simpler way than is presented
+    in [P1423R3 (char8_t backward compatibility remediation)](https://wg21.link/p1423r3).
+  - PBrett asked if any consideration was given for addressing these concerns with a
+    core issue.
+  - JeanHeyd replied that a core issue wouldn't be appropriate since the C++20 changes
+    were deliberate.
+  - Tom agreed and noted that this aspect of the C++20 changes was approved by EWG.
+  - Jens agreed that a core issue is unlikely to be helpful, especially since a paper
+    already exists.
+  - Jens asserted that EWG should review and, as a DR, this can be considered after
+    C++23 feature freeze.
+  - Hubert observed that the backward compatibility impact to overload resolution can
+    be avoided by limiting the allowance to variables of array type.
+  - Jens agreed, but noted that would require more careful wordsmithing.
+  - **Poll 2: Add an Annex C entry and discussion to D2513R1, and forward the published
+    paper as revised to EWG as a defect report.**
+    - Attendance: 8 (one abstention)
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   5 |   0 |   1 |   0 |
+    - Strong consensus in favor.
+    - A: Concerned about the different handling for pointers vs arrays; concerns
+      increased as discussion continued.
+  - Tom asked if anyone felt concern about the possibility of unintended initialization
+    by a UTF-8 string literal as opposed to an ordinary string literal.
+  - Victor expressed minor concern, but that the risk is low.
+  - JeanHeyd noted that such unintended possibilities are already the case in C.
+- Tom announced that the next telecon will be February 23rd.
 
 
 # January 26th, 2022
