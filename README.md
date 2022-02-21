@@ -299,7 +299,7 @@ The draft agenda is:
     there is no requirement to match the behavior for the Unicode case with regard to emitting hex
     vs UCN notation.  
   - Hubert noted that, if locale dependence is avoided, it will be necessary to assume an
-    encoding for characters that are not consistently encoded for all locales; like '\' in EBCDIC
+    encoding for characters that are not consistently encoded for all locales; like '\\' in EBCDIC
     environments.
   - Hubert added that doing so might be ok if the choice is determined by the literal encoding.
   - PBrett suggested it may be useful to support opt-in to locale dependence via the 'L' modifier.
