@@ -19,6 +19,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [February 23rd, 2022](#february-23rd-2022)
 - [February 9th, 2022](#february-9th-2022)
 - [January 26th, 2022](#january-26th-2022)
 - [January 12th, 2022](#january-12th-2022)
@@ -27,6 +28,219 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 23rd, 2022
+
+## Agenda
+- Discuss objectives and priorities for C++26
+
+## Meeting summary
+- Attendees:
+  - Charles Barto
+  - Hubert Tong
+  - Inbal Levi
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- Tom reminded the group about the upcoming SSRG meeting on Monday, February 28th, and encouraged
+  the contribution of suggested improvements for
+  [P2528R0 (C++ Identifier Security using Unicode Standard Annex 39)](https://wg21.link/p2528)
+  to the author.
+- Discuss objectives and priorities for C++26:
+  - Tom asked the group for suggestions on what we should focus on for C++26.
+  - Tom suggested alias barriers as a remaining core language feature improvement.
+  - \[ Editor's note: See [SG16 issue #67](https://github.com/sg16-unicode/sg16/issues/67). \]
+  - PBrett suggested improvements for access to command line options and environment variables.
+  - \[ Editor's note: See [SG16 issue #66](https://github.com/sg16-unicode/sg16/issues/66). \]
+  - Jens noted the existing practice for the `_wmain()` entry point in Microsoft Visual C++.
+  - PBrett noted the `envp` parameter that POSIX adds to `main()`.
+  - Tom suggested `std::rope` for chained text segments.
+  - Steve suggested transcoding and lamented JeanHeyd's absence.
+  - PBrett suggested an owning string type that eschews null termination.
+  - Charles expressed concern that a string type that doesn't ensure null termination may not
+    improve security due to programmers attempting to pass such data to functions that require
+    a null terminated string anyway.
+  - PBrett suggested that implicit conversions could be prohibited.
+  - Steve noted the usability challenges such prohibition creates.
+  - Victor stated that programmers will misuse such types even if implicit conversions are not
+    supported; they will assume that, for example, a `data()` member function will provide a
+    null terminated string.
+  - PBrett replied that such concerns apply to the existing `std::string_view` type as well.
+  - PBrett asserted there is room for a `std::string_view` like type that owns the string data.
+  - Charles noted that having to pass a string held in such a type to a function that requires
+    null termination would require having to copy the string contents just to add a null
+    terminator and lamented the cost of such copies.
+  - Jens asked PBrett what other features he might like to see in a new string type.
+  - PBrett responded that he would mostly like to not have to write yet more string types that
+    avoid null termination concerns.
+  - Jens suggested that a string type that helps to avoid allocation and deallocation costs
+    could be beneficial.
+  - Jens stated he would prefer not to spend time in SG16 on general data structures.
+  - Jens asserted that the elephant in the room is ICU and the functionality it provides and
+    expressed a desire for a roadmap towards providing similar functionality.
+  - Steve suggested that PBrett publish a paper extolling the benefits of a string type
+    without null termination.
+  - PBrett responded that benefits appear when working with databases and graphics.
+  - Tom stated that, if a new string type were to materialize, he would like to know for sure
+    what encoding it is intended to be used with.
+  - PBrett offered two categories of such encoding assurances: 1) a type intended for text
+    with an assumed encoding, and 2) a type that enforces well-formed encoding.
+  - Steve offered a third category: 3) a type that maintains invariants like normalization form.
+  - Steve reported having to investigate problems due to assumption of UTF-8 leading to errors
+    when data was passed to Python programs that enforced well-formedness.
+  - Steve stated that Bloomberg is strongly in favor of a type that maintains such invariants.
+  - Charles expressed desire for a way to pass a filename on the command line that is preserved.
+  - Charles explained that this currently isn't possible on Windows due to transcoding that
+    occurs when preparing a command line to pass to `main()`.
+  - Tom asked if it is possible to enter such names on the command line from Windows shells in
+    the first place, but acknowledged it can be done from `CreateProcess()`.
+  - Charles replied that tab completion and similar shell features can produce such names.
+  - Tom asked to confirm that this should be considered a language issue as opposed to a shell
+    issue.
+  - Charles explained that other languages provide such mechanisms and noted that Rust has an
+    `OsString` type that stores WTF-8 on Windows.
+  - PBrett added that Rust is a good example of a language that provides strings that don't
+    guarantee null termination.
+  - Tom returned to discussion about features to focus on and suggested Unicode algorithms.
+  - Hubert asked if ICU provides message formatting features.
+  - Tom confirmed that it does.
+  - PBrett noted the work that the Message Format Working Group (MFWG) is doing.
+  - \[ Editor's note: The MFWG tracks its work
+    [here](https://github.com/unicode-org/message-format-wg). \]
+  - Tom suggested improved support for regular expressions as another feature to work on.
+  - Charles replied that such work depends on whether the committee is willing to standardize
+    a `std::regex2` or similar.
+  - Charles stated that a new regex design would presumably face the same challenges that
+    `std::regex` did and may therefore produce a similarly poor result.
+  - Charles noted that regular expression support is a feature for which interoperability
+    across libraries is not often needed.
+  - PBrett asserted that a standard regex facility is beneficial because general programmers
+    aren't particularly good at writing their own.
+  - Charles suggested that a class intended to be used as a base class for string buffer
+    management could be beneficial for building parsers; particularly a type that provides
+    interfaces to peek ahead and push back.
+  - PBrett suggested a `std::lexy` with reference to Jonathan Müller's work.
+  - \[ Editor's note: Jonathan's Lexy work is published
+    [here](https://lexy.foonathan.net). \]
+  - Tom asked if the work done on `std::format` provides a precedent for how to design a
+    `std::regex` replacement that would be more isolated from ABI concerns.
+  - Charles responded that `std::format` is fairly exposed to ABI concerns, but acknowledged
+    the possibility of designing a more isolated type.
+  - Victor stated that Hana Dusíková's CTRE provides a good example of how to write parsers.
+  - \[ Editor's note: Hana's CTRE work is published
+    [here](https://compile-time-regular-expressions.readthedocs.io/en/latest). \]
+  - PBrett asked about ideas for how to be more explicit about associating an encoding with
+    existing text; e.g., how to have text in UTF-8 and pass it to something that requires UTF-16.
+  - Steve asked if anyone recalled a proposal that would allow specifically binding to a string
+    literal.
+  - Tom stated that he did not but noted that a user-defined literal (UDL) can provide similar
+    functionality.
+  - \[ Editor's note: Tom was thinking of something like this:
+
+        #include <cstddef>
+        class string_literal {
+        private:
+            const char *p;
+            string_literal(const char *p) : p(p) {}
+        public:
+            const char* data() const { return p; }
+            friend string_literal operator ""sl(const char *p, std::size_t);
+        };
+        string_literal operator ""sl(const char *p, std::size_t) {
+            return string_literal(p);
+        }
+        void f(const char*);
+        void g(string_literal sl) {
+            f(sl.data());
+        }
+        void h() {
+            g("hello"sl);
+        }
+    \]
+  - Steve stated that a facility that allows associating a dynamic encoding
+    would be useful for scenarios in which the text and its associated encoding
+    are not known at compile time.
+  - Victor noted that encodings are often properties of interfaces and suggested that an
+    attribute based approach to specifying encoding expecations could be helpful; this would
+    allow specifying expectations that are dependent on locale or Windows Active Code
+    Page (ACP).
+  - Charles expressed support for that approach.
+  - PBrett asked what the advantage of an attribute would be.
+  - Victor replied that it could be added to existing functions without ABI impact.
+  - Charles observed that, if the `#embed` proposal is adopted, then text that is not
+    in the literal encoding might be imported.
+  - Hubert responded that the `#embed` author has been clear that the proposal is intended
+    to provide binary resources.
+  - Tom changed topics by asking for suggestions regarding how to solicit new SG16 attendees
+    and reported that he and Peter had previously discussed inviting other WG21 members to
+    share what the organizations they work with do in practice.
+  - PBrett responded that backward compatibility and existing practice are motivation for
+    not providing new facilities.
+  - PBrett suggested that, if someone were to come forward with a proposal to adopt a suite
+    of string types similar to those provided by Rust, that we might tell them no thank you.
+  - PBrett stated that we should, of course, discuss any proposals that come before us.
+  - Tom replied that seems to argue for the status quo plus what people actually do.
+  - Jens expressed belief that there is good opportunity to make progress with small
+    improvements and provided a UTF-8 decoding iterator as an example.
+  - Tom replied that an existing proposal covers such iterators.
+  - \[ Editor's note: See
+    [P0244 (Text_view: A C++ concepts and range based character encoding and code point enumeration library)](https://wg21.link/p0244). \]
+  - Charles responded that he has written a grapheme iterator.
+  - Charles noted that such iterators are always going to be slower than bulk conversion routines.
+  - PBrett suggested adding locale-independent replacements for character classification
+    functions like `isdigit()`; e.g., `is_ascii_digit()`.
+  - Charles expressed support for such locale invariant functions and noted via chat that glib
+    provides such a variant named `g_ascii_isdigit()`.
+  - Tom noted that there is a distinction; locale-independent variants would operate using an
+    implementation-defined encoding where as ASCII variants would operate using ASCII even in
+    an EBCDIC environment.
+  - Hubert asked if anyone would object to having both variants; e.g., a locale-independent
+    variant that always operates using the "C" locale and an ASCII variant.
+  - No objections were raised.
+  - PBrett stated that the highest priority item should be transcoding facilities.
+  - Jens asked if he meant something like `iconv()`.
+  - PBrett responded that he meant something more like JeanHeyd Meneide's `ztd::text`.
+  - \[ Editor's note: JeanHeyd's `ztd::text` work is published
+    [here](https://ztdtext.readthedocs.io/en/latest). \]
+  - Charles stated that, with regard to providing an ICU interface in the standard, there are
+    performance implications; support for generic iterators would warrant availability of
+    definitions for inlining purposes.
+  - PBrett asked if anyone could comment regarding the utility of `std::message`.
+  - Steve responded that the main problem with message catalogs is that they don't tend to work
+    well with real languages.
+  - PBrett reported having good experience with GNU gettext, but that it required disicpline to
+    be used successfully.
+  - PBrett stated that the other elephant in the room is locale, but noted that `std::format()`
+    provides a foundation we can build on.
+  - Tom suggested the possibility of enabling thread-specific locale facilities that avoid reliance
+    on a global locale.
+  - PBrett suggested a review of all locale dependent interfaces followed by a proposal that adds
+    variants that accept a locale as an argument.
+  - Jens replied that C already does that and that all C++ interfaces use `std::locale`.
+  - Hubert stated that POSIX provides a thread aware locale interface that enables changing locale
+    for a specific thread as well as interfaces that accept a locale argument.
+  - PBrett provided an example; a `std::isalpha()` overload that accepts a `std::locale` argument.
+  - Hubert responded that POSIX specifies a `isalpha_l()` interface that accepts a `locale_t` argument.
+  - Tom asked if `std::locale` is fundamentally problematic or whether the problems we face with it
+    are isolated to the facets.
+  - PBrett responded that it has fundamental limitations due to reliance on inheritance.
+  - Victor stated that the facet's assumption that characters fit in a code unit is the most
+    significant problem.
+  - Victor added that `std::locale` uses reference counting and therefore has a performance profile
+    similar to a shared pointer.
+  - Hubert stated that `std::locale` strongly ties C++ implementations to the suite of C locales
+    since the interface depends on the names of C locales; it is therefore questionable how
+    implementors might provide more generic locale support.
+  - Steve stated that WG14 recently adopted a proposal that adds '@', '$', and '`' to the basic
+    source character set.
+  - Steve added that he intends to bring a matching paper to WG21 in the near future.
+  - \[ Editor's note: The adopted WG14 proposal is
+    [N2701](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2701.htm). \]
+- Tom announced that the next meeting will be on March 9th and, unless a new paper materializes,
+  will likely focus on diving deeper into one of the topics discussed today.
 
 
 # February 9th, 2022
