@@ -9,13 +9,10 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, February 9th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220209T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, March 9th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220309T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- [P2498R1: Forward compatibility of text_encoding with additional encoding registries](https://wg21.link/p2498r1)
-  - Continue prior discussion and poll.
-- [P2513R0: char8_t Compatibility and Portability Fixes](https://wg21.link/p2513r0)
-  - Initial review.
+- ICU features to consider for C++26 (see feature list [here](https://docs.google.com/document/d/1f-CLhYZIf_L0q1QBEqe2sVHyAofGx8Akt_xJKDGhcgA/edit?usp=sharing)).
 
 
 # Past SG16 meetings
@@ -211,7 +208,7 @@ The draft agenda is:
   - PBrett asked if anyone could comment regarding the utility of `std::message`.
   - Steve responded that the main problem with message catalogs is that they don't tend to work
     well with real languages.
-  - PBrett reported having good experience with GNU gettext, but that it required disicpline to
+  - PBrett reported having good experience with GNU gettext, but that it required discipline to
     be used successfully.
   - PBrett stated that the other elephant in the room is locale, but noted that `std::format()`
     provides a foundation we can build on.
