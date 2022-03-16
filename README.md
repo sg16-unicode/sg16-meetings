@@ -9,13 +9,14 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, March 9th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220309T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, March 23rd, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220323T183000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cet)).
 The draft agenda is:
-- ICU features to consider for C++26 (see feature list [here](https://docs.google.com/document/d/1f-CLhYZIf_L0q1QBEqe2sVHyAofGx8Akt_xJKDGhcgA/edit?usp=sharing)).
+- TBD
 
 
 # Past SG16 meetings
+- [March 9th, 2022](#march-9th-2022)
 - [February 23rd, 2022](#february-23rd-2022)
 - [February 9th, 2022](#february-9th-2022)
 - [January 26th, 2022](#january-26th-2022)
@@ -25,6 +26,164 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 9th, 2022
+
+## Agenda
+- ICU features to consider for C++26
+
+## Meeting summary
+- Attendees:
+  - Charles Barto
+  - Hubert Tong
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+- Tom introduced the topic:
+  - Tom was inspired by Jens' assertion during the previous telecon that
+    "the elephant in the room is ICU and the functionality it provides".
+  - Based on that, Tom created a
+    [Google Doc](https://docs.google.com/document/d/1f-CLhYZIf_L0q1QBEqe2sVHyAofGx8Akt_xJKDGhcgA/edit?usp=sharing)
+    containing a list of ICU feature categories annotated with Tom's opinions on whether
+    such features are worthy of consideration for standardization in C++26 should suitable
+    proposals materialize.
+  - Tom would like to issue a Call for Papers covering the features we agree are worth
+    consideration.
+- Tom began reviewing the feature categories in the order they appear in the document.
+- The categories enumerated below are those for which there were material comments.
+- "Unicode character properties":
+  - Tom pondered the benefits of exposing the set of raw UCD properties as opposed to just
+    those that are needed for other features.
+  - Charles responded that there are representation choices to be made based on usage.
+  - Steve noted that support for segmentation requires many of the UCD properties.
+  - Steve stated that it would be useful to expose all of the properties to enable experimentation.
+  - Steve noted that, if there are design problems with how the data is exposed, that would be
+    useful information.
+  - PBrett observed that the UCD properties are needed to implement proper internationalization
+    and localization support.
+  - PBrett pondered whether exposing all UCD properties might create portability issues.
+  - Tom asked if it might be reasonable to only expose properties with stability guarantees.
+  - Steve replied that doing so probably would not be viable; some properties required for
+    segmentation are not stable and there is a need to be able to fix things.
+  - Tom noted the difference between data being stable as compared to property shapes being stable.
+  - Steve acknowledged and noted that property shapes haven't changed in a while.
+  - Steve added that the ICU maintainers would presumably push back hard if Unicode made significant
+    changes to the shape of existing properties.
+- "Sets of Unicode Code Points and Strings":
+  - Tom commented that the items in this category appear to be simple utilities.
+  - PBrett opined that may be a good reason to provide them.
+  - Tom observed that they appear to be used to provide support for character classes.
+- "Locales":
+  - PBrett stated that one of the challenges with locale identifiers is that choice of locale is
+    not fixed at compile-time.
+  - PBrett added that locale IDs are subject to geopolitical changes.
+  - Steve reported that there has been much work on client-side localization through
+    [ECMA 402](https://www.ecma-international.org/publications-and-standards/standards/ecma-402/), and
+    [ICU4X](https://github.com/unicode-org/icu4x).
+  - Steve expressed caution over trying to standardize something like ECMA 401 and ICU4X given that
+    they are recent developments.
+  - Steve noted that client side support uses browser based facilities.
+  - PBrett wondered if C++ code compiled to WASM should transparently proxy to the local environment.
+  - Tom asked whether new locale support could be built on `std::locale`, perhaps via new facets.
+  - Hubert objected to such support built on new `std::locale` facets due to `std::locale` being
+    dependent on C locale names.
+  - PBrett replied that it would be useful to be able to get an ISO locale name from a standard locale.
+  - Hubert noted that encoding information would be lost in that case.
+  - PBrett agreed and asserted that encoding ideally wouldn't be a locale concern anyway.
+  - Hubert replied that a particular script could be implied by `std::locale`.
+  - Steve observed that we seem to be in agreement that we don't know how to do this today.
+  - Tom stated that the problem is that proper case mapping, case folding, and collation can't be
+    provided without proper locale support.
+  - PBrett agreed and asserted the need for a plan to improve locale support.
+- "Resource Bundles":
+  - Tom suggested that this feature could be built on top of features like `#embed` and support for
+    dynamic libraries; perhaps a downstream feature then.
+  - Charles noted that Microsoft style resource management can be provided on other platforms using
+    linker scripts.
+  - PBrett opined that resources are a requirement for a good locale system.
+- "Calendars and Time Zones" and "Date and Time Formatting":
+  - Tom stated that base facilities exist that could be expanded, but that there are locale
+    dependenices.
+  - PBrett acknowledged concerns raised by Corentin on the mailing list that noted that the existing
+    facilities are not at parity with the ICU features.
+- "Message Formatting":
+  - Tom stated that this is awaiting further developments from the
+    [Message Format Working Group (MFWG)](https://github.com/unicode-org/message-format-wg).
+  - PBrett commented that, what programmers want and what they need are not always the same thing.
+  - Charles expressed a desire for experience outside the standard before pursuing support in the
+    standard; even more so for this feature than for other ones.
+  - Charles added that, ideally, a production quality application would be built on top of such a
+    facility; one that has users using it from multiple locales.
+  - PBrett opined that `std::format()` may not provide a great base to build this on.
+  - Charles replied that it is probably usable, but not sufficient as is.
+  - Tom stated there would presumably be a need to pass a message ID in place of a format string.
+  - Charles reported that could be done using `std::vformat()`.
+- "Text Transformation":
+  - Tom suggested that, if there is a specific transliteration that we have motivation to provide,
+    then we can do so; range adapters provide general support for this otherwise.
+  - Steve noted that JeanHeyd's
+    [ztd.text](https://ztdtext.readthedocs.io/en/latest)
+    library can do some of this.
+  - Hubert asked if this feature category is referring to technical transliteration or linguistic
+    transliteration.
+  - Tom replied that he did not know.
+- "Bidirectional Algorithm":
+  - Tom asked for confirmation that this does not have locale dependencies and is effectively
+    about state management for layout purposes.
+  - Steve replied that the algorithm is complicated as it tries to support all possible scenarios.
+- "Collation":
+  - Jens described a design possibility involving locale independent base functionality that
+    operates on a set of locale dependent collation rules.
+  - Jens stated that the rules engine would have to be sufficient to perform all tasks required
+    by all locales.
+  - Jens noted that such a facility could be useful as a building block for locale support and as
+    a standalone facility.
+- "String Searching":
+  - Tom noted the locale dependence.
+  - PBrett noted collation dependence.
+  - Jens stated that precise requirements are needed and that basic element searching is present.
+  - Hubert suggested this might be provided by a regular expression facility.
+- "Text Boundary Analysis":
+  - Steve stated there are natural range interfaces for this and that the interface is probably clear.
+  - Hubert asked when a C++ programmer would use this.
+  - Steve replied that he performs such analysis for reflowing text in outgoing email.
+  - PBrett added that such support was an integral part of a DSP language he worked on.
+  - Steve stated that word wrapping comes up in many scenarios.
+- "Regular Expressions":
+  - Tom suggested we consider this category if a paper arrives.
+  - Tom noted that a proposed design would be locale dependent and would presumably have to operate
+    on various string types, potentially including segmented text data structures.
+  - PBrett pondered the possibility of a run-time only library with a narrow interface that could
+    later be overloaded for new extensions.
+  - Steve stated that this is not an area of his experties but that he would be willing to help
+    author a paper if a good design were to be proposed.
+  - Steve noted that there are many SG16 and LEWG related issues to consider.
+- "StringPrep":
+  - Hubert stated that this feature is related to string normalization for interchange purposes
+    such as key lookup.
+  - Jens noted that the
+    [stringprep RFC](https://datatracker.ietf.org/doc/html/rfc3454)
+    specifies exclusion of certain characters and expressed a desire to better understand what this
+    facility is used for.
+  - Tom updated the Google Doc to change the consideration column value from "N/A" to "No", to
+    add a reference to RFC 3454, and to note that this is a string normalization feature.
+- "IDNA":
+  - Tom expressed considerable ignorance of this topic.
+  - \[ Editor's note: "IDNA" stands for "Internationalizing Domain Names for Applications" and is
+    covered by [UTS #46](https://unicode.org/reports/tr46). \]
+  - PBrett suggested such support might be needed for standard networking.
+- "Universal Time Scale":
+  - Tom suggested this is not an SG16 concern and could be tackled directly by LEWG if motivated.
+  - Tom updated the Google Doc to change the consideration column value from "N/A" to "No; LEWG".
+- "Paragraph Layout / Complex Text Layout":
+  - Review of the ICU `playout.h` header revealed that this is an experimental facility.
+  - Tom updated the Google Doc to change the consideration column value from "Not yet" to "No"
+    and added a note about the facility being experimental.
+- "ICU I/O":
+  - Tom stated this is not an SG16 concern.
+- Tom stated that the next telecon is scheduled for 3/23; the agenda is TBD.
 
 
 # February 23rd, 2022
