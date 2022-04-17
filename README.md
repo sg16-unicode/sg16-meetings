@@ -9,14 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, April 13th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220413T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, April 27th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220427T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
 - [P2558R0: Add @, $, and \` to the basic character set](https://wg21.link/p2558)
-  - Initial review.
+  - Continue review pending an updated revision.
 - D2572R0: std::format() fill character allowances
-  - (link not yet available)
-  - Initial review.
+  - Continue review pending an updated revision.
 
 
 # Past SG16 meetings
