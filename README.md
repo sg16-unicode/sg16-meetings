@@ -19,6 +19,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [April 13th, 2022](#april-13th-2022)
 - [March 9th, 2022](#march-9th-2022)
 - [February 23rd, 2022](#february-23rd-2022)
 - [February 9th, 2022](#february-9th-2022)
@@ -29,6 +30,219 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 13th, 2022
+
+## Agenda
+- [P2558R0: Add @, $, and \` to the basic character set](https://wg21.link/p2558)
+  - Initial review.
+- [D2572R0: std::format() fill character allowances](https://rawcdn.githack.com/sg16-unicode/sg16-meetings/c84e3e4eef341795fb9ac44824525a3a89583fa7/presentations/2022-04-13-d2572r0.html)
+  - Initial review.
+
+## Meeting summary
+- Attendees:
+  - Charles Barto
+  - Hubert Tong
+  - Jens Maurer
+  - Mark de Wever
+  - Peter Bindels
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [P2558R0: Add @, $, and \` to the basic character set](https://wg21.link/p2558)
+  - PBrett asked whether this proposal is an SG16 concern.
+  - Tom replied that we are the encoding experts and best equipped within the committee to evaluate 
+    whether these changes will have consequences for source character sets used in practice;
+    our affirmation of the proposal will hopefully ease progress through other groups.
+  - Charlie asked for confirmation that SG22 will review the paper as well.
+  - Steve replied affirmatively and stated WG14 has already adopted the proposal for C.
+  - Someone (apologies, the editor neglected to record who) noted the existence of
+    [P2342: For a Few Punctuators More]([https://wg21.link/p2342)
+    and that it argues that these characters could be used as new operators.
+  - Tom responded that P2342 is an example of a paper that is not an SG16 concern; once the
+    characters are available in the source character set, how they are used is an EWG concern.
+  - Hubert observed that this introduces a requirement that these characters be encoded as a
+    single code unit.
+  - Jens acknowledged and noted that this is required by
+    [\[lex.charset\]p6](http://eel.is/c++draft/lex.charset#6)
+    for all characters in the basic literal character set.
+  - Jens requested that the paper prose discuss this requirement.
+  - Steve agreed to add such prose.
+  - Jens stated that he does not know if this requirement would be problematic for any existing
+    character sets.
+  - Steve replied that there are infrequently used EBCDIC code pages that lack them.
+  - Jens asked if those code pages also lack other characters.
+  - Steve responded that they probably do.
+  - Charlie asked if those problematic EBCDIC code pages have unused code points that could be
+    used for these characters.
+  - Tom suggested that digraphs could be introduced to support those code pages if needed.
+  - Jens replied that digraphs can't be used inside character or string literals.
+  - Steve suggested this concern can be addressed if these characters start getting used
+    within the standard.
+  - Jens reported that the addition of these characters to the basic character set makes them
+    ineligible to be specified via a *universal-character-name* (UCN) outside of a character
+    or string literal due to
+    [\[lex.charset\]p3](http://eel.is/c++draft/lex.charset#3).
+  - PBrett suggested that restriction could be lifted.
+  - Charlie stated that existing uses of '$' are probably limited to identifiers and symbol
+    renaming via attributes, pragma directives, or `asm` labels.
+  - Hubert reported they may appear in preprocessor stringization.
+  - PBrett reported they may appear in header names as well.
+  - Jens noticed that use of a UCN to`#include` a source file named with one of these characters
+    would become ill-formed.
+  - PBrett reiterated support for lifting restrictions on use of UCNs to name characters from the
+    basic character set with the rationale that we shouldn't ban things that are only bad ideas.
+  - Charlie stated that, if such incompatibilities were to cause problems in practice, then
+    lifting that restriction would be the obvious solution.
+  - Steve suggested such concerns can be addressed after the paper is approved; we know programmers
+    want to use these characters.
+  - Tom asked Steve if he knows whether the UCN concern was discussed in WG14.
+  - Steve replied that it was not.
+  - Hubert asked when UCNs are translated in identifiers and other preprocessor tokens.
+  - Jens replied, during translation phase 3 except in quoted contexts; so translation occurs as
+    a *preprocessing-token* is formed.
+  - PBrett observed that the new UCN restrictions would be limited to *h-char* and *q-char*
+    sequences since these characters aren't otherwise usable outside quoted contexts.
+  - Jens replied that they may also appear in a *preprocessing-token* used in stringization.
+  - Hubert stated that a UCN specifying one of these characters would become ill-formed during
+    stringization.
+  - Hubert added that, likewise, use of a UCN to specify '$' in an identfier would become ill-formed.
+  - Tom asked whether that matters since use of '$' in an identifier is already an extension.
+  - Jens noted that these characters currently match the
+    "each non-whitespace character that cannot be one of the above"
+    case of
+    [*preprocessing-token*](http://eel.is/c++draft/lex.pptoken#nt:preprocessing-token).
+  - Jens stated that this makes such intended use in identifiers ill-formed since, after this
+    change, such a character would appear as a lone *preprocessing-token*.
+  - \[ Editor's note: This behavior doesn't seem related to the proposed change since, previously,
+    a UCN naming one of these characters would also appear as a lone *preprocessing-token*.
+    The editor is concerned that this portion of the discussion was not captured accurately. \]
+  - Jens requested that this discussion be included in the paper.
+  - PBrett asked whether *h-char* and *q-char* sequences remain a backward compatibility concern.
+  - Jens replied that they do, but that UCNs in such sequneces already have implementation-defined
+    behavior; what UCNs mean in *h-char* and *q-char* sequences isn't really defined.
+  - \[ Editor's note: Per
+    [\[lex.phases\]p1.3](http://eel.is/c++draft/lex.phases#1.3),
+    UCNs are not recognized and replaced in *h-char-sequence* and *q-char-sequence* sequences and, per
+    [\[lex.header\]p1](http://eel.is/c++draft/lex.header#1),
+    these sequences are mapped in an implementation-defined manner. \]
+  - Tom suggested that it might be worth updating the paper to describe how existing implementations
+    behave with respect to UCNs in preprocessor token concatenation, stringization and `#include`
+    scenarios.
+  - Jens asked if there are other ways in which these characters might plausibly be used today.
+  - Tom replied that Objective-C uses '@'.
+  - Jens mentioned the possibility of concerns being raised regarding the imposition of single code
+    unit encoding for these characters on the execution character set.
+  - Tom asked Hubert if he was aware of any EBCDIC related concerns.
+  - Hubert replied that his colleagues in WG14 did not express such concerns and that he is confident
+    that they would have if they had any.
+  - Hubert noted that locales that don't support these characters would no longer be strictly
+    conforming but could still be supported as extensions.
+  - Tom summarized the discussion; there are requests to Steve to update the prose for several of
+    the items discussed, but that there do not appear to be any objections to the paper direction.
+- [D2572R0: std::format() fill character allowances](https://rawcdn.githack.com/sg16-unicode/sg16-meetings/c84e3e4eef341795fb9ac44824525a3a89583fa7/presentations/2022-04-13-d2572r0.html)
+  - Tom provided an overview of the topic and prior discussions.
+  - Tom asked for additional categories of characters that should be represented in the introductory
+    table.
+  - Tom stated that Zero-Width Joiner (ZWJ) and Zero-Width Non-Joiner (ZWNJ) cases were not added
+    because he thought they were not interesting.
+  - Tom noted that lone surrogates should not be possible.
+  - PBrett suggested the bidirectional override characters.
+  - \[ Editor's note: the bidirectional override characters are U+2066 through U+202E. \]
+  - Tom agreed to add right-to-left and left-to-right examples.
+  - Tom stated that extending fill character support to arbitrary extended grapheme clusters (EGCs)
+    in the future would presumably impose an ABI break.
+  - Mark agreed that it would; at least one implementation only stores a single code unit as the
+    current wording appears to specify.
+  - Charlie agreed and noted that another implementation stores the fill character as a code unit
+    sequence with a maximum length of 4 code units for UTF-8.
+  - Tom noted that, for the "Estimated display width restrictions" section, there is no good or
+    right solution.
+  - Tom asked if characters with an estimated width other than one were to be banned, how that would
+    be accomplished without imposing undesirable overhead.
+  - PBindels noted that the ZWSP case is interesting; if it were given an estimated-width of 0,
+    then an infinite amount of padding would be required.
+  - Charlie stated that the estimated width is not intended to be accurate; it is best effort.
+  - Charlie stated that, in the "Existing practice" section, `std::format_error` is now thrown
+    for the cases that previously produced the stack overflow for MSVC.
+  - Charlie noted that the diagnostic is somewhat disappointing though since an invalid type is
+    reported because the intended fill character does not match the *fill-and-align* grammar.
+  - \[ Editor's note: The diagnostic produced by gcc with {fmt} is likewise disappointing. \]
+  - PBrett suggested that a table that demonstrates the desired output inline with the proposal
+    would be useful.
+  - Victor stated that the paper direction makes sense and is consistent with previous guidance.
+  - Victor pondered the consequences of diagnosing fill characters with an estimated width other
+    than one; on one hand, it would be nice, but on the other hand, it adds overhead and
+    potentially restricts valid use cases.
+  - PBrett suggested that fill characters with an estimated width other than one could be
+    conditionally supported.
+  - PBrett stated that his preferred approach would be to diagnose at run-time (e.g., throw an
+    exception) when alignment requirements could not be achieved due to the estimated width of
+    the fill character.
+  - PBindels reviewed the "Proposal" section and stated:
+    - The first point to restrict to a single UCS scalar value seems sensible.
+    - The third and fourth points appear to be consistent with what implementations currently do.
+    - The second point is the questionable one.
+  - PBrett suggested that the number of fill characters inserted could be unspecified when the
+    fill character has an estimated width other than one.
+  - PBindels replied that he considered that as well, but since the actual width is dependent on
+    font selection, a consistent result may not be achieved anyway.
+  - Charlie reminded the group that the estimated widths are not currently specified by any standard.
+  - Charlie observed that diagnosing fill characters with an estimated width other than one will
+    have the potential effect of rendering existing code invalid if estimated widths are changed
+    in the future.
+  - PBrett suggested another possibility that, if the fill character has an estimated width of two,
+    then perform the alignment as if the fill character and all characters in the format argument
+    have an estimated width of one; this would enable idiographic characters to be formatted properly.
+  - Charlie responded that, if such a feature is desirable, then it would be preferable to add a
+    flag to opt-in to it rather than inferring it based on the chosen fill character.
+  - Tom agreed and noted that idiographic characters are just one special case.
+  - Charlie stated that, for table style alignment, it is likely preferrable to emit a field
+    separator character explicitly in the format string rather than to rely on the fill and align
+    capabilities.
+  - PBindels asserted that there is value to having well-defined portable behavior across
+    implementations, so unspecified and implementation-defined behaviors should be avoided where
+    possible.
+  - Hubert asked if Victor has good examples of this facility being used with format arguments
+    that have characters with estimated widths other than one regardless of fill character.
+  - Victor replied affirmatively, but stated he did not recall specific examples; such cases
+    involved terminal output.
+  - Tom reported vague recollections of such examples being present in Victor's original papers.
+  - PBrett stated that support for certain languages remains a concern for him and reported
+    seeing Japanese characters reliably displayed in terminals in tabular formats.
+  - Tom asked if he knew how the programmers were facilitating such output.
+  - PBrett replied that he did not.
+  - PBindels asked if it would be feasible to research what features would be useful for such
+    languages.
+  - PBrett replied that it isn't feasible for him to do so due to the number of possible
+    solutions; he would like to allow implementations to be creative and see what the results bring.
+  - PBindels again emphasized a desire for portable behavior.
+  - Charlie agreed and stated that a creative solution in one implementation might produce an
+    error in another.
+  - Tom asked Peter Brett if it would suffice for an implementation to provide a flag to opt-in to
+    an alternate behavior.
+  - PBrett lamented the absence of attendees that are experts in non-Latin based languages.
+  - Hubert questioned the frequency with which a programmer would want to use a fill character with
+    an estimated width other than one; the programmer would presumably need to be able to specify a
+    fill-remainder character or otherwise provide their own padding.
+  - Victor agreed with the goal of specifying consistent behavior and suggested standardizing the
+    demonstrated existing behavior in which a fill character is assumed to have an estimated width
+    of one.
+  - Charlie noted that a programmer can implement their own fancy formatter that produces a result
+    that is then embedded using standard formatters.
+  - Tom stated that it sounds like we have a few possible extension mechanisms that can be used
+    for experimentation, work arounds, or future standard behavior.
+  - Tom reported that he is leaning towards Victor's suggestion of specifying the currently
+    demonstrated implementation experience.
+  - PBindels indicated he would be content with any of the demonstrated outputs so long as behavior
+    is consistent across implementations.
+  - PBrett expressed concern about specifying particular behavior in the absence of more diverse
+    expertise in SG16.
+  - PBindels stated that he would reach out within his organization to try to find people with more
+    diverse experience that would be interested in attending.
+- Tom reported that the next meeting will be on 2022-04-27.
 
 
 # March 9th, 2022
