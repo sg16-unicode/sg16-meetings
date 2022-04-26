@@ -114,11 +114,6 @@ The draft agenda is:
     "each non-whitespace character that cannot be one of the above"
     case of
     [*preprocessing-token*](http://eel.is/c++draft/lex.pptoken#nt:preprocessing-token).
-  - Jens stated that this makes such intended use in identifiers ill-formed since, after this
-    change, such a character would appear as a lone *preprocessing-token*.
-  - \[ Editor's note: This behavior doesn't seem related to the proposed change since, previously,
-    a UCN naming one of these characters would also appear as a lone *preprocessing-token*.
-    The editor is concerned that this portion of the discussion was not captured accurately. \]
   - Jens requested that this discussion be included in the paper.
   - PBrett asked whether *h-char* and *q-char* sequences remain a backward compatibility concern.
   - Jens replied that they do, but that UCNs in such sequneces already have implementation-defined
