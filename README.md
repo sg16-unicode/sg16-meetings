@@ -22,6 +22,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [April 27th, 2022](#april-27th-2022)
 - [April 13th, 2022](#april-13th-2022)
 - [March 9th, 2022](#march-9th-2022)
 - [February 23rd, 2022](#february-23rd-2022)
@@ -33,6 +34,134 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 27th, 2022
+
+## Agenda
+- [P2286R7: Formatting Ranges](https://wg21.link/p2286r7)
+  - Review recent updates and confirm direction.
+- [P2558R1: Add @, $, and \` to the basic character set](https://wg21.link/p2558r1)
+  - Review recent updates.
+
+## Meeting summary
+- Attendees:
+  - Hubert Tong
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2286R7: Formatting Ranges](https://wg21.link/p2286r7)
+  - \[ Editor's note: D2286R7 was the active paper under discussion at the telecon. The agenda
+    and links used here reference P2286R7 since the links to the draft paper were not shared
+    publicly. The published document may differ from the reviewed draft revision. \]
+  - PBrett provided an introduction.
+  - Victor explained that LWG reviewed the wording and conditionally approved the paper subject
+    to SG16 review.
+  - PBrett recalled concerns raised in the past regarding the use of Unicode properties.
+  - Victor replied that implementors were present during the LWG review and did not express
+    any objections or concerns.
+  - Victor noted that Hubert provided some wording tweaks during the LWG review.
+  - PBrett presented wording updates Tom
+    [proposed on the SG16 mailing list](https://lists.isocpp.org/sg16/2022/04/3111.php).
+  - PBrett expressed a preference for Tom's wording relative to the current wording.
+  - Victor stated that he is ok with Tom's wording so long as it is equivalent to the
+    current wording in the paper.
+  - Victor stated that he would prefer not to defer to other format facilities for the
+    description of how hexadecimal values are formatted.
+  - Hubert expressed a desire to document spacing and non-printable characters by their
+    encoded values as opposed to their character names or glyphs.
+  - Hubert explained that doing so would free the library from having to be aware of the
+    literal encoding selected at compile-time.
+  - Tom acknowledged the concern; the set of spacing and non-printable characters, or
+    their encoded values may differ for one literal encoding vs another.
+  - Hubert noted that the concern applies to both EBCDIC and Windows code pages.
+  - Hubert stated that the proposed wording could produce strange results in cases where
+    unnecessary shift states are present.
+  - PBrett observed that the current wording does not state which encoding is used in cases
+    where printable characters overlap with control characters in a related encoding, but
+    the proposed wording does.
+  - Jens noticed that the proposed wording states that the literal encoding is used to
+    construct *E*, but not to interpret *S*.
+  - Tom acknowledged the omission and stated that it needs to be corrected.
+  - PBrett returned to his example where a locale encoding overlays graphical characters
+    over control characters and noted that the overlayed characters would be interpreted
+    in the literal encoding.
+  - Hubert reported that his implementations are not affected by overlay concerns and that
+    locale support can be added later if motivated.
+  - Zach asked if the method for determining whether *S* is in a Unicode encoding matches
+    the method specified for `std::format()` in C++20.
+  - Tom replied that he didn't recall how it was specified.
+  - \[ Editor's note: It does not appear to be specified. The relevant wording simply states
+    "For a string in a Unicode encoding, ...". See
+    [\[format.string.std\]p11](http://eel.is/c++draft/format#string.std-11),
+    [\[format.string.std\]p12](http://eel.is/c++draft/format#string.std-12), and
+    [\[format.string.std\]p14](http://eel.is/c++draft/format#string.std-14).
+    Improvements appear to be warranted. \]
+  - Jens stated that, with the exception of the use of *CE* for string *S*, this is
+    well-specified so long as it matches the desired behavior.
+  - Tom noted that `std::format()` is intentionally locale independent.
+  - Hubert reported that his implementations will likely assume a certain literal encoding
+    rather than storing the literal encoding actually used at compile-time; that encoding is
+    likely to be EBCDIC 1047 or, for ASCII contexts, ISO-8859-1.
+  - Hubert expressed his understanding of the design intent to be that an escaped sequence
+    can be interpreted to reproduce the original byte sequence.
+  - Hubert suggested that it may be worth adding a note to that effect.
+  - Tom acknowledged the intent and noted that his wording fails to reflect that intent for
+    stateful encodings since state transitions in *S* should be reflected as escape sequences
+    rather than interpreted when constructing *E*.
+  - PBrett asked for other concerns.
+  - Tom noted that there is the issue of handling boundaries of ill-formed code unit sequences
+    and asked if anyone wanted to argue for addressing that now.
+  - PBrett expressed a preference not to address it now.
+  - Hubert suggested it could be unspecified or implementation-defined.
+  - Tom replied that it is more-or-less implied at present.
+  - PBrett agreed.
+  - Tom summarized the discussion; we agree that we want revised wording for this case but that
+    we don't quite have what we want yet.
+  - Tom said he will inform LWG that we'll continue iterating on the wording with the intent
+    to have something approved by our next meeting in two weeks.
+  - Hubert agreed with the summary.
+  - Victor gave a thumbs up.
+- [P2558R1: Add @, $, and \` to the basic character set](https://wg21.link/p2558r1)
+  - \[ Editor's note: D2558R1 was the active paper under discussion at the telecon. The agenda
+    and links used here reference P2558R1 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Steve reported that the prose was updated to record the results of prior discussions in
+    order to better explain the intent; the wording has not been changed.
+  - Steve presented the paper and noted that section 3 is new.
+  - Tom suggested adding a comment in section 3.1 (Universal Character Name) to indicate the
+    character corresponding to `\u0060`.
+  - PBrett reported a typo in section 3.4, "sting literal" should be "string literal".
+  - PBrett noted that, with respect to existing use of these characters, they are usually used
+    for convenience where another mechanism could be used.
+  - Steve agreed and noted that such use generally occurs in contexts that require some kind
+    of magic and where they can generally be escaped in some way.
+  - Tom stated that, with regard to raw string literals, a reason to exclude the new characters
+    in the delimiter portion is because these characters might acquire meaning in the future
+    that could become problematic.
+  - Tom expressed a preference to exclude \` for now so that we can preserve it for use as a
+    new type of string literal.
+  - \[ Editor's note: Such exclusion is unnecessary; the raw string literal delimiter pattern
+    is bounded by a double quote and a parenthesis. Allowing use of \` in between those poses
+    no ambiguity for a hypothetical new string literal delimited by \`. \]
+  - Tom suggested the paper explicitly note that the proposed changes enable these characters to
+    portably be used in character literals by virtue of being encoded as a single code unit.
+  - Steve agreed to update the paper.
+  - PBrett reported another typo in section 3.3, "invarient" should be "invariant".
+  - Jens expressed a continuing interest in the paper showing examples of behavioral changes.
+  - Hubert noted that such examples should be added to annex C.
+  - Steve reported two known compatibility issues:
+    - Use of a UCN to name one of these characters in stringification.
+    - Use of a UCN to name one of these characters as an argument to a function-like macro that
+      does not use the corresponding parameter.
+  - Steve stated that SG22 may want to review these updates.
+  - Steve suggested it may suffice to forward an updated paper via an SG16 mailing list review.
+  - Tom agreed.
+- Tom stated that the next meeting will be May 11th and will hopefully include review of an
+  updated revision of D2572R0 (std::format() fill character allowances).
 
 
 # April 13th, 2022
