@@ -9,14 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, April 27th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220427T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, May 11th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220511T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
 - [P2286R7: Formatting Ranges](https://wiki.edg.com/pub/Wg21telecons2022/LibraryWorkingGroup/p2286r7.html)
-  - Review recent updates and confirm direction.
-  - (The link is to a draft revision attached to the LWG wiki page)
-- [P2558R0: Add @, $, and \` to the basic character set](https://wg21.link/p2558)
-  - Continue review pending an updated revision.
+  - Review and approve final wording updates.
+- [P2558R1: Add @, $, and \` to the basic character set](https://wg21.link/p2558r1)
+  - Review pending an updated revision.
 - D2572R0: std::format() fill character allowances
   - Continue review pending an updated revision.
 
