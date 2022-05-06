@@ -67,7 +67,7 @@ The draft agenda is:
     [proposed on the SG16 mailing list](https://lists.isocpp.org/sg16/2022/04/3111.php).
   - PBrett expressed a preference for Tom's wording relative to the current wording.
   - Victor stated that he is ok with Tom's wording so long as it is equivalent to the
-    current wording in the paper.
+    current wording in the paper for the Unicode case.
   - Victor stated that he would prefer not to defer to other format facilities for the
     description of how hexadecimal values are formatted.
   - Hubert expressed a desire to document spacing and non-printable characters by their
