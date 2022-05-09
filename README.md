@@ -12,12 +12,12 @@ The next SG16 meeting is scheduled for
 Wednesday, May 11th, 2022, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220511T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [P2286R7: Formatting Ranges](https://wiki.edg.com/pub/Wg21telecons2022/LibraryWorkingGroup/p2286r7.html)
+- [D2286R8: Formatting Ranges](https://brevzin.github.io/cpp_proposals/2286_fmt_ranges/p2286r8.html)
   - Review and approve final wording updates.
-- [P2558R1: Add @, $, and \` to the basic character set](https://wg21.link/p2558r1)
-  - Review pending an updated revision.
-- D2572R0: std::format() fill character allowances
-  - Continue review pending an updated revision.
+- [D2558R1: Add @, $, and \` to the basic character set](https://isocpp.org/files/papers/D2558R1.html)
+  - Continue review pending the availability of an updated revision.
+- [D2572R0: std::format() fill character allowances](https://rawgit.com/tahonermann/std-proposals/master/d2572r0.html)
+  - Continue review pending the availability of an updated revision.
 
 
 # Past SG16 meetings
