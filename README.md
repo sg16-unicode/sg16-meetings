@@ -19,8 +19,8 @@ The draft agenda is:
 - [D2572R0: std::format() fill character allowances](https://rawgit.com/tahonermann/std-proposals/master/d2572r0.html)
   - Continue review pending the availability of an updated revision.
 
-
 # Past SG16 meetings
+- [May 11th, 2022](#may-11th-2022)
 - [April 27th, 2022](#april-27th-2022)
 - [April 13th, 2022](#april-13th-2022)
 - [March 9th, 2022](#march-9th-2022)
@@ -33,6 +33,107 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 11th, 2022
+
+## Agenda
+- [P2286R8: Formatting Ranges](https://wg21.link/p2286r8)
+  - Review and approve final wording updates.
+- [P2558R1: Add @, $, and \` to the basic character set](https://wg21.link/p2558r1)
+  - Continue review pending the availability of an updated revision.
+
+## Meeting summary
+- Attendees:
+  - Charles Barto
+  - Hubert Tong
+  - Jens Maurer
+  - Mark de Wever
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [P2286R8: Formatting Ranges](https://wg21.link/p2286r8)
+  - \[ Editor's note: D2286R8 was the active paper under discussion at the telecon. The agenda
+    and links used here reference P2286R8 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Victor summarized recent wording changes worked out on the SG16 mailing list.
+  - Victor asked if "code point" should be preferred over "character" in the proposed wording
+    for \[format.string.escaped\]p2.
+  - Tom replied that he is unaware of any normative use of "code point" in the standard today.
+  - Victor responded that it is used in the wording for format field width estimation.
+  - Hubert stated that the usage there is in a Unicode specific context and that "character"
+    is probably most appropriate here.
+  - Hubert pointed out that, in \[format.string.escaped\]p2.3, it is odd that *c* is defined
+    as a character, but then compared with UCS scalar values.
+  - Jens agreed and proposed substituting "character" for "UCS scalar value" in paragraph
+    2.3.1 and in the header of the associated table.
+  - Jens suggested doing likewise in paragraph 2.3.3.
+  - Hubert argued that a change is not needed in 2.3.3 due to the use of "corresponds".
+  - Tom noted the use in that paragraph is also a Unicode specific context.
+  - Tom asked Charles if he continues to have concerns regarding the lack of specification
+    for determining the boundaries of ill-formed code unit sequences.
+  - Charles replied that he does and that he would like to see it addressed via a reference
+    to the [WHATWG Encoding Standard](https://encoding.spec.whatwg.org).
+  - Tom responded with uncertainty whether such a normative reference is possible given the
+    lack of versioning around that standard.
+  - Charles suggested that the method specified in the WHATWG standard could be replicated
+    in the C++ standard; we want the "maximal subpart" behavior described by policy option 2
+    in [Unicode PR-121](http://unicode.org/review/pr-121.html).
+  - Hubert asked if that policy is defined for all UTF encodings.
+  - Charles replied that it is.
+  - PBrett asked what the motivation is for rigorously specifying how the boundaries of
+    ill-formed code unit sequences are determined.
+  - Charles replied that the goal is to ensure consistent output, but then noticed that, in
+    this case, the method used does not appear to be observable since each code unit of the
+    sequence is written to the output anyway.
+  - Tom agreed that it should not matter for self-synchronizing encodings.
+  - Charles noted that this will be the first instance of Unicode UCD properties being
+    normatively required by the C++ standard.
+  - Charles suggested that, if we're ok with such normative use, we could revisit the wording
+    for estimated format field widths to make the uses there normative as well.
+  - \[ Editor's note: [\[format.string.std\]p11](http://eel.is/c++draft/format.string.std#11)
+    specifies normative encouragement of behavior that depends on UCD properties in order to
+    identify extended grapheme cluster boundaries. \]
+  - \[ Editor's note: This would not be the first normative use of the UCD properties;
+    [\[lex.name\]p1](http://eel.is/c++draft/lex.name#1) requires the `XID_Start` and
+    `XID_Continue` properties to determine identifier boundaries and validity. \]
+  - Jens requested that such changes not be handled via this paper.
+  - Steve asked how much data is required for the new uses of the `General_Category` and
+    `Grapheme_Extend` properties.
+  - Victor replied that the necessary data fits in ~1K.
+  - Charles agreed and shared a
+    [link to code](https://github.com/microsoft/STL/blob/main/stl/inc/__msvc_format_ucd_tables.hpp)
+    used to implement a grapheme break algorithm that uses the `Grapheme_Cluster_Break` and
+    `Extended_Pictographic` properties.
+  - Charles noted that some creative packing is necessary to get the size that small.
+  - Tom expressed surprise that `Grapheme_Extend` is small.
+  - Victor replied that it is composed of a number of compressable ranges.
+  - \[ Editor's note: The set of all characters that satisfy the `Grapheme_Extend=yes` property
+    can be viewed
+    [here](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%3AGrapheme_Extend%3DYes%3A%5D&g=&i=);
+    that set comprises 2090 code points in Unicode 14. \]
+  - **Poll: Forward D2286R8 to LWG with 2.3.1 and associated table revised to substitute "character" for "UCS scalar value" as discussed for inclusion in C++23**
+    - Attendance 8
+    - No objection to unanimous consent.
+- [P2558R1: Add @, $, and \` to the basic character set](https://wg21.link/p2558r1)
+  - \[ Editor's note: D2558R1 was the active paper under discussion at the telecon. The agenda
+    and links used here reference P2558R1 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Steve introduced the changes made since the last review; just the addition of annex C wording.
+  - **Poll: Forward D2558R1 to EWG for inclusion in C++26**
+    - Attendance: 8 (1 abstention)
+
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   1 |   3 |   0 |   0 |
+
+    - Consensus in favor.
+  - Steve stated that he would follow up with SG22 with regard to issues found that
+    were not discussed in WG14.
+  - \[ Editor's note: Steve did so via a
+    [post to the C liaison list](https://lists.isocpp.org/liaison/2022/05/1071.php). \]
+- Tom stated that the next meeting is scheduled for May 25th.
 
 
 # April 27th, 2022
