@@ -9,15 +9,14 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, May 11th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220511T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, May 25th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220525T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [D2286R8: Formatting Ranges](https://brevzin.github.io/cpp_proposals/2286_fmt_ranges/p2286r8.html)
-  - Review and approve final wording updates.
-- [D2558R1: Add @, $, and \` to the basic character set](https://isocpp.org/files/papers/D2558R1.html)
-  - Continue review pending the availability of an updated revision.
 - [D2572R0: std::format() fill character allowances](https://rawgit.com/tahonermann/std-proposals/master/d2572r0.html)
   - Continue review pending the availability of an updated revision.
+- [L2/22-007R2: Avoiding Source Code Spoofing](https://www.unicode.org/L2/L2022/22007r2-avoiding-spoof.pdf)
+  - Review in order to provide feedback to the Unicode Trojan Source WG.
+
 
 # Past SG16 meetings
 - [May 11th, 2022](#may-11th-2022)
