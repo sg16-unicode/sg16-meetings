@@ -14,8 +14,12 @@ Wednesday, May 25th, 2022, from 19:30-21:00 UTC
 The draft agenda is:
 - [D2572R0: std::format() fill character allowances](https://rawgit.com/tahonermann/std-proposals/master/d2572r0.html)
   - Continue review pending the availability of an updated revision.
-- [L2/22-007R2: Avoiding Source Code Spoofing](https://www.unicode.org/L2/L2022/22007r2-avoiding-spoof.pdf)
-  - Review in order to provide feedback to the Unicode Trojan Source WG.
+- [L2/22-072R: Proposal for amendments to UAX#9 and UAX#31](https://www.unicode.org/L2/L2022/22072r-uax9-uax31-amd.pdf)
+  - L2/22-072R was produced by the Unicode Source Code Ad-Hoc Group and
+    adopted in April for Unicode 15 per the
+    [Draft Minutes of UTC Meeting 171](https://www.unicode.org/L2/L2022/22061.htm#171-C25).
+  - Review for familiarity and relevance to
+    [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949).
 
 
 # Past SG16 meetings
