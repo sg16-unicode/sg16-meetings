@@ -9,17 +9,11 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, May 25th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220525T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, June 8th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220608T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
 - [D2572R0: std::format() fill character allowances](https://rawgit.com/tahonermann/std-proposals/master/d2572r0.html)
-  - Continue review pending the availability of an updated revision.
-- [L2/22-072R: Proposal for amendments to UAX#9 and UAX#31](https://www.unicode.org/L2/L2022/22072r-uax9-uax31-amd.pdf)
-  - L2/22-072R was produced by the Unicode Source Code Ad-Hoc Group and
-    adopted in April for Unicode 15 per the
-    [Draft Minutes of UTC Meeting 171](https://www.unicode.org/L2/L2022/22061.htm#171-C25).
-  - Review for familiarity and relevance to
-    [P1949: C++ Identifier Syntax using Unicode Standard Annex 31](https://wg21.link/p1949).
+  - Final review pending the availability of an updated revision.
 
 
 # Past SG16 meetings
