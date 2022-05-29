@@ -106,15 +106,21 @@ The draft agenda is:
     be possible to act on a core issue and an NB comment would end up being required anyway.
   - Robin directed discussion to allowances for U+200E LEFT-TO-RIGHT MARK (LRM) and
     U+200F RIGHT-TO-LEFT MARK (RLM) to be used in combination with other whitespace.
-  - Robin stated that example wording can be found in the Ada specification.
+  - Robin stated that example wording can be found in the Ada 2012 reference manual;
+    [section 2.2 paragraph 7 1/3, "Lexical Elements, Separators, and Delimiters"](http://www.ada-auth.org/standards/rm12_w_tc1/html/RM-2-2.html#p7.1)
+    states:
+      > One or more other_format characters are allowed anywhere that a separator is;
+      > any such characters have no effect on the meaning of an Ada program.
   - Jens noted that this would be a new kind of whitespace for C++ since sequences of these
     marks by themselves would not constitute whitespace.
   - Jens expressed curiosity regarding "implicit directional marks" as discussed in L2/22-072R.
   - Robin replied that "implicit directional marks" is discussed in
     [UAX #9 section 2.6, "Implicit Directional Marks"](https://unicode.org/reports/tr9/#Implicit_Directional_Marks).
-  - Robin explained how a higher level protocol like
+  - Robin explained that, per
+    [UAX #9 section 6.5, "Conversion to Plain Text"](https://unicode.org/reports/tr9/#Conversion_to_Plain_Text),
+    such marks may be implicitly inserted during conversion to plain text for text subject to protocol
     [UAX9-HL4](https://unicode.org/reports/tr9/#HL4)
-    might be used to implicitly insert such marks.
+    and that Unicode 15 will recommend that protocol for source code text.
   - Hubert asked if it would make sense to prohibit sequences consisting of more than one of
     these marks.
   - Robin replied that he knew of no motivation for doing so; that the presence of multiple
@@ -185,7 +191,8 @@ The draft agenda is:
       in annex E to claim conformance with UAX31-R3.
       At the same time, update the UAX references in the bibliography to refer to
       Unicode 16 (or later).
-  - Robin noted that Unicode 15 is due out in September.
+  - Robin noted that Unicode 15 is planned for release on September 13th per
+    https://www.unicode.org/versions/beta-15.0.0.html.
   - Tom recalled Hubert mentioning on the mailing list that
     U+000D CARRIAGE RETURN (CR)
     can now be added to the basic character set.
