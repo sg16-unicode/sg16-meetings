@@ -14,6 +14,7 @@ Wednesday, June 8th, 2022, from 19:30-21:00 UTC
 The draft agenda is:
 - [D2572R0: std::format() fill character allowances](https://rawgit.com/tahonermann/std-proposals/master/d2572r0.html)
   - Final review pending the availability of an updated revision.
+- Discuss survey questions to suggest for the 2023 C++ Developer Survey
 
 
 # Past SG16 meetings
