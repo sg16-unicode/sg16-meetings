@@ -9,12 +9,12 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, June 8th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220608T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, June 22nd, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220622T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- [D2572R0: std::format() fill character allowances](https://rawgit.com/tahonermann/std-proposals/master/d2572r0.html)
-  - Final review pending the availability of an updated revision.
-- Discuss survey questions to suggest for the 2023 C++ Developer Survey
+- Continue discussion of survey questions for the 2023 C++ Developer Survey
+  - Pending availability of a draft set of survey questions that incorporate comments
+    from the 2022-06-08 telecon.
 
 
 # Past SG16 meetings
