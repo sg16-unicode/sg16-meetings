@@ -13,8 +13,8 @@ Wednesday, June 22nd, 2022, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220622T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
 - Continue discussion of survey questions for the 2023 C++ Developer Survey
-  - Pending availability of a draft set of survey questions that incorporate comments
-    from the 2022-06-08 telecon.
+  - Revise, add, and remove questions from the
+    [draft survey document](https://docs.google.com/document/d/1lRU7uErn2Vc7LOGG2H3PrzCvmf69u8S_v-43by_Vb9c/edit?usp=sharing)
 
 
 # Past SG16 meetings
