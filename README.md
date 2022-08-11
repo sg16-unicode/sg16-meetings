@@ -19,6 +19,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [June 22nd, 2022](#june-22nd-2022)
 - [June 8th, 2022](#june-8th-2022)
 - [May 25th, 2022](#may-25th-2022)
 - [May 11th, 2022](#may-11th-2022)
@@ -37,6 +38,174 @@ The draft agenda is:
 
 
 # June 22nd, 2022
+
+## Agenda
+- Continue discussion of survey questions for the 2023 C++ Developer Survey.
+  - Revise, add, and remove questions from the
+    [draft survey document](https://docs.google.com/document/d/1lRU7uErn2Vc7LOGG2H3PrzCvmf69u8S_v-43by_Vb9c/edit?usp=sharing).
+
+## Meeting summary
+- Attendees:
+  - Hubert Tong
+  - Jens Maurer
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+- Continue discussion of survey questions for the 2023 C++ Developer Survey:
+  - \[ Editor's note: The active revision at the start of the meeting can be viewed by selecting
+    `File` | `Version history` | `See version history`, then selecting the version named
+    "pre 2022-06-22 meeting", then clicking the rightward facing triangle next to the version
+    name to "expand detailed versions"; this latter step is necessary to exclude detailed edits
+    that otherwise interfere with numbering of the questions. \]
+  - Tom asked attendees to nominate questions to be removed from consideration.
+  - PBrett suggested removing Q1 (What character encoding(s) do you use for source files?) since
+    we already have consensus for moving towards UTF-8 encoded source files.
+  - PBrett asked how answers to Q1 would affect our decision making.
+  - Jens concurred and asked hypothetically whether responses would entice us to, for example,
+    add a translation phase 1 option to support GB18030 as we are doing for UTF-8 via
+    [P2295 (Support for UTF-8 as a portable source file encoding)](https://wg21.link/p2295).
+  - Jens noted that implementations that support non-UTF-8 source files will continue to support
+    them and argued that there is nothing to be done within the standard.
+  - Hubert suggested an alternative formulation that asks which scripts programmers are using in
+    their source files and for which they might be using specific encodings.
+  - Jens noted that
+    [P2528 (C++ Identifier Security using Unicode Standard Annex 39)](https://wg21.link/p2528)
+    assumes that everyone is using Unicode for their source file encoding and that encoding does
+    not imply which scripts are being used.
+  - Jens stated that use of a particular encoding such as ISO8859-1 does restrict what scripts
+    can be used and that such information could potentially be used in confusability analysis.
+  - Jens suggested the question could probe which scripts are used in conjunction with a
+    non-Unicode encoding.
+  - PBrett noted the existence of the Big-5 encoding and that it is being fazed out in favor of
+    GB18030 and UTF-8.
+  - PBrett asked if we are at risk of discussing whether support for additional encodings should
+    be mandated.
+  - Hubert responded negatively and stated that the question is intended to probe the extent to
+    which substantial use of non-Unicode encodings remains.
+  - Tom stated that it sounds like we have not identified a use case for this question.
+  - Tom struck Q1 from the draft document.
+  - PBrett expressed uncertainty as to what Q2 (What character encoding(s) do you use for string
+    literals?) is intended to ask and stated that it might be interpreted as asking if `L`, `u8`,
+    `u`, or `U` prefixed literals are being used.
+  - Tom replied that the question is intended to ascertain what encodings are being used for the
+    encoding of ordinary (non-prefixed) literals in order to learn about trends occurring in the
+    ecosystem.
+  - Hubert noted that we now assume that if string literals are UTF-8, then the locale encoding
+    is as well.
+  - PBrett expressed a feeling of persistent saltiness over that assumption.
+  - Jens stated that only `std::format` is currently pushing us towards Unicode in this way.
+  - Tom stated that we seem to have no use case for this question.
+  - Tom struck Q2 from the draft document.
+  - PBrett suggested removing Q10 (How are the project(s) that you work on organized for
+    Unicode normalization?) on the basis that few programmers are aware of Unicode normalization.
+  - Tom responded that the question is intended to provide input regarding whether normalization
+    should be reflected in the type system.
+  - Steve stated that it doesn't matter for most programmers, but that it matters immensely for
+    a few.
+  - PBrett suggested it is not a good candidate question if we believe it impacts few programmers.
+  - Tom struck Q10 from the draft document.
+  - PBrett opined that Q13 (Do your project(s) use regular expressions for which the search
+    pattern is not known at compile-time?) is important to determine if programmers create regular
+    expressions using user input.
+  - PBrett stated that it probes whether
+    [CTRE](https://compile-time-regular-expressions.readthedocs.io/en/latest)
+    is a suitable replacement for `std::regex`.
+  - PBrett stated that Q14 (Which regular expression languages do you use?) appears to duplicate
+    Q12 (What libraries do you use for regular expression support?).
+  - Tom replied that Q14 is intended to ask which regular expression languages are being used; for
+    example, which of the six languages supported by `std::regex` are being used.
+  - Hubert stated that Q12 could be useful to determine whether collation support is useful and
+    noted that use of POSIX languages may imply better locale support needs.
+  - Jens observed that programmers might use those languages for other reasons.
+  - PBrett replied that programmers tend to use whatever language the regular expression facility
+    they are already using supports.
+  - Tom struck Q14 from the draft document.
+  - Jens asserted that Q15 (Do you use the signed char or unsigned char types for text processing?)
+    is not interesting.
+  - Hubert asked if that concern is motivated by the lack of standard library support.
+  - Jens replied that iostream supports signed and unsigned char types.
+  - Tom stated that the question is intended to help determine whether these types should be used
+    exclusively as small integer types as opposed to character types.
+  - Jens opined that programmers should use `char`, `char8_t`, etc... for character types.
+  - PBrett noted that `unsigned char` is commonly used as a character type in C.
+  - Tom stated that this reflects a policy issue regarding whether we intend to extend the standard
+    library to support use of these types for text and stated we have no such intent.
+  - Jens agreed, noted that the aliasing is unfortunate, and expressed support for not making the
+    situation worse.
+  - Tom struck Q15 from the draft document.
+  - Jens expressed support for asking programmers how they support internationalization and
+    localization.
+  - PBrett suggested dropping Q19 (What libraries do you use for collation?).
+  - Jens countered with a suggestion to merge
+    Q17 (What libraries or operating system features do you use for language translation?),
+    Q18 (What libraries do you use for localization?), and Q19.
+  - Tom agreed to do so.
+  - Tom pondered whether it is worth asking about prohibition of standard library facilities.
+  - PBrett responded that we can infer avoidance of the standard library when programmers state
+    that they use, for example, ICU, but not the standard library facilities.
+  - Steve stated that the explicit locale capabilities present in `std::format` are representative
+    of what programmers want.
+  - PBrett asked about adding a free form field for programmers to state how they support
+    localization.
+  - Tom responded that it is difficult to extract data from free form entries.
+  - Steve stated that it is useful to know that no one uses, for example, `stdcoll()`.
+  - Tom asked if the "discourage or prohibit" language should be retained.
+  - Jens replied negatively and stated that we want to know what they do use.
+  - Hubert stated that Q16 (Do you use the C and C++ locale features?) is useful to know if, or
+    to what extent, programmers depend on the C and C++ locale for identification purposes.
+  - Tom agreed to simplify Q16.
+  - Tom pondered what we would use the responses to questions about languages and scripts for.
+  - PBrett replied that Visual Studio Code has
+    [UAX#9 HL4](https://unicode.org/reports/tr9/#HL4) features intended to help with display of
+    bidirectional text in source files; that information could be used for SG15 guidance.
+  - Jens stated that the standard allows identifiers, literals, and comments to be written in
+    many kinds of scripts; support for languages such as Japanese is intentional.
+  - Jens added that he favors developing guidelines to encourage features like those that
+    Visual Studio Code offers.
+  - Tom noted that guidance will be forthcoming from the Unicode Source Code Ad-Hoc Group.
+  - PBrett concluded that it sounds like we already know we want to support these features;
+    the data could help establish urgency.
+  - Jens agreed, but noted that implementors can decide for themselves what is and is not urgent.
+  - Tom struck Q3 and Q4 from the draft document.
+  - Tom opined that Q5 (Do you use characters other than the basic character set in identifiers)
+    is probably irrelevant following the adoption of
+    [P1949 (C++ Identifier Syntax using Unicode Standard Annex 31)](https://wg21.link/p1949).
+  - Steve indicated that language specific concerns are best addressed in a code style guide.
+  - Tom struck Q5 from the draft document.
+  - Discussion ensued regarding poll bias and privacy concerns.
+  - PBrett suggested we could ask which region of the world respondents are located in.
+  - Jens replied that such a question might be one that the Standard C++ Foundation is interested
+    in asking anyway; it may not need to be included within our quota of questions.
+  - Hubert suggested it would be useful to emphasize culture as opposed to geographical location.
+  - PBrett expressed a preference for asking which nation the respondent is in.
+  - Tom suggested asking respondents what their native language is.
+  - Jens replied negatively; there are many languages spoken in India.
+  - Tom proposed striking Q6 (Do the projects you work on limit locale selection in deployment
+    environments to those that use a specific character encoding?) on the basis that mainframes
+    aren't going away any time soon.
+  - Tom struck Q6 from the draft document.
+  - PBrett suggested merging
+    Q7 (What libraries do you use for text processing?),
+    Q8 (How are the project(s) that you work on organized for text processing?), and
+    Q9 (If your project(s) convert text to and from an internal encoding, what encoding(s) are
+    used for the internal encoding?) based on an expectation that use of framework libraries like
+    QT sufficiently answer these questions.
+  - Jens noted that we already have agreement that we want utilities to convert to/from UTF-8 and
+    possibly UTF-16.
+  - Tom asked for clarification that such agreement is relative to locale dependent encodings.
+  - Steve replied yes, but also to other specified encodings.
+  - PBrett asserted that these questions have already been probed by JeanHeyd.
+  - Tom explained that Q7 (What libraries do you use for text processing?) is really intended to
+    ascertain what features are supported via non-standard libraries because the standard does
+    not provide adequate support for them.
+  - Jens suggested asking that question instead.
+  - Tom agreed to rephrase Q7 accordingly.
+  - Jens suggested asking what text processing features people most need; whether that be
+    transcoding, Unicode algorithms, or something else.
+  - Jens noted that regular expression support could be added to that list differentiated by
+    compile-time vs run-time support.
+  - Steve asserted that a laundry list would be ok.
+- Tom stated that the next meeting is scheduled for July 13th but that we need new papers.
 
 
 # June 8th, 2022
