@@ -19,6 +19,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [July 27th, 2022](#july-27th-2022)
 - [June 22nd, 2022](#june-22nd-2022)
 - [June 8th, 2022](#june-8th-2022)
 - [May 25th, 2022](#may-25th-2022)
@@ -35,6 +36,157 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# July 27th, 2022
+
+## Agenda
+- [WG14 N3016: Unicode Length Modifiers v3](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3016.pdf)
+
+## Meeting summary
+- Attendees:
+  - Eskil Steenberg
+  - Hubert Tong
+  - Jens Maurer
+  - Marcus Johnson
+  - Peter Brett
+  - Tom Honermann
+  - Victor Zverovich
+- [WG14 N3016: Unicode Length Modifiers v3](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3016.pdf):
+  - PBrett introduced the topic and invited Marcus to present his paper.
+  - Marcus discussed the motivation for the paper; the desire to be able to easily format
+    text in a Unicode encoding.
+  - Tom provided a summary of the WG14 review of the paper during the recent WG14 meeting.
+  - PBrett described how `gettext()` is used; a string in the string literal encoding is
+    provided and a string in the current locale encoding is produced.
+  - Tom stated that there is effectively a contract that the string produced by
+    `gettext()` is encoded in the current locale encoding.
+  - PBrett confirmed.
+  - PBrett asked how `printf()` would handle formatting a UTF-16 encoded argument.
+  - Tom replied that the existing practice for `wchar_t` based arguments is to convert them
+    to the current locale encoding.
+  - Tom asked if motivation exists for an alternative behavior.
+  - Jens asked for an example of alternative behavior.
+  - Tom replied that the string literal encoding could be used to guide conversions instead
+    of the current locale and noted that this would match the behavior chosen for
+    `std::format()` when the string literal encoding is a Unicode encoding.
+  - Tom explained that such behavior would require preserving the string literal encoding
+    for each translation unit and then somehow passing that information to `printf()`.
+  - Jens noted that `std::printf()` and `gettext()` have different encoding expectations; the
+    former expects the formatting string to be in the current locale encoding while the latter
+    expects something else.
+  - \[ Editor's note: The
+    [GNU gettext man page](https://man7.org/linux/man-pages/man3/gettext.3.html)
+    states:
+      > The msgid argument identifies the message to be translated. By
+      > convention, it is the English version of the message, with non-
+      > ASCII characters replaced by ASCII approximations.
+    \]
+  - PBrett stated that it is rare in his experience for a string literal to be passed as the
+    format string to `printf()`.
+  - Victor replied that in the code base he works on, approximately 50% of `printf()` calls
+    pass a string literal.
+  - Tom surmised that Victor's experience may reflect an assumption of UTF-8 as both the
+    string literal encoding and the locale encoding.
+  - Victor replied that third party libraries are more likely to not assume UTF-8.
+  - Jens asked if there is motivation to introduce a `u8printf()`.
+  - Tom replied that adding such an interface is an option.
+  - Jens expressed belief that we have consensus that the future is UTF-8 and that
+    transcoding operations should occur at program boundaries.
+  - PBrett expressed acceptance of library UB as a result of passing a format string to
+    `printf()` that is not encoded in the expected encoding.
+  - Jens asked how `printf()` implementations recognize the '%' character today.
+  - Hubert responded that `printf()` is required to be locale sensitive and that the code
+    point value of the '%' character may vary across encodings.
+  - Eskil professed that implementations simply search for a code unit that matches the
+    ASCII encoding of '%'.
+  - Jens argued that is an unlikely implementation choice for an EBCDIC-based system.
+  - Hubert explained that the '%' character encoding is non-varying across EBCDIC code
+    pages so a simple search for a code unit that matches the EBCDIC encoding works on
+    such systems.
+  - Jens surmised that, for implementations that support a locale encoding that is
+    unrelated to the string literal encoding, there must exist a compile time decision
+    regarding calls to `printf()`.
+  - Hubert responded affirmatively and stated that the `printf()` family of functions have
+    multiple entry points on z/OS.
+  - \[ Editor's note: The z/OS C run-time library provides EBCDIC-based implementations
+    and ASCII-based implementations. The latter exist to support an ASCII environment on
+    z/OS systems. See IBM's
+    [Enhanced ASCII support documentation](https://www.ibm.com/docs/en/zos/2.3.0?topic=table-enhanced-ascii-support). \]
+  - PBrett reported having seen cases where, if `printf()` was not locale sensitive, the
+    results produced would not have matched expectations.
+  - Tom agreed that we have established that the format string must match the locale encoding.
+  - Eskil stated that, ideally, the string literal and locale encodings would match.
+  - Hubert agreed but noted that the locale encoding is controlled by the program user as
+    opposed to the program author.
+  - Eskil observed that character conversions are not desirable in all cases and provided
+    production of a JPEG header as an example.
+  - Jens noted that there is no current proposal to implicitly convert the `printf()` format
+    string to the locale encoding.
+  - Eskil and others agreed that such a proposal would be ill-advised.
+  - PBrett concluded that the current `printf()` behavior matches the needs of the paper; it
+    must alreadly be locale encoding aware, so conversion between UTF encodings and the locale
+    encoding is reasonable.
+  - Hubert agreed assuming requisite functionality as proposed in JeanHeyd's transcoding
+    facilities.
+  - Hubert stated that it would be necessary to specify how transcoding errors are handled.
+  - Tom expressed a belief that the C standard already specifies how such errors are handled
+    via delegation to functions like `wcrtomb()`.
+  - Hubert responded with a belief that the C standard requires that well-formed multibyte
+    strings and well-formed wide strings always be interconvertible without loss.
+  - Tom expressed surprise that such a requirement exist.
+  - PBrett noted that the wording would need to specify whether the precision flag applies to
+    code units, code points, or extended grapheme clusters (EGCs).
+  - PBrett stated that additional flags could select either code units, code points, or EGCs.
+  - PBrett asserted that the grapheme break algorithm is not too onerous a requirement.
+  - Tom asserted that the precision flag must specify code units for consistency with other
+    uses of precision flags and that written code units should not split code points or EGCs.
+  - Hubert explained that the number of code units read from the input must not exceed the
+    specified precision for security reasons.
+  - Discussion ensued regarding the possibility of buffer overflows and existing uses of
+    the precision flag.
+  - Victor asked if the precision flag currently specifies the maximum number of input
+    characters when performing wide character conversions.
+  - Hubert responded affirmatively but suggested verifying.
+  - PBrett noted that, for existing uses, code units is equivalent to characters.
+  - Tom explained his understanding of the precision flag; that if the precision is *X*,
+    then up to *X* code units are read, but only the complete code unit sequences are written.
+  - Hubert responded that, if the input string had *X* code points, but the number of code
+    units to write differs, then the same number of characters written would not match *X*.
+  - PBrett asserted that it is common to use the precision to limit output.
+  - Tom checked https://cppreference.com and reported that it claims that the `%s` specifier
+    uses the precision to limit the maximum number of bytes to write.
+  - Eskil expressed a preference towards designing for the future and that legal output
+    always be produced.
+  - Hubert checked the C standard and reported that the precision specifies the maximum
+    number of output code units in the target encoding and that partial characters are not
+    written.
+  - Victor summarized; the precision is the amount of output to write and the remainder of
+    what was read is discarded.
+  - PBrett asserted that programmers expect the precision to express display width.
+  - Hubert responded that existing behavior hasn't matched that expectation for as long as
+    multibyte encodings have existed.
+  - Hubert pondered whether field width has a meaning in this case.
+  - PBrett replied that field width fills and that precision truncates.
+  - PBrett asserted that what code authors really want is the ability to specify display
+    width.
+  - Tom asked if there is agreement that `printf()` does not currently have the ability to
+    specify display width.
+  - PBrett and Eskil responded negatively.
+  - Discussion ensued regarding EGCs and display width.
+  - Eskil expressed a preference that the C standard provide base level functionality and
+    that additional functionality be built as libraries.
+  - Eskil asserted that there isn't always a single best solution.
+  - Hubert noted that, with regard to code points vs EGCs, splitting an EGC can produce
+    misleading output.
+  - PBrett noted that virtually all programs need to interact with text in some capacity.
+  - Eskil stated that some capabilities are fundamental and provided the example of
+    formatting a number.
+  - Eskil stated that, with regard to string types, there are uses for a size+pointer
+    string type, a size+buffer string type, a size+capacity+buffer string type, a
+    string-with-allocator string type, and more.
+- Tom indicated that the next meeting is scheduled for August 10th and that the agenda is
+  yet to be determined.
 
 
 # June 22nd, 2022
