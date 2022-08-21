@@ -228,7 +228,7 @@ The draft agenda is:
     can be used and that such information could potentially be used in confusability analysis.
   - Jens suggested the question could probe which scripts are used in conjunction with a
     non-Unicode encoding.
-  - PBrett noted the existence of the Big-5 encoding and that it is being fazed out in favor of
+  - PBrett noted the existence of the Big-5 encoding and that it is being phased out in favor of
     GB18030 and UTF-8.
   - PBrett asked if we are at risk of discussing whether support for additional encodings should
     be mandated.
