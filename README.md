@@ -9,13 +9,18 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, August 24th, 2022, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220824T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, September 14th, 2022, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20220914T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 The draft agenda is:
-- Initial planning for Kona:
-  - SG16 will likely have NB comments to respond to.
-  - Whether we need to plan for in-person SG16 attendees.
-- [D2626R0: charN_t incremental adoption: Casting pointers of UTF character types](https://wg21.link/p2626r0)
+- [Migration challenges following P1949 changes to identifier syntax](https://github.com/sg16-unicode/sg16/issues/79):
+  - Summary of reported challenges.
+  - Guidance for implementors.
+- WG21 and Unicode Consortium collaboration:
+  - The Unicode Source Code Ad Hoc Group.
+  - The Unicode Message Format Working Group.
+  - Following WG21 participation changes, we may need to setup formal liaison relationships.
+- [P2626R0: charN_t incremental adoption: Casting pointers of UTF character types](https://wg21.link/p2626r0):
+  - Continue discussion.
 
 
 # Past SG16 meetings
