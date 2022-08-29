@@ -119,6 +119,10 @@ The draft agenda is:
   - Corentin asked if the paper represents a good direction.
   - Hubert stated that the proposed semantics are such that, if these functions were called
     to replace a subobject, that the enclosing complete object would be destroyed.
+  - \[ Editor's note: Hubert provided a reference to the relevant wording in
+    [\[basic.life\]p1](http://eel.is/c++draft/basic.life#1)
+    in a follow up
+    [post to the SG16 mailing list](https://lists.isocpp.org/sg16/2022/08/3359.php). \]
   - Hubert repeated his assertion that the proposed semantics have sharp edges.
   - Hubert noted that there are on-going concerns involving `start_lifetime_as()` and base
     classes.
