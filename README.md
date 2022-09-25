@@ -18,6 +18,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [September 14th, 2022](#september-14th-2022)
 - [August 24th, 2022](#august-24th-2022)
 - [July 27th, 2022](#july-27th-2022)
 - [June 22nd, 2022](#june-22nd-2022)
@@ -36,6 +37,247 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 14th, 2022
+
+## Agenda
+- Report on the on-going interactions between WG21 and the Unicode Consortium.
+- Report on the backward compatibility impact of
+  [P1949 (C++ Identifier Syntax using Unicode Standard Annex 31)](https://wg21.link/p1949).
+- Continued discussion of
+  [P2626R0: charN_t incremental adoption: Casting pointers of UTF character types](https://wg21.link/p2626r0).
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Hubert Tong
+  - Mark Davis
+  - Michael Kuperstein
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- A round of introductions was held in honor of new attendees.
+- Report on the on-going interactions between WG21 and the Unicode Consortium:
+  - Tom provided an introduction and presented prepared slides.
+  - \[ Editor's note: Tom's slides are available at
+    https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2022-09-14-WG21-UC-collab-p1949-presentation.odp. \]
+  - Unicode Message Format Working Group (MFWG):
+    - Tom presented his understanding of the group's progress as previously relayed to him
+      by Peter Brett as Peter was unable to attend the meeting.
+      - Progress is on-going.
+      - A draft specification is available.
+      - The specification is complicated.
+      - The features provided subsume those currently available in ICU.
+      - Implementations are available in Javascript and Rust.
+      - The design might not integrate well with `std::format()`.
+    - Mark elaborated on the group's work.
+      - A tech preview will be available in an upcoming release of ICU; In Java first with
+        C++ support to come later.
+      - The current specification (2.0) supercedes previous work.
+      - The design is intended to minimize dynamic processing.
+      - In support of higher level processes, the design enables formatting to a data model
+        that is then formatted to a string.
+      - Formatting is sensitive to surrounding characters.
+    - Robin stated that, with regard to dynamic and static formatting models, the previous
+      1.0 specification could be used to produce a statically checked implementation via
+      code generation.
+    - Michael noted that most formatting needs involve simple cases and that the interfaces
+      provided must support difficult cases without complicating the simple cases.
+    - Mark replied that making simple things simple is a goal, but that challenges naturally
+      arise.
+    - Mark provided an example of such challenges; some languages have gendered forms of
+      sentences that should be tailored for the user.
+    - Mark further emphasized the desire to cater to those cases while maintaining simplicity.
+    - Tom noted an implication; that locale is insufficient by itself for producing a message;
+      information about the recipient is needed.
+    - Mark acknowledged, but noted that gender should not be imposed; formatting should reflect
+      the diversity of recipients.
+    - Michael reflected on how these concerns are expressed in social media.
+    - Mark noted the concerns apply in any case where a particular user is the target of a
+      message.
+    - Mark added that western speakers are not often aware of these concerns.
+  - Unicode Source Code Ad Hoc Group (SCWG):
+    - Tom presented the group's progress and on-going activities.
+      - The group started meeting in late 2021.
+      - A liaison relationship between ISO SC22 and the Unicode Consortium might be established.
+      - Proposed updates to
+        [UAX #9](https://www.unicode.org/reports/tr9/tr9-46.html) and
+        [UAX #31](https://www.unicode.org/reports/tr31/tr31-37.html)
+        were accepted for Unicode 15.
+      - On-going work includes:
+        - Establishing principles for source code as text.
+        - Considerations for language designers.
+        - A new UTS.
+      - A new group will be formed to focus on issues of character confusability.
+    - Mark commented that the updates adopted for Unicode 15 were done to address
+      some fairly obvious deficiencies.
+    - Robin categorized the updates as non-normative clarifications.
+    - Steve stated that
+      [annex E](http://eel.is/c++draft/uaxid)
+      should be updated to reflect these clarifications.
+    - Steve noted such an update would only modify non-normative wording.
+    - Hubert cautioned that the updates must be consistent with prior intent and noted
+      there was a desire not to speculate on uncertain interpretations at the time.
+    - Hubert stated that we tend to favor normative text when there is a conflict with
+      non-normative text.
+    - Mark noted that non-normative text may better explain the intent of normative
+      wording.
+    - Robin described in more detail some of the on-going work:
+      - There will be a new UTS that will be a one-stop shop for source code.
+      - Much of the focus concerns display of source code in the presence of
+        bidirectional text or invisible characters.
+      - Considerations for language design.
+      - Considerations for language evolution; for example, migrating a language from
+        immutable identifiers to default identifiers.
+    - Mark explained the intent to define a suite of standard profiles that language
+      designers can choose from in order to provide a simple set of options that
+      encompass complicated concerns.
+    - Corentin noted that most language designers are not qualified to determine what
+      characters should be used for what purposes and that it is important to understand
+      the consequences of changes.
+    - Corentin expressed a desire for the Unicode Consortium to make decisions about
+      character use; for example, for what characters are allowed in an identifier.
+    - Mark reiterated that the goal is to make choices as easy as possible.
+    - Mark noted that language designers have to make choices for backward compatibility
+      purposes and provided the example of maintaining use of '_' in identifiers.
+    - Mark explained that providing well-defined profiles allows language designers to
+      better understand the implications of combining profiles.
+    - Mark stated that some profiles will offer the option of removing characters that
+      are otherwise in a default included set.
+    - Robin acknowledged Corentin's concern and agreed with not wanting language designers
+      to be burdened with having to consider individual characters.
+    - Robin stated that characters in these profiles won't be added to `XID_Start` and
+      `XID_Continue` because those properties are required to be universal.
+    - Tom noted that this work was partially motivated by the C++ migration from immutable
+      identifiers to default identifiers and the effort required to appreciate the
+      consequences.
+    - Mark reflected on the difficulties encountered by backward incompatible changes made
+      for XML 2.0 relating to C1 control characters.
+    - Robin offered assurances that a new UAX #31 revision will make the consequences of
+      such choices more clear.
+    - Steve noted limitations imposed by concerns we don't have control over and provided
+      the examples of separate compilation and linkers; identifiers might be written in
+      normalization form C (NFC) but a linker might just interpret it as a sequence of
+      bytes.
+    - Mark responded that requiring NFC is a good solution for a lot of matching cases that
+      also arise outside of programming languages.
+    - Robin lamented the problems that occur by burdening users with NFC requirements and
+      asserted that programmers can help.
+    - Steve noted that programs can validate NFC quickly.
+    - Mark agreed and noted that hits to the slow path during NFC validation are infrequent.
+    - Tom stated that the Unicode Consortium will form a new group to address character
+      confusability in order to take that security burden off the programmer.
+    - Mark responded that the Unicode Standard provides some data regarding confusable
+      characters but is limited to cases where glyphs for a single code point might be
+      confused with a sequence of multiple code points; maps between code point sequences
+      are not currently provided.
+    - Mark noted that confusability is often dependent on the font being used, that
+      programming languages tend to use a reduced set of characters, and that programmers
+      tend to use fonts that avoid some confusability issues.
+    - Robin explained that major changes to confusability analysis will be handled by the
+      new group and that smaller issues will likely follow the existing processes.
+    - Michael asked if the confusability work will focus more on usability or security.
+    - Mark responded that both are important and that improving one often helps with the
+      other.
+    - Corentin mentioned that visual markup for confusability can impact usability and
+      noted that VS Code currently highlights all non-ASCII characters.
+    - Mark acknowledged the concern and stated that efforts will be focused on avoiding
+      markup that isn't helpful.
+    - Robin commented that he has a note in his working draft that states "don't do what
+      VS Code does".
+    - Mark suggested a thought exercise; imagine using an editor that highlights all
+      Latin characters that look like characters in other lanugages.
+    - Robin explained that mixed script identifier support is important and provided
+      `HTTP_<russion-identifier>` as an example in which an identifier is composed of
+      names that originate from different languages.
+    - Michael expressed support for a code library that provides confusability analysis.
+    - Mark replied that ICU provides confusability data but noted that application of
+      that data necessarily requires understanding text structure.
+- Report on the backward compatibility impact of
+  [P1949 (C++ Identifier Syntax using Unicode Standard Annex 31)](https://wg21.link/p1949):
+  - Tom provided an introduction.
+    - [SG16 issue #79](https://github.com/sg16-unicode/sg16/issues/79)
+      tracks reports of backward compatibility impact.
+    - [Clang defect report #54732](https://github.com/llvm/llvm-project/issues/54732)
+      tracks Clang user reports; four users have reported impact, but the number of
+      projects represented by them is unknown.
+    - Robin maintains code that was impacted.
+    - Robin conducted a survey of character usage in identifiers and published
+      [L2/22-102 (A survey of non-XID identifier usage in program text)](https://www.unicode.org/L2/L2022/22102-non-xid-ident-usage.pdf).
+  - Robin explained that his code that was impacted is in a hobby project.
+  - Robin described the survey he conducted and reported that it identified impacted
+    code in a number of projects.
+  - Robin reported that the SCWG intends to provide standard profiles for optional
+    inclusion of select mathematical symbols and emoji in identifiers.
+  - Robin noted that the main character differences between immutable and default
+    identifiers is the selection of allowed mathematical symbols and emoji characters.
+  - Corentin expressed concern that, if C++ were to add support for user-defined
+    operators as Swift did, we don't want to end up in a situation where characters
+    previously allowed in identifiers become candidates for use as operators.
+  - Robin reiterated that there is no intent to add these characters to `XID_Start` or
+    `XID_Continue`; that they are only being considered for standard profiles.
+  - Robin reported that character reviews are being performed by other members of the
+    Unicode Consortium and that those reviews are considering existing use; for example,
+    those reviews are considering the use of mathematical symbols in Julia and which
+    ones are used for which purposes.
+  - Steve expressed sympathy towards use of mathematical symbols in Mathematica and that
+    doing similarly in C++ means using those symbols in identifiers since algorithms are
+    typically implemented as functions in C++.
+  - Steve stated that the subscript and superscript characters are problematic since many
+    fonts don't support those characters.
+  - Michael asked what motivates programmers to want their code to look like mathematical
+    equations.
+  - Steve responded that, in mathematics heavy fields like physics simulation, it is
+    desirable for the code to match equations in other documents.
+  - Michael expressed uncertainty whether that is reasonable and reported that his closest
+    experience has involved equations in Mathematica.
+  - Michael noted that typesetting languages like TeX are able to render such characters
+    appropriately but that he wasn't sure about common programming language editors.
+  - Steve responded that such concerns may be limited if code is not widely shared or
+    reused.
+  - Steve asserted that depending on a finicky environment is ill-advised.
+  - Corentin expressed a belief that language designers don't want to make such decisions
+    and that implementors should not offer such extensions.
+  - Tom responded that different recommendations are appropriate for, for example, general
+    purpose languages vs domain specific ones.
+  - Corentin agreed.
+  - Steve stated that defining standard profiles helps to provide sensible options.
+  - Steve suggested that profiles also provide a clearly defined feature for which
+    implementors can be lobbied for an extension that could then be standardized based on
+    adoption.
+  - Hubert replied that common extensions are not necessarily good evidence of widely used
+    or appreciated extensions.
+  - Steve agreed with not wanting to make decisions on individual characters; that an appeal
+    to authority is desired.
+  - Robin agreed with not placing the burden of evaluating individual characters on language
+    designers.
+  - Corentin asked about the anticipated timeline for this work.
+  - Robin responded that a draft is expected in November, that feedback from the UTC will
+    then be provided, and that the work is targeting next September's Unicode release.
+- [P2626R0: charN_t incremental adoption: Casting pointers of UTF character types](https://wg21.link/p2626r0):
+  - Tom apologized for the lack of time available to continue discussion of this paper.
+- Tom stated that the next meeting will be held on September 28th and asked for opinions
+  regarding what to prioritize next.
+  - Corentin replied that continued discussion of P2626 is not a high priority right now.
+  - Corentin stated that there is a need to update the standard to use and reference the
+    current Unicode version.
+  - Corentin stated that work is needed to improve estimated field widths.
+  - Corentin stated that the escape string format added via
+    [P2286 (Formatting Ranges)](https://wg21.link/p2286)
+    needs additional work to handle combining characters in extended grapheme clusters.
+  - Hubert cautioned that concern is warranted regarding debug strings getting corrupted
+    during copy/paste operations.
+  - Steve stated that Bloomberg will be filing an NB comment to update annex E.
+  - Hubert stated that he will be filing an NB comment about `std::format()` debug strings.
+  - Tom pondered the possibility of requesting that NB comment authors send copies of relevant
+    NB comments to us when they submit them so that we can start work on them sooner.
+  - \[ Editor's note: Tom reached out to Herb and he arranged for all SGs to get early access
+    to NB comments. \]
+  - Tom reported that the next meeting will focus on LWG issues and that the following meeting
+    will likely include a presentation from Michael.
 
 
 # August 24th, 2022
