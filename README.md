@@ -183,7 +183,14 @@ The draft agenda is:
     - Mark responded that both are important and that improving one often helps with the
       other.
     - Corentin mentioned that visual markup for confusability can impact usability and
-      noted that VS Code currently highlights all non-ASCII characters.
+      noted that VS Code currently highlights all non-ASCII characters that might be
+      confused with an ASCII character.
+    - \[ Editor's note: Following the meeting, Robin Leroy shared an example of current
+      VS Code highlighting as exhibited by Compiler Explorer (Compiler Explorer uses
+      VS Code as its editor). The example code contains Russian text and many of the
+      characters in that text are highlighted as confusable characters despite the
+      surrounding context. The highlighting creates significant distraction that makes
+      the text difficult to read. See https://gcc.godbolt.org/z/zK7GPo9hW. \]
     - Mark acknowledged the concern and stated that efforts will be focused on avoiding
       markup that isn't helpful.
     - Robin commented that he has a note in his working draft that states "don't do what
@@ -191,8 +198,9 @@ The draft agenda is:
     - Mark suggested a thought exercise; imagine using an editor that highlights all
       Latin characters that look like characters in other lanugages.
     - Robin explained that mixed script identifier support is important and provided
-      `HTTP_<russion-identifier>` as an example in which an identifier is composed of
+      `HTTPЗапрос` as an example in which an identifier is composed of
       names that originate from different languages.
+    - \[ Editor's note: HTTPЗапрос can be translated as HTTPRequest. \]
     - Michael expressed support for a code library that provides confusability analysis.
     - Mark replied that ICU provides confusability data but noted that application of
       that data necessarily requires understanding text structure.
@@ -219,10 +227,11 @@ The draft agenda is:
     previously allowed in identifiers become candidates for use as operators.
   - Robin reiterated that there is no intent to add these characters to `XID_Start` or
     `XID_Continue`; that they are only being considered for standard profiles.
-  - Robin reported that character reviews are being performed by other members of the
-    Unicode Consortium and that those reviews are considering existing use; for example,
-    those reviews are considering the use of mathematical symbols in Julia and which
-    ones are used for which purposes.
+  - Robin reported that the rationale for the proposed mathematical notation standard
+    profile for default identifiers considers existing use in languages such as Julia
+    and Swift that support user-defined operators.
+  - Robin stated that relevant experts from other members of the Unicode Consortium
+    are reviewing that rationale.
   - Steve expressed sympathy towards use of mathematical symbols in Mathematica and that
     doing similarly in C++ means using those symbols in identifiers since algorithms are
     typically implemented as functions in C++.
