@@ -18,6 +18,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [September 28th, 2022](#september-28th-2022)
 - [September 14th, 2022](#september-14th-2022)
 - [August 24th, 2022](#august-24th-2022)
 - [July 27th, 2022](#july-27th-2022)
@@ -37,6 +38,172 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 28th, 2022
+
+## Agenda
+- [LWG #3767: codecvt<charN_t, char8_t, mbstate_t> incorrectly added to locale](https://cplusplus.github.io/LWG/issue3767)
+- [LWG #3412: §[format.string.std] references to "Unicode encoding" unclear](https://cplusplus.github.io/LWG/issue3412)
+- Handling ill-formed Unicode in the library
+  - See prior [mailing list discussion](https://lists.isocpp.org/sg16/2022/09/3369.php).
+
+## Meeting summary
+- Attendees:
+  - Hubert Tong
+  - Jens Maurer
+  - Mark de Wever
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [LWG #3767: codecvt<charN_t, char8_t, mbstate_t> incorrectly added to locale](https://cplusplus.github.io/LWG/issue3767):
+  - Victor provided an introduction.
+    - There are four `std::codecvt` facets specified for `std::locale` that are not
+      intended to be locale dependent.
+    - This appears to be the result of an oversight; when `char16_t` and `char32_t` were
+      added, new specializations were presumably added to match the existing `char` and
+      `wchar_t` ones but are not actually locale dependent.
+    - When `char8_t` was added, new specializations that convert between `char16_t`/`char32_t`
+      and `char8_t` were added and the old specializations were deprecated.
+    - The overhead of the unnecessary facets is probably minimal.
+    - The presence of the unnecessary facets is confusing from a design perspective.
+    - The proposed resolution removes the specializations that are not actually locale
+      dependent from `std::locale`.
+    - The proposed resolution also makes the `std::codecvt` constructors publicly accessible
+      so that specializations can be constructed without declaring derived classes.
+  - PBrett stated that the
+    [email that announced the meeting agenda](https://lists.isocpp.org/sg16/2022/09/3427.php)
+    noted that it would be helpful to understand what overhead is imposed by these additional
+    facets in practice and asked if it had been measured.
+  - Victor replied that he had not measured and that the design ramifications were of more
+    concern to him.
+  - Victor volunteered to perform some measurements and described how implementations manage
+    the facets; via a dynamically allocated array.
+  - Tom responded with his understanding that at least some implementations statically allocate
+    the facets and just register pointers.
+  - Steve asked if the proposed changes would cause existing programs to break at run-time.
+  - Victor replied that the presence of the facets can be queried at run-time.
+  - Tom stated an expectation that, for some implementations, complete removal of these
+    specializations might result in link failures.
+  - Steve expressed appreciation for the desire to remove these facets based on them not
+    actually being locale dependent.
+  - Victor suggested that these facets could be deprecated instead.
+  - PBrett asked if the `std::codecvt` destructor should be virtual.
+  - Victor expressed an expectation that a virtual destructor is inherited from a base class.
+  - PBrett asserted the destructor should be declared with `override` in that case.
+  - Hubert opined that these questions are more of a concern for LEWG and do not fall under
+    SG16's purview.
+  - Jens suggested an SG16 perspective that these facets are not locale dependent and therefore
+    should not vary by locale.
+  - Jens noted that these facets have been present for more than one standard cycle and removal
+    could result in silent behavior change.
+  - Jens asserted that experience should be obtained regarding the effects of removal before
+    moving forward with a change.
+  - Jens noted that those removal effects are LEWG concerns.
+  - Victor agreed regarding SG16 scope for concerns.
+  - Victor volunteered to investigate what the consequences of removal would be.
+  - **Poll 1: SG16 agrees that the codecvt facets mentioned in
+    LWG3767 "codecvt<charN_t, char8_t, mbstate_t> incorrectly added to locale"
+    are intended to be invariant with respect to locale.**
+    - Attendance: 7
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   3 |   0 |   0 |   0 |
+    - Consensus: unanimously in favor.
+- [LWG #3412: §[format.string.std] references to "Unicode encoding" unclear](https://cplusplus.github.io/LWG/issue3412):
+  - Hubert explained that the term "Unicode encoding" is used in several places in
+    the standard, but with no formal definition.
+  - Tom provided two perspectives:
+    - "Unicode encoding" refers to only those encodings specified by the Unicode
+      standard and ISO/IEC 10646; UTF-8, UTF-16, and UTF-32.
+    - "Unicode encoding" refers to any encoding that maps the entirety of the
+      Unicode code space and therefore includes, for example, UTF-7 and UTF-EBCDIC
+      in addition to UTF-8, UTF-16, and UTF-32.
+  - PBrett asked if there is an industry term that describes the latter perspective.
+  - Hubert replied that he is not aware of one.
+  - Tom replied that he had briefly looked for one in the Unicode standard when
+    drafting the agenda email but did not find one.
+  - Hubert stated that, for the debug formatting output introduced by
+    [P2286 (Formatting Ranges)](https://wg21.link/p2286),
+    that a stateless encoding was assumed.
+  - Tom expressed support for restricting "Unicode encoding" to just those encodings
+    that are defined in the Unicode Standard.
+  - Tom noted that, if motivation arises to support additional encodings as Unicode
+    encodings, that a paper can argue for relaxing the restrictions.
+  - **Poll 2: SG16 recommends that
+    LWG3412 "§[format.string.std] references to 'Unicode encoding' unclear"
+    should be resolved by replacing references to "Unicode encoding" with
+    "UCS encoding scheme".**
+    - Attendance: 7
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   5 |   0 |   0 |   0 |
+    - Consensus: unanimously in favor.
+  - Tom asked Hubert if he would be willing to research other uses of "Unicode encoding"
+    to see if they should be similarly changed.
+  - Hubert agreed to do so and to open new LWG issues as appropriate.
+  - Jens suggested that a proposed resolution can address all such issues.
+  - PBrett raised concern about use of GB18030 with `std::print()`.
+  - Hubert noted that we don't currently use the "Unicode encoding" terminology in
+    conjunction with `std::print()`.
+  - \[ Editor's note: Overloads of `std::print()` for `wchar_t` and other character
+    types are not currently provided; the wording in
+    [\[print.fun\]p2](http://eel.is/c++draft/print.fun#2)
+    currently restrits the enhanced Unicode behavior to UTF-8. \]
+  - Hubert suggested we proceed with the pragmatic solution for now.
+  - Tom noted that, for GB18030, the latest version no longer requires use of the
+    Unicode Private Use Area (PUA), and is therefore more likely to be considered
+    acceptable as a "Unicode encoding" in the colloquial sense.
+  - Tom stated that the issues are likely sufficiently complicated though that inclusion
+    via a new paper is justified.
+- Handling ill-formed Unicode in the library:
+  - Mark summarized the two issues raised during prior
+    [mailing list discussion](https://lists.isocpp.org/sg16/2022/09/3369.php):
+    - One of the examples in
+      [\[format.string.escaped\]p3](https://eel.is/c++draft/format.string.escaped#3)
+      is incorrect; `s5` should have a result value of
+      `["\x{c3}("]`, not `["\x{c3}\x{28}"]`.
+    - It is not specified how ill-formed code unit sequences should be handled for
+      purposes of width estimation and formatting of debug output.
+  - Victor responded that, for debug format output, the goal is to avoid loss of
+    information but that concern doesn't apply to width estimation.
+  - Tom stated that the issue with the example is editorial since examples are
+    non-normative.
+  - PBrett suggested that the width estimation issue can be addressed via an
+    NB comment or an LWG issue.
+  - Tom opined that specifying the behavior for invalid code unit sequences is
+    reasonable.
+  - Victor agreed and noted that this is actually a C++20 issue.
+  - PBrett noted that performance overhead may be potential motivation for not
+    specifying the behavior of ill-formed input.
+  - Victor responded that this concern only applies to width estimation; optimizations
+    can still be employed.
+  - Jens stated that, for formatting of debug output, it is clear that the intent is
+    not to lose information.
+  - Tom agreed that the intent in that case is clear and well-specified; the remaining
+    issue is width estimation for ill-formed code unit sequences.
+  - Jens asked what should be displayed for such ill-formed code unit sequences.
+  - Tom replied that such questions depend on replacement character policy.
+  - Jens asserted that the width estimate should be derived from the characters that
+    will actually be displayed.
+  - Victor suggested that research is needed to determine what happens in practice.
+  - Tom noted that the input string has to be processed to calculate the estimated width,
+    so what terminals and such do with ill-formed code unit sequences doesn't
+    necessarily matter.
+  - Victor agreed and asked if the standard specifies a replacement character.
+  - Tom responded that he did not think it does.
+  - Tom suggested that the desired resolution is probably to apply
+    [PR-121](https://www.unicode.org/review/pr-121.html)
+    policy 2 with the Unicode replacement character substituted for the ill-formed
+    sequence.
+  - Victor replied that substituting a replacement character might not be easy and might
+    impose overhead.
+  - Jens suggested that the best answer might be that the estimated width is unspecified.
+  - Mark volunteered to file an LWG issue for further follow up.
+- Tom stated that the next meeting is scheduled for October 12th and that the agenda is
+  expected to include a presentation by Michael Kuperstein unless preempted by a need to
+  start addressing NB comments.
 
 
 # September 14th, 2022
