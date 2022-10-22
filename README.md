@@ -16,6 +16,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [October 12th, 2022](#october-12th-2022)
 - [September 28th, 2022](#september-28th-2022)
 - [September 14th, 2022](#september-14th-2022)
 - [August 24th, 2022](#august-24th-2022)
@@ -36,6 +37,180 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 12th, 2022
+
+## Agenda
+- Michael Kuperstein: Internationalization From the Perspective of Defect Analysis
+- NB comment processing.
+
+## Meeting summary
+- Attendees:
+  - Charles Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark de Wever
+  - Mark Zeren
+  - Michael Kuperstein
+  - Nevin Liber
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Tomasz Kamiński
+  - Victor Zverovich
+- Michael Kuperstein: Internationalization From the Perspective of Defect Analysis
+  - \[ Editor's note: Michael's slides are available at
+    https://github.com/sg16-unicode/sg16-meetings/blob/master/presentations/2022-10-12-i18n-presentation.pptx. \]
+  - Michael provided a brief introduction:
+    - He has been working for Intel since 1996.
+    - He has been working in Intel's localization group since 2001.
+  - Slide 1: Internationalization From the Perspective of Defect Analysis
+  - Slide 2: Venn Diagram
+  - Slide 3: Defects in Localized Software
+    - The defect breakdown presented is from an analysis performed in 2011.
+    - Internationalization and localization defects are usually found by the localization team.
+    - Localization defects can often be fixed by the localization team; as a result, localization
+      teams tend to maintain their own defect database.
+    - Localization defects that require a fix by a development team tend to first be reported in
+      a defect database maintained by the localization team and then migrated to another team's
+      defect database.
+  - Slide 4: World-Readiness Defect Types
+    - Most localization defects are due to UI, Layout, or formatting issues.
+    - The next largest category of defects are due to translation issues.
+    - Defects due to non-translated and embedded strings make up the next largest two categories.
+    - Defects due to encoding issues make up the smallest defect category, but are very important.
+    - For software developers, internationalization and localization support is a small part of
+      their total effort, but an important part.
+  - Slide 5: Code Scans: I18N Issues by Volume
+    - The top two categories of issues found by code scans are hard-coded strings and hard-coded
+      formatting.
+  - Slide 6: I18N Issues by Volume – Honorable Mentions
+    - A consistent internal locale insensitive representation of dates is necessary to prevent
+      failures.
+    - Steve confirmed that the general shape of relative error counts presented matches his
+      experience.
+    - Steve reported that products he has worked on avoid localized formatting of dates so as
+      to avoid confusion; likewise, "." is consistently used for decimal point.
+  - Slide 7: More than 150 string formatting functions in C/C++ on Windows
+    - Charlie noted that most of those 150 functions wrap a common underlying formatting function.
+    - Corentin suggested bumping the number to 151 now that `std::format()` has been standardized.
+  - Slide 8: Defaults: Fall into the pit of success
+    - Use of UTF-16 made it easier to produce the right results on Windows.
+    - A string class that basically does the right thing makes it easier to get the right result.
+    - The goal is to guide developers towards doing the right thing.
+    - Many programmers like string interpolation.
+    - ICU discussion:
+      - Charlie reported that the ICU included in Windows doesn't expose the C++ interface.
+      - Michael noted that, in .NET languages, programmers can choose either ICU or the native
+        Windows NLS subsystem for localization, but programmers generally use the default.
+      - Charlie asked if ICU is mostly present for transcoding purposes.
+      - Michael replied that he doesn't believe that to be the case since .NET interfaces can
+        defer to ICU for more localization purposes.
+      - Michael expressed a belief that ICU is more deeply integrated on Apple systems.
+      - PBrett asked what defect category would best be associated with cases where programmers
+        incorrectly attempt to produce translated strings via concatenation.
+      - Michael expressed uncertainty, suggested "other", and noted that such issues are very
+        common but not called out specifically in the slides.
+      - Michael acknowledged that, for some applications, issues due to concatenation are one of
+        the most common problems, but that doesn't happen to be the case for Intel.
+      - Michael reiterated that making sure programmers fall into the pit of success is important.
+  - Slide 9: Quick Intro to BCP 47 Language Tags and Fallback
+    - Spoken language is not relevant for text presentation; written language, or script, is.
+    - Chinese has two forms of written language; simplified and traditional.
+    - It is important to specify fallback locales; otherwise, a request for zh-SG when it is not
+      available may result in a default language like English rather than zh-CN.
+    - Specifying a hierarchy of fallbacks such as zh-Hans and zh-Hant is recommended.
+    - Since C++ locales don't appear to provide locale fallbacks, it may be necessary to supply
+      support for all of them; perhaps by providing the same locale data for, e.g., zh-CN and
+      zh-SG.
+    - Steve noted that English is a better fall back than blank strings or the "tofu" character.
+  - Slide 10: User Language Selection Choices
+    - The .NET languages wrap locale info in a `CultureInfo` type.
+    - They also allow various components of a locale to be selected from different locales.
+    - Programmers can create their own custom cultural definitions.
+    - Thread specific locale selection is infrequently used; it is more common to supply a
+      locale object locally when constructing a string for presentation.
+    - Browsers have multiple language settings; one for the browser UI itself and another for
+      the requested page language.
+  - Slide 11: Date formatting
+    - Use ISO 8601 for date formatting and store times relative to UTC internally.
+    - Convert dates to the appropriate locale for presentation.
+    - Likewise, use one encoding internally and convert for presentation and at program
+      boundaries.
+    - Hubert asked if Michael had any opinions on the use of ISO week days and numbers.
+    - Michael responded that he has no opinion on that.
+  - Slide 12: The Famous Turkish “İ” Problem
+    - Locale sensitive uppercasing may translate "i" to "İ" (dot retained on uppercase I).
+    - Locale sensitive lowercasing may translate "I" to "ı" (dot omitted on lowercase i).
+    - This is why it is important to test with Turkish locales!
+    - Various languages offer locale invariant or case insensitive case folding operations.
+    - ICU collation solves many of these problems when used correctly.
+    - Some form of collation should be used for file name matching.
+    - Hubert asked if it would generally be expected for a file with an uppercase dotted I
+      like "FILE.GİF" to match a request for files named with a ".gif" extension.
+    - Michael responded affirmatively; that would generally be desired.
+    - Tom observed that such use cases may be more aligned with a form of transliteration.
+    - Corentin responded that Unicode case folding as defined in
+      [UAX #35](https://unicode.org/reports/tr35)
+      handles that case, but that standard C++ doesn't provide an interface.
+  - Slide 13: Formats (numbers, dates, etc.) are not as straightforward as they appear
+    - ICU's message formatting abilities handle all of these.
+    - Corentin noted that currency symbols should not be locale dependent and that C++
+      got this wrong.
+  - Slide 14: Many other things can go wrong when dealing with international users
+    - Handling plural forms is important; the .NET languages do not handle plural forms
+      or gendering.
+  - Slide 15: JavaScript i18n Objects and Namespaces
+    - JavaScript only provides a small number of builtins; i18n is a separate package.
+    - Current browser versions provide the JavaScript i18n namespace; polyfill is required
+      for older browser versions.
+    - Since the language doesn't provide it as a builtin, there are thousands of i18n
+      packages available.
+  - Slide 16: .NET Culture Aware Classes and Namespaces
+    - The .NET languages provide a relatively complete solution that is improving each year.
+    - The .NET fundamentals documentation is extensive.
+    - Resource files are easy for .NET languages and can be provided in a number of formats.
+    - The .NET languages support gettext-like methods for retrieving translated strings.
+  - Slide 17: Resource File Formats
+    - Some resource file formats are differentiated by encoding.
+  - Slide 18: Read All Lines From a File
+    - Some languages provide more ergonomic interfaces.
+  - Slide 19: Byte Order Mark (BOM) and Endian descriptions
+    - On Windows, the default encoding used to be a locale dependent "ANSI" encoding, but
+      modern editors are more likely to default to UTF-8.
+    - C and C++ don't provide interfaces for file encoding detection and it isn't easy to
+      implement well.
+  - Slide 20: Character Count vs Byte Count
+    - Character counts tend to be close to code unit count for many languages for text
+      encoded in UTF-16.
+    - It is not easy to obtain a count of characters.
+    - Corentin asked when it is useful to count characters.
+    - Michael responded that a number of cases exist and provided an example of a buffer for
+      which the user is told how many more characters they can expect to type; Twitter is an
+      example for which both characters and bytes are counted.
+  - Slide 21: Character Encodings (Incomplete List)
+    - In C and C++, `char` doesn't have a strongly associated encoding.
+    - PBrett asked how often the lack of a strongly associated encoding leads to defects.
+    - Michael responded that it is not as much of a problem as it used to be, but that there
+      are still many locale dependent "ANSI" encoded files to be found.
+  - Slide 22: RTL Text Detection
+  - Tom asked the group what stood out to them from the presentation.
+    - PBrett noted that C++ doesn't make it easy to write programs that are locale insensitive
+      internally but locale sensitive at program boundaries.
+    - Michael noted that `gettext()` provides an example of how plural forms can be handled.
+    - Jens observed that, with `std::format()`, we're still far away from providing proper
+      localization support; it doesn't yet lead to the pit of success.
+    - Tom noted that the possibility of extending `std::format()` creates opportunity.
+    - Michael noted that formatting is often used for internal uses that don't require
+      localization or translation.
+    - Steve stated that the experiences reported closely match his experience at Bloomberg.
+- NB comment processing.
+  - NB comment processing was postponed due to lack of time.
+- Tom reported that he would not be available for the previously scheduled 2022-10-26 meeting
+  and suggested rescheduling meetings for 2022-10-19 and 2022-11-02 with the intent to focus
+  on addressing NB comments in advance of the Kona meeting; there were no objections.
 
 
 # September 28th, 2022
