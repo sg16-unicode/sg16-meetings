@@ -64,7 +64,7 @@ The draft agenda is:
     [October 19th, 2022 SG16 meeting](#october-19th-2022)
     suffices to resolve this issue.
   - Victor agreed that the prior poll result is consistent with the first option of the proposed change.
-  - **Poll: \[FR 005-134\]: SG16 recommends accepting the comment in the direction presented in the
+  - **Poll 1: \[FR 005-134\]: SG16 recommends accepting the comment in the direction presented in the
     first bullet of the proposed change and as recommended in the polls for US 38-098.**
     - Attendees: 8
     - Unanimous consent
@@ -154,7 +154,7 @@ The draft agenda is:
     or designed to support cherry picking different versions of its parts.
   - Corentin provided normalization as an example of Unicode specification that is defined
     across multiple parts of the Unicode Standard.
-  - **Poll 1: [FR-009-024]: SG16 recommends rejecting the comment on the basis that explicit
+  - **Poll 2: [FR-009-024]: SG16 recommends rejecting the comment on the basis that explicit
     indication of Unicode requirement conformance, non-conformance, or inapplicability is useful.**
     - Attendees: 9 (1 abstention)
       | SF  | F   | N   | A   | SA  |
@@ -255,7 +255,7 @@ The draft agenda is:
     we can rely on forward compatibility guarantees.
   - Jens noted that, though we do understand and appreciate the Unicode stability guarantees,
     we are obligated to verify that those commitments are honored.
-  - **Poll 2: \[FR-010-133\]\[FR-021-013\]: SG16 requests that the project editor discuss with the
+  - **Poll 3: \[FR-010-133\]\[FR-021-013\]: SG16 requests that the project editor discuss with the
     ISO the option of eschewing references to ISO/IEC 10646 in favor of the Unicode Standard
     both for technical consistency and release frequency.**
     - Attendees: 9 (1 abstention)
@@ -271,7 +271,7 @@ The draft agenda is:
   - MarkZ suggested that quality issues could also be reported to the Unicode Consortium.
   - MarkZ noted that interoperation with other languages and runtimes might be improved by
     aligning with the Unicode Standard.
-  - **Poll 3: \[FR-010-133\]\[FR-021-013\]: SG16 recommends resolving these comments by restricting
+  - **Poll 4: \[FR-010-133\]\[FR-021-013\]: SG16 recommends resolving these comments by restricting
     all references to the Unicode Standard to the version that corresponds to the referenced
     version of ISO/IEC 10646.**
     - Attendees: 9 (1 abstention)
