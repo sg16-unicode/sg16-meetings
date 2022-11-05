@@ -16,6 +16,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [November 2nd, 2022](#november-2nd-2022)
 - [October 19th, 2022](#october-19th-2022)
 - [October 12th, 2022](#october-12th-2022)
 - [September 28th, 2022](#september-28th-2022)
@@ -38,6 +39,253 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# November 2nd, 2022
+
+## Agenda
+- NB comment processing.
+
+## Meeting summary
+- Attendees:
+  - Charles Barto
+  - Corentin Jabot
+  - Hubert Tong
+  - Jens Maurer
+  - Mark Zeren
+  - Mark de Wever
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [FR 005-134 22.14.6.4 \[format.string.escaped\] Aggressive escaping](https://github.com/cplusplus/nbballot/issues/408):
+  - Corentin explained that the direction polled for
+    [US 38-098](https://github.com/cplusplus/nbballot/issues/515)
+    during the
+    [October 19th, 2022 SG16 meeting](#october-19th-2022)
+    suffices to resolve this issue.
+  - Victor agreed that the prior poll result is consistent with the first option of the proposed change.
+  - **Poll: \[FR 005-134\]: SG16 recommends accepting the comment in the direction presented in the
+    first bullet of the proposed change and as recommended in the polls for US 38-098.**
+    - Attendees: 8
+    - Unanimous consent
+  - Corentin asked if anyone is preparing wording for US 38-098.
+  - Hubert replied that no wording was provided with the comment.
+  - Victor noted that the proposed change for US 38-098 did have the suggestion to replace "logging"
+    with "technical logging".
+  - Hubert replied that the direction polled didn't include that change.
+  - Tom stated that wording will be left up to LWG without a volunteer.
+- [GB-031 5.2 \[lex.phases\] Clarification of wording on new-line and whitespace](https://github.com/cplusplus/nbballot/issues/432):
+  - Tom lamented Peter Brett's absence.
+  - Tom recalled recent
+    [discussion on the SG16 mailing list](https://lists.isocpp.org/sg16/2022/10/3495.php)
+    that suggested a possible misunderstanding regarding feedback provided during the
+    [2022-09-09 CWG review](https://wiki.edg.com/bin/view/Wg21telecons2022/Teleconference2022-09-09)
+    of a draft of
+    [P2348R3](https://wg21.link/p2348r3).
+  - Corentin explained that CWG was dissatisfied with the amount of churn involved in the paper and
+    preferred an approach that addresses whitespace issues during translation phase 1.
+  - Corentin expressed disagreement with that approach and stated that he doesn't plan to pursue it.
+  - Corentin acknowledged that an issue exists.
+  - Steve expressed support for fixing the issue eventually but that he is weakly against doing so
+    via an NB comment since, though the risk is low, late fixes can have unintended consequences.
+  - Jens disagreed with Corentin's summary of the CWG review, specifically with the claim that CWG
+    wanted all whitespace issues to be addressed in translation phase 1.
+  - Jens explained that what CWG requested was for translation phase 1 to translate all accepted
+    new-line forms to a single new-line character in the translation character set.
+  - Jens reported that CWG determined that the form of a new-line expressed in an input file is
+    not observable by a program, not even in a raw string literal.
+  - Jens agreed with Corentin's claim that CWG recommended against the churn proposed in the paper.
+  - Jens explained the status quo, that translation phase 1 does not currently allow a UTF-8 encoded
+    input file to have a new-line sequence other than U+000A (LINE FEED); the wording prohibits the
+    use of U+000D (CARRIAGE RETURN) followed by U+000A (LINE FEED) as a new-line indicator.
+  - Jens noted that
+    [US 3-030](https://github.com/cplusplus/nbballot/issues/475)
+    requests a change that matches the CWG feedback.
+  - Tom asked Corentin if Jens' explanation was helpful.
+  - Corentin replied that he doesn't want to object to progress but that he lacks bandwidth to work
+    on the issue himself.
+  - Corentin offered to share the source to
+    [P2348](https://wg21.link/p2348)
+    to anyone interested in working on a revision.
+  - Steve stated that, based on the intended scope, he would not object to CWG's preferred direction.
+  - Steve volunteered to look into producing a revision of P2348 if Corentin makes the source
+    available.
+  - Tom stated that Jens' comments suggest a path forward of rejecting this comment in favor of
+    pursuing US 3-030.
+  - Jens suggested that further action await a revision of P2348 and that this NB comment be
+    handled procedurally as not having consensus for a change.
+  - Corentin noted that P2348 went through the committee pipeline and doesn't need to be rushed.
+- [FR-009-024 Annex E \[uaxid\] Shorten contents and integrate with \[lex.name\]](https://github.com/cplusplus/nbballot/issues/411):
+  - Tom mentioned that this issue was briefly discussed with the discussion of
+    [US 64-132](https://github.com/cplusplus/nbballot/issues/542)
+    during the
+    [October 19th, 2022 SG16 meeting](#october-19th-2022).
+  - Corentin stated that it is not yet clear that we understand
+    [UAX #31](https://unicode.org/reports/tr31)
+    sufficiently well to declare conformance.
+  - Corentin asserted that, assuming retaining annex E is desirable, additional work is needed
+    to evaluate conformance against a specific version of UAX #31, but it isn't clear which
+    version that evaluation should be performed against.
+  - Corentin claimed that it is not clear that annex E is necessary or useful.
+  - Corentin noted that it would be useful to note some of the associations in
+    [\[lex.name\]](http://eel.is/c++draft/lex.name).
+  - Steve replied that the burden of conformance is the same regardless of where it is stated.
+  - Steve added that he is disinclined to abandon attempting to state conformance.
+  - Steve asserted that, similarly to undefined behavior, it is hard to find answers for things
+    that are not explicitly stated in the standard.
+  - Steve claimed that statements regarding what is and is not intended to be conforming are
+    useful.
+  - Steve noted that the placement of the conformance statements in an annex avoids interactions
+    with normative wording.
+  - Jens reported that the reference to UAX #31 in the
+    [bibliography](http://eel.is/c++draft/bibliography)
+    specifically refers to revision 33 and Unicode 13.
+  - Jens asserted that it is preferable that the C++ standard specify the syntax of identifiers
+    itself rather than by deference to Unicode.
+  - Jens expressed support for expanding annex E to include statements of conformance for other
+    Unicode requirements in a future standard.
+  - Jens noted that some of the clarifications made to UAX #31 for Unicode 15 were directly
+    inspired by the initial attempt to state conformance in annex E and that such a feedback
+    cycle is a valuable result.
+  - Jens stated that annex E doesn't require significant maintenance and, since it is
+    non-normative, a failure to update it would not be highly consequential since it has no
+    implementaiton impact.
+  - Corentin stated that the Unicode standard is defined as a complete set and is not intended
+    or designed to support cherry picking different versions of its parts.
+  - Corentin provided normalization as an example of Unicode specification that is defined
+    across multiple parts of the Unicode Standard.
+  - **Poll 1: [FR-009-024]: SG16 recommends rejecting the comment on the basis that explicit
+    indication of Unicode requirement conformance, non-conformance, or inapplicability is useful.**
+    - Attendees: 9 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   3 |   1 |   0 |   1 |
+    - Consensus.
+- [FR-010-133 \[Bibliography\] Unify references to Unicode](https://github.com/cplusplus/nbballot/issues/412)
+  and <br/>
+  [FR-021-013 5.3p5.2 \[lex.charset\] Codepoint names in identifiers](https://github.com/cplusplus/nbballot/issues/423):
+  - Corentin explained that the C++ standard currently references four distinct Unicode versions
+    for various purposes but that implementations, Clang specifically, intend to adopt behaviors
+    from newer Unicode versions as releases occur.
+  - Corentin described a technical inconsistency that results from the disjoint version references:
+    - The range of UCS scalar values that can be expressed in a *universal-character-name* (UCN)
+      is determined by the ISO/IEC 10646 version.
+    - The set of character names recognized for a *named-universal-character* (NUC) are likewise
+      determined by the ISO/IEC 10646 version.
+    - The set of UCS scalar values allowed in an *identifier* is determined by the `XID_Start` and
+      `XID_Continue` properties defined in the referenced
+      [UAX #44](https://unicode.org/reports/tr44)
+      version.
+    - If the version of UAX #44 referenced corresponds to a newer version of the Unicode Standard
+      than the associated version for the referenced version of ISO/IEC 10646, then there will
+      exist some identifiers that can be spelled as, for example, `x\u1234` but not as
+      `x\N{NAME_FOR_1234}`.
+  - Steve expressed concern that updating the referenced versions might break section references.
+  - Corentin replied that he checked all references and only found one section reference; the
+    reference for the Unicode replacement character in
+    [\[ostream.formatted.print\]](http://eel.is/c++draft/ostream.formatted.print)
+    specifically references chapter 3.9 of the core specification for Unicode 14.
+  - Steve stated that the bibliography is intended to reflect what the author was reading when
+    writing the C++ standard.
+  - Corentin agreed and noted that normative changes should be made as necessary when the versions
+    referenced in the bibliography are updated.
+  - Steve noted that such concerns will be more important for future library features that have
+    a deeper dependence on the Unicode Standard.
+  - Tom noted that the ISO requires references to other ISO standards to reference the most recent
+    version and asked if that applies to non-ISO standards as well.
+  - Jens replied that the ISO prefers undated references.
+  - Jens explained that outdated ISO versions don't really exist from the ISO perspective since a
+    newer version is intended to replace a previous version; references to previous releases are
+    somewhat like dangling pointers.
+  - Jens noted that, practically speaking, older versions do exist and that we do refer to older
+    versions when necessary; like we have to do for UCS-2.
+  - Jens further explained that a dated reference is used for C since normative changes are very
+    likely required to accommodate a newer version.
+  - Corentin explained that, at present, there is a mix of specific version references and floating
+    references and that some are normative and some are non-normative.
+  - Corentin stated that the only change that would have a normative impact is for named character
+    sequences.
+  - Jens stated that the Unicode Standard is referenced for cases where the needed subject matter
+    is not present in an ISO standard.
+  - Jens noted that ISO prefers referencing ISO standards when possible.
+  - Jens suggested that the project editor should have more insight into the rules provided by ISO
+    regarding references to ISO standards vs the Unicode Standard.
+  - Corentin clarified that the NB comment is not asking to only refer to the Unicode Standard; it
+    is asking that named character sequences be made consistent with other uses of Unicode
+    functionality.
+  - Jens noted that the character names are present in ISO/IEC 10646, but that the properties
+    needed for identifiers are not.
+  - Hubert suggested that, when a reference is needed to the Unicode Standard, that the version
+    aligned with ISO/IEC 10646 be referenced.
+  - Hubert stated that implementations can then veto that in favor of newer versions and that
+    no one would complain.
+  - Hubert raised the option of asking the project editor to make a request to the ISO that
+    the scope of ISO/IEC 10646 be expanded to include the additional Unicode features that we
+    need.
+  - Hubert expressed a preference towards referencing ISO/IEC 10646 for terms and definitions
+    because the ISO's practice tends to be more stringent than the Unicode Consortium's.
+  - Corentin repeated his goal to improve consistency; that the references be updated so that
+    the character names and XID properties be sourced from the same reference.
+  - Hubert asked why the reference for extended grapheme cluster is non-normative.
+  - Jens replied that he thinks
+    [UAX #29](https://unicode.org/reports/tr29)
+    is only referenced to satisfy normative encouragement for an implementation direction.
+  - Charlie expressed agreement with Jens' recollection.
+  - Hubert stated that normative encouragement should require a normative reference.
+  - Jens agreed that is probably true.
+  - Corentin asserted that, as more support for Unicode is added to C++, there will be more
+    need for references to the Unicode Standard that can't be satisfied by ISO/IEC 10646.
+  - Jens admitted he was surprised when he first joined SG16 to learn that ISO/IEC 10646
+    specifies a subset of the features present in the Unicode Standard.
+  - Tom asked if changes to reference the Unicode Standard version that is aligned with the
+    referenced ISO/IEC 10646 version would resolve the concern.
+  - Jens noted that the current reference to ISO/IEC 10646 is undated.
+  - MarkZ suggested the right approach would be to just reference the Unicode Standard.
+  - Corentin suggested that the next action be to coordinate with the project editor to
+    better understand our options.
+  - Steve suggested it might be best to state that implementations should use the
+    Unicode Standard version that aligns with their version of ISO/IEC 10646.
+  - Tom stated that the
+    [Unicode FAQ](https://unicode.org/faq/unicode_iso.html)
+    explicitly states which Unicode Standard version is aligned with each ISO/IEC 10646
+    version and asked if ISO/IEC 10646 is similarly explicit.
+  - Jens checked and reported that it is not, but that it embeds links that are version
+    specific.
+  - Corentin stated that the highest priority is to provide consistent references and that
+    we can rely on forward compatibility guarantees.
+  - Jens noted that, though we do understand and appreciate the Unicode stability guarantees,
+    we are obligated to verify that those commitments are honored.
+  - **Poll 2: \[FR-010-133\]\[FR-021-013\]: SG16 requests that the project editor discuss with the
+    ISO the option of eschewing references to ISO/IEC 10646 in favor of the Unicode Standard
+    both for technical consistency and release frequency.**
+    - Attendees: 9 (1 abstention)
+    - Objection to unanimous consent.
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   3 |   0 |   1 |   1 |
+    - Weak consensus
+    - SA: Use of the ISO/IEC 10646 document benefits from ISO governance.
+    - SA: Would prefer to explore expansion of ISO/IEC 10646 to include more components of Unicode.
+  - Hubert indicated he might work with his NB to raise comments on the next ballot of
+    ISO/IEC 10646 to request that it expand its scope.
+  - MarkZ suggested that quality issues could also be reported to the Unicode Consortium.
+  - MarkZ noted that interoperation with other languages and runtimes might be improved by
+    aligning with the Unicode Standard.
+  - **Poll 3: \[FR-010-133\]\[FR-021-013\]: SG16 recommends resolving these comments by restricting
+    all references to the Unicode Standard to the version that corresponds to the referenced
+    version of ISO/IEC 10646.**
+    - Attendees: 9 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   3 |   0 |   3 |   0 |
+    - No consensus.
+    - A: It doesn't benefit the community to reference a Unicode version that is outdated by the
+      time the standard is published.
+  - Steve suggested that it might be helpful to explore different guarantees for core language vs
+    the standard library.
+  - Hubert agreed that it is conceivable that use of different Unicode Standard versions for the
+    core language and the standard library would be ok.
+- Tom reported that the next meeting will take place on November 30th.
 
 
 # October 19th, 2022
