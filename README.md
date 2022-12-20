@@ -86,7 +86,7 @@ The draft agenda is:
   - **Poll 1: P2713R0: Forward to LEWG as the recommended resolution of US 38-098 and FR 005-134
     amended with discussed wording changes.**
     - Attendees: 10
-    - No oposition to unanimous consent.
+    - No objection to unanimous consent.
 - [P2693R0: Formatting thread::id and stacktrace](https://wg21.link/p2693r0):
   - Corentin provided an introduction.
   - Victor reported Bryce's rationale for SG16 review; there were questions about wide string
@@ -112,7 +112,7 @@ The draft agenda is:
     text representation for `std::thread::id` would be out of scope.
   - **Poll 2: P2693R0: Forward to LEWG as the recommended resolution of FR-008-011.**
     - Attendees: 10
-    - No oposition to unanimous consent.
+    - No objection to unanimous consent.
 - [FR-010-133 \[Bibliography\] Unify references to Unicode](https://github.com/cplusplus/nbballot/issues/412) and<br/>
   [FR-021-013 5.3p5.2 \[lex.charset\] Codepoint names in identifiers](https://github.com/cplusplus/nbballot/issues/423):
   - Corentin explained that authoring a paper to address these NB comments is on his todo list.
