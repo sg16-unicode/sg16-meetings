@@ -17,6 +17,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [November 30th, 2022](#november-30th-2022)
 - [November 2nd, 2022](#november-2nd-2022)
 - [October 19th, 2022](#october-19th-2022)
 - [October 12th, 2022](#october-12th-2022)
@@ -40,6 +41,136 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# November 30th, 2022
+
+## Agenda
+- [P2713R0: Escaping improvements in std::format](https://wg21.link/p2713r0)
+  - [US 38-098 22.14.6.4p1 \[format.string.escaped\] Escaping for debugging and logging](https://github.com/cplusplus/nbballot/issues/515)
+  - [FR 005-134 22.14.6.4 \[format.string.escaped\] Aggressive escaping](https://github.com/cplusplus/nbballot/issues/408)
+- [P2693R0: Formatting thread::id and stacktrace](https://wg21.link/p2693r0)
+  - [FR-008-011 22.14 \[format\] Support formatting of thread::id](https://github.com/cplusplus/nbballot/issues/410)
+- [FR-010-133 \[Bibliography\] Unify references to Unicode](https://github.com/cplusplus/nbballot/issues/412) and<br/>
+  [FR-021-013 5.3p5.2 \[lex.charset\] Codepoint names in identifiers](https://github.com/cplusplus/nbballot/issues/423)
+- [P2675R0: LWG3780: The Paper (format's width estimation is too approximate and not forward compatible)](https://wg21.link/p2675r0)
+  - [LWG #3780: format's width estimation is too approximate and not forward compatible](https://cplusplus.github.io/LWG/issue3780)
+  - [FR-007-012 22.14.2.2 \[format.string.std\] codepoints with width 2](https://github.com/cplusplus/nbballot/issues/409)
+- [FR-020-014 5.3 \[lex.charset\] Replace "translation character set" by "Unicode"](https://github.com/cplusplus/nbballot/issues/422)
+
+## Meeting summary
+- Attendees:
+  - Charles Barto
+  - Corentin Jabot
+  - Jens Maurer
+  - Mark de Wever
+  - Mark Zeren
+  - Nathan Owen
+  - Peter Brett
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2713R0: Escaping improvements in std::format](https://wg21.link/p2713r0):
+  - Tom reported that the paper implements the previous guidance provided for
+    [US 38-098](https://github.com/cplusplus/nbballot/issues/515)
+    during the
+    [2022-10-19 SG16 telecon](https://github.com/sg16-unicode/sg16-meetings#october-19th-2022)
+    and for
+    [FR 005-134](https://github.com/cplusplus/nbballot/issues/408)
+    during the
+    [2022-11-02 SG16 telecon](https://github.com/sg16-unicode/sg16-meetings#november-2nd-2022)
+    so all that should be needed is to confirm the paper via a poll.
+  - Tom noted that some minor wording feedback was provided in a
+    [post to the SG16 mailing list](https://lists.isocpp.org/sg16/2022/11/3586.php).
+  - Victor presented the paper and further wording review commenced.
+  - **Poll 1: P2713R0: Forward to LEWG as the recommended resolution of US 38-098 and FR 005-134
+    amended with discussed wording changes.**
+    - Attendees: 10
+    - No oposition to unanimous consent.
+- [P2693R0: Formatting thread::id and stacktrace](https://wg21.link/p2693r0):
+  - Corentin provided an introduction.
+  - Victor reported Bryce's rationale for SG16 review; there were questions about wide string
+    support.
+  - Victor noted that the `ostream` inserters for `stacktrace_entry` and `basic_stacktrace`
+    do not support wide ostreams, so the lack of support for `std::format` is consistent.
+  - Corentin stated that there is no guarantee that `std::thread::id` will be formatted
+    consistently for `char` and `wchar_t`.
+  - Jens, referring to the proposed \[stacktrace.format\] wording, noted that "must" is not
+    allowed in normative wording.
+  - Victor asked what should be used instead.
+  - Tom suggested "mandates" or "requires".
+  - Victor explained that the wording intent is that a non-empty *format-spec* evaluated at
+    compile-time render the program ill-formed and result in a format error exception if
+    evaluated at run-time.
+  - Jens suggested wording the requirements in terms of format string validity.
+  - Charles noted that a thread ID is a handle on Windows.
+  - Charles stated that his only concern is whether additional header inclusion might be
+    required but the proposal looks fine otherwise.
+  - Jens suggested dropping the "The syntax of format specifications is as follows" sentence
+    in the wording for `formatter<thread::id, charT>`.
+  - Tom stated that any changes to require wide character support for stacktrace or consistent
+    text representation for `std::thread::id` would be out of scope.
+  - **Poll 2: P2693R0: Forward to LEWG as the recommended resolution of FR-008-011.**
+    - Attendees: 10
+    - No oposition to unanimous consent.
+- [FR-010-133 \[Bibliography\] Unify references to Unicode](https://github.com/cplusplus/nbballot/issues/412) and<br/>
+  [FR-021-013 5.3p5.2 \[lex.charset\] Codepoint names in identifiers](https://github.com/cplusplus/nbballot/issues/423):
+  - Corentin explained that authoring a paper to address these NB comments is on his todo list.
+  - Corentin invited offers to help with a paper.
+  - Jens stated that it will be important to understand how the change to the normative reference
+    impacts how wording is interpreted throughout the standard.
+- [P2675R0: LWG3780: The Paper (format's width estimation is too approximate and not forward compatible)](https://wg21.link/p2675r0):
+  - Corentin provided an introduction.
+    - Victor had initially identified a range of code points that specify characters to be
+      considered as having an estimated width of two.
+    - That code point range corresponds to Unicode 13 and has not been updated for more recent
+      Unicode Standard versions.
+    - Analysis of source code and behavior in existing terminals inspired the current proposal
+      to derive the code point ranges from the Unicode character property database.
+  - Victor expressed mixed feelings regarding the proposal; though the idea is favorable,
+    consulted sources indicate that the Unicode properties don't predict how characters are
+    displayed particularly well.
+  - Victor indicated support for consideration of the Unicode width property, but that code
+    point ranges that are ambiguous should be retained.
+  - Victor stated that all of the code points that change from an estimated width of two to
+    an estimated width of one are rendered with a width of two in his environment, so those
+    cases appear to constitute a regression.
+  - Victor acknowledged that the proposal looks like a good step in the right direction.
+  - Victor raised U+2E9A as an example; it is an unassigned character in a block for which
+    characters are assumed to have a width of two and it is rendered as a wide unassigned
+    character.
+  - \[ Editor's note: In Unicode 15.0,
+    [U+2E9A](https://util.unicode.org/UnicodeJsps/character.jsp?a=%E2%BA%9A&B1=Show)
+    is a reserved unassigned character in the
+    [CJK Radicals Supplement block](https://www.unicode.org/charts/PDF/U2E80.pdf)
+    and its `East_Asian_Width` property value is `N` (Neutral).
+    \]
+  - Corentin replied that terminals that display such characters as wide characters are
+    non-conforming.
+  - Corentin argued that use of the Unicode character database is justified by the lack of
+    anything obviously better.
+  - Corentin asserted that estimated width is necessarily an approximation at present.
+  - Corentin stated his goal with the proposal is to prioritize a principled solution with
+    predictability.
+  - Zach observed that there appear to be some contradictions and pondered how they might be
+    resolved.
+    - There is a desire to be forward compatibile and to defer to the Unicode Standard.
+    - There is a desire to consider certain unassigned code points as wide until they are
+      assigned a width by the Unicode Standard.
+  - Corentin stated that existing behavior should be evaluated before choosing to deviate
+    from Unicode.
+  - PBrett observed that wide divergence can be observed between different rastorizers and
+    stated that he does not relish the idea of identifying the subset of behavior that is
+    exhibited in the wild.
+  - Victor expressed skepticism regarding the feasibility of relying only on Unicode.
+  - Victor stated that Unicode conformance doesn't apply to this situation.
+  - Victor cautioned that the traditional Windows console behavior should not be used as a
+    reference as it exhibits notoriously poor behavior.
+  - Corentin indicated an intent to update the paper with references to the scripts used
+    to collect data and evaluate behavior.
+- [FR-020-014 5.3 \[lex.charset\] Replace "translation character set" by "Unicode"](https://github.com/cplusplus/nbballot/issues/422):
+  - Discussion was postponed due to lack of time.
+- Tom reported that the next meeting will take place on December 14th, 2022.
 
 
 # November 2nd, 2022
