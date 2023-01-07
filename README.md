@@ -17,6 +17,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [December 14th, 2022](#december-14th-2022)
 - [November 30th, 2022](#november-30th-2022)
 - [November 2nd, 2022](#november-2nd-2022)
 - [October 19th, 2022](#october-19th-2022)
@@ -41,6 +42,202 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 14th, 2022
+
+## Agenda
+- [D2675R1: LWG3780: The Paper (format's width estimation is too approximate and not forward compatible)](https://wg21.link/p2675r1)
+  - [LWG #3780: format's width estimation is too approximate and not forward compatible](https://cplusplus.github.io/LWG/issue3780)
+  - [FR-007-012 22.14.2.2 \[format.string.std\] codepoints with width 2](https://github.com/cplusplus/nbballot/issues/409)
+- [FR-020-014 5.3 \[lex.charset\] Replace "translation character set" by "Unicode"](https://github.com/cplusplus/nbballot/issues/422)
+
+## Meeting summary
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Jens Maurer
+  - Mark de Wever
+  - Peter Brett
+  - Tom Honermann
+  - Victor Zverovich
+- [D2675R1: LWG3780: The Paper (format's width estimation is too approximate and not forward compatible)](https://wg21.link/p2675r1):
+  - \[ Editor's note: D2675R1 was the active paper under discussion at the telecon. The agenda
+    and links used here reference P2675R1 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - PBrett summarized the changes in the draft R1 revision.
+  - Corentin summarized an
+    [email sent by Victor](https://lists.isocpp.org/sg16/2022/12/3623.php)
+    that demonstrated behavior in which a wide character was rendered such that it
+    overlapped an adjacent character because the terminal treated the character as
+    a narrow one but the font in use rendered it as a wide character.
+  - Corentin pointed out that the demonstrated behavior implies that character width
+    cannot be determined by looking at a rendered character in isolation since the
+    character rendering may exceed the bounds of a terminal cell.
+  - Victor acknowledged it was a mistake to categorize the relevant characters as
+    having a width of 2; the initial error was due to observing the rendered character
+    without an adjacent character.
+  - Victor expressed appreciation for the systematic approach proposed in the paper
+    and that it appears to improve behavior.
+  - Victor stated that it is difficult to interpret the screenshots currently in the
+    paper.
+  - PBrett suggested that it might be helpful to provide more constructive feedback
+    to paper authors regarding how presentation can be improved.
+  - Corentin explained that he had asked for contributions of screenshots from others
+    since he did not have convenient access to the wide range of terminals that are
+    used in practice.
+  - Corentin reported that rendering issues that occur with just one or a small subset
+    of terminals are common and asserted that we should not concern ourselves with
+    such cases.
+  - Corentin stated that he has not found cases that are contrary to the proposal and
+    that have consistent behavior across the sampled terminals.
+  - Victor, referring to an
+    [email that Tom sent to the SG16 mailing list](https://lists.isocpp.org/sg16/2022/12/3621.php),
+    reported having performed some further analysis with the attached source code and
+    provided some constructive feedback.
+  - \[ Editor's note: The mailing list software appears to have ignored, misplaced, or
+    otherwise omitted the source code that was attached to that email. \]
+  - Tom stated that we could spend additional time discussing the pros and cons of the
+    screenshots but that doing so might not be a good use of our time.
+  - Corentin opined that it would not be a good use of our time and agreed to remove
+    most of the screenshots.
+  - Jens summarized his understanding of the paper; that the standard currently specifies
+    explicit code point ranges and the paper proposes changes to better align behavior
+    with various terminals.
+  - Tom voiced agreement.
+  - Jens expressed concern that it is late in the release cycle for such changes.
+  - PBrett replied that this addresses a defect.
+  - Corentin noted that
+    [LWG issue 3780](https://cplusplus.github.io/LWG/issue3780)
+    already exists.
+  - Tom explained that we can choose between recommending this as a change for C++23 or
+    as a DR to be addressed in C++26.
+  - PBrett expressed a preference for addressing this in C++23.
+  - Victor noted that there already is consensus that width estimation is best effort and
+    likely to change in the future.
+  - Victor stated that there is not an urgent need to rush this into C++23 but that we
+    might as well add it now if we agree the paper is ready.
+  - Corentin explained that his motivation for targeting C++23 is to ensure that behavior
+    varies as expected with whatever Unicode version is in use by an implementation.
+  - Corentin noted that the situation will grow worse over time as the explicit code point
+    ranges in the standard deviate further from existing practice as that practice changes
+    with new Unicode releases.
+  - **Poll 0.1: Forward D2675R1
+    "format's width estimation is too approximate and not forward compatible",
+    with improved presentation, to LEWG as the recommended resolution of LWG3780
+    and NB comment FR-007-012.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   3 |   0 |   0 |   0 |
+    - Unanimous consent.
+  - **Poll 0.2: Recommend that D2675R1 be applied to the C++23 working paper.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   4 |   0 |   0 |   0 |
+    - Unanimous consent.
+- [FR-020-014 5.3 \[lex.charset\] Replace "translation character set" by "Unicode"](https://github.com/cplusplus/nbballot/issues/422):
+  - Tom asked what new information has become available since we last discussed and
+    polled this topic during the
+    [2021-03-24 SG16 meeting](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2021.md#march-24th-2021).
+  - PBrett responded that the existence of an NB comment may constitute new information.
+  - Corentin stated that removal of the "translation character set" term will require
+    addressing the imprecise use of the term "character".
+  - Corentin reported that the Unicode Standard states that an unassigned character must
+    not be treated as a character and that treating one as such could be a Unicode
+    conformance concern.
+  - Corentin requested an indication of support for this direction before devoting the
+    considerable time drafting a paper would require.
+  - Jens noted that we don't claim conformance with the Unicode Standard; we only use it
+    as a reference.
+  - Tom opined that the current use of "character" does not constitute a Unicode
+    conformance concern.
+  - Tom asserted that a paper to address the imprecise use of "character" would be quite
+    valuable regardless of any changes with respect to "translation character set".
+  - PBrett expressed support for making changes with regard to "translation character set"
+    either in C++23 or sometime after the use of "character" is addressed.
+  - Corentin noted that the Unicode Standard intentionally does not define "character".
+  - Corentin indicated that the paper he would write would address the core language, but
+    not the standard library since addressing both would require such a significant effort.
+  - PBrett asked if these changes could be done editorially.
+  - Jens replied that there is potential for friction with the C standard since it also
+    uses the term "character".
+  - Tom reported that Ken Whistler recommended reviewing
+    [UTR #17 (Unicode Character Encoding Model)](https://www.unicode.org/reports/tr17)
+    for terminology to use.
+  - Corentin replied that he would review it.
+  - Corentin noted that, after translation phase 1, the elements of the translation
+    character set are all Unicode scalar values because surrogate code points are not
+    allowed and asked what terminology should be used.
+  - Tom replied that, in an offline discussion, he had suggested to Corentin that we prefer
+    "code point" in general discussion and reserve "scalar value" for use as a form of
+    qualifier to restrict code point allowances.
+  - Jens requested a paper that describes the desired end state before considerable effort
+    is put into producing wording.
+  - PBrett replied that doing so implies rejecting the NB comment.
+  - Jens replied that, without a paper, rejection is the only option as there can be no
+    consensus for a specific change.
+  - Tom noted that there is very little time left for making changes to C++23.
+  - **Poll 1.1: Encourage further work on expressing the semantics of C++ lexing in terms
+    of the terminology defined in the Unicode Standard.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   1 |   0 |   1 |   0 |
+    - Strong consensus.
+    - A: I'm concerned about interaction with the C standard and introducing inconsistency
+      between core wording and library wording.
+- [D2736R0: Referencing the Unicode Standard](https://wg21.link/p2736r0):
+  - \[ Editor's note: D2736R0 was the active paper under discussion at the telecon. The agenda
+    and links used here reference P2736R0 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Corentin noted that the previous feedback was to try to ensure that the change of
+    reference would have no normative impact on behavior.
+  - Corentin explained that there is a design question regarding the `__STDC_ISO_10646__`
+    predefined macro; the macro is specified by the C standard as having a value that reflects
+    the date of a ISO/IEC 10646 standard.
+  - Corentin reported that there are known issues with the macro; compilers can't predefine it
+    because the value to define it to is determined by the C standard library.
+  - Corentin stated that the macro is only useful to distinguish between old 16-bit Unicode
+    and modern 21-bit Unicode.
+  - Corentin suggested that the C++ standard could specify it to have an implementation-defined
+    value like it does for `__STDC_VERSION__`.
+  - Corentin suggested another alternative would be to specify it as having a Unicode version
+    date instead.
+  - PBrett suggested specifying it to have a value that matters.
+  - Corentin explained that implementations that use a 16-bit `wchar_t` can't define this macro
+    to any relevant Unicode or ISO/IEC 10646 standard.
+  - Jens replied that in those cases, he would expect the macro to be defined for the last
+    ISO/IEC 10646 standard that had a 16-bit code point space.
+  - Jens suggested the value should just reflect the size of `wchar_t`.
+  - Corentin noted that the macro also reflects whether values of `wchar_t` correspond to a
+    Unicode encoding; which could be locale dependent.
+  - Tom summarized three possibilities:
+    - `wchar_t` has an associated encoding that is not a Unicode encoding; the macro is not
+      defined.
+    - `wchar_t` is 16-bit and the associated encoding is UCS-2; the macro is defined to reflect
+      an obsolete ISO/IEC 10646 standard.
+    - `wchar_t` is 32-bit and the associated encoding is UTF-32; the macro is defined to reflect
+      a relatively current ISO/IEC 10646 standard.
+  - Jens opined that this requires coordination with WG14.
+  - PBrett asked if we can deprecate the macro.
+  - Jens replied that we can choose to deviate from the C standard but noted that the macro can
+    be useful.
+  - PBrett asked about Corentin's previous suggestion to just state that the macro has an
+    implementation-defined value.
+  - Jens opined that the macro has some value.
+  - Jens noted that the C++ standard has library wording that states that all elements of the
+    wide character set are representable as values of `wchar_t` and that the presence of the
+    macro definition in core wording is suggestive of applicability to wide character and
+    string literals.
+  - Tom suggested some compare and contrast analysis with the C standard.
+  - Corentin stated that it isn't clear to him that WG14 knows what this macro is intended for.
+  - Corentin pondered deprecation, but not as a part of this paper.
+  - Corentin reported that code searches revealed few references to the macro that are sensitive
+    to the macro value; most code just checks if the macro is defined.
+- Tom announced that the next two telecons are scheduled for 2023-01-11 and 2023-01-25 and
+  will be followed by the WG21 meeting in Issaquah in early February.
 
 
 # November 30th, 2022
