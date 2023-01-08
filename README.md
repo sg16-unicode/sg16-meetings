@@ -12,8 +12,9 @@ The next SG16 meeting is scheduled for
 Wednesday, January 11th, 2023, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230111T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 The draft agenda is:
-- Any further follow up on C++23 NB comments.
-- [P2736R0: Referencing the Unicode Standard](https://wg21.link/p2736r0).
+- Planning for Issaquah.
+- [P2736R0: Referencing the Unicode Standard](https://wg21.link/p2736r0)
+- [D2749R0: Down with ”character”](https://isocpp.org/files/papers/D2749R0.pdf)
 
 
 # Past SG16 meetings
