@@ -17,6 +17,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [January 11th, 2023](#january-11th-2023)
 - [December 14th, 2022](#december-14th-2022)
 - [November 30th, 2022](#november-30th-2022)
 - [November 2nd, 2022](#november-2nd-2022)
@@ -42,6 +43,181 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 11th, 2023
+
+## Agenda
+- Planning for Issaquah.
+- [P2736R0: Referencing the Unicode Standard](https://wg21.link/p2736r0)
+- [D2749R0: Down with ”character”](https://isocpp.org/files/papers/D2749R0.pdf)
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Fraser Gordon
+  - Hubert Tong
+  - Jens Maurer
+  - Mark de Wever
+  - Mark Zeren
+  - Nathan Owen
+  - Steve Downey
+  - Tom Honermann
+  - Zach Laine
+- A round of introductions was held to welcome Fraser as a new attendee.
+- Planning for Issaquah:
+  - Tom expressed interest in holding a meeting in Issaquah despite neither he nor Peter
+    Brett planning to attend in person.
+  - Tom reported that Steve agreed to facilitate the in-person aspects of the meeting in
+    Issaquah.
+  - Tom suggested aiming for a half day on Thursday.
+  - Tom asked who planned to attend in person; three people expressed such intent.
+  - MarkZ reported that he would have a conflict at 3pm every day.
+  - Discussion ensued regarding the merits of reserving a room vs planning for in-person
+    attendees to join via Zoom.
+  - Steve noted that Zach's recent and upcoming papers may attract more interest.
+  - Zach noted that SG16 tends to attract a few additional attendees beyond the regulars.
+  - Tom stated he would request a room.
+- [P2736R0: Referencing the Unicode Standard](https://wg21.link/p2736r0):
+  - Tom summarized the discussion from the
+    [2022-12-14 SG16 telecon](https://github.com/sg16-unicode/sg16-meetings#december-14th-2022)
+    concerning the `__STDC_ISO_10646__` predefined macro.
+  - Corentin provided an introduction.
+  - Corentin reported having reviewed the terminology from the Unicode Standard to identify
+    wording changes to be made.
+  - Corentin explained that ISO/IEC 10646 uses "character" in its wording, but that the
+    proposed wording uses "abstract character" when appropriate.
+  - Corentin noted that "character" is retained for uses such as "character type".
+  - Hubert stated that the "abstract character" definition from the Unicode Standard can be
+    broadly applied.
+  - Corentin replied that "abstract character" is relevant when mapping between different
+    character sets.
+  - Corentin indicated that "abstract character" only ended up being used in one place.
+  - Jens asserted there is a need for a term to express equivalence between characters.
+  - Tom agreed and noted that "abstract character" is useful when there is more than one
+    possible encoding for the same character; as in Unicode normalization forms.
+  - Hubert acknowledged that "abstract character" would be appropriate for the mapping of
+    source code characters to the translation character set.
+  - Jens suggested that is a QoI concern since translation phase 1 behavior is
+    implementation-defined.
+  - Hubert agreed use of the term could be avoided there if desired.
+  - Corentin explained that the C++ standard currently contains two normative references
+    to ISO/IEC 10646, one of which is to an obsolecent version for a definition of UCS-2;
+    the proposed wording replaces references to UCS-2 with a restricted form of UTF-16.
+  - Corentin stated that references to the Unicode Standard are inclusive of the
+    annexes; normative references to the annexes are therefore removed.
+  - Corentin reported that many of the changes are mechanical; "UCS" was replaced with
+    "Unicode".
+  - Corentin noted that the control code alias names table was removed following discussion
+    on the SG16 mailing list.
+  - Steve pondered whether notes should be added to the C++ standard that explain where
+    to find information in the Unicode Standard.
+  - Corentin replied that doing so can be useful; for example for `NameAliases.txt`.
+  - Hubert stated that "UCS Encoding Form" is more restrictive than "Unicode Encoding Form";
+    the latter isn't limited to the common UTF encodings..
+  - Mark asked if that terminology should not then be changed.
+  - Hubert replied that it might be necessary to add constraints or to find another way to
+    identify the relevant encodings.
+  - Mark suggested that the first heading in Table 1 in \[lex.charset\] could be changed to
+    "abstract character".
+  - Jens objected and explained that the first column lists code points and the second
+    column lists names; these are concrete character references.
+  - Corentin replied that he had not felt a need to change the use of "character" in that
+    table heading.
+  - Jens stated that the change to remove the control code alias table changes the
+    specification with regard to allowances for the "BELL" and "ALERT" names.
+  - Corentin replied that wording was added to restrict alias names to those that are
+    specified as "control", "correction", and "alternate".
+  - Jens noted that the code page chart appears to list "BELL" as a control name, but
+    in a confusing way that is inconsistent with the names in `NameAliases.txt`.
+  - \[ Editor's note: The discussion of "BELL" and "ALERT" centers around how the Unicode
+    Standard presents the alias names for U+0007. The
+    [C0 Controls and Basic Latin PDF](https://www.unicode.org/charts/PDF/U0000.pdf)
+    displays as follows.
+
+        0007  <control>
+                = BELL
+
+    [`NameAliases.txt`](https://www.unicode.org/Public/UCD/latest/ucd/NameAliases.txt)
+    is more clear in its intent:
+
+        # Note that no formal name alias for the ISO 6429 "BELL" is
+        # provided for U+0007, because of the existing name collision
+        # with U+1F514 BELL.
+        
+        0007;ALERT;control
+        0007;BEL;abbreviation
+
+    \]
+  - Tom summarized the concern; implementors might look at the code page charts and
+    become confused or implement something other than what is intended.
+  - Corentiin replied with doubts that implementors would base their implementations
+    on the code page charts.
+  - Zach asked if the intent can be made more explicit by reintroducing a note to
+    direct readers to `NameAliases.txt`.
+  - Jens replied that a note would be helpful and that be believes the existing table
+    was originally built from content in `NameAliases.txt`.
+  - Steve suggested amending the proposed "control, correction, or alternate" wording
+    to add "as specified in `NameAliases.txt`".
+  - Jens expressed concern about duplicating content from the Unicode Standard.
+  - Zach suggested retaining the prior "These names are derived from the Unicode
+    Character Database's `NameAliases.txt`" wording but with "derived" removed.
+  - Corentin agreed to make a change.
+  - Jens stated that references to the Unicode Standard should have "the" capitalized.
+  - Tom expressed a preference in favor of "Unicode code point" over
+    "Unicode scalar value" with the latter reserved for use in expressing requirements.
+  - Zach expressed indifference and noted that UCD properties won't be present for
+    surrogate code points.
+  - Hubert stated that use of "Unicode scalar value" has the advantage of avoiding the
+    question of whether non-scalar values need to be considered in the given context.
+  - Steve noted that "Unicode scalar value" implies a precondition that, if violated,
+    could lead to undefined behavior.
+  - Jens suggested that references to chapters of the Unicode Standard should use both
+    numbers and names for resiliency against changes.
+  - Corentin explained that references to UCS-2 were replaced with references to UTF-16
+    with additional restrictions to limit encoded characters to those in the BMP.
+  - Fraser replied that there is a semantic difference since UCS-2 allowed encoding
+    surrogate code points.
+  - Corentin responded that the previous wording was not clear how such code points were
+    to be handled.
+  - Hubert pointed out a category error in the proposed wording change for the `codecvt`
+    facets; "code point" is used where "code unit" would be more appropriate.
+  - Jens suggested retaining UCS-2 teminology by adding a definition of it that specifies
+    it as a restricted form of UTF-16.
+  - Zach expressed a preference for the currently proposed wording with the category error
+    corrected.
+  - Hubert suggested that the wording state that the facet only maps from that code point
+    range and nothing else.
+  - Tom observed that, if the UTF-8 text has characters that map outside the BMP, the
+    wording doesn't say what happens.
+  - Hubert stated that we need to make it clear that just converting to UTF-16 isn't
+    acceptible.
+  - Corentin explained that he did not remove the UAX #31 reference since Steve is working
+    on related changes.
+  - Corentin expressed uncertainty whether a separate UAX #31 reference is needed.
+  - Corentin observed that some unintended `tcode` LaTeX markup appears in one of the
+    bibliography entries proposed for removal.
+  - Zach returned discussion to the `__STDC_ISO_10646__` predefined macro, noted that it
+    is inherited from C, and opined that there is nothing to be done for it.
+  - Jens replied that the wording essentially states that `wchar_t` must be at least 21
+    bits for the macro to be defined.
+  - Hubert observed that the proposed change loses the requirement that storing a wide
+    character stores a value that matches that character's Unicode scalar value.
+  - Hubert explained that this behavior is the design flaw that makes it not possible for
+    a compiler to predefine this macro; the value held in an object of type `wchar_t` has
+    a locale dependent interpretation.
+  - Zach suggested that restricting the implication to the encoding of wide character
+    literals might be an improvement.
+  - Hubert suggested this might be a matter worth discussing in SG22.
+  - Zach asked if the wording could just defer to the C standard.
+  - Jens replied that we can do so for library wording, but not for core wording.
+  - Jens stated that we could match the wording in the C standard.
+  - Steve noted a misspelling of 10646 in the first paragraph of the Motivation section:
+    "10446".
+- [D2749R0: Down with ”character”](https://isocpp.org/files/papers/D2749R0.pdf):
+  - Discussion was postponed due to lack of time.
+- Tom reported that the meeting will be on 2023-01-25 and will prioritize further review
+  of P2736R0 and then D2749R0.
 
 
 # December 14th, 2022
