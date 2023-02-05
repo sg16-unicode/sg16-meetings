@@ -250,7 +250,8 @@ The draft agenda is:
     proposed wording uses "abstract character" when appropriate.
   - Corentin noted that "character" is retained for uses such as "character type".
   - Hubert stated that the "abstract character" definition from the Unicode Standard can be
-    broadly applied.
+    broadly applied and thus should only be used when a broad interpretation is actually
+    intended.
   - Corentin replied that "abstract character" is relevant when mapping between different
     character sets.
   - Corentin indicated that "abstract character" only ended up being used in one place.
@@ -343,6 +344,9 @@ The draft agenda is:
     to be handled.
   - Hubert pointed out a category error in the proposed wording change for the `codecvt`
     facets; "code point" is used where "code unit" would be more appropriate.
+  - Hubert further explained that the first bullet describes the artifacts produced by
+    an encoding where as the second bullet names an encoding; both bullets should be
+    written such that they can be easily read as specifying encodings.
   - Jens suggested retaining UCS-2 teminology by adding a definition of it that specifies
     it as a restricted form of UTF-16.
   - Zach expressed a preference for the currently proposed wording with the category error
