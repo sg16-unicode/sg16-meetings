@@ -342,11 +342,11 @@ The draft agenda is:
     surrogate code points.
   - Corentin responded that the previous wording was not clear how such code points were
     to be handled.
-  - Hubert pointed out a category error in the proposed wording change for the `codecvt`
-    facets; "code point" is used where "code unit" would be more appropriate.
-  - Hubert further explained that the first bullet describes the artifacts produced by
-    an encoding where as the second bullet names an encoding; both bullets should be
-    written such that they can be easily read as specifying encodings.
+  - Hubert pointed out that, in the proposed wording for the `codecvt` facets, the
+    first bullet describes the artifacts produced by an encoding where as the second
+    bullet names an encoding.
+  - Hubert stated that both bullets should be written such that they can be easily read
+    as specifying encodings.
   - Jens suggested retaining UCS-2 teminology by adding a definition of it that specifies
     it as a restricted form of UTF-16.
   - Zach expressed a preference for the currently proposed wording with the category error
