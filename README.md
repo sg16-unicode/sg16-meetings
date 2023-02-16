@@ -16,7 +16,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
-- [February 2nd, 2023](#february-2nd-2023)
+- [February 1st, 2023](#february-1st-2023)
 - [January 25th, 2023](#january-25th-2023)
 - [January 11th, 2023](#january-11th-2023)
 - [Meetings held in 2022](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2022.md)
@@ -27,7 +27,7 @@ The draft agenda is:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
-# February 2nd, 2023
+# February 1st, 2023
 
 ## Agenda
 - [P2749R0: Down with ”character”](https://wg21.link/p2749r0).
