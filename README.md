@@ -164,14 +164,14 @@ The draft agenda is:
   - Steve asked what the motivation is for getting this change in C++23.
   - Corentin responded that he is motivated to remove "translation character set" before it appears
     in training materials.
-  - **Poll 1.1: P2749R1 "Down with 'character'" should be included in the IS only if the updates
+  - **Poll 1.1: P2749R0 "Down with 'character'" should be included in the IS only if the updates
     to whitespace specification described in P2348 "Whitespaces Wording Revamp" are also included.**
     - Attendees: 7 (1 abstention)
       | SF  | F   | N   | A   | SA  |
       | --: | --: | --: | --: | --: |
       |   0 |   4 |   1 |   0 |   1 |
     - Weak consensus.
-  - **Poll 1.2: Forward P2749R1 "Down with 'character'", revised as discussed, to CWG for C++23 as
+  - **Poll 1.2: Forward P2749R0 "Down with 'character'", revised as discussed, to CWG for C++23 as
     the recommended resolution of ballot comment FR-020-014.**
     - Attendees: 7
       | SF  | F   | N   | A   | SA  |
