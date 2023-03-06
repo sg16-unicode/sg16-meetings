@@ -17,6 +17,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [February 22nd, 2023](#february-22nd-2023)
 - [February 1st, 2023](#february-1st-2023)
 - [January 25th, 2023](#january-25th-2023)
 - [January 11th, 2023](#january-11th-2023)
@@ -26,6 +27,185 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 22nd, 2023
+
+## Agenda
+- [P2773R0: Considerations for Unicode algorithms](https://wg21.link/p2773r0).
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Fraser Gordon
+  - Hubert Tong
+  - Jens Maurer
+  - Mark de Wever
+  - Nathan Owens
+  - Peter Brett
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2773R0: Considerations for Unicode algorithms](https://wg21.link/p2773r0):
+  - PBrett suggested that Corentin provide a brief introductory overview by speaking to each of
+    the points in the "TL;DR" section.
+  - Corentin presented an overview:
+    - The paper is guided by experience obtained through prototyping.
+    - The paper is informed by expectations of performance requirements.
+    - Views are a good fit for Unicode algorithms.
+    - It is not clear what invariants would be desirable for a new text container.
+    - Unicode does not impose constraints on what code points may follow other ones;
+      new code points can be inserted effectively anywhere.
+    - The paper assumes the availability of transcoding interfaces.
+    - Normalization should be an early focus.
+    - The existing interfaces for uppercase and lowercase operations in the C++ standard
+      do not suffice to address the needs of all languages.
+    - The existing interfaces for case insensitive operations in the C++ standard are
+      likewise insufficient.
+    - Text operations need to be easy for programmers to use with UTF-8 encoded text.
+    - Interfaces for text operations should not be replicated for every encoding of
+      Unicode code points.
+    - It should be possible to, for example, perform casing and normalization operations
+      without having to materialize a code point sequence in between the operations.
+    - The standard lacks localization facilities sufficient to support tailoring.
+    - Interfaces that support tailoring should be implemented using ICU4X.
+    - Interfaces for the non-tailored algorithms may be provided as `constexpr` since
+      they are locale invariant.
+    - Providing views implemented with ICU would be challenging and would limit performance
+      opportunities and iterator categories.
+    - Interfaces that support tailored algorithms with an interface similar to that used
+      for non-tailored interfaces can be added later.
+    - Non-tailored interfaces are useful despite their being insufficient for user
+      presentation purposes in general.
+    - There are no known use cases for performing normalization for non-Unicode encodings
+      like EBCDIC or Shift-JIS.
+    - Code unit sequences should be validated by default on consumption; for safety reasons.
+    - Standardized interfaces should not be constrained by what ICU is capable of providing.
+    - Implementation via ICU should be supported when doing so doesn't limit potentially
+      better solutions.
+    - Implementation via ICU prohibits `constexpr` and `noexcept`.
+    - Standardized interfaces should take advantage of ranges and views.
+    - Size hints are useful for reserving memory in order to avoid reallocations.
+    - It is important and reasonable to optimize table lookups for most character properties.
+    - In place mutation of text does not perform well.
+    - UTF decoding and encoding is inexpensive even when not optimized; it might not be
+      necessary to design every interface to support maximum optimization possibilities.
+  - Zach stated that normalization is a relatively expensive operation and is therefore best
+    suited to eager transformations.
+  - Victor commented in the chat that lazy operations often limit optimizations like SIMD.
+  - Jens also commented in the chat that range filters are probably at odds with SIMD, noted
+    that table lookups aren't SIMD-friendly, and pondered how much the Unicode algorithms
+    benefit from SIMD.
+  - Zach noted that maintaining multiple levels of enclosed iterators can be painful.
+  - Zach reflected on prior discussions regarding requirements to be able to implement
+    Unicode functionality using ICU and asked how important such implementability is.
+  - \[ Editor's note:
+    [P1238R1 (SG16: Unicode Direction)](https://wg21.link/p1238)
+    lists as a constraint that implementors cannot afford to rewrite ICU. \]
+  - Tom responded that his prior statements were partially motivated by politics; a desire
+    to assure implementors that SG16's efforts would not culminate in a requirement for them
+    to implement all Unicode functionality on their own.
+  - PBrett indicated that he is not worried regarding implementability via ICU.
+  - Tom noted that the pipeline approach presented in the paper allows combining
+    transformations in ways that may be order dependent.
+  - Tom asked Robin to confirm that case folding and normalization operations are order
+    dependent.
+  - Robin noted that case folding does not depend on tailoring and confirmed that there
+    are order dependencies; `toCasefold(toNFKC(S))` does not produce the same result as
+    `toNFKC_Casefold(S)`.
+  - \[ Editor's note: In later correspondence, Robin noted that Turkic case folding
+    (I -> ı, İ -> i) is usually not performed for non-Turkic languages as noted in
+    [CaseFolding.txt](https://www.unicode.org/Public/UCD/latest/ucd/CaseFolding.txt). \]
+  - Robin stated that, for canonical normalization, it is common to normalize at program
+    boundaries, but that compatibility normalization might need to be done locally.
+  - Tom noted the implication; programmers can't expect to combine transformations
+    arbitrarily and get the "right" result.
+  - Jens replied that this means special algorithms are needed for some transformations.
+  - Jens stated that the range pipeline approach is idiomatic and seems amenable to these
+    transformations.
+  - Jens noted that ranges was tranformational in its ability to avoid the need for
+    intermediate storage.
+  - Jens cautioned that this ability comes with the cost that the transformations be
+    interruptible.
+  - Jens expressed appreciation for the syntax that views enable but that he would like to
+    understand the performance trade off with respect to eager transformations.
+  - Jens asserted it would be useful to have some performance data in a paper.
+  - Jens acknowledged that normalization as a view adapter would require some local memory,
+    but noted that might be cache advantageous.
+  - Steve expressed concern over including normalization as a pipeline stage; if
+    normalization iterators have to bounce between various buffers, performance may suffer.
+  - Jens noted that views can be materialized when it is advantageous to do so.
+  - PBrett reported that he has applications for normalization views.
+  - Corentin stated that it is probably advantageous to materialize a view if it will be
+    iterated more than once.
+  - Corentin reported having implemented a normalization view and that he did not find the
+    implementation to be too difficult.
+  - Corentin noted that normalization can benefit from limits like those specified in the
+    stream-safe text format.
+  - \[ Editor's note: The stream-safe text format is described in
+    [UAX #15 (Unicode Normalization Forms)](https://unicode.org/reports/tr15). \]
+  - Corentin commented that normalization can be expensive, but only when transformations
+    are actually necessary; characters corresponding to some of the `General_Category`
+    classes can be recognized and copied without further lookup.
+  - Victor stated that, with regard to implementability with ICU and the benefits of range
+    based interfaces, good performance is more important.
+  - Victor advised creating a reference implementation so that performance can be evaluated
+    relative to ICU.
+  - Victor noted that we do not want another experience like `std::regex` where the
+    implementations available exhibit poor performance.
+  - Zach reported having compared performance between his
+    [Boost.Text](https://tzlaine.github.io/text/doc/html/index.html)
+    implementation and ICU and found his implementation initially lagged ICU performance
+    by 50 times.
+  - Zach explained that he was able to improve performance after studying the implementation
+    in ICU, but that his implementation was still 10 times as expensive as ICU.
+  - Zach asserted that we should not expect implementors to match ICU performance.
+  - Zach declared that we don't want to specify a facility that will pose a decade long
+    implementation challenge as happened with `std::from_chars()` and `std::to_chars()`.
+  - Zach noted that the lazy range approach can be implemented using ICU.
+  - Zach suggested that we can specify both eager and view based implementations.
+  - PBrett provided a use case for lazy normalization; Unicode regular expression matching
+    can perform better with NFKD normalized text and it can be advantageous to only normalize
+    until a match is found.
+  - Corentin replied to Victor's request for a reference implementation that he would make
+    his prototype work available, but that better implementations are possible.
+  - Corentin expressed skepticism that there isn't room to improve on ICU performance.
+  - Tom asked Robin if the CLDR follows BCP-47.
+  - Robin replied that they are maintained in sync and that the CLDR uses some extensions
+    defined in BCP-47.
+  - Robin stated that, with regard to standardizing localization support, localization is
+    fundamentally not stable since it tracks evolving human behavior.
+  - Robin noted that, since the C++ standard is updated every 3 years, it will always trail
+    localization changes.
+  - \[ Editor's note: Robin noted in later offline discussion that CLDR releases occur at
+    least every six months. \]
+  - Tom asked if some of the locale properties specified in BCP-47 are stable.
+  - Robin replied that BCP-47 specifies a syntax and that it has some stability assurances.
+  - \[ Editor's note: Robin provided additional detail in offline correspondence following
+    the telecon; The relation between Unicode language and locale identifiers and BCP-47 is
+    documented in the "BCP 47 Conformance" section of
+    [UTS #35 (Unicode Locale Data Markup Language (LDML))](https://unicode.org/reports/tr35)
+    and stability is discussed in the "Stability of IANA Registry Entries" section of BCP-47
+    in [RFC 5646](https://www.rfc-editor.org/rfc/rfc5646.html).
+    The
+    [ISO 3166](https://www.iso.org/iso-3166-country-codes.html)
+    standard responsible for assigning country codes also implements a transition policy
+    for changes to country codes as described at
+    https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Transitional_reservations. \]
+  - Corentin recalled discussion of Zach's papers in Issaquah and noted that the level of
+    stability guarantees is not sufficient for ABI purposes.
+  - Robin reported that the line breaking algorithm changes frequently but that other
+    algorithmes, like grapheme breaking, change less frequently.
+  - Robin advised focusing on use cases when considering the Unicode algorithms as different
+    use cases may have different concerns.
+  - Robin noted that case folding has stability concerns and that it is stable for NFKC
+    normalized text.
+  - Zach pondered whether it is reasonable to standardize something like a case-insensitive
+    search.
+- Tom reported that the next meeting will be 2023-03-08 and that we will continue discussion
+  of this paper.
 
 
 # February 1st, 2023
