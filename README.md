@@ -197,7 +197,7 @@ The draft agenda is:
     a better building block.
   - Robin noted his own association with ICU4X and expressed its goal to improve portability based
     on a more flexible and modular design.
-  - Robtin stated that ICU4X does not offer strong stability guarantees.
+  - Robin stated that ICU4X does not offer strong stability guarantees.
   - Robin agreed with the perspective that implementing support for LDML is tantamount to
     implementing half of ICU.
   - Hubert noted that the existing C++ collation support is not customizable and that it simply
@@ -213,7 +213,7 @@ The draft agenda is:
       | --: | --: | --: | --: | --: |
       |   3 |   5 |   0 |   0 |   0 |
     - Unanimous consensus in favor.
-  - **It is a design goal that non-tailored standard library Unicode algorithms be efficiently
+  - **Poll 2: It is a design goal that non-tailored standard library Unicode algorithms be efficiently
     implementable using ICU.**
     - Attendees: 10 (2 abstentions)
       | SF  | F   | N   | A   | SA  |
