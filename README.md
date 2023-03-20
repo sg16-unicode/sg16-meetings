@@ -63,20 +63,19 @@ The draft agenda is:
       - ICU supports this behavior via a boolean flag on case folding interfaces.
       - Case folding was intended to support identifier equivalence.
     - NFKC case folding does not include language specific tailoring.
-    - There are examples of extended grapheme cluster (EGC) tailoring, but at present, that isn't
-      done in practice.
-      - The CLDR technical committee is experimenting with tailoring of EGCs, but that work has not
-        been forwarded to the UTC yet.
+    - UAX #29 provides examples of language-dependent grapheme cluster tailoring, but at present,
+      that isn't done in practice.
+      - The CLDR technical committee is experimenting with a language-independent tailoring of
+        grapheme clusters with a different behavior for Indic scripts. That work has not
+        been forwarded to the UTC yet, but is intended to eventually be used as the new default
+        default behavior.
       - Changes to
         [UAX #29 (Unicode Text Segmentation)](https://unicode.org/reports/tr29)
         are likely to be proposed.
     - ICU supports tailoring for line breaking beyond what is stated in the Unicode Standard:
-      - Support for Indic layout.
       - Support for dictionary based layout for Thai.
       - Machine learning based layout for Burmese, Chinese, Japanese, and Thai.
-      - Changes to
-        [UAX #14 (Unicode Line Breaking Algorithm)](https://unicode.org/reports/tr14)
-        might be proposed.
+      - Different line breaking rules for numbers.
     - Line breaking behavior can be script based as opposed to language based.
     - Case mapping includes language specific tailoring.
     - Collation is used for sorting, but is also used for case insensitive search:
