@@ -104,7 +104,7 @@ The draft agenda is:
     function like other view adapters.
   - Hubert agreed and noted that, unlike other view or iterator adapters, it appears that
     these views place additional semantic requirements on the iterator template parameters.
-  - Zach explained that, if `as_utf8()` is passed a pair of `char*` pointers that the
+  - Zach explained that, if `as_utf8()` is passed a pair of pointers to `char` that the
     iterator/sentinel pair is returned as is.
   - Hubert noted that, for `utf8_view`, that makes `utf8_iter` an odd choice of name.
   - Jens explained that requiring transcoding work to be performed by the provided
