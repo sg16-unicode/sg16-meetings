@@ -83,7 +83,7 @@ The draft agenda is:
     rather than on code units.
   - Jens concluded that the output of any kind of eager algorithm should therefore be a
     sequence of code points that are then piped into encoding iterators.
-  - Jens stated that adding the full matrix of transcoding iterators is an OMDB concern.
+  - Jens stated that he is strongly opposed to adding the full matrix of transcoding iterators.
   - Corentin requested stronger motivation for transcoding output iterators.
   - Corentin noted that the size of a range that has iterators that only model
     `std::input_iterator` is never known prior to iterating it.
@@ -108,9 +108,9 @@ The draft agenda is:
     so leaves performance on the table.
   - Tom acknowledged that views are not well optimized today and suggested that might
     change in the future.
-  - Jens indicated low expectations with regard to such performance improvements and noted
-    the lack of improvements for, for example, string concatenation.
-  - Jens opined that implementors tend to be better off focussing on spec benchmarks.
+  - Jens indicated low expectations with regard to teaching optimizers the peculiarities
+    of views and noted the lack of improvements for, for example, string concatenation.
+  - Jens opined that implementors tend to be better off focussing on SPEC benchmarks.
   - Jens explained that the incremental processing of view pipelines requires intermediate
     state that is difficult to lower to a vectorizable loop.
   - Jens observed that vectorizing optimizers still lag the performance achieved by hand
