@@ -21,6 +21,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [April 12th, 2023](#april-12th-2023)
 - [March 22nd, 2023](#march-22nd-2023)
 - [March 8th, 2023](#march-8th-2023)
 - [February 22nd, 2023](#february-22nd-2023)
@@ -33,6 +34,179 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 12th, 2023
+
+## Agenda
+- [P2728R0 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728r0):
+  - Continue discussion.
+
+## Meeting summary
+- Attendees:
+  - Charlie Barto
+  - Corentin Jabot
+  - Fraser Gordon
+  - Jens Maurer
+  - Nathan Owens
+  - Peter Brett
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2728R0 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728r0):
+  - Zach spoke to concerns raised in the previous discussion regarding the need for
+    output iterators:
+    - There is a need for programs that use UTF-8 internally to convert to and from UTF-16
+      in `wchar_t` for Windows and `char16_t` for ICU.
+    - The proposed "out" and "insert" transcoding iterators implement a push model; the
+      others implement a pull model.
+    - The "out" and "insert" transcoding iterators are useful to store the output of an
+      eagerly evaluated pipeline.
+  - PBrett stated that, for an eager algorithm, the size of the range is known.
+  - Zach disagreed that the final size is necessarily known, but noted that it is often
+    possible to predict an approximate size.
+  - Tom asserted that output iterators don't work for transcoding since a failure to assign
+    a complete code unit sequence results in silent data loss or UB or similar.
+  - Zach suggested that the iterator destructors could perform some kind of flush operation.
+  - Zach agreed that the output iterators could be removed from the proposal but that he
+    had encountered situations where he couldn't both use a view and efficiently compute
+    an output size.
+  - Jens asserted that the existing `std::back_insert_iterator`, `std::front_insert_iterator`,
+    and `std::insert_iterator` types should suffice for the proposed back insert, front insert,
+    and insert iterators.
+  - Jens observed that there has so far not been much demonstrated motivation for push-based
+    iterators but stated that a general output iterator abstraction should be developed if
+    compelling use cases are identified.
+  - Jens recalled prior consensus for specifying Unicode algorithms that operate on code points
+    rather than on code units.
+  - Jens concluded that the output of any kind of eager algorithm should therefore be a
+    sequence of code points that are then piped into encoding iterators.
+  - Jens stated that adding the full matrix of transcoding iterators is an OMDB concern.
+  - Corentin requested stronger motivation for transcoding output iterators.
+  - Corentin noted that the size of a range that has iterators that only model
+    `std::input_iterator` is never known prior to iterating it.
+  - Corentin observed that non-sized ranges exist in C++23 and programmers have so far been
+    ok with that.
+  - Corentin suggested that `std::ranges::to()` should suffice and should perform similarly
+    to direct use of an output iterator.
+  - Zach replied that output iterators are essentially never needed with ranges.
+  - Corentin asked when an output iterator would be preferred over a range.
+  - Zach replied that performance experiments demonstrated that output buffers performed
+    better for eager algorithms.
+  - Corentin expressed concern that output iterators add complexity but don't provide an
+    order of magnitude performance improvement.
+  - Zach stated that output iterators are somewhat odd, but that they aren't particularly
+    complicated.
+  - Corentin countered that their specification would still require spending additional
+    time in wording review that would come at the expense of something else.
+  - Zach reiterated his willingness to drop them for now and to revisit later if needed.
+  - PBrett expressed support for deferring features that are not essential so as to narrow
+    the proposal to the feature set that will provide the most value to the community.
+  - Zach stated that it is an option to not include eager algorithms at all but that doing
+    so leaves performance on the table.
+  - Tom acknowledged that views are not well optimized today and suggested that might
+    change in the future.
+  - Jens indicated low expectations with regard to such performance improvements and noted
+    the lack of improvements for, for example, string concatenation.
+  - Jens opined that implementors tend to be better off focussing on spec benchmarks.
+  - Jens explained that the incremental processing of view pipelines requires intermediate
+    state that is difficult to lower to a vectorizable loop.
+  - Jens observed that vectorizing optimizers still lag the performance achieved by hand
+    vectorized UTF-8 decoders.
+  - Zach agreed with Jens in chat; "I am just as skeptical as Jens about the optimization
+    prospects."
+  - Jens stated that the paper would benefit from more rationale that motivates including
+    the individual features in the C++ standard.
+  - Jens observed that we appear to have consensus to at least provide views.
+  - Jens expressed uncertainty whether it is reasonable to provide normalization as a view
+    or whether an eager algorithm is required.
+  - Corentin agreed that lack of support for eager algorithms does leave performance on the
+    table and estimated the difference as between 2x to 5x.
+  - Zach agreed, but argued the cost is closer to 2x.
+  - Corentin noted that the performance difference matters more in some cases; several MB
+    of text might be needed before the difference becomes noticeable.
+  - Corentin asserted that quick and simple interfaces are needed in the standard to fill
+    the existing functionality gap but that they don't need to be the fastest possible
+    implementation.
+  - PBrett reported that
+    [P2300 (`std::execution`)](https://wg21.link/p2300)
+    includes a simple set of algorithms with an expectation that implementations will
+    pattern match and optimize accordingly.
+  - PBrett asked whether implementors could provide, as a QoI concern, specialized
+    implementations.
+  - Zach responded that such improvements are possible and reported that ICU avoids
+    decoding for some operations.
+  - Zach stated that recognition of operations in pipelines will probably not be feasible.
+  - Tom suggested a case that can be specialized; a transcode algorithm where the inputs
+    and outputs operate on contiguous storage.
+  - Zach agreed, but noted that dropping a chunk-by operation into a pipeline will prevent
+    use of those kinds of specializations.
+  - PBrett observed that `std::ranges::to()` is always eager and, at the end of a pipeline,
+    it seems technically possible to optimize based on the input and output types.
+  - Zach agreed and noted that library authors can handle that for simple cases.
+  - Jens noted that the ranges library is often proscriptive about types used and that use
+    of features like `decltype` can interfere with specialization.
+  - Jens provided an example; the result of `std::ranges::views::take(R, n)` is
+    a specialization of `std::span` if `R` is a `std::span`.
+  - Corentin reported having used ranges to optimize based on type in his prototypes.
+  - Corentin mentioned that text transformations tend not to produce sized ranges, but that
+    their outputs usually have a size that is proportional to their input.
+  - Robin explained that, with regard to normalization, there is an upper bound of 3x on the
+    possible size of the output, but acknowledged that is still well above the size usually
+    required in practice.
+  - **Poll 1: SG16 would like to see a version of P2728 without eager algorithms.**
+    - Attendees: 10 (3 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   2 |   0 |   1 |   0 |
+    - Consensus in favor.
+  - Zach explained that, with regard to the `as_utfN()` factory functions behaving differently
+    from those for other views, it is because they are defined in terms of any UTF iterator
+    and a sentinel; this is what allows any iterator that produces UTF code units to be used.
+  - Jens expressed an expectation that an interface that requires a range of UTF-32 code points
+    would use a concept that requires a range with corresponding constraints on its
+    `value_type` and that programmers could provide their own views in that case.
+  - Corentin agreed.
+  - Tom stated that `as_utf8()` doesn't seem to actually do anything.
+  - Zach replied that it selects a transcoding iterator to implement transcoding from the UTF
+    input iterator to UTF-8 and noted that the input iterator might not produce UTF-8 code units.
+  - Tom suggested a better name for such a function might be `to_utf8()`.
+  - Zach explained part of the motivation for use of the `utf_iter` concept as in `as_utf8()`;
+    since the algorithms work on code points, its use enables implicit conversions that would
+    otherwise require an explicit call to `as_utf32()` or similar.
+  - Jens acknowledged the utility of such conversions based on the `char8_t`, `char16_t`, and
+    `char32_t`, but not for other types where the encoding is not clear.
+  - Jens requested that a revision of the paper include a view that behaves similarly to existing
+    views in the standard.
+  - Jens also requested confirmation that normalization can be reasonably implemented as a view.
+  - Zach replied that he did not implement normalization or collation as a view.
+  - PBrett stated that collation can be performed by comparing two ranges.
+  - Zach replied that it doesn't make sense to implement reduction as a view.
+  - Zach stated that views didn't seem like a good match for normalization due to the state
+    requirements.
+  - Corentin reported success having implemented normalization as a view.
+  - **Poll 2: UTF transcoding interfaces provided by the C++ standard library should operate
+    on `charN_t` types, with support for other types provided by adapters, possibly with a
+    special case for `char` and `wchar_t` when their associated literal encodings are UTF.**
+    - Attendees: 9 (2 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   1 |   0 |   0 |   1 |
+    - Consensus in favor.
+    - SA: There is a precondition that input is intended to be UTF-8 and that isn't avoided
+      by adding a wrapper; this doesn't help programmers to find bugs.
+  - **Poll 3: `char32_t` should be used as the Unicode code point type within the C++ standard
+    library implementations of Unicode algorithms.**
+    - Attendees: 9 (2 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   6 |   0 |   1 |   0 |   0 |
+    - Strong consensus in favor.
+- Tom announced that the next meeting will take place 2023-04-26 and will include review of:
+  - [P2741R1: user-generated static_assert messages](https://wg21.link/p2741r1).
+  - [P2758R0: Emitting messages at compile time](https://wg21.link/p2758r0).
 
 
 # March 22nd, 2023
