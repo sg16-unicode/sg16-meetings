@@ -9,15 +9,10 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, April 26th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230426T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, May 10th, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230510T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 The draft agenda is:
-- [L2/23-107: Proper Complex Script Support in Text Terminals](https://www.unicode.org/L2/L2023/23107-terminal-suppt.pdf):
-  - Determine interest for participation in a potential new UTC project.
-- [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0):
-  - Determine whether to commit SG16 time to discussing this paper.
-- [P2741R1: user-generated static_assert messages](https://wg21.link/p2741r1).
-- [P2758R0: Emitting messages at compile time](https://wg21.link/p2758r0).
+- TBD
 
 
 # Past SG16 meetings
