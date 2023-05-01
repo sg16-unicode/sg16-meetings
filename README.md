@@ -16,6 +16,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [April 26th, 2023](#april-26th-2023)
 - [April 12th, 2023](#april-12th-2023)
 - [March 22nd, 2023](#march-22nd-2023)
 - [March 8th, 2023](#march-8th-2023)
@@ -29,6 +30,215 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 26th, 2023
+
+## Agenda
+- [L2/23-107: Proper Complex Script Support in Text Terminals](https://www.unicode.org/L2/L2023/23107-terminal-suppt.pdf):
+  - Determine interest for participation in a potential new UTC project.
+- [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0):
+  - Determine whether to commit SG16 time to discussing this paper.
+- [P2741R1: user-generated static_assert messages](https://wg21.link/p2741r1).
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Fraser Gordon
+  - Jens Maurer
+  - Mark de Wever
+  - Nathan Owen
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [L2/23-107: Proper Complex Script Support in Text Terminals](https://www.unicode.org/L2/L2023/23107-terminal-suppt.pdf):
+  - Tom provided an introduction:
+    - The paper authors seek to specify a protocol for the display of complex scripts in
+      traditional text-based terminals.
+    - Such a protocol could improve text formatting behavior beyond what has been achieved
+      with
+      [P1868 (🦄 width: clarifying units of width and precision in std::format)](https://wg21.link/p1868)
+      and
+      [P2675 (LWG3780: The Paper (format's width estimation is too approximate and not forward compatible))](https://wg21.link/p2675).
+    - The paper proposes the creation of a new project within the UTC.
+    - Robin Leroy indicated that, should a new UTC project be approved, volunteers to
+      participate in it would be welcome.
+    - Anyone interested should reach out to Robin.
+  - Fraser stated that the paper is an interesting read regardless of any interest in
+    participation in a UTC project.
+- [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0):
+  - Tom stated that, in his opinion, the paper does not raise SG16 concerns; however,
+    the paper lists SG16 as an audience and Victor requested that SG16 review it.
+  - Tom explained that the discussion today is only intended to determine whether SG16
+    should spend time on this paper prior to receiving a request from the LEWG chair.
+  - Victor opined that SG16 should review because the paper proposes the use of
+    `std::char_traits` to detect a string-like type.
+  - Tom observed that the proposed wording doesn't actually reference `std::char_traits`.
+  - Fraser asked for confirmation that the question in front of SG16 is whether to weight
+    in on this use of `std::char_traits`.
+  - Victor confirmed.
+  - Tom commented that the proposed wording only appears to use a traits type to name
+    specializations of `std::basic_string_view` in order to opt them into the proposed
+    `is_string_view_like` trait.
+  - Victor directed Tom to look at the wording for option 2.
+  - Corentin stated that he has been considering writing a paper to prohibit user
+    specializations of `std::char_traits`.
+  - Zach commented that traits types can be awkward; especially with SFINAE.
+  - Tom observed that the proposed wording only checks whether both types have a
+    matching member type named `traits_type`; it doesn't check for `std::char_traits`
+    specifically.
+  - Corentin requested a poll to encourage LEWG not to rely on `std::char_traits`.
+  - Tom asked if anyone was opposed to such a poll.
+  - Jens noted that the proposal just performs a type tag comparison and doesn't inspect
+    the type definition.
+  - Jens emphasized that this is just a heuristic intended to identify types that are
+    semantically similar to `std::string-view`.
+  - Jens commented that if a better heuristic were to be found, that would be great, but
+    otherwise the proposed heuristic seems conservatively correct.
+  - Jens stated that he does not see an SG16 concern here.
+  - Zach expressed a preference towards waiting for the paper author to present before
+    any polls are taken.
+  - Zach stated that the `traits_type` name is not great for enabling this heuristic, but
+    is not as bad as examining `std::char_traits` directly.
+  - Corentin suggested that option 2 might not be needed given the option 1 approach to
+    explicitly opt in using a different name.
+  - Jens noted that the proposed wording for option 1 subsumes option 2.
+  - Victor noticed that the paper lists Folly's `fbstring` type and asserted that the
+    implicit opt-in would not be wanted by its maintainers.
+  - Victor expressed a desire to deprecate `std::char_traits`.
+  - Tom agreed with Zach that the paper author should be granted an opportunity to present
+    his perspective before SG16 takes further action.
+  - Tom said he would reach out to the paper author to see if he would like to present.
+- [P2741R1: user-generated static_assert messages](https://wg21.link/p2741r1):
+  - Corentin introduced the paper:
+    - The paper proposes an extension to `static_assert` to enable the optional message
+      to be provided by a constant expression evaluated at compile-time.
+    - Barry Revzin's
+      [P2758R0 (Emitting messages at compile time)](https://wg21.link/p2758r0)
+      proposes some additional `consteval` functions that do similarly.
+    - The functionality these papers propose is not an SG16 concern, but the encoding
+      used for the messages is.
+    - The only encoding that is currently known at compile-time for strings in 
+      char`-based storage is the ordinary literal encoding.
+    - There is a question of whether the proposed features should also support
+      `wchar_t`, `char8_t`, `char16_t`, and/or `char32_t`.
+  - Victor noticed that the paper contains an example that uses `std::format` in an
+    expression that requires constant evaluation despite the current lack of `constexpr`
+    support for it in the standard and no current proposal to add such support.
+  - Corentin acknowledged that limitation but noted that the `format` implementation in
+    [libfmt](https://github.com/fmtlib/fmt)
+    has such support.
+  - Corentin explained that the proposed addition to `static_assert` is that the message
+    parameter accept string-like types that have appropriate `data()` and `size()` member
+    functions.
+  - Corentin noted that this suffices to enable any string produced during constant
+    evaluation to be provided by wrapping it in a `std::string_view`-like type.
+  - Corentin stated that there is an open question of whether string-like types with
+    non-contiguous storage should be supported.
+  - Corentin added that, as proposed, text in `char8_t`-based storage can also be used.
+  - Zach asked why `std::format` doesn't support constant evaluation.
+  - Corentin replied that the question should be directed to EWG, but noted some existing
+    constant evaluation limitations; that floating-point types aren't supported for example.
+  - Zach asked what an implementation would do when trying to present the message to a user.
+  - Corentin responded that it would have to convert the message from the literal encoding
+    to the encoding used to display text to a user.
+  - Corentin noted that this would add a new conversion requirement to compilers.
+  - \[ Editor's note: Implementations are currently required to convert from the source
+    file encoding to the various literal encodings, but do not necessarily need to be able
+    to convert from those literal encodings to any other encoding. \]
+  - Zach commented that the proposed wording makes the design clear and that he has no
+    concerns. 
+  - Victor stated that `std::format` could support `constexpr` now given that is has been
+    shown to be implementable.
+  - Victor asserted that the ordinary literal encoding is the right choice for text in
+    `char`-based storage.
+  - Victor commented that the only question for SG16 is whether to add support just for
+    `char` or for all of the character types.
+  - Jens observed a parsing issue in the proposed wording that will require disambiguation;
+    a string literal matches both *unevaluated-string* and *constant-expression*.
+  - Jens suggested that, if text in `char8_t`-based storage is supported for the
+    *constant-expression* case, then UTF-8 string literals should also be supported for the
+    *unevaluated-string* case so that such literals don't fall into the former case.
+  - Corentin suggested that EWG should decide whether pointers to null-terminated strings
+    should be supported.
+  - \[ Editor's note: Discussion ensued regarding unevaluated strings, UCNs, conversion to
+    literal encodings, and whether two grammar productions are really required; the editor
+    failed to record an accurate record of the discussion. \]
+  - Jens requested that the wording be rebased on the current working draft.
+  - Jens noted that the pointer+size interface is preferred for the constant evaluation case
+    and that therefore creates motivation for treating string literals as a special case.
+  - Jens noticed that the proposed wording suggests that the *constant-expression* argument
+    is evaluated multiple times.
+  - Jens identified an additional wording issue; "possibly const-qualified type is `char`\*
+    or `char8_t`\*" should be something like "pointer to possibly const-qualified `char` or
+    `char8_t`."
+  - Mark asked Victor if the libfmt `format` implementation supports floating-point types
+    in constant evaluation.
+  - Victor confirmed that it does, but that it doesn't use `to_chars()` to do so.
+  - Corentin spoke towards the motivation to support character types other than `char`:
+    - Support for `u8""` and `char8_t` ensures the availability of an encoding that supports
+      all characters.
+    - Support for `L""` and `wchar_t` enables the use of existing `constexpr` string building
+      functions used on Windows.
+  - Tom asked if it is necessary to allow encoding prefixes for the *unevaluated-string*
+    case and noted that
+    [P2361 (Unevaluated strings)](https://wg21.link/p2361)
+    argued that such allowances are not needed.
+  - Corentin replied that the only motivation would be to prevent such expressions from
+    falling into the *constant-expression* case.
+  - Jens noted that falling into that case would render the program ill-formed since
+    string literals don't have a type that satisfies the requirements for `data()` and
+    `size()` members.
+  - Tom responded that the *constant-expression* case could also support pointers to
+    null-terminated strings.
+  - Zach asked if the requirements could be specified in terms of `std::data()` and
+    `std::size()`.
+  - Corentin replied that such support would require including standard headers.
+  - Jens observed that use of `std::data()` and `std::size()` with the arrays produced
+    by string literals would create ambiguity regarding the presence or absence of a null
+    terminator in the string data.
+  - Zach lamented the absence of a trait to differentiate string literals from other kinds
+    of expressions.
+  - Jens replied that any such solution would require extensions into the type system.
+  - Jens reported that the last line of the proposed wording refers to a *string-literal*
+    that is not present in the *static_assert-declaration*.
+  - Victor expressed a preference for avoiding null-terminated strings and sticking to the
+    proposed pointer+size design.
+  - Jens requested that the wording be aligned across other declarations with regard to
+    the requirements to display messages at compile-time and advised discussing with the
+    author of
+    [P1301 (\[\[nodiscard("should have a reason")\]\])](https://wg21.link/p1301).
+  - **Poll 1: Text produced during constant evaluation in char-based storage that is provided to the compiler shall be encoded in the literal encoding.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   4 |   0 |   0 |   0 |
+    - Strong consensus in favor.
+  - **Poll 2: static_assert(cond, constant-expression) should support expressions that produce a range of `char` result.**
+    - Attendees: 6
+    - No objection to unanimous consent.
+  - **Poll 3: static_assert(cond, constant-expression) should support expressions that produce a range of `wchar_t` result.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   1 |   1 |   4 |   0 |
+    - A: Would like to see more motivation.
+    - Consensus against.
+  - **Poll 4: static_assert(cond, constant-expression) should support expressions that produce a range of `char8_t` result.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   1 |   1 |   2 |   1 |
+    - SA: We shouldn't complicate the feature; `char` should suffice.
+    - No consensus.
+  - **Poll 5: static_assert(cond, constant-expression) should support expressions that produce a range of `char16_t` or `char32_t` result.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   0 |   3 |   3 |   0 |
+    - No consensus.
+- Tom stated that the next meeting will be on 2023-05-10 and that an agenda is yet to be
+  determined.
 
 
 # April 12th, 2023
