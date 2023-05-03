@@ -92,7 +92,7 @@ The draft agenda is:
   - Jens noted that the proposal just performs a type tag comparison and doesn't inspect
     the type definition.
   - Jens emphasized that this is just a heuristic intended to identify types that are
-    semantically similar to `std::string-view`.
+    semantically similar to `std::string_view`.
   - Jens commented that if a better heuristic were to be found, that would be great, but
     otherwise the proposed heuristic seems conservatively correct.
   - Jens stated that he does not see an SG16 concern here.
@@ -119,7 +119,7 @@ The draft agenda is:
     - The functionality these papers propose is not an SG16 concern, but the encoding
       used for the messages is.
     - The only encoding that is currently known at compile-time for strings in 
-      char`-based storage is the ordinary literal encoding.
+      `char`-based storage is the ordinary literal encoding.
     - There is a question of whether the proposed features should also support
       `wchar_t`, `char8_t`, `char16_t`, and/or `char32_t`.
   - Victor noticed that the paper contains an example that uses `std::format` in an
