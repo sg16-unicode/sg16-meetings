@@ -169,7 +169,6 @@ The draft agenda is:
       | SF  | F   | N   | A   | SA  |
       | --: | --: | --: | --: | --: |
       |   1 |   1 |   4 |   2 |   1 |
-    - Strong consensus in favor.
     - No consensus; author's discretion for how to continue.
   - Zach began reviewing the proposed constants and utility functions in section 5.4.
   - Zach stated that `replacement_character` is useful to have.
