@@ -17,6 +17,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [May 10th, 2023](#may-10th-2023)
 - [April 26th, 2023](#april-26th-2023)
 - [April 12th, 2023](#april-12th-2023)
 - [March 22nd, 2023](#march-22nd-2023)
@@ -31,6 +32,246 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 10th, 2023
+
+## Agenda
+- [P2728R3 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728r3).
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Nathan Owens
+  - Jens Maurer
+  - Peter Brett
+  - Robert Leahy
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- A round of introductions was held in honor of a new attendee, Eddie Nolan.
+- [P2728R3 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728r3):
+  - PBrett introduced the topics for today.
+  - Zach provided an introduction to the latest revision:
+    - Use case 4 in section 4.4 illustrates use with `std::print()` and `std::cerr`.
+    - The `code_unit` concept still relies on `sizeof()` pending changes to infer encoding
+      based on `charN_t` types; that change is still in progress awaiting fixes to existing tests.
+  - Victor pointed out an error in section 4.4; the call to `std::print()` is missing the
+    required format string.
+  - Corentin asked how encoding is handled for the `operator<<` ostream inserter.
+  - Zach responded that `as_utf8` produces a `utf_view` specialization for which specializations
+    of `std::formatter` and overloads of `operator<<` are defined.
+  - Zach noted that the current paper revision specifies `utf_view` but that prior revisions
+    specified distinct templates for `utf8_view`, `utf16_view`, and `utf32_view`.
+  - Zach explained that `utf_view` is able to produce UTF-8 from whatever encoding it adapts.
+  - Corentin stated that some kind of string-like type is needed to enable formatting.
+  - Zach noted the potential for additional views such as a `toupper_view` that performs case
+    conversions.
+  - Corentin responded that it should not be necessary to provide `operator<<` overloads for every
+    view; a generic formatting mechanism is needed.
+  - Zach explained that the goal is to provide interoperation with streaming and formatting and
+    asserted that we need a conveient way to format these types.
+  - Zach agreed that a `printable_view` or similar could be provided, but asserted it would be
+    preferable to just be able to format them directly.
+  - Victor stated that generic formatters can be provided assuming a mechanism to determine the
+    proper source and destination encoding.
+  - Victor observed that, when the changes to infer encoding based on `charN_t` types is complete,
+    that there won't be any support for `char` and `wchar_t`.
+  - Zach confirmed the observation and noted this reflects prior consensus in prior polls.
+  - Robin posted the text of the relevant poll in the chat:
+
+        Poll 2: UTF transcoding interfaces provided by the C++ standard library should operate on
+        `charN_t` types, with support for other types provided by adapters, possibly with a special
+        case for `char` and `wchar_t` when their associated literal encodings are UTF.
+
+  - PBrett interpreted the poll as meaning that the author can choose to provide support for
+    `char` and `wchar_t` as code units when the associated literal encoding is a UTF encoding.
+  - Zach suggested those types could be supported with another adapter.
+  - Tom stated that, with regard to another adapter, there is a question of whether such an
+    adapter should be implicitly used or require explicit syntax.
+  - Zach expressed disfavor twoards dependence on the literal encoding for portability reasons.
+  - Tom acknowledged that existing use of the literal encoding to infer an encoding for
+    `char-`based text is an imperfect heuristic.
+  - PBrett expressed support for having a `std::formatter` specialization that supports
+    these views, but expressed discomfort with ostream support for `operator<<` since there
+    is no indication of what encoding to use.
+  - PBrett asked what the proposed `operator<<` actually does.
+  - Zach replied that it prints octets one at a time.
+  - PBrett explained that `std::print()` doesn't necessarily just write octets.
+  - Zach asked if `std::print()` is equivalent to streaming the result of a call to `std::format()`.
+  - PBrett replied negatively.
+  - \[ Editor's note: See the *Effects* description for `std::vprint_unicode()` in
+    [\[print.fun\]p7](http://eel.is/c++draft/print.fun#7);
+    the `std::print()` family of functions have specialized behavior when the target stream is
+    a Unicode capable terminal. \]
+  - Zach opined that stream support is very useful and suggested `operator<<` could be conditionally
+    supported for non-ASCII based systems.
+  - Zach stated that he is most concerned with ensuring that `std::format()` and `std::print()`
+    work as intended.
+  - Jens summarized the status quo; `std::print()` does not currently support `char8_t`-based text
+    as either the format string or as a format argument.
+  - Jens observed that handling of `char8_t` encoded data as proposed is novel since it effectively
+    passes `char8_t`-encoded data as `char`-based input to `std::print()`.
+  - Jens asserted that transcoding should be performed or the print attempt should be ill-formed.
+  - Jens acknowledged the encoding questions will certainly be revisited at some point.
+  - Corentin stated that the lack of support for `charN_t` in `std::format()` is a separate issue
+    that awaits someone doing the work needed.
+  - Zach explained that the new paper revision moves `null_sentinel_t` from the `std::uc` namespace
+    to `std`.
+  - Zach noted that `null_sentinel_t` equality is determined by comparison with a value constructed
+    object of the other type.
+  - Zach asserted that `null_sentinel_t` is important for support of string literals.
+  - Corentin suggested that `null_sentinel_t` could be split off to a separate paper for SG9 and EWG
+    to review since it doesn't need to be tied to Unicode.
+  - PBrett observed that there is an implicit vs explicit tradeoff with regard to `null_sentinel_t`;
+    some functions take sized ranges and support embedded null characters while others don't.
+  - PBrett noted this presents the possibility of a string being inadvertently truncated.
+  - Zach agreed that unintented truncation can occur with `utf_view`.
+  - PBrett asked to confirm that such truncation can only occur when a single pointer is passed to
+    the constructor.
+  - Zach confirmed and directed attention to the `utf_range_like` concept.
+  - Victor stated that `null_sentinel_t` makes sense as a generic facility but that the proposed
+    `base()` member function seems specific to this use case.
+  - Zach agreed that the member is specific to the ability to navigate a hierarchy of transformed
+    ranges.
+  - Steve agreed that something like `null_sentinel_t` is needed to have a good story for support
+    of null terminated strings.
+  - Steve stated that requiring explicit syntax just adds noise if practical use requires having
+    to be explicit all the time.
+  - Tom asked if ranges already has a concept for layered range transformations and navigation
+    between them; if so, SG9 could comment on the usefulness of the proposed `base()` member
+    function.
+  - Zach noted that views often provide a `base()` member function; likewise with iterators such
+    as `reverse_iterator`.
+  - Tom asked if there is precedent for a range-or-iterator concept like `utf_range_like`.
+  - Jens replied negatively.
+  - Tom suggested taking the `base()` and range-or-iterator concept concerns to SG9 to see if they
+    have comments or if there is existing practice that we should align with.
+  - Jens stated that `null_sentinel_t` seems useful but that it should be moved to the
+    `std::ranges` namespace.
+  - Jens argued that there is no need to move `null_sentinel_t` to a separate paper now; that can
+    be done later if it would be helpful.
+  - Jens requested the removal of the `base()` member since there is no base to begin with and
+    noted that there are other means to accomplish the purpose it is intended to serve.
+  - Jens stated that any chaining will be on the range level rather than the iterator level.
+  - Corentin agreed with Jens.
+  - Corentin noted that sized range types like `std::string_view` are advantageous since the size
+    is maintained; calls to `strlen()` are avoided.
+  - Zach stated that Eric Niebler has demonstrated the effectiveness of sentinels.
+  - Zach commented that Jens is probably right regarding removal of the `base()` member.
+  - **Poll 1: Separate `std::null_sentinel_t` from P2728 into a separate paper for SG9 and LEWG;
+    SG16 does not need to see it again.**
+    - Attendees: 12 (3 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   1 |   4 |   2 |   1 |
+    - Strong consensus in favor.
+    - No consensus; author's discretion for how to continue.
+  - Zach began reviewing the proposed constants and utility functions in section 5.4.
+  - Zach stated that `replacement_character` is useful to have.
+  - Zach explained that the `starts_encoded()` and `ends_encoded()` functions are just for
+    convenience.
+  - Tom asked why `starts_encoded()` requires a range rather than supporting the range-or-iterator
+    approach offered with `utf_range_like` and what the criteria is for determining when the
+    range-or-iterator approach should be used.
+  - Jens expressed a preference that these remain range-only.
+  - Zach agreed with Jens and explained that these are low level functions that don't require a
+    high level of ergonomics.
+  - PBrett noticed that there is an `is_low_surrogate()` function, but that a corresponding
+    `is_high_surrogate()` is absent and argued that neither or both should be provided.
+  - Steve stated in chat:
+    "If we don't provide `is_high_surrogate` we have to explain that forever, even if it's low value."
+  - Zach reported a mistake in use case 3 in section 4.3; `is_lead_code_unit()` is used, but is
+    no longer proposed with the other utility functions.
+  - Corentin stated that the proposed utility functions provide a subset of Unicode character
+    properties that programmers don't really want to know about.
+  - Corentin suggested that, if support for use case 3 is desirable, it might be better to
+    provide a type that maintains the required state internally instead of users having to use
+    `is_lead_code_unit()` and such on their own.
+  - Fraser suggested changing the names to `is_lead_surrogate()` and `is_trail_surrogate()`
+    because it is difficult to remember what is meant by high and low.
+  - Victor stated in chat:
+    "I'd prefer to stick with established terminology and not invent new terms, even if they are marginally clearer."
+  - Robert agreed with Victor in chat.
+  - Jens offered a quote from Unicode 15 section 3.8:
+
+        D71 *High-surrogate code point*: A Unicode code point in the range U+D800 to U+DBFF.
+        ...
+        D73 *Low-surrogate code point*: A Unicode code point in the range U+DC00 to U+DFFF.
+
+  - Fraser countered with a quote from from later in the same section:
+
+        D75 ...
+        ...
+        Sometimes high-surrogate code units are referred to as *leading surrogates*.
+        Lowsurrogate code units are then referred to as *trailing surrogates*.
+        This is analogous to usage in UTF-8, which has *leading bytes* and *trailing bytes*.
+
+  - Jens opined that a clear scope for the utility functions is needed in order to avoid
+    design-by-committee.
+  - Jens suggested that `is_scalar_value()` and `is_code_point()` might be appropriate, but
+    noted that `is_assigned_code_point()` would not be an elementary level building block.
+  - Jens requested an analysis of what building blocks should be exposed.
+  - Jens stated that the incremental read of a UTF-8 stream use case is interesting and can
+    be in scope, but that more design and analysis is needed.
+  - Jens asserted that the paper needs more rationale of what the scope is and what the
+    criteria is for inclusions and exclusions.
+  - Steve indicated that the proposed functions are facilities that he needs, but agreed
+    with Jens that the streaming use cases probably deserve their own paper.
+  - Steve offered to work with Zach to move these functions into a separate classification
+    paper if Zach is interested.
+  - Zach agreed that doing so sounds like the right approach.
+  - PBrett stated that `find_invalid_encoding()` would be more useful if it returned the
+    range of invalid code units rather than just an iterator to the first.
+  - Zach agreed and noted that would be useful for replacement character handling.
+  - Tom stated that there are multiple replacement strategies to be considered.
+  - \[ Editor's note see
+    [PR-121](https://www.unicode.org/review/pr-121.html)
+    for a description of replacement character policies that conform to the Unicode
+    standard. \]
+  - Zach stated that he would probably remove all of the utilities except for
+    `replacement_character`.
+  - Tom responded that error policies need more discussion and suggested that
+    `replacement_character` can likely be postponed as well.
+  - Corentin noted that a replacement character policy is required since Unicode
+    algorithms only operate on code points.
+  - Zach explained that the transcoding iterators now adapt the iteratory category
+    correctly.
+  - Zach noted that the complete set of UTF transcoding iterators is still present.
+  - PBrett asked what the `const char*` parameter of
+    `use_replacement_character::operator()` is for.
+  - Zach explained that an error message is passed to the function.
+  - PBrett requested that the range of invalid code units be passed so that the entire
+    sequence can be preserved in a thrown exception.
+  - Jens acknowledged the need for the transforming iterators to implement the
+    transcoding view, but stated a lack of motivation for exposing them.
+  - Tom agreed and requested that, if there are strong use cases for the iterators, to
+    please include the motivation for them in the paper.
+  - Zach acknowledged that the iterators can be obtained from the view type.
+  - Jens opined that the iterators seem like a step backwards given the effort to move
+    towards range-based designs.
+  - Corentin stated that the need to store three iterators within each transcoding
+    iterator to track the beginning and end of the range as well as the current position is
+    novel; iterators generally don't know where the beginning and end of a range are;
+    ranges maintain that information.
+  - \[ Editor's note: Further discussion regarding iterators that hold references to a
+    view occurred on the SG16 mailing list. See the
+    [2023-05-10 dated messages in the thread with subject "Re: [SG16] New revision of P2728"](https://lists.isocpp.org/sg16/2023/05/3850.php).
+    \]
+  - Tom reported a potential ambiguity with the range-or-iterator approach; string literals
+    are arrays that satisfy range concepts but that also decay to a pointer that
+    satisfies iterator concepts.
+  - Tom indicated that an explicit deduction guide might be needed to ensure that `utf_view`
+    works as intended with CTAD.
+  - Tom and Zach agreed to take further discussion offline.
+- PBrett stated that the next meeting will be on 2023-05-24 and that the agenda will include
+  the following:
+  - [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0).
+  - Review of proposed deprecations by Alisdair (awaiting paper).
 
 
 # April 26th, 2023
