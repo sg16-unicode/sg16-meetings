@@ -13,7 +13,10 @@ Wednesday, May 24th, 2023, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230524T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 The draft agenda is:
 - [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0).
-- Review proposed deprecations by Alisdair (awaiting paper).
+- [P2863R0: Review Annex D for C++26](https://wg21.link/p2863r0).
+- [P2871R0: Remove Deprecated Unicode Conversion Facets From C++26](https://wg21.link/p2871r0).
+- [P2872R0: Remove wstring_convert From C++26](https://wg21.link/p2872r0).
+- [P2873R0: Remove Deprecated Locale Category Facets For Unicode from C++26](https://wg21.link/p2873r0).
 
 
 # Past SG16 meetings
