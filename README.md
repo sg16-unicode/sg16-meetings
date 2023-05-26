@@ -21,6 +21,7 @@ The draft agenda is:
 
 
 # Past SG16 meetings
+- [May 24th, 2023](#may-24th-2023)
 - [May 10th, 2023](#may-10th-2023)
 - [April 26th, 2023](#april-26th-2023)
 - [April 12th, 2023](#april-12th-2023)
@@ -36,6 +37,228 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 24th, 2023
+
+## Agenda
+- [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0).
+- [P2863R0: Review Annex D for C++26](https://wg21.link/p2863r0).
+- [P2871R0: Remove Deprecated Unicode Conversion Facets From C++26](https://wg21.link/p2871r0).
+- [P2873R0: Remove Deprecated Locale Category Facets For Unicode from C++26](https://wg21.link/p2873r0).
+- [P2872R0: Remove wstring_convert From C++26](https://wg21.link/p2872r0).
+
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Charlie Barto
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Giuseppe D'Angelo
+  - Jens Maurer
+  - Mark de Wever
+  - Mark Zeren
+  - Peter Bindels
+  - Peter Brett
+  - Robin Leroy
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0):
+  - Giuseppe presented an overview of the paper including relevant history:
+    - [P1989R2 (Range constructor for std::string_view 2: Constrain Harder)](https://wg21.link/p1989)
+      added an implicit `std::string_view` constructor that enables implicit conversion from any type 
+      that satisfies a set of constraints, one of which includes having a member type alias named
+      `traits_type` that matches the `std::string_view` member of the same name.
+    - [P2499R0 (string_view range constructor should be explicit)](https://wg21.link/p2499)
+      changed the new constructor to be declared `explicit` due to concerns involving ranges that do
+      or do not contain an embedded null character; this broke the ability for string types to
+      implicitly convert to `std::string_view`.
+    - [LWG 3857](https://wg21.link/lwg3857)
+      removed the constraint requiring a matching `traits_type` member type alias based on the rationale
+      that such a safety precaution is no longer necessary since conversions are now explicit.
+    - The proposed paper seeks to conditionally restore implicit conversions for string-like types
+      without requiring modifications to those types to add conversion operators.
+    - Two options are proposed:
+      - Option 1 adds an opt-in trait and makes the constructor conditionally explicit based on the
+        presence of a matching member `traits_type` type alias.
+      - Option 2 makes the constructor conditionally explicit based on the presence of a matching member
+        `traits_type` type alias without requiring an opt-in trait.
+    - Qt has provided a `QStringView` class with an
+      [implicit constructor that accepts a range](https://doc.qt.io/qt-6/qstringview.html#QStringView-7)
+      that has worked well in practice for a decade.
+  - PBrett asked what the essential nature of a string-like type is.
+  - Giuseppe responded that it is a contiguous sequence of characters and associated character
+    classification traits.
+  - PBrett argued for substitution of "code units" for "characters".
+  - Zach noted that the `traits_type` name might be used by types that are not string-like types, stated
+    that he does not typically add a `traits_type` to his own string-like types, and asked what is
+    commonly done in practice.
+  - Giuseppe responded that the paper lists the results of a survey of various projects for occurrences
+    of the `traits_type` name and found that it is strongly correlated with string-like types but that
+    there are string-like types that don't have such a member.
+  - Giuseppe acknowledged that the `traits_type` name is quite generic.
+  - Victor expressed opposition to option 2 since it relies on what he considers to be a legacy feature
+    and that `traits_type` is, in practice, always `std::char_traits`.
+  - Victor asserted that implicit conversions and implicit interoperation with the standard library are
+    not desired for Folly's `fbstring`.
+  - Victor stated that he is ok-ish with option 1.
+  - Tom asked Victor to further explain his concerns and the damage he fears the implicit conversions
+    would cause.
+  - Victor replied that use of `fbstring` is no longer encouraged and the proposed change would
+    facilitate continued usage.
+  - Victor noted that the proposed changes could also impact overload resolution in generic code and
+    potentially introduce overload resolution failures due to ambiguity.
+  - Corentin lamented the ability for programmers to specialize `std::char_traits` for their own
+    user-defined types and stated he plans to propose deprecating or removing that allowance.
+  - Corentin explained that the interface that `std::char_traits` provides is not a good match for how
+    text processing works in practice.
+  - Corentin asserted that increased use of `std::char_traits` should be discouraged.
+  - Corentin opined that option 1 is fine but that option 2 is problematic in the long run.
+  - Giuseppe acknowledged Corentin's position.
+  - Corentin clarified that programmers should not be encouraged to use a different type than
+    `std::char_traits` but rather that they should be encouraged not to use a char-traits-like type
+    at all.
+  - Tom summarized his understanding of the concerns; the proposed change could encourage programmers
+    to add a `traits_type` member type alias of `std::char_traits` to classes that otherwise wouldn't
+    define the type alias solely to enable implicit conversions to `std::string_view`.
+  - Zach argued for not enabling such implicit conversions at all on the basis that `std::string_view`
+    is intended to be implicitly convertible from other standard library types and that explicit
+    conversions are appropriate elsewhere.
+  - Alisdair opined that the right approach would be for types to opt themselves in to an implicit
+    conversion.
+  - Alisdair asserted that `std::char_traits` is not legacy and that it cannot be removed without
+    significant ABI impact.
+  - Alisdair stated that the matching `traits_type` constraint is a good heuristic and that the
+    opt-in trait in option 1 is so specific that he would have a hard time supporting it.
+  - Jens noted that the proposed wording for option 1 requires both the opt-in string-like-type
+    trait and the matching `traits_type` constraint to enable implicit conversions.
+  - Jens expressed a preference for an option that proposed only the string-like-type trait.
+  - Jens stated that the wording needs to be rebased on the current working paper since the
+    struck wording has already been removed.
+  - Jens suggested `is_string_view_like` might not be the best choice of name for the opt-in
+    trait and suggested `enable_view` as an example name for similar opt-in traits.
+  - Giuseppe acknowledged the suggestion and stated that the name can be changed.
+  - Jens noted that it doesn't matter how string-view-like the source type is as long as it
+    provides contiguous storage and opts itself in.
+  - Jens agreed with not wanting to encourage the addition of an otherwise unused `traits_type`
+    member.
+  - Jens observed that `is_string_view_like` is false by default.
+  - Jens suggested that, if it is desirable to provide a safety check on a matching `traits_type`
+    member, that the `is_string_view_like` trait can support a mechanism to enable that.
+  - Jens expressed a preference for postponing a poll to forward the paper until it has been
+    rebased on the current working paper.
+  - Various poll options were discussed but it was decided that polling be postponed pending
+    an updated paper revision with wording rebased on the current working paper and an additional
+    option to enable implicit conversions based solely on the opt-in trait.
+- [P2863R0: Review Annex D for C++26](https://wg21.link/p2863r0):
+  - Alisdair introduced this and the following papers.
+  - Tom explained his understanding of the ramifications for removal of standard library features;
+    that an implementor may choose not to provide the removed features or may choose to provide
+    them since the removed names are reserved as "zombie" names.
+  - Alisdair acknowledged the intent, but noted that the standard currently lacks wording to
+    support zombification of explicit template specializations.
+  - Alisdair explained that there are four deprecated subclauses that are relevant to SG16;
+    [D.26 (\[depr.locale.stdcvt\])](http://eel.is/c++draft/depr.locale.stdcvt),
+    [D.27 (\[depr.conversions\])](http://eel.is/c++draft/depr.conversions),
+    [D.28 (\[depr.locale.category\])](http://eel.is/c++draft/depr.locale.category), and
+    [D.29 (\[depr.fs.path.factory\])](http://eel.is/c++draft/depr.fs.path.factory).
+  - PBindels stated that
+    [D.15 (\[depr.str.strstreams\])](http://eel.is/c++draft/depr.str.strstreams) and
+    [D.25 (\[depr.string.capacity\])](http://eel.is/c++draft/depr.string.capacity)
+    have to do with text facilities but that he reviewed them and concluded that the functionality
+    is not strongly relevant for SG16.
+  - Alisdair stated that, for `std::filesystem::u8path`, per
+    [LWG 3840](https://wg21.link/lwg3840),
+    there have been recent comments that removal would be problematic.
+  - Tom stated that the LWG issue was recently discussed in LEWG but that the LWG issue
+    does not appear to have been updated to reflect that discussion.
+  - \[ Editor's note: LEWG discussed the LWG issue during its
+    [2023-01-10 telecon](https://wiki.edg.com/bin/view/Wg21telecons2023/LWG3840). \]
+  - Alisdair stated that deprecated features should either be undeprecated or removed and noted
+    that this feature has been deprecated since C++20.
+  - Jens expressed concern regarding Billy O'Neal's comment in the LWG issue that deprecation
+    of `u8path` was one of the reasons that vcpkg discontinued use of `std::filesystem`.
+  - Jens stated that SG16 should offer an opinion.
+  - Corentin replied that there was a poll in LEWG in January and that there was no consensus
+    to undeprecate `u8path`.
+  - Corentin stated that a mechanism to access a sequence of `char` that holds UTF-8 code units
+    as-if it were a sequence of `char8_t` is a feature that we should have; we're missing a way
+    to pass such a sequence to the `std::filesystem::path()` constructor such that it is
+    interpreted as UTF-8.
+  - Tom noted that Corentin has a paper on that topic.
+  - \[ Editor's note: See
+    [P2626 (charN_t incremental adoption: Casting pointers of UTF character types)](https://wg21.link/p2626). \]
+  - Alisdair noted that, if removed, `u8path` would be added to the list of zombie names, so
+    implementors that wish to continue providing it may do so.
+  - PBindels opined that `u8path` provides a solution to work around legacy issues but that
+    Corentin's P2626 provides a proper solution.
+  - PBindels suggested that we should neither undeprecate nor remove `u8path` until a proper
+    solution is in place.
+  - Alisdair stated that he can update the paper to reflect that guidance and to note further
+    action as dependent on P2626.
+  - Charlie agreed with not removing `u8path` without a proper alternative.
+  - Charlie noted that, if `u8path` is zombified, that implementors can continue to provide
+    it, but that portability is lost.
+  - Charlie stated that he didn't see a reason to remove `u8path`; that it isn't harmful.
+  - Alisdair acknowledged that a migration path is needed.
+  - Tom explained that the original motivation for deprecation was to dissuade continuing to
+    provide standard library functions that require UTF-8 data in `char`-based storage.
+  - Tom noted that `u8path` and the deprecated `std::codecvt` facets were the only standard
+    library features that did so.
+- [P2871R0: Remove Deprecated Unicode Conversion Facets From C++26](https://wg21.link/p2871r0):
+  - Alisdair presented the paper:
+    - These facets were deprecated because they did not provide error handling capabilities
+      and could not reasonably be extended.
+    - There are some implementations that do not issue deprecation warnings.
+  - Corentin noted the work in progress and general plan to provide replacements for C++26 and
+    suggested waiting to remove them pending that work.
+  - Jens agreed and stated that removal without replacements is ill-advised unless these are
+    actively causing harm.
+  - Tom noted that conversions are possible through the `mbrtoc*` and `c*rtomb` family of
+    functions though those have their own issues.
+  - Victor stated that the `codecvt` facets are so challenging to use that not having a
+    replacement isn't really a problem.
+  - Alisdair noted that implementors can continue to provide them thanks to zombification.
+  - Alisdair reported that, per the paper, LEWG and SG16 previously recommended removal during
+    the C++23 cycle, but that action wasn't completed.
+  - PBrett asked for any objections to removal.
+  - No objections were reported.
+  - Alisdair stated he will take that feedback back to LEWG.
+- [P2873R0: Remove Deprecated Locale Category Facets For Unicode from C++26](https://wg21.link/p2873r0):
+  - Tom explained that these facets were deprecated because they convert to and from UTF-8
+    in `char`-based storage rather than between the multibyte encoding like the non-deprecated
+    facets do.
+  - Tom reported that `char8_t`-based replacements were added as replacements, but those
+    were a mistake because they won't be used by `char`-based streams anyway.
+  - \[ Editor's note:
+    [LWG 3767](https://wg21.link/lwg3767)
+    tracks deprecating the `char8_t`-based facets. \]
+  - PBrett asked for any objections to removal.
+  - No objections were reported.
+  - Corentin spoke in favor of removal.
+- [P2872R0: Remove wstring_convert From C++26](https://wg21.link/p2872r0):
+  - Giuseppe asked if the paper includes removal of `std::wbuffer_convert`.
+  - Alisdair confirmed that it does.
+  - Alisdair explained that these were deprecated because the example for `std::wstring_convert`
+    used another deprecated feature, `std::codecvt_utf8` and, due to other underspecification
+    concerns, noone was motivated to fix them.
+  - Alisdair asked if SG16 is the right group to address this.
+  - PBrett responded affirmatively and stated that SG16 is the group that misunderstands `wchar_t`
+    the least.
+  - Alisdair noticed some issues with the paper and concluded that updates are required before
+    the paper is ready for any action to be taken on it.
+- Tom stated that the next meeting is tentatively scheduled for 2023-06-07 and will likely
+  continue review of 
+  [P2779 (Make basic_string_view’s range construction conditionally explicit)](https://wg21.link/p2779) and 
+  [P2872 (Remove wstring_convert From C++26)](https://wg21.link/p2872) if updated revisions
+  are available followed by an initial review of
+  [P2845 (Formatting of std::filesystem::path)](https://wg21.link/p2845).
+- Zach reported that he expects to have a new revision of
+  [P2728 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728)
+  available soon after the Varna meeting.
 
 
 # May 10th, 2023
