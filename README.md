@@ -224,6 +224,8 @@ The draft agenda is:
   - Alisdair noted that implementors can continue to provide them thanks to zombification.
   - Alisdair reported that, per the paper, LEWG and SG16 previously recommended removal during
     the C++23 cycle, but that action wasn't completed.
+  - Alisdair reminded the group that `codecvt_utf8` and `codecvt_utf16` convert to and from
+    UCS-2 or UTF-32 depending on the size of the first template parameter.
   - PBrett asked for any objections to removal.
   - No objections were reported.
   - Alisdair stated he will take that feedback back to LEWG.
