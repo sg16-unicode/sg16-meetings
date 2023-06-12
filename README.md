@@ -9,15 +9,12 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, June 7th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230607T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, June 28th, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230628T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 The draft agenda is:
-- [P2779R0: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r0).
-  - Further review pending an updated revision.
-- [P2872R0: Remove wstring_convert From C++26](https://wg21.link/p2872r0).
-  - Further review pending an updated revision.
 - [P2845R0: Formatting of std::filesystem::path](https://wg21.link/p2845r0).
-  - Initial review.
+  - Continue review.
+- [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944).
 
 
 # Past SG16 meetings
