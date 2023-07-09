@@ -9,13 +9,15 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, June 28th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230628T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, July 12th, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230712T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 The draft agenda is:
+- [P1030R5: std::filesystem::path_view](https://wg21.link/p1030r5).
+  - Discuss what to do in lieu of overloads with `std::locale` parameters.
 - [P2845R0: Formatting of std::filesystem::path](https://wg21.link/p2845r0).
   - Continue review.
 - [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944).
-
+  - Initial review.
 
 # Past SG16 meetings
 - [May 24th, 2023](#may-24th-2023)
