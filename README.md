@@ -19,7 +19,9 @@ The draft agenda is:
 - [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944).
   - Initial review.
 
+
 # Past SG16 meetings
+- [June 7th, 2023](#june-7th-2023)
 - [May 24th, 2023](#may-24th-2023)
 - [May 10th, 2023](#may-10th-2023)
 - [April 26th, 2023](#april-26th-2023)
@@ -36,6 +38,210 @@ The draft agenda is:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# June 7th, 2023
+
+## Agenda
+- [P2779R1: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r1).
+- [P2872R1: Remove wstring_convert From C++26](https://wg21.link/p2872r1).
+- [P2845R0: Formatting of std::filesystem::path](https://wg21.link/p2845r0).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Charlie Barto
+  - Corentin Jabot
+  - Fraser Gordon
+  - Giuseppe D'Angelo
+  - Jens Maurer
+  - Mark de Wever
+  - Mark Zeren
+  - Peter Brett
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2779R1: Make basic_string_view’s range construction conditionally explicit](https://wg21.link/p2779r1).
+  - \[ Editor's note: D2779R1 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P2749R1 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Giuseppe summarized the paper and changes since the last revision:
+    - The paper endeavors to identify a compromise position for the issues that have resulted in multiple
+      changes to how the `std::basic_string_view` range constructor is specified.
+    - Option 2 from the previous revision is still present though there was not much support for this
+      option in the last discussion.
+    - Option 1 follows existing precedent for type traits that enable some functionality; this option
+      has been divided into two sub-options.
+    - Option 1-A provides a type trait that enables conversion without regard to the `traits_type`
+      member.
+    - Option 1-B provides the type trait from option 1-A as well as an additional type trait that can be
+      used to enable conversion that is sensitive to the `traits_type` member.
+  - Tom asked if the intent is for the trait to be used only for conversion to `std::string_view` or for
+    conversion to any string_view-like type.
+  - Giuseppe responded that it is intended to be used for conversion to any string_view-like type.
+  - Jens suggested in chat: "You can also define enable_string_view_conversion in a way so that the user
+    specialization can compare char_traits, if so desired (or not)."
+  - Jens' suggestion received several positive responses.
+  - Alisdair, following up on Jens' suggestion in chat, asked if the traits in option 1-B could be
+    merged.
+  - Giuseppe confirmed that they could be.
+  - Alisdair indicated that would be his preference.
+  - Alisdair stated that the conversion could be enabled based on a class member similar to how transparent
+    key comparison for associative containers is enabled via the `is_transparent` member of the compare class.
+  - Giuseppe acknowledged that approach would work as well.
+  - Tom noted that approach would require modifying the class.
+  - Alisdair responded that the trait could still be specialized but could be defaulted based on the presence
+    of a member.
+  - Jens stated that the most convenient option would be to define a conversion operator with the trait
+    available as a fallback.
+  - Jens expressed a preference for a single trait with template parameters such that a specialization can
+    be written to explicitly match `traits_type` or `std::char_traits` as desired.
+  - Jens noted that `enable_string_view_conversion_with_traits` still requires comparison with
+    `std::char_traits` or a `traits_type` member.
+  - Jens suggested that third party string_view-like classes can provide their own trait to enable implicit
+    conversions.
+  - Giuseppe responded that the goal is to enable interconvertibility between different string types.
+  - Giuseppe noted that the proposal doesn't require comparisons with specific type or member names.
+  - Zach stated that he doesn't find the problem that the paper intends to address compelling and noted
+    that `std::string_view` is available as a vocabulary type.
+  - Zach noted that working around the lack of an implicit conversion just requires slightly more code;
+    explicit construction of a `std::string_view` object.
+  - Victor requested that the two traits in option 1-B be merged.
+  - Victor agreed with Alisdair's suggestion to default the trait to enable based on the presence of a
+    class member.
+  - Victor asserted that only the author of a class should opt a class into the proposed behavior; not
+    users of the class.
+  - Victor repeated his opposition to enabling implicit third party interoperation.
+  - Corentin stated that most of the proposed behavior should be being discussed in LEWG rather than in
+    SG16 and that SG16 just needs to provide a recommendation whether use of `std::char_traits` is a
+    good heuristic.
+  - PBrett responded that there is an SG16 question concerning which types are sufficiently text-like.
+  - PBrett asked for poll suggestions.
+  - Tom noted that discussion revealed other options that should be explored.
+  - Tom suggested polling the desire to enable interconvertibility across any/all string-like types in
+    the ecosystem.
+  - Poll wordsmithing ensued.
+  - **Poll 1.1: Any opt-in to implicit range construction of `std::string_view` should be explicit on
+    a per-type basis.**
+    - Attendees: 12 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   8 |   0 |   1 |   0 |
+    - Strong consensus.
+    - A: If types have character traits, we should be making use of them to determine compatibility.
+  - Jens responded to the against rationale by stating that use of character traits is not excluded;
+    per-type enablement could be conditional on matching traits.
+  - **Poll 1.2: The standard library should provide a general-purpose facility for enablement of
+    implicit interconvertibility between string and string_view-like types (including UDTs).**
+    - Attendance: 12 (2 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   1 |   4 |   4 |   0 |
+    - No consensus.
+  - **Poll 1.3: A solution to the problem stated in P2779 needs to be included in the C++ standard library.**
+    - Attendance: 12 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   1 |   5 |   4 |   0 |
+    - No consensus.
+  - Tom stated that he will record the poll results in the paper tracker and that it will be up to
+    the LEWG chair to decide what to do next.
+  - PBrett suggested that more examples of how this proposal could alleviate programming challenges
+  - might help to increase motivation.
+  - Tom agreed and noted that the large proportion of N votes presumably reflects insufficient
+    motivation.
+- [P2872R1: Remove wstring_convert From C++26](https://wg21.link/p2872r1).
+  - \[ Editor's note: D2872R1 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P2872R1 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Alisdair stated that, If feedback is light, that he will incorporate it and publish the paper as
+    P2872R1; otherwise, he will publish P2872R1 as-is and incorporate the feedback in a newer revision.
+  - Alisdair explained that `wbuffer_convert` and `wstring_convert` have been deprecated for three
+    standard releases now.
+  - Alisdair noted that removal permits implementors to continue to provide the functionality thanks
+    to the additions to zombie names.
+  - Alisdair indicated that wording updates might be needed, but that LWG will handle that.
+  - Alisdair explained that the deprecation was motivated by underspecification and dependence on
+    other deprecated features like `std::codecvt_utf8`.
+  - Alisdair reported that there are currently four related open LWG issues and that reviving the
+    feature would require more.
+  - Corentin stated that, without `std::codecvt_utf8`, the standard no longer provides features needed
+    to use these types.
+  - Alisdair agreed and explained that programmers would have to provide their own `std::codecvt` facet.
+  - Corentin acknowledged the requirement, but observed that programmers could more easily just
+    implement the needed conversion.
+  - Victor opined that these types provide little value since they are just light wrappers anyway.
+  - Victor reported that a search of the projects he works on found a few uses, but that those uses
+    should be replaced anyway.
+  - PBrett asked if anyone had an objection to removing these features.
+  - No objections were raised.
+  - MarkZ reported that a Github search identified few uses.
+- [P2845R0: Formatting of std::filesystem::path](https://wg21.link/p2845r0).
+  - Victor introduced the paper:
+    - [P1636 (Formatters for library types)](https://wg21.link/p1636) previously proposed formatting
+      for `std::filesystem::path` but was specified to use the `native()` member function which might
+      require transcoding and had no provisions for handling of non-printable characters.
+    - This paper proposes a formatter that performs proper transcoding and substitutes escape
+      sequences for non-printable characters and ill-formed code units.
+  - Victor noticed a missing doublequote character in the first source code example in section
+    2, "Problems".
+  - Victor reported that some minor issues have been fixed in a draft R1 revision.
+  - Corentin asked if backslash path delimiters on Windows would be formatted with escape sequences.
+  - Victor confirmed that they would be, that such substitution might be surprising, but is
+    consistent with `std::quoted()`.
+  - Victor noted that an additional format specifier could be provided to choose an alternate behavior.
+  - Corentin asked about use of the debug specifier, "{:?}".
+  - Victor replied that the escaped format is proposed as the default behavior.
+  - Charlie asserted that some lattitude is needed to choose an alternate escape character since
+    backslash in paths has an important meaning on Windows.
+  - Charlie noted that an alternate escape character could be surprising and would create an
+    inconsistency across platforms.
+  - PBrett asked about adding a specifier that enables specifying a different escape character.
+  - Victor responded that such a specifier would be cumbersome and that there are other options
+    such as performing a transformation.
+  - Victor stated that there are use cases for both an escaped and a non-escaped variant.
+  - Tom presented a few use cases including formatting for generic text, byte preserved for
+    filesystem access, punycode for URLs, and quoted for shell scripts.
+  - Tom suggested that most transformations should be done outside of formatting.
+  - Corentin stated that the default behavior should just escape ill-formed code units and that
+    the debug format specifier could be used to escape problematic characters.
+  - Victor replied that quoting is useful but not always needed.
+  - Tom suggested that a specifier could be added to opt in to quoting.
+  - PBrett expressed two high level use cases:
+    - The need to format the path precisely such that it can be used to open a file.
+    - The need to format the path for textual display in a format friendly to humans.
+  - PBrett opined that the paper does not clearly define the problem it intends to solve.
+  - PBrett noted that, in
+    [GLib](https://docs.gtk.org/glib),
+    functions are provided to request a file name suitable for display as valid UTF-8 or as
+    a byte array.
+  - Victor replied that the goal of the paper is to address the issues discovered from prior
+    review of
+    [P1636 (Formatters for library types)](https://wg21.link/p1636).
+  - Victor stated that additional use cases can be addressed as needed.
+  - Zach reported that Python provides the functionality this paper is proposing and noted
+    that its formatters will double Windows path separators.
+  - Zach stated that Python allows printing unformatted paths by treating paths as a string
+    and that C++ can do so as well.
+  - Zach agreed that some kind of escaping and quoting is needed.
+  - \[ Editor's note: Corentin later
+    [posted a message to the SG16 mailing list](https://lists.isocpp.org/sg16/2023/06/3886.php)
+    that demonstrates Python's behavior with a
+    [Compiler Explorer link](https://godbolt.org/z/7sf5xPPsc).
+    \]
+  - Jens asserted that, due to various quirks with `std::filesystem::path`, that the paper
+    should cover the motivation and design space and not solely focus on addressing the issues
+    found from review of P1636.
+  - Jens stated that the paper should discuss, for example, the implication of using backslashes
+    in the syntax of character escapes in formatted paths.
+  - PBrett agreed.
+  - PBrett noted that we were out of time and that additional review will be needed to discuss
+    encoding issues.
+- Tom stated that the next meeting is scheduled for 2023-06-28, that there are several LWG issues
+  awaiting review, and that Zach is working on a revision of
+  [P2728 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728).
+- \[ Editor's note: The following meeting was canceled due to summer vacations. \]
+- Zach stated an expectation to have a new revision available in the next two weeks.
 
 
 # May 24th, 2023
