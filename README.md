@@ -9,15 +9,16 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, July 12th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230712T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, July 26th, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230726T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 The draft agenda is:
-- [P1030R5: std::filesystem::path_view](https://wg21.link/p1030r5).
-  - Discuss what to do in lieu of overloads with `std::locale` parameters.
-- [P2845R0: Formatting of std::filesystem::path](https://wg21.link/p2845r0).
-  - Continue review.
-- [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944).
-  - Initial review.
+- [WG14 N3145: $ in Identifiers v2](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3145.pdf):
+  - Determine whether a corresponding proposal for WG21 is desired.
+- [P2811R7: Contract-Violation Handlers](https://wg21.link/p2811r7):
+  - Discuss character encoding considerations for the `std::contracts::contract_violation::comment()`
+    member function.
+- [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944):
+  - Continue review pending a proposed resolution or related paper.
 
 
 # Past SG16 meetings
