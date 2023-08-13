@@ -9,16 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, July 26th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230726T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, August 23rd, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230823T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 The draft agenda is:
-- [WG14 N3145: $ in Identifiers v2](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3145.pdf):
-  - Determine whether a corresponding proposal for WG21 is desired.
-- [P2811R7: Contract-Violation Handlers](https://wg21.link/p2811r7):
-  - Discuss character encoding considerations for the `std::contracts::contract_violation::comment()`
-    member function.
-- [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944):
-  - Continue review pending a proposed resolution or related paper.
+- [P2909R0: Dude, where’s my char?](https://wg21.link/p2909r0):
+  - Initial review.
+- [P2728R5: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r5):
+  - Continue review.
 
 
 # Past SG16 meetings
