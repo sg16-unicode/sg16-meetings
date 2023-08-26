@@ -9,13 +9,14 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, August 23rd, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230823T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
-The draft agenda is:
-- [P2909R0: Dude, where’s my char?](https://wg21.link/p2909r0):
-  - Initial review.
-- [P2728R5: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r5):
+Wednesday, September 13th, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230913T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+
+Draft agenda:
+- [P2728R6: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r6):
   - Continue review.
+- [P1729R2: Text Parsing](https://wg21.link/p1729r2):
+  - Initial review.
 
 
 # Past SG16 meetings
