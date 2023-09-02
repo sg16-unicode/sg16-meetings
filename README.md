@@ -20,6 +20,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [July 26th, 2023](#july-26th-2023)
 - [July 12th, 2023](#july-12th-2023)
 - [June 7th, 2023](#june-7th-2023)
 - [May 24th, 2023](#may-24th-2023)
@@ -38,6 +39,180 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# July 26th, 2023
+
+## Agenda
+- [WG14 N3145: $ in Identifiers v2](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3145.pdf):
+  - Determine whether a corresponding proposal for WG21 is desired.
+- [P2811R7: Contract-Violation Handlers](https://wg21.link/p2811r7):
+  - Discuss character encoding considerations for the `std::contracts::contract_violation::comment()`
+    member function.
+- [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944):
+  - Continue review pending a proposed resolution or related paper.
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Eddie Nolan
+  - Hubert Tong
+  - Jens Maurer
+  - Joshua Berne
+  - Mark de Wever
+  - Peter Brett
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Ville Voutilainen
+  - Zach Laine
+- [WG14 N3145: $ in Identifiers v2](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3145.pdf):
+  - Hubert introduced the topic.
+    - C23 explicitly blessed `$` as an allowed character in identifiers as an implementation-defined extension.
+    - C has traditionally allowed this extension and support for it is widely implemented.
+    - [P2342 (For a Few Punctuators More)](https://wg21.link/p2342) contains additional analysis.
+    - Up to and including C++20, this has been a conforming extension in C++ since `$` in an identifier would
+      be ill-formed.
+    - In C++20, `$` is a UCN and combines with adjacent identifier characters to produce an ill-formed identifier.
+    - In C++23, `$` is no longer a UCN and adjacency with identifier characters now yields two pp-tokens, the
+      second of which renders the program ill-formed.
+    - In C++26, `$` is a member of the basic character set, adjacency with identifier characters continues to yield
+      two pp-tokens, but the `$` token may be discarded such that it is never processed during translation phase 7.
+  - PBrett asked for clarification of what constitutes a conforming extension.
+  - Corentin observed that this extension requires the production of a single pp-token when `$` is adjacent to
+    an identifier character.
+  - Corentin stated that sanctioning this allowance in the standard would restrict evolution of the language
+    since it would prevent use of `$` as an operator.
+  - Steve noted that the status quo is that all implementations allow `$` in identifiers by default, `$` is
+    widely used in identifiers, and `$` appears in mangled names.
+  - Steve stated that compilers are free to issue a diagnostic and produce a working executable for source code
+    that is ill-formed according to the standard.
+  - Hubert replied that the concern is with preprocessing; if `$` is not explicitly allowed in an identifier by
+    the preprocessor, then it is handled as a separate token and the difference is observable.
+  - Hubert stated that issuing a diagnostic only during translation phase 7 would be difficult.
+  - Hubert asserted that wording changes are in order to continue to permit existing practice with `$` in
+    identifiers.
+  - Hubert acknowledged concerns regarding how to word an allowance so that new uses of `$` are not restricted.
+  - Hubert noted that new uses are only problematic if they are not surrounded by whitespace.
+  - Jens suggested the possibility of reverting the adoption of
+    [P258R2 (Add @, $, and ` to the basic character set)](https://wg21.link/p2558r2)
+    for C++26.
+  - PBrett expressed opposition to doing so since that would contradict the direction established in WG14
+    and codified in C23.
+  - PBrett stated that this discussion is a good start regarding how to move forward.
+  - Jens opined that the WG14 rationale is not motivating and that he is therefore not motivated to follow
+    the same direction in C++.
+  - Tom noted that there are backward compatibility concerns for some platforms due to use of `$` in identifiers
+    in system headers.
+  - Corentin stated that the WG14 direction was to explicitly state that it is implementation-defined whether
+    `$` is allowed in an identifier.
+  - **Poll 1: Whether DOLLAR SIGN is accepted as an identifier start and/or identifier continuation character
+    should be explictly implementation-defined.**
+    - Attendees: 12 (4 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   2 |   1 |   2 |   2 |
+    - No consensus.
+    - SA: I don't think an identifier should be implementation-defined.
+  - PBrett stated that the next step would be a proposal to EWG acknowledging the guidance here.
+  - Tom asked for opinions regarding the default modes of current compilers being non-conforming.
+  - Zach replied that all implementations offer an option to disable the extension.
+  - PBrett stated that every implementation is non-conforming in their default modes in practice.
+  - Corentin asserted that implementations should issue warnings for use of the extension.
+- [P2811R7: Contract-Violation Handlers](https://wg21.link/p2811r7):
+  - Joshua introduced the topic:
+    - SG21 is working on a specification for a contract violation handler.
+    - The proposed `comment()` member function of `std::contracts::contract_violation` is intended
+      to return a string containing the source code of the violated contract predicate.
+    - The proposed encoding for the returned string is the ordinary literal encoding.
+  - Tom expressed support for use of the ordinary literal encoding.
+  - Tom asked if anything should be specified regarding handling of characters that are not
+    encodeable in the ordinary literal encoding.
+  - Corentin agreed with use of the ordinary literal encoding on the basis that the text will be
+    used at run-time.
+  - Steve asked for confirmation that the feature effectively converts a source code snippet to text.
+  - Joshua confirmed.
+  - Steve suggested that a hand wavy approach similar to that taken for `static_assert` is likely
+    necessary except that the string has to survive until run-time and we lack a mechanism to
+    communicate the encoding.
+  - Steve stated that the compiler should perform a best effort rendering in the target encoding
+    with the understanding that, for example, an identifier might not be representable in Latin1.
+  - Jens observed that is a different operation than stringizing.
+  - Steve agreed.
+  - Corentin asked what the anticipated use cases are for the `comment()` function.
+  - Joshua replied that the primary use case is for logging; other use cases might involve using
+    the result as a key for a map.
+  - Joshua asserted that it is not intended to provide source code that a programmer might expect
+    to parse.
+  - Joshua stated that the output is only intended to be sufficient for a human to be able to
+    correlate it with the original source code.
+  - Zach ruminated on the interaction of source encoding and literal encoding and how preprocessor
+    stringifying works.
+  - Jens noted that the `assert` macro is similarly expected to embed source code in the output it
+    produces.
+  - Jens stated that the wording for `assert` does not capture the fact that producing the output
+    involves multiple transcoding steps.
+  - \[ Editor's note: the transcoding steps are the conversion from the encoding of the input file
+    ([\[lex.phases\]p1](http://eel.is/c++draft/lex.phases#1.1)
+    to the *translation character set*
+    ([\[lex.charset\]p1](http://eel.is/c++draft/lex.charset#1))
+    then to the *ordinary literal encoding*
+    ([\[lex.charset\]p8](http://eel.is/c++draft/lex.charset#8))
+    and then finally, if necessary, to the implementation-defined encoding used to write text to
+    the standard error stream
+    ([\[cassert.syn\]](http://eel.is/c++draft/cassert.syn) via reference to the C standard). \]
+  - Jens observed that, for `comment()`, there is a possibility to differentiate these steps;
+    the compiler performs the conversion to the ordinary literal encoding and the violation
+    handler can then perform additional transcoding as necessary.
+  - Jens asserted that these are not novel problems.
+  - Jens observed that non-encodeable characters in string literals are ill-formed and that a
+    preprocessor stringize operation that produces such a string would likewise be ill-formed.
+  - Jens posited doing similarly for contracts.
+  - Corentin stated that doing so makes sense and then described some additional encoding options:
+    - UTF-8 in `char8_t`, though that doesn't improve usability.
+    - implementation-defined.
+    - ordinary literal encoding with an escaping mechanism for non-encodeable characters.
+  - Corentin suggested it is likely best to just let implementors do what they think is best.
+  - PBrett stated that SG21 had strong consensus for the text returned by `comment()` being
+    implementation-defined.
+  - PBrett noted that, since it is implementation-defined, there is no need to specify whether
+    the content includes macro expanded text.
+  - PBrett asserted that it is essential that the encoding be specified and expressed support
+    for the current paper direction.
+  - PBrett agreed that UTF-8 in `char8_t` is an option, but that the standard provides few
+    facilities to consume it.
+  - Hubert noted that, since C does not prohibit non-encodeable characters in string literals,
+    the stringize operation suffices for `assert` in C.
+  - Steve stated that it would be very suprising if a `char`-based string with an encoding
+    other than the ordinary literal encoding was returned; a `char8_t`-based string should be
+    used if a UTF-8 encoded string is always returned.
+  - **Poll 2: The value of std::contract_violation::comment should be a null-terminated
+    multi-byte string (NTMBS) in the string literal encoding.**
+    - Attendees: 12 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   8 |   3 |   0 |   0 |   0 |
+    - Unanimous consensus.
+- [LWG 3944: Formatters converting sequences of char to sequences of wchar_t](https://wg21.link/lwg3944):
+  - PBrett explained that the goal of discussing this issue is to determine if we agree with
+    the proposed resolution.
+  - Victor expressed support for it and stated that it is consistent with previous discussions.
+  - Victor noted a minor markup issue in the proposed wording; the extent of the struck text should
+    include the trailing `>` character.
+  - **Poll 3: Recommend the proposed resolution to LWG3944 "Formatters converting sequences of char
+    to sequences of wchar_t" to LWG, after fixing the typo.**
+    - Attendees: 12
+    - No objection to unanimous consent.
+  - Mark asked what the next step is for this issue.
+  - Tom advised sending the proposed resolution to the LWG chair and stated that he would work with the
+    LWG chair to get a github issue filed to record the SG16 poll.
+- Tom stated that the next meeting is scheduled for 2023-08-09.
+- Zach indicated that he could have a revision of
+  [P2728 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728)
+  available by then.
+- Victor reported that he has a a new revision of
+  [P2845: Formatting of std::filesystem::path](https://wg21.link/p2845)
+  available.
 
 
 # July 12th, 2023
