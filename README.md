@@ -20,6 +20,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [August 23rd, 2023](#august-23rd-2023)
 - [July 26th, 2023](#july-26th-2023)
 - [July 12th, 2023](#july-12th-2023)
 - [June 7th, 2023](#june-7th-2023)
@@ -39,6 +40,227 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# August 23rd, 2023
+
+## Agenda
+- [P2909R0: Dude, where’s my char?](https://wg21.link/p2909r0).
+- [P2728R6: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r6).
+
+## Meeting summary
+- Attendees:
+  - Fraser Gordon
+  - Hubert Tong
+  - Mark de Wever
+  - Peter Brett
+  - Robin Leroy
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2909R0: Dude, where’s my char?](https://wg21.link/p2909r0):
+  - Much appreciation was expressed for the clever paper title.
+  - \[ Editor's note: in later revisions, the R0 title was demoted to a sub-title and a new title introduced;
+    "Fix formatting of code units as integers". \]
+  - Victor introduced the paper:
+    - When `std::format()` was introduced, non-portable behavior due to the implementation-defined signedness
+      of 'char' was not intended.
+    - It is possible that some users expect the signedness to be reflected in the output, but most users that
+      are formatting character types as integers are intending to expose bit patterns.
+    - This is technically a breaking change.
+    - This is more LEWG territory, but since it is text related, it seemed prudent to collect input from SG16.
+  - PBrett requested that section 2, "Proposal", be expanded to illustrate the before/after effects for each
+    of the type options.
+  - Victor agreed to do so.
+  - Victor explained that the change increases compatibility with `std::printf()` for the impacted type options
+    other than "d"; the "%d" `std::printf()` conversion specifier always treats its argument as a signed type,
+    but the proposed change for the "d" type option will always treat `char` as an unsigned type regardless of
+    whether it is signed.
+  - Zach expressed appreciation for symmetry and that the change improves support for portable roundtripping
+    behavior.
+  - Mark acknowledged that the change is a breaking change and asked if the intent is to handle this as a DR.
+  - Victor replied that LEWG will decide that and that he would recommend handling this as a DR.
+  - Mark observed the lack of a feature test macro.
+  - Victor stated that he could add one.
+  - Hubert requested that a more descriptive title be used for the paper.
+  - Hubert noted that it is implementation-defined whether `wchar_t` is a signed type as well.
+  - Victor replied that it would be reasonable to treat all `charT` types as being unsigned.
+  - PBrett requested that the paper be updated to explicitly mention `wchar_t` as well.
+  - Hubert expressed some concerns over the proposed change; `char` and `wchar_t` do have a signedness and it
+    isn't good for programmers to ignore that.
+  - Victor replied that, for `wchar_t` at least, the concern is not as strong since programmers don't tend to
+    use `wchar_t` as an integer type as is done with `char`.
+  - Hubert suggested it might make sense for the "d" type option to maintain signedness.
+  - Victor stated a preference for the signedness handling being consistent across the type options.
+  - Tom noted that `int8_t` could be implemented in terms of `char`.
+  - Hubert noted that most of the changes increase consistency with `std::printf()` and stated the improved
+    consistency should be extended to all of the integer types.
+  - PBrett reminded the group that `char` is a distinct type from `signed char` and `unsigned char`.
+  - Zach asserted that it is surprising to get a negative value for a `char` type and stated that negative
+    `char` values are a wart in the language.
+  - Hubert noted that
+    [\[basic.fundamental\]p11](https://eel.is/c++draft/basic.fundamental#11) specifies that `char` is an
+    integer type.
+  - PBrett asked if an LWG issue should be raised regarding whether `int8_t` can use `char` as its
+    designated type.
+  - Fraser responded that cv-qualified types are also integer types and might therefore possibly be used
+    as the designated type unless the `int8_t` wording excludes them.
+  - Hubert noted that cv-qualified types being integer types was a recent CWG change.
+  - PBrett reported that
+    [\[cstdint.syn\]](https://eel.is/c++draft/cstdint.syn)
+    specifies that `int8_t` must designate a signed integer type and that
+    [\[basic.fundamental\]p1](https://eel.is/c++draft/basic.fundamental#1)
+    doesn't include `char` in its definition of *signed integer types*.
+  - PBrett stated that we will file a LWG issue to clarify this.
+  - Tom asked for confirmation of the behavior for integer types other than `char` when used with the
+    "o", "x", and "X" type options.
+  - Victor replied that negative values may be produced.
+  - Hubert stated that includes `wchar_t` when it is a signed type.
+  - Tom noted that is consistent with the status quo wording.
+  - Hubert noted that the wording is applicable to `charT`, but not to mixed character types.
+  - **Poll 1: Modify P2909R0 "Dude, where's my char‽" to maintain semi-consistency with printf
+    such that the 'b', 'B', 'o', 'x', and 'X' conversions convert all integer types as unsigned.**
+    - Attendees: 8 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   2 |   0 |   2 |   2 |
+    - No consensus.
+    - SA: I'm not opposed to that direction in principle, but it is a deeper change and needs more
+      research.
+    - A: I'm concerned about the lack of implementation experience.
+  - **Poll 2: Modify P2909R0 "Dude, where's my char‽" to remove the change to handling of the
+    'd' specifier.**
+    - Attendees: 8 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   1 |   2 |   1 |   1 |
+    - No consensus.
+    - SA: That would add a corner case to a corner case; this is more LEWG territory and will get
+      discussed there.
+  - **Poll 3: Forward P2909R0 "Dude, where's my char‽", amended with a descriptive title, an
+    expanded before/after table, and fixed CharT wording, to LEWG with the recommendation to adopt
+    it as a Defect Report.**
+    - Attendees: 8 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   2 |   2 |   1 |   0 |
+    - Weak consensus.
+  - Tom asked if there are any concerns beyond the `std::printf()` inconsistencies that would
+    motivate the N and A voters towards F/SF.
+  - No other concerns were raised.
+  - Hubert expressed unhappiness with the "d" type option direction since it won't provide help to
+    those debugging issues related to `char` being a signed type.
+- [P2728R6: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r6):
+  - Zach introduced the changes made in recent revisions:
+    - The type unpacking mechanism was reworked.
+    - The `null_sentinel_t` type was moved to the `std` namespace.
+    - A `std::ranges::project_view` was introduced bsaed on SG9 (Ranges) feedback though this view
+      is likely to be replaced in a future revision with a conditionally borrowed `transform_view`.
+    - The `utfN_view`s are now just aliases of a `utf_view` class template specialization.
+  - PBrett asked if anyone has new SG16 concerns inspired by the changes since R3.
+  - \[ Editor's note: SG16's last review of this paper was
+    [P2728R3](https://wg21.link/p2728r3)
+    during the
+    [2023-05-10 SG16 meeting](https://github.com/sg16-unicode/sg16-meetings#may-10th-2023). \]
+  - No new concerns were raised.
+  - Tom asked for specific ideas on how to improve presentation in the motivation section of the
+    paper to address any lingering concerns from reviews of previous revisions.
+  - PBrett stated that the paper has improved significantly from previous revisions
+  - PBrett volunteered to meet with Zach offline to more thoroughtly review that section.
+  - Fraser asked whether support for the `approximately_sized_range` concept proposed by
+    [P2846 (`size_hint`: Eagerly reserving memory for not-quite-sized lazy ranges)](https://wg21.link/p2846)
+    has been considered.
+  - Zach replied that he has to some extent and noted that there are range limits that could be imposed
+    and that might work with that feature.
+  - Fraser asked if the proposal could be retrofitted to support that feature as it progresses through
+    the committee.
+  - Zach replied affirmatively and explained that the `size_hint()` member could be conditionally
+    enabled when size information is available.
+  - Hubert requested clarification regarding the request for improvements to the motivation section.
+  - Tom explained that he had received input from multiple people that they felt the motivation
+    section was lacking.
+  - PBrett explained that one of the perceived issues was the lack of rationale for the design decisions
+    made and an analysis of alternatives considered; for example, during previous SG16 discussions, vague
+    comments were sometimes made regarding the design being motivated by performance concerns, but the
+    performance goals and concerns are not reflected in the paper.
+  - PBrett repeated his earlier claim that recent revisions and the refined scope have improved the situation.
+  - Hubert stated that it sounds like the motivation question might be resolved then.
+  - Hubert suggested that a scope section could be added.
+  - PBrett reported that, in a recent UK body discussion concerning the failure for some papers to attain
+    consensus, observations were made that lack of a common understanding of the problem to be solved likely
+    contributed to the failure.
+  - PBrett opined that discussion of earlier revisions of the paper exhibited some confusion regarding which
+    problems this paper is intended to address.
+  - Zach stated that he has been working on prototypes that lead to this paper for about seven years now and
+    that some of the design motivation is influenced by things he learned along the way, but that would
+    require some reflection to recall.
+  - Zach suggested that discussion move towards error handling as discussion of that topic was requested in
+    the meeting agenda.
+  - \[ Editor's note: Zach was referring to requests made on the SG16 mailing list. See
+    https://lists.isocpp.org/sg16/2023/08/3930.php. \]
+  - Robin added some background for the linked
+    [PR-121 (Recommended Practice for Replacement Characters)](http://unicode.org/review/pr-121.html)
+    policies. That policy paper was used to inform the recommendation made by the UTC during the
+    [UTC 116 / L2 213 Joint Meeting held in Redmond, WA from August 11-15, 2008](https://www.unicode.org/L2/L2008/08253.htm)
+    in which a
+    [consensus to prefer policy 2](https://www.unicode.org/L2/L2008/08253.htm#116-C12)
+    was established.
+  - Zach reported having been unaware of PR-121 and that his design decisions were guided by what appears in
+    the Unicode Standard.
+  - Zach summarized the error handling options described by the Unicode Standard as:
+    - terminate
+    - report an error
+    - substitute a replacement character.
+  - \[ Editor's note: the Unicode 15 chapters that discuss handling of ill-formed code unit sequences are:
+    - 3.9, Unicode Encoding Forms, U+FFFD Substitution of Maximal Subparts.
+    - 5.22, U+FFFD Substitution in Conversion.
+    \]
+  - Zach stated that an option to just drop ill-formed code unit sequences seems misguided.
+  - Robin agreed and stated that doing so can lead to security issues.
+  - Zach stated that there are other options to identify encoding errors and that he does not want this
+    feature to be made complicated.
+  - PBrett asserted a need for a feature to just validate that a given string can be successfully decoded.
+  - Zach responded that such a feature was in a previous revision of the paper, but that it was removed
+    as part of reducing scope.
+  - PBrett stated that he actually wants that feature more than he wants transcoding support so that
+    input could be proactively rejected.
+  - Tom expressed sympathy for Zach's perspective but stated a preference towards not providing an error
+    handler at all over providing one that is unable to handle arbitrary complexity.
+  - Zach replied that he really only cared to support terminate, throw, and substitute as recommended by
+    the Unicode Standard.
+  - Tom described the error handling approach that JeanHeyd developed for his work on
+    [P1629 (Standard Text Encoding)](https://wg21.link/p1629); it allows for the current iterator to be
+    moved to an error handler that manipulates it as necessary and then moves it back; this provides the
+    error handler full autonomy.
+  - Zach replied that such an approach doesn't work for a transcoding iterator since exactly one output
+    code unit must be produced; or would otherwise require a buffer to be persisted and referenced for
+    later outputs.
+  - Tom expressed gratitude for that response and reported that he had not considered the limitations
+    of lazily transcoding within iterator operations.
+  - PBrett provided a brief introduction to the
+    [ztd.text](https://github.com/soasis/text)
+    error handlers.
+  - \[ Editor's note: see the error handlers in the header files included by
+    https://github.com/soasis/text/blob/main/include/ztd/text/error_handler.hpp. \]
+  - Zach noted that each iterator dereference has to produce the next code unit value and that makes it
+    expensive to support anything other than substitution of a single code point.
+  - PBrett asked if more design space options are opened by considering views rather than iterators.
+  - Zach replied that the iterators are stateful in either case.
+  - Zach stated that he would be ok with dropping the error handler in favor of only doing substitution
+    and noted that the error handler can only be specified when the iterators are used directly; the
+    views don't support providing an error handler.
+  - Tom asked Hubert if his previously expressed interest in exposing the type unpacking behavior has
+    been satisfied.
+  - Hubert did not recall his previous interest.
+  - Tom explained his recollection; that Hubert wanted to be able to take advantage of the unpacking
+    behavior when writing adapters to be used in range pipelines.
+  - Zach stated that the concepts in the paper might need to be refined a bit but that he has a test
+    that does that.
+  - Tom requested that an example be added to the paper.
+  - Hubert suggested that the motivation section be updated to explain that functionality as well.
+- Tom reported that the next meeting will be 2023-09-13 and that likely agenda items include continued
+  review of P2728R6 and initial review of
+  [P1729R2 (Text Parsing)](https://wg21.link/p1729r2).
 
 
 # July 26th, 2023
