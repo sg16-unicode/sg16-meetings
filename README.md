@@ -375,7 +375,7 @@ Draft agenda:
   - Jens stated that the wording for `assert` does not capture the fact that producing the output
     involves multiple transcoding steps.
   - \[ Editor's note: the transcoding steps are the conversion from the encoding of the input file
-    ([\[lex.phases\]p1](http://eel.is/c++draft/lex.phases#1.1)
+    ([\[lex.phases\]p1](http://eel.is/c++draft/lex.phases#1.1))
     to the *translation character set*
     ([\[lex.charset\]p1](http://eel.is/c++draft/lex.charset#1))
     then to the *ordinary literal encoding*
