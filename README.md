@@ -13,10 +13,10 @@ Wednesday, September 13th, 2023, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20230913T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 
 Draft agenda:
+- [P2845R2: Formatting of std::filesystem::path](https://wg21.link/p2845r2):
+  - Continue review.
 - [P2728R6: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r6):
   - Continue review.
-- [P1729R2: Text Parsing](https://wg21.link/p1729r2):
-  - Initial review.
 
 
 # Past SG16 meetings
