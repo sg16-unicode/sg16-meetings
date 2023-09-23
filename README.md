@@ -15,8 +15,6 @@ Wednesday, September 27th, 2023, from 19:30-21:00 UTC
 Draft agenda:
 - [P1729R2: Text Parsing](https://wg21.link/p1729r2):
   - Initial review.
-- [P2728R6: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r6):
-  - Continue review.
 
 
 # Past SG16 meetings
