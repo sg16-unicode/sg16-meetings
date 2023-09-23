@@ -20,6 +20,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [September 13th, 2023](#september-13th-2023)
 - [August 23rd, 2023](#august-23rd-2023)
 - [July 26th, 2023](#july-26th-2023)
 - [July 12th, 2023](#july-12th-2023)
@@ -40,6 +41,254 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 13th, 2023
+
+## Agenda
+- [P2845R3: Formatting of std::filesystem::path](https://wg21.link/p2845r3):
+  - Continue review.
+- [P2728R6: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r6):
+  - Continue review.
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Hubert Tong
+  - Jens Maurer
+  - Nathan Owen
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Zach Laine
+- [P2845R3: Formatting of std::filesystem::path](https://wg21.link/p2845r3):
+  - \[ Editor's note: D2845R3 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P2845R3 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Tom noted that SG16 previously reviewed P2845R0 and that the current revision addresses
+    prior review feedback.
+  - Victor provided an introduction:
+    - The recent revisions correct some minor mistakes.
+    - The proposed default format now produces a non-quoted non-escaped representation.
+    - If the format specifier includes the `?` option, then a quoted escaped representation is produced.
+    - The
+      [{fmt} library](https://github.com/fmtlib/fmt)
+      had previously implemented the behavior proposed in P2845R0 but was recently changed to implement
+      the behavior introduced in P2845R2; this was a breaking change that impacted a few users.
+  - Eddie pointed out an incorrect word choice in section 6, Proposal; "loose" is used where "lose" is
+    intended.
+  - Victor stated that the output shown for the first lone surrogate example in section 6, Proposal,
+    might be incorrect and that he needs to check if a `\x` escape should be produced instead of the
+    `\u` escape currently presented; the intent is for the behavior to match what is specified in
+    [\[format.string.escaped\]](https://eel.is/c++draft/format.string.escaped).
+  - **Poll 1: Forward P2845R2, Formatting of std::filesystem::path, to LEWG with a recommended target of C++26.**
+    - Attendees: 9 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   2 |   1 |   0 |   0 |
+    - Strong consensus.
+- [P2728R6: Unicode in the Library, Part 1: UTF Transcoding](https://wg21.link/p2728r6):
+  - Tom reminded the group that our purpose as a study group is to assist paper authors in producing a
+    proposal that has the best possible chance of passing review in other groups and, ultimately, an
+    adoption poll in a plenary session.
+  - Tom stressed that questions asked during discussion likely reflect some lack of clarity in the paper
+    and should therefore inspire additional edits, not just immediate responses.
+  - Tom listed the topics for discussion as presented in the
+    [previously communicated agenda](https://lists.isocpp.org/sg16/2023/09/3955.php):
+    - Continued review of error handling.
+    - Opportunities for simplification; whether `std::uc::format` is still needed.
+    - How the proposed features fit with the bigger picture and vision for future library proposals.
+  - Zach summarized some other recent reviews:
+    - SG9 has reviewed the paper three times and plans to review it at least one more time.
+    - SG9 has provided some feedback that has not yet been incorporated in the paper.
+  - Zach provided an overview of the proposed error handling:
+    - The error handler receives an unspecified diagnostic message that programmers can use as
+      they please.
+    - The default error handler ignores the diagnostic message and returns a replacement character.
+  - Zach stated that the error handling approach used in JeanHeyd's work doesn't fit into the
+    iterator model.
+  - Zach said he does not have strong opinions about the error handler and suggested it could be
+    removed for now and added back later if needed.
+  - Steve noted that transliteration is a use case for error handlers that allow multiple characters
+    to be substituted for a non-translateable character.
+  - Steve acknowledged that support for multi-character substitution would require a buffer that
+    would make iterators larger and more complicated.
+  - Corentin expressed confusion regarding the transliteration example since the proposed
+    functionality is specific to UTF encodings.
+  - Corentin suggested implementing transliteration as a layered view adapter.
+  - Corentin stated that there are few good options beyond a single replacement character approach
+    and that this approach is conforming, implementable, and useful.
+  - Victor observed that the error handling interface treats all errors the same and that there is
+    no distinction between different kinds of errors.
+  - Zach responded that there are a fixed number of error possibilities and that a set of error
+    codes would be isomorphic to the set of messages that are passed in the reference implementation.
+  - Tom asked Zach if he has a strong preference.
+  - Zach replied that his preference is to just substitute a replacement character and otherwise
+    ignore any errors.
+  - Tom expressed a belief that there are other reasonable error handling possibilities, but that
+    a concrete proposal should be offered before trying to engage further on such discussion.
+  - Jens noted that passing an error message creates an internationalization concern and expressed
+    a preference against a message based interface.
+  - Jens pondered the plausible options for reacting to an error:
+    - The substitution approach is easily understood and Unicode provides a recommendation for how
+      to perform them.
+    - Throwing an exception is easily understood and works with ranges and iterators.
+    - Since the error handler is not given access to the ill-formed code unit sequence, there is
+      little context for doing anything else useful.
+  - Zach indicated that he would be fine with replacing the `std::string_view` parameter with an
+    enumeration.
+  - Zach noted that substitution of a different replacement character would not be inline with
+    Unicode recommendations.
+  - Jens stated that there is no universal right answer for error handling for all programs;
+    throwing an exception could be the right choice for one while aborting could be the right
+    choice for another.
+  - Zach suggested that `utf_iterator` could be used to single step through the input and noted
+    that it provides access to the underlying sequence.
+  - Zach stated that trying to provide a tool that handles every situation seems unnecessary.
+  - Jens asked if the paper has an example that demonstrates single stepping through an input
+    sequence with access to the underlying code unit sequence.
+  - Tom commented that such an example would be a great addition to the paper.
+  - Zach asked for a poll to remove the error handler.
+  - Steve seconded Jens' preference to not use a stringly-typed error message.
+  - Steve expressed tenuous consent for removal of the error handler based on the discussion.
+  - Steve summarized the design requirements; there is one error handling mode that we want
+    for sure, and a few others that we might want rarely.
+  - Steve expressed a desire for more examples in the paper.
+  - Corentin stated that views are not designed for error handling; they are designed for
+    composition.
+  - Corentin outlined a design approach for a different feature; a view that iterates over
+    ill-formed code unit sequences.
+  - Corentin pondered which replacement policy should be used.
+  - Zach replied that Unicode specifies the recommended replacement policy.
+  - Jens requested that the paper explicitly reference that policy.
+  - Zach responded that it already does.
+  - \[ Editor's note: section 5.4, "Add the transcoding iterator template", has a paragraph
+    that states:
+      > The number and position of the error handler invocations should use the
+      > “substitution of maximal subparts” approach described in Chapter 3 of the
+      > Unicode standard.
+    \]
+  - Hubert asked if formal wording is available.
+  - Zach replied that there is some pseudo wording, but no real wording yet.
+  - Eddie observed that removal of the error handling interface would require use of a for
+    statement for even minimal error handling.
+  - Eddie posited a use case that requires counting the number of errors encountered and
+    noted that it could be implemented using the proposed design with the caveat that it
+    would require global state since error handler objects are not persistent.
+  - Zach acknowledged such use cases, but characterized them as examples of corner cases
+    that are not frequently needed.
+  - Hubert stated that he does not see a reason to prohibit the easy error handling cases
+    and opined that removal of the error handler would be an over reaction.
+  - Tom noted that the error handler is stateless; an object of the error handler is
+    constructed on demand for each error and since the error handler is not passed details
+    of the error encountered, error handling is severely constrained.
+  - Jens charaterized the lack of persistence of an error handling object as a design
+    defect; global state should not be required for Eddie's example.
+  - Zach stated that the discussion has made it clear that we don't have a good grasp of
+    the design that we want.
+  - Corentin pondered how error handling in the middle of a lazy algorithm should be
+    performed and suggested that may be a question for SG9.
+  - Corentin stated that there are currently no standard views that throw.
+  - Corentin suggested that views might not be the appropriate utility to use to sanitize
+    input.
+  - Corentin noted that a requirement to maintain state might make it difficult to
+    match range complexity requirements.
+  - Corentin advised using a view that operates on code units to analyze code units.
+  - Zach agreed with Corentin's comments and stated that the proposal does not support
+    custom error handling for views for exactly those reasons.
+  - Tom suggested meeting with SG9 to discuss error handling in range pipelines.
+  - Zach agreed to do so.
+  - Eddie noted that exceptions are the only way to alter the control flow in range
+    pipelines.
+  - Tom agreed and stated that iterator operations don't provide an option other than
+    throwing exceptions.
+  - Eddie indicated that those limitations make him less inclined to support custom
+    error handling.
+  - Jens acknowledged that existing standard views might not throw exceptions directly,
+    but noted that views that accept a callable, like `std::ranges::transform_view`
+    allow an exception to be conditionally thrown based on the input in order to break
+    the pipeline processing.
+  - Jens concurred with having SG9 weigh in and perhaps poll error handling for ranges.
+  - Jens requested an example of how error checking and handling could be performed
+    using the proposed iterators in a for statement so that he could better determine
+    how programmers could provide their own exception throwing view.
+  - Zach provided an example in the chat.
+    ```c++
+    auto v = my_view();
+    for (auto it = v.begin(); it != v.end(); ++it) {
+      if (is_replacement_character(*it)) ...
+    }
+    ```
+  - Jens pointed out that the example doesn't differentiate between a substitution
+    character in the input vs a substitution made due to an ill-formed code unit
+    sequence.
+  - Zach replied that doing so would require inspecting and comparing code units.
+  - Hubert opined that we don't have a great story here if we're going to be telling
+    programmers to figure this out themselves.
+  - Zach suggested that we don't have a good understanding of the needs right now, but
+    stated improvements can be made later.
+  - Tom expressed skepticism that error handling could be added later since the addition
+    of a template parameter, even one with a default argument, would break passing
+    these class templates as template template parameters.
+  - Jens expressed a belief that the standard reserves the right to make such additions.
+  - Zach agreed that such changes would constitute an ABI break.
+  - Hubert agreed that it seems that we don't know exactly what we want.
+  - Jens expressed skepticism that there aren't compelling use cases for custom error
+    handling and suggested that a more complete design that addresses those use cases
+    might subsume the use cases met with what is proposed.
+  - Jens stated that his personal approach is to never accept bad data provided via a
+    network since bad data can lead to security vulnerabilities.
+  - Zach suggested that a good solution might be to wrap the for statement that single
+    steps the character decoding in a convenient interface for users.
+  - Tom advised that we not poll this topic for now and that we move on to other topics
+    such as whether the `std::uc::format' enumeration is still needed.
+  - Zach stated the enumeration is no longer needed and can be removed.
+  - Zach backtracked slightly and stated that he needs to implement that removal to
+    confirm that is the case.
+  - Jens noted that the enumeration is isomorphic to the three UTF code unit types.
+  - Tom directed the discussion towards another topic; how the proposed functionality
+    fits in with other features we expect to provide in the future.
+  - Corentin stated that the requirements are different with respect to JeanHeyd's work on
+    [ztd.text](https://github.com/soasis/text) and
+    [P1629 (Transcoding the 🌐 - Standard Text Encoding)](https://wg21.link/p1629).
+  - Corentin noted that Zack's proposed features are suitable for freestanding and can
+    therefore run on a toaster; that isn't the case for JeanHeyd's work.
+  - Corentin expressed support for having multiple solutions, particularly since JeanHeyd's
+    work cannot reasonably be implemented to work with the same constraints.
+  - Jens recalled that JeanHeyd's work is targeting WG14 and C interfaces.
+  - Tom replied that JeanHeyd has proposals targeting both WG14 and WG21 and that the WG14
+    proposal provides low level functionality needed for his WG21 proposal.
+  - \[ Editor's note: JeanHeyd's related proposal for WG14 is
+    [N3095 (Restartable Functions for Efficient Character Conversion, r11)](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3095.htm).
+    \]
+  - Jens observed that Zach's proposal is limited to support for the well-defined UTF
+    encodings and avoids the complications of table lookups and such that come with
+    support for arbitrary encodings.
+  - Tom asked Zach to confirm that there is no known reason that his proposal should not be
+    implementable for freestanding implementations.
+  - Zach confirmed.
+  - Jens noted that there are no system calls involved.
+  - Zach reported that he spent time looking at how ztd.text is implemented and how the
+    features could be integrated and that, the more he discussed with Tim Song, the more it
+    looked like integration just wasn't feasible.
+  - Zach stated that his proposal implements lazy algorithms where as JeanHeyd's work
+    implements eager transformations that can optimize based on knowledge of the destination.
+  - Zach said he could not find a reasonable way to make these compatible or to implement one
+    in terms of the other.
+  - Tom claimed it is ok if these features are complementary without being integrated.
+- Tom stated that the next meeting is scheduled for 2023-09-27 and that the anticipated agenda
+  will include an initial review of
+  [P1729R2 (Text Parsing)](https://wg21.link/p1729r2).
+- Tom asked for opinions regarding what else should be discussed before we're ready to poll
+  forwarding this paper.
+- Corentin replied that we could work on improving the presentation in the paper for LEWG.
+- Corentin noted that LEWG is likely to return the paper to SG16 for any Unicode questions
+  not answered in the paper.
+- Hubert suggested that LEWG review the design before substantial effort is expended on
+  formal wording.
 
 
 # August 23rd, 2023
