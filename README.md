@@ -198,11 +198,12 @@ Draft agenda:
       > character encoding form, it shall treat ill-formed code unit sequences as an error
       > condition and shall not interpret such sequences as characters.
   - PBrett interpreted the clause as motivation for erroneous behavior.
-  - Robin asked whether erroneous behavior is similar to ADA's constraints and provided
-    a link to
+  - Robin asked whether erroneous behavior is similar to Ada's concept of bounded errors and
+    provided a link to
     [section 1.1.5, "Classification of Errors" in the Ada 2022 standard](http://www.ada-auth.org/standards/22aarm/html/AA-1-1-5.html).
-  - \[ Editor's note: "erroneous behavior" as recently used in WG21 appears to correlate best
-    with Ada's "bounded errors". \]
+  - \[ Editor's note: "erroneous behavior" as recently used in WG21 does appear to correlate
+    well with Ada's "bounded errors". Note that Ada's "erroneous execution" corresponds to
+    the C and C++ notion of "undefined behavior". \]
   - Tom provided a brief overview of the recent history of erroneous behavior and its proposed
     use for reads of uninitialized variables.
   - \[ Editor's note: Robin shared a link to
