@@ -76,7 +76,7 @@ Draft agenda:
     - `std::scan` is the parsing analog to `std::format`.
   - Elias proceded with presenting the paper.
   - PBrett pointed out an error in the comments in the example code in section 3.1, "Basic example";
-    'result.begin()' should be 'result->begin()'.
+    `result.begin()` should be `result->begin()`.
   - Elias reported that that error has already been corrected in an R3 draft.
   - PBrett asked whether `begin()` reflects the start of the parsed range or the start of the
     remaining text.
