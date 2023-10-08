@@ -18,6 +18,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [September 27th, 2023](#september-27th-2023)
 - [September 13th, 2023](#september-13th-2023)
 - [August 23rd, 2023](#august-23rd-2023)
 - [July 26th, 2023](#july-26th-2023)
@@ -39,6 +40,212 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 27th, 2023
+
+## Agenda
+- [P1729R2: Text Parsing](https://wg21.link/p1729r2):
+  - Initial review.
+
+## Meeting summary
+- Attendees:
+  - Eddie Nolan
+  - Elias Kosunen
+  - Fraser Gordon
+  - Nathan Owen
+  - Peter Brett
+  - Robin Leroy
+  - Tom Honermann
+  - Victor Zverovich
+- Tom announced that Steve Downey has agreed to take on a SG16 co-chair role and will likely participate
+  in a SG16 meeting chair rotation.
+- PBrett stated that he might have less time available for SG16 meetings in the near future due to
+  commute changes.
+- Tom reported that an in-person meeting for SG16 is not planned for Kona.
+- PBrett noted that SG21 (contracts) is likely to reduce both his and Tom's availability during the
+  Kona meeting.
+- Fraser asked if SG16 is impacted by the recent decision to disallow ISO and INCITS from hosting
+  joint meetings.
+- PBrett responded that it is not.
+- [P1729R2: Text Parsing](https://wg21.link/p1729r2):
+  - Elias offered an introduction:
+    - SG16 reviewed P1729R0 during the in-person meeting in Cologne.
+    - P1729R1 was reviewed by LEWG-I soon after, but activity then stalled until recently.
+    - There have been a lot of changes.
+    - `std::scan` is the parsing analog to `std::format`.
+  - Elias proceded with presenting the paper.
+  - PBrett pointed out an error in the comments in the example code in section 3.1, "Basic example";
+    'result.begin()' should be 'result->begin()'.
+  - Elias reported that that error has already been corrected in an R3 draft.
+  - PBrett asked whether `begin()` reflects the start of the parsed range or the start of the
+    remaining text.
+  - Elias replied that it reflects the unparsed remainder.
+  - Fraser asked why the text to be parsed is passed before the format string.
+  - Elias replied that the order is consistent with `scanf()`.
+  - Tom observed that the dereference of 'result' in the example code in section 3.5,
+    "Alternative error handling", is unconditional and would presumably result in some kind of
+    bad behavior if the scan was not successful.
+  - Elias confirmed that would result in undefined behavior, noted that an exception would be thrown
+    if `result.value()` was used instead, and stated that the null-coalesing example avoids the
+    bad behavior.
+  - Elias stated that the example should probably be updated.
+  - Elias presented 3.6, "Scanning an user-defined type" and stated that, with regard to encoding,
+    his implementation assumes UTF-8, but that doing so is probably not acceptable for the standard.
+  - Victor replied that most of the matching against the format string is encoding agnostic and
+    just needs to match code units.
+  - Victor noted that encoding issues are relevant for cases that involve locale.
+  - Victor asserted that the same encoding approach should be used as for `std::format`; use the
+    ordinary literal encoding.
+  - PBrett reported that other encodings, such as EUC-KR, are still widely used in some regions.
+  - Elias presented 6.2, "`scanf`-like `[character set]` matching", a future extension to support
+    matching a range of characters and asked about the potential to unintentionally close off the
+    possibility of future support for such extensions if they are not provided up front.
+  - Tom replied that he didn't have any such concerns.
+  - Tom stated that this is regex-like behavior that could be layered on in a different manner.
+  - PBrett expressed a desire for such a feature in order to ease migration from `scanf()`.
+  - PBrett noted that matching a range could be locale dependent.
+  - Victor asserted that feature additions should be motivated by usage and noted that
+    `std::format()` does not provide replacements for all features in `printf()`.
+  - Eddie asked if a range of characters might be sensitive to encoding; for example, the meaning
+    of the range `[A-Z]` could potentially be different for EBCDIC vs ASCII.
+  - Tom suggested revisiting such concerns with locale in mind at a later time.
+  - Tom noted that character set ranges are locale sensitive in utilities like `grep`.
+  - Tom directed discussion back to section 4.2, "Format strings", and stated that the use of
+    `std::isspace()` to scan whitespace is problematic because it is only able to recognize
+    whitespace characters that are encoded as a single code unit.
+  - Tom asked Victor to confirm that a definition of whitespace characters was not required
+    for `std::format()`.
+  - Victor confirmed.
+  - Tom suggested that, if the associated literal encoding is a standard unicode encoding form,
+    then the set of whitespace characters should be defined to match one of the Unicode
+    whitespace definitions and that the set is otherwise implementation-defined.
+  - Elias noted that Unicode specifies a lot of whitespace characters and wondered how surprising
+    recognizing them might be.
+  - Robin stated that Unicode provides multiple whitespace character definitions for use in
+    various contexts via the `White_Space` and `Pattern_White_Space` character properties.
+  - Robin noted that `Pattern_White_Space` has the advantage of being immutable and that it
+    includes some invisible characters that should be ignored.
+  - Robin explained that `Pattern_White_Space` is intended to be used for the specification of
+    programming languages and that Unicode offers a recommendation in
+    [UAX #31 of Unicode 15.1](https://www.unicode.org/reports/tr31/tr31-39.html).
+  - \[ Editor's note: See
+    [section 4.1, "Whitespace"](https://www.unicode.org/reports/tr31/tr31-39.html#Whitespace)
+    and, in particular,
+    [conformance requirement UAX31-R3a](https://www.unicode.org/reports/tr31/tr31-39.html#R3a).
+    \]
+  - Tom provided a Unicode utilities link that lists all the characters with
+    `Pattern_White_Space=Yes`.
+    - https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=[:Pattern_White_Space=Yes:]
+  - PBrett lamented the "null" names for the C0 and C1 control characters.
+  - Robin filed an issue to correct the display names.
+    - [The UnicodeSet utility should show Name_Alias in the absence of Name](https://github.com/unicode-org/unicodetools/issues/542)
+  - \[ Editor's note: Following the meeting, Robin shared additional details regarding the
+    categorization of whitespace in the Unicode Standard. Even this is an incomplete list.
+    - [Things that are categorized as space separators](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5Cp%7BZs%7D&g=General_Category&i=White_Space%2C+Pattern_White_Space)
+    - [Things that are called spaces](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5Cp%7BName%3D%2F%5CbSPACE%5Cb%2F%7D&g=General_Category&i=White_Space%2C+Pattern_White_Space)
+    - [Things that are white space](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5Cp%7BWhite_Space%7D&g=General_Category&i=White_Space%2C+Pattern_White_Space)
+    - [Things that should be treated as white space in machine-readable syntaxes](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5Cp%7BPattern_White_Space%7D&g=General_Category&i=White_Space%2C+Pattern_White_Space)
+    - [Things that behave like space for line breaking](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5Cp%7BLine_Break%3DSPACE%7D&g=General_Category&i=White_Space%2C+Pattern_White_Space)
+    - [Things that behave like space for bidirectional ordering](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5Cp%7Bbc%3Dws%7D&g=General_Category&i=White_Space%2C+Pattern_White_Space)
+    - [Things that behave like space for word separation](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5Cp%7Bwb%3DWSeg_Space%7D&g=General_Category&i=White_Space%2C+Pattern_White_Space)
+    \]
+  - Tom asked for a clarification in the example in section 4.3.2, "Fill and align"; if the
+    format string for `rK` was changed to `"**42*"` would that result in an error like in the
+    `rI` example?
+  - Elias replied affirmatively.
+  - Tom suggested it might be worth adding an additional example to make that explicit.
+  - Elias asked what the behavior should be for input that is invalidly encoded and stated
+    that he had planned to propose substitution with a replacement character, but that
+    approach is problematic for output types with reference semantics like
+    `std::string_view`.
+  - Tom asked facetiously why the input wasn't sanitized before being passed to `std::scan`.
+  - Tom noted that this is a basic error handling question.
+  - Victor stated that substituting a replacement character doesn't work well in general since
+    it can't be matched by most of the type specific scanners.
+  - Victor suggested treating invalidly encoded input as an error such that an unsuccessful
+    scan result is returned.
+  - PBrett noted that ill-formed sequences could just be passed through when scanning for string
+    input.
+  - Tom asked how the scanner would know when to stop scanning.
+  - PBrett replied that the replacement character could be handled as a character that doesn't
+    match any other character.
+  - Tom quipped, so it's a NaN.
+  - PBrett agreed.
+  - Robin suggested treating such substituted characters as the unknown character, U+FFFF, with
+    regard to Unicode properties and shared a link that lists those properties.
+    - https://util.unicode.org/UnicodeJsps/character.jsp?a=FFFF&B1=Show
+  - Elias expressed concern about the overhead imposed by always validating the encoding of the
+    input, but noted that passing ill-formed sequences through means that errors are sometimes
+    caught and sometimes not.
+  - Eddie expressed a desire for input to be sanitized to avoid having to worry about the
+    consequences otherwise.
+  - PBrett observed that, historically, we have required input to be sanitized and noted that
+    validating the input is helpful to avoid undefined behavior.
+  - PBrett summarized the options available; make the behavior well-defined, make it undefined,
+    or, perhaps, categorize it as erroneous though we don't yet know how to apply that concept
+    to the standard library.
+  - \[ Editor's note: "Erroneous behavior" is a concept recently discussed within WG21 in the
+    context of
+    [P2795 (Erroneous behaviour for uninitialized reads)](https://wg21.link/p2795). \]
+  - Elias noted that scanners written for user-defined types are unlikely to perform encoding
+    validation, but that we could encourage authors to delegate scanning back to `std::scan`
+    as demonstrated in section 3.6, "Scanning an user-defined type".
+  - Robin reported that Unicode does have a conformance requirement that ill-formed input not be
+    treated as a character and directed the group to
+    [conformance clause C.10 in chapter 3 of Unicode 15](https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#G54355).
+      > When a process interprets a code unit sequence which purports to be in a Unicode
+      > character encoding form, it shall treat ill-formed code unit sequences as an error
+      > condition and shall not interpret such sequences as characters.
+  - PBrett interpreted the clause as motivation for erroneous behavior.
+  - Robin asked whether erroneous behavior is similar to ADA's constraints and provided
+    a link to
+    [section 1.1.5, "Classification of Errors" in the Ada 2022 standard](http://www.ada-auth.org/standards/22aarm/html/AA-1-1-5.html).
+  - \[ Editor's note: "erroneous behavior" as recently used in WG21 appears to correlate best
+    with Ada's "bounded errors". \]
+  - Tom provided a brief overview of the recent history of erroneous behavior and its proposed
+    use for reads of uninitialized variables.
+  - \[ Editor's note: Robin shared a link to
+    [section 13.9.1, "Data Validity", paragraph 9 in the Ada 2022 standard](http://www.ada-auth.org/standards/22aarm/html/AA-13-9-1.html#p9)
+    and its discussion of handling of objects with invalid representations; such cases might
+    arise due to lack of initialization. \]
+  - PBrett asked if there is a way to scan a single code point.
+  - Elias replied that there is in his reference implementation but that it is provided via
+    a distinct `scanner` specialization for a `code_point` type.
+  - Elias suggested that it might be desirable to support transcoding of `charN_t`-based
+    types in the future.
+  - PBrett noted that scanning of `charN_t`-based types does not involve ambiguous encoding.
+  - Victor expressed uncertainty regarding how to handle such transcoding when the corresponding
+    literal encoding isn't a standard Unicode encoding form.
+  - Elias stated that a programmer can handle such concerns on their own, but only for a
+    user-defined type since they would not be permitted to specialize `std::scanner` for the
+    `charN_t` types.
+  - Elias explained that locale support is opt-in the same as it is for `std::format` and that
+    the classic locale is used by default.
+  - Tom pondered whether it would be desirable to recognize input using both the specified locale
+    and the classic locale.
+  - PBrett expressed strong opposition.
+  - Tom realized use of multiple locales doesn't work at all because recognition of characters
+    used for, e.g., thousands separators and decimal points would be ambiguous.
+  - PBrett requested the addition of an example to the paper to demonstrate explicit use of a
+    locale.
+  - PBrett asserted that it is a programmer requirement to ensure that input is correctly encoded
+    for the specified locale.
+  - Elias directed attention to section 4.3.5, "Localized (L)", and asked whether a misplaced
+    grouping separator should result in an error.
+  - Elias indicated that the proposed behavior is consistent with iostreams.
+  - Victor cautioned against being innovative and opined that existing practice should be followed.
+  - Victor noted that implementation of a relaxed scanner should not be difficult when needed.
+  - Tom noted the discussion of alternative options for interpretation of field width units in
+    section 4.3.4, "Width and precision" and asked for motivating reasons to consider options that
+    differ from `std::format`.
+  - Elias replied that the proposed behavior differs from `std::scanf()`.
+  - Tom asked whether the message strings described in section 4.6, "Error handling" require
+    translation or localization.
+  - Elias replied that they are intended for use with `std::exception` and therefore target
+    programmers rather than end users.
+- Tom stated that the next meeting is scheduled for October 11th and that an agenda is still to
+  be determined.
 
 
 # September 13th, 2023
