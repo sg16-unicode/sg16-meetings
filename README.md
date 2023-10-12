@@ -9,12 +9,19 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, October 11th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20231011T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, October 25th, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20231025T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
 
 Draft agenda:
-- [P1729R2: Text Parsing](https://wg21.link/p1729r2):
-  - Continue review.
+- [P2873R0: Remove Deprecated Locale Category Facets For Unicode from C++26](https://wg21.link/p2873r0):
+  - Revisit. The deprecated `codecvt<char16_t,char>` and `codecvt<char32_t,char>` specializations are needed
+    for support of `basic_fstream<char16_t>` and `basic_fstream<char32_t>`. However, the standard does not
+    currently require support for those and adding support would require adding additional specializations
+    of other locale facets like `ctype`. Likewise, adding support for `basic_fstream<char8_t>` would
+    require adding a new `codecvt<char8_t,char>` specialization. Meanwhile,
+    [\[locale.codecvt.virtuals\]p4](http://eel.is/c++draft/locale.codecvt#virtuals-4)
+    states requirements that `codecvt<char8_t,char>` and `codecvt<char16_t,char>` don't meet since each
+    of them requires more than one "internal character" for some characters.
 
 
 # Past SG16 meetings
