@@ -25,6 +25,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [October 11th, 2023](#october-11th-2023)
 - [September 27th, 2023](#september-27th-2023)
 - [September 13th, 2023](#september-13th-2023)
 - [August 23rd, 2023](#august-23rd-2023)
@@ -47,6 +48,207 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 11th, 2023
+
+## Agenda
+- [P1729R3: Text Parsing](https://wg21.link/p1729r3):
+  - Continue review.
+ 
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Elias Kosunen
+  - Hubert Tong
+  - Nathan Owen
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [P1729R3: Text Parsing](https://wg21.link/p1729r3):
+  - \[ Editor's note: D1729R3 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P1729R3 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Elias presented the changes in the draft P1729R3:
+    - `std::scan` now returns a subrange for the unparsed input rather than just an iterator to the
+      start of the range.
+    - As noted in the revision history, changes requested during the last SG16 review with respect to
+      whitespace, locale, and encoding concerns have been made.
+  - Victor asked if returning a subrange will be less efficient since it requires passing an iterator
+    pair or an iterator and size pair.
+  - Elias responded that the overhead is expected to be negligible relative to the convenience provided
+    by returning the sentinel.
+  - Elias commented that, per section 3.6, "Scanning an user-defined type", the second template parameter
+    for `std::scanner` now has `char` as a default argument.
+  - Elias reviewed the changes in section 4.2, "Format strings" to define whitespace in terms of the
+    Unicode `Pattern_White_Space` property.
+  - Victor asked why LEFT-TO-RIGHT MARK and RIGHT-TO-LEFT MARK are considered whitespace.
+  - Robin responded that these code points can be used to prevent directionality properties from one
+    token from affecting how the characters of an adjacent token are displayed.
+  - Tom asked for confirmation that there is no desire or need for scanning to consider bidirectional
+    concerns; e.g., scanning should always follow memory order, not logical order.
+  - Robin referenced the examples in
+    [section 1.3.2, "Usability issues arising from bidirectional reordering"](https://www.unicode.org/reports/tr55/tr55-3.html#Usability-bidi)
+    of
+    [UTS #55, "Unicode Source Code Handling"](http://www.unicode.org/reports/tr55)
+    that demonstrate how the Unicode Bidirectional Algorithm can produce unreadable text.
+  - Victor requested the addition of some bidirectional examples and asked Robin if he could offer
+    some suggestions that would be relevant for scanning.
+  - Elias agreed that examples can be added.
+  - Tom noted that, when the input is not known to be in a UTF encoding, that the set of whitespace
+    characters will need to be implementation-defined.
+  - Elias agreed and stated those details will be added later.
+  - Elias directed attention to section 4.3.5.1, "Design discussion: Thousands separator grouping checking"
+    and noted that iostreams enforces grouping separators.
+  - Tom asked for confirmation that iostreams only enforces that, if grouping separators are present,
+    that they are in the expected locations and that they aren't required to be present.
+  - Elias confirmed.
+  - Victor asserted that `std::scan` should do what iostreams does and stated that programmers that
+    want different behavior can implement that themselves.
+  - Elias suggested the behavior could potentially be changed later if desired.
+  - Victor replied that it is generally more difficult to introduce an error where one was not
+    previously reported than it is to relax an error that was previously reported.
+  - Elias noted that some `scanf()` implementations have an extension that allows `'` to be
+    recognized as a grouping separator.
+  - Tom asked if that separator is handled like it is in C++ where it can appear anywhere any number
+    of times.
+  - Elias responded that it is recognized as an alternate grouping separator, so no.
+  - Victor explained that
+    [{fmt}](https://github.com/fmtlib/fmt)
+    briefly supported that feature but that it was removed.
+  - Victor opined that support for that feature probably isn't needed.
+  - Elias acknowledged that support for it could always be added later.
+  - Corentin agreed with Victor, expressed a desire to eventually replace locale support with
+    something based on ICU someday, and encouraged avoidance of innovation with locale features.
+  - Elias stated that he would not proceed further with the alternate separator.
+  - Elias pointed out that section 4.5, "Argument passing, and return type of `scan`", now
+    specifies that `std::scan` returns a subrange.
+  - Elias observed a markup error in the last paragraph of that section; "gt;" appears where
+    "&gt;" was intended to encode ">".
+  - Elias claimed that the return of a subrange consisting of an iterator and sentinel pair is
+    novel and is done because the sentinel is always available but converting it to an iterator
+    would require more work to advance an iterator to the sentinel position.
+  - Tom encouraged Elias to contact the SG9 chair to arrange a discussion.
+  - Elias proclaimed that a better name is needed for the proposed `borrowed_ssubrange_t` and
+    explained that the extra "s" stands for sentinel.
+  - Steve agreed and stated that, as is, that name looks like a typo.
+  - Steve recommended spelling the name out since this isn't one that programmers would have
+    to write often anyway.
+  - Corentin suggested that it might be possible to change `borrowed_subrange` to support an
+    iterator and sentinel subrange.
+  - Elias replied that doing so might impact ABI.
+  - Corentin recommended discussing it in SG9.
+  - Elias presented section 4.6, "Error handling", and the recently added `value_out_of_range`
+    enumerator added to `scan_error::code_type`.
+  - Elias explained that the `strtol()` family of interfaces allow a programmer to differentiate
+    between overflow and underflow using a combination of the return value and `errno`, but that
+    `std::scan` as proposed would not be able to support that.
+  - Victor reported having previously needed to be able to differentiate between underflow and
+    overflow.
+  - Tom stated that it sounds like there is some motivation for more granular errors.
+  - Corentin argued that isn't a question for SG16 to answer.
+  - Elias reported that there are a lot of potential error conditions and argued that adding a
+    different error code for each is probably undesirable.
+  - Corentin asked if a distinct error code is needed for encoding errors.
+  - Elias responded that there had been discussion about that during the previous review and
+    that we'll get to that section shortly.
+  - Corentin asserted that it would be useful to provide an iterator or index to the position
+    within the input where an error occurred.
+  - Victor agreed.
+  - Victor suggested it would make sense to provide more granular error handling for builtin types.
+  - Victor requested some additional examples and noted that there are unique error cases for
+    floating-point types.
+  - Elias mentioned that an example has been added to section 4.10, "Locales".
+  - Elias stated that section 4.11, "Encoding" was added for the R3 revision.
+  - Elias summarized discussion from the last SG16 review; that ill-formed code unit sequences be
+    handled similar to floating-point NaN values in that they don't match anything.
+  - Victor suggested that "invalidly encoded code points" should be changed to something like
+    "ill-formed code unit sequences".
+  - Corentin asked if the intent is to supply replacement characters for ill-formed code unit
+    sequences.
+  - Elias replied negatively and explained that the intent is to allow use of `std::string_view`
+    as a result type that refers to matched characters in the input; that support precludes
+    substitution of replacement characters.
+  - Elias stated that these sequences are instead handled like non-characters.
+  - Elias acknowledged that this design means that unsanitized input won't be validated and that
+    ill-formed code unit sequences may persist in the output.
+  - Corentin noted the implication; that values returned by `std::scan` can't be trusted and lack
+    of verification can result in UB and security issues.
+  - Elias agreed that there is a security aspect since the input could be arbitrary user provided
+    input.
+  - Victor opined that the proposed behavior seems reasonable and consistent with other scan-like
+    functions.
+  - Victor suggested updating the paper to compare the proposed behavior with `scanf()`.
+  - Steve noted that, even if the input was mutable, rewriting replacement characters into the buffer
+    is not an option since the space needed for the encoded replacement character might require a
+    longer buffer.
+  - Steve explained that Zach's proposed transcoding facilities could be used to pipe input that
+    has not been validated for encoding concerns into the scanner such that replacement characters
+    are proactively substituted.
+  - \[ Editor's note: The input produced by such a pipeline would not provide a contiguous range
+    of elements and would presumably not be usable with a `std::string_view` result type. \]
+  - Steve expressed a preference for features that compose.
+  - Victor asserted that it should be possible to use `std::scan` with binary data and that
+    ill-formed code unit sequences should therefore not be unconditionally rejected.
+  - Corentin agreed that support for binary data is an important concern and referred to a comment
+    [Tom made in a message to the SG16 mailing list](https://lists.isocpp.org/sg16/2023/10/3974.php)
+    about the potential use of a `{:?}` format specier for byte precise scanning.
+  - Corentin expressed uncertainty regarding how important it is to handle mixed binary and text.
+  - Corentin noted that the proposed design provides different guarantees for different types;
+    result objects of `int` and `float` type will always hold valid values, but a string type might
+    hold garbage.
+  - Corentin worried that programmers might expect a validly encoded string and be surprised.
+  - Victor claimed that it is not possible to determine what is and is not garbage since programmers
+    do use string types like `std:string_view` with binary data.
+  - Victor asserted that we should not try to guess the programmer's intent.
+  - Tom agreed that we should not assume the programmer's intent and observed that providing a
+    facility to allow them to express their intent could be ok.
+  - Elias reported that the example that Tom included in the
+    [agenda announcement](https://lists.isocpp.org/sg16/2023/10/3971.php)
+    has been added as example 6 in section 4.3.8, "Type specifiers: CharT".
+  - \[ Editor's note: the example involves a scan of the first code unit of a multiple code unit
+    sequence followed by a scan of a string that then interprets the remainder of the code unit
+    sequence as an ill-formed sequence. \]
+  - Corentin noted that scanning strings requires recognizing spaces and asked if there is a use
+    case for a space separated sequence of random bytes.
+  - Corentin surmised that, if that use case is important, then it should influence the design.
+  - Victor recognized Corentin's observation regarding spaces and random bytes as important.
+  - Victor stated that the behavior described for the example in the paper matches his expectations.
+  - Elias argued that the entire input should not be sanitized due to processing overhead.
+  - Elias affirmed that an invalidly encoded string could be handled as an error.
+  - Tom asserted it would be useful to allow the programmer to express their intent with a type
+    specifier.
+  - Tom noted that the ability to do so would allow for the kinds of encoding guarantees that
+    programmers might expect and argued that this should be the default behavior.
+  - Elias agreed that would be useful.
+  - Elias stated that he will have to evaluate further how that fits into the design but that it
+    sounds manageable.
+  - Tom asked if `signed char` and `unsigned char` are handled as character or integer types.
+  - Elias responded that they are treated as integer types.
+  - Tom noted that is consistent with `std::format()`.
+  - Elias added that it is also consistent with iostream.
+  - Victor conveyed a lack of enthusiasm for an additional format specifier due to the increased
+    complexity.
+  - Tom suggested relying on the type system instead; perhaps `std::span<char>` could be used to
+    scan a "binary string".
+  - Victor agreed and suggested there could be another type to represent a broken code unit.
+  - Corentin nominated `std::byte`.
+  - Tom noted that `std::byte` wouldn't work for wide strings.
+  - Corentin countered that wide strings aren't used for binary data.
+  - Tom responded that a programmer might want to be able to read a lone surrogate.
+  - Victor reported that `std::format()` formats `std::byte` as an unsigned integer.
+  - Tom summarized his impression of the consensus at this point; the design is good, but some
+    progress is needed regarding handling of text vs binary input.
+  - Corentin expressed a penchant for the design in general.
+  - Elias requested that the meeting minutes be published before October 15th so that they would
+    be available for reference by the R3 paper in time for the next mailing deadline.
+  - Tom said he would try.
+  - \[ Editor's note: Tom provided a rough draft of the minutes prior to the 15th and that
+    sufficed for Elias' purposes. \]
+- Tom announced that the next meeting will be held 1023-10-25 and that there are some LWG issues
+  to be discussed, including ones involving everyone's favorite locale facet, `std::codecvt`.
+- Hubert stated that he might soon have a paper that discusses use of `$` in identifiers.
 
 
 # September 27th, 2023
