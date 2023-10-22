@@ -95,6 +95,10 @@ Draft agenda:
     that demonstrate how the Unicode Bidirectional Algorithm can produce unreadable text.
   - Victor requested the addition of some bidirectional examples and asked Robin if he could offer
     some suggestions that would be relevant for scanning.
+  - Robin responded in chat to see the examples in
+    [section 4.1.1, "Bidirectional Ordering"](https://www.unicode.org/reports/tr31/tr31-39.html#Bidirectional_Ordering)
+    of
+    [UAX #31, "Unicode Identifiers and Syntax"](https://www.unicode.org/reports/tr31).
   - Elias agreed that examples can be added.
   - Tom noted that, when the input is not known to be in a UTF encoding, that the set of whitespace
     characters will need to be implementation-defined.
