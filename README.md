@@ -9,17 +9,11 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, October 25th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20231025T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cest)).
+Wednesday, November 29th, 2023, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20231129T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
-- charN_t, char_traits, codecvt, and iostreams:
-  - [P2873R0: Remove Deprecated Locale Category Facets For Unicode from C++26](https://wg21.link/p2873r0).
-  - [LWG 3767: codecvt<charN_t, char8_t, mbstate_t> incorrectly added to locale](https://wg21.link/lwg3767).
-  - [LWG 2959: char_traits<char16_t>::eof is a valid UTF-16 code unit](https://wg21.link/lwg2959).
-    - [SG16 #32: std::char_traits<char16_t>::eof() requires uint_least16_t to be larger than 16 bits](https://github.com/sg16-unicode/sg16/issues/32).
-  - [SG16 #33: A correct codecvt facet that works with basic_filebuf can't do UTF conversions](https://github.com/sg16-unicode/sg16/issues/33).
-
+- TBD
 
 # Past SG16 meetings
 - [October 11th, 2023](#october-11th-2023)
