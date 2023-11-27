@@ -13,7 +13,13 @@ Wednesday, November 29th, 2023, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20231129T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
-- TBD
+- [P2980R0: A motivation, scope, and plan for a physical quantities and units library](https://wg21.link/p2980r0):
+  - Support for a `fixed_string` type as referenced in the
+    ["External dependencies"](https://wg21.link/p2980r0#external-dependencies)
+    section.
+  - Support for `std::format` and display of symbol names.
+  - Support for `wchar_t`, `char8_t`, `char16_t`, and `char32_t`.
+
 
 # Past SG16 meetings
 - [October 25th, 2023](#october-25th-2023)
