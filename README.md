@@ -9,16 +9,11 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, November 29th, 2023, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20231129T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, January 10th, 2024, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240110T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
-- [P2980R0: A motivation, scope, and plan for a physical quantities and units library](https://wg21.link/p2980r0):
-  - Support for a `fixed_string` type as referenced in the
-    ["External dependencies"](https://wg21.link/p2980r0#external-dependencies)
-    section.
-  - Support for `std::format` and display of symbol names.
-  - Support for `wchar_t`, `char8_t`, `char16_t`, and `char32_t`.
+- TBD
 
 
 # Past SG16 meetings
