@@ -17,6 +17,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [November 29th, 2023](#november-29th-2023)
 - [October 25th, 2023](#october-25th-2023)
 - [October 11th, 2023](#october-11th-2023)
 - [September 27th, 2023](#september-27th-2023)
@@ -41,6 +42,158 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# November 29th, 2023
+
+## Agenda
+- [P2980R0: A motivation, scope, and plan for a physical quantities and units library](https://wg21.link/p2980r0):
+  - Support for a `fixed_string` type as referenced in the
+    ["External dependencies" section](https://wg21.link/p2980r0#external-dependencies).
+  - Support for `std::format` and display of symbol names.
+  - Support for `wchar_t`, `char8_t`, `char16_t`, and `char32_t`.
+
+## Meeting summary
+- Attendees:
+  - Eddie Nolan
+  - Fraser Gordon
+  - Lauri Vasama
+  - Mateusz Pusz
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- A round of introductions was held for new attendee Lauri Vasama.
+- [P2980R0: A motivation, scope, and plan for a physical quantities and units library](https://wg21.link/p2980r0):
+  - Mateusz explained that the contents of this paper, as well as the contents of
+    [P2981 (Improving our safety with a physical quantities and units library)](https://wg21.link/p2981)
+    and
+    [P2982 (`std::quantity` as a numeric type)](https://wg21.link/p2982)
+    are being merged into a new paper following feedback during the Kona 2023 meeting.
+  - Mateusz proceded with presenting a draft version of the new paper.
+- [P3045R0: Quantities and units library](https://wg21.link/p3045r0):
+  - \[ Editor's note: D3045R0 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P3045R0 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - Mateusz introduced the paper:
+    - Formatting support is needed to present dimensions and units.
+    - Unicode doesn't provide subscript and superscript characters for all Latin characters, so
+      formatting necessarily differs from conventional notation in some cases.
+    - The design currently specifies symbol names in terms of `char` and assumes a Unicode encoding.
+    - A `fixed_string` type is required to enable a unit symbol to be passed as a template argument
+      for the `named_unit` class template.
+    - The library only requires a `fixed_string` type with read capabilities; mutation is not needed.
+    - There are many implementations of a `fixed_string` type and re-inventing yet another one for
+      this library is not desirable.
+    - There are many design options for a `fixed_string` type including whether mutate and resize
+      operations are supported or whether the type can be implemented with `std::string` and a fixed
+      allocator.
+    - `std::string_view` does not support mutation.
+    - The conventional notation for SI units depends on characters that are not represented in ASCII
+      or in the basic character set.
+    - Some users will require ASCII-only output and there is no standard specification for ASCII-only
+      symbol names.
+    - Supporting both Unicode and non-Unicode formatting requires alternative symbols.
+    - The `basic_symbol_text` class template allows for both a Unicode and ASCII-only representation
+      to be provided.
+  - Tom mentioned that formatted output should be designed for roundtripping so that the output
+    produced is amenable to scanning.
+  - Tom noted that a proposal for text parsing is making its way through the committee.
+  - \[ Editor's note: See
+    [P1729 (Text Parsing)](https://wg21.link/p1729).
+    \]
+  - Mateusz agreed that roundtripping is important to support serialization to a text file and back.
+  - Tom suggested that, in lieu of a `fixed_string` type, string operations could be provided by
+    layering `std::string_view` on top of a template parameter that provides contiguous storage.
+  - Mateusz agreed that `std::array` could be used.
+  - Tom acknowledged that `std::array` is a structural type and thus usable as a non-type template
+    parameter.
+  - Eddie asked if `operator+` and other operators could be provided on top of `std::array`.
+  - Mateusz replied that he believed so.
+  - Lauri expressed concern that deduction guides might be problematic due to null terminators.
+  - Tom noted that the proposal assumes that a string literal is always passed as the template
+    argument for symbol names.
+  - Lauri stated that the array approach won't work if there is special handling of string literals.
+  - Eddie suggested that a simple wrapper type with a `std::array` member and a suitable deduction
+    guide could work.
+  - Tom suggested use of a UDL since they can only be used with a string literal.
+  - Mateusz replied that consideration should be given to this functionality being user facing.
+  - Steve stated that use of `std::array` instead of a more specific type could lead to ambiguities
+    later.
+  - Lauri noted that a UDL would require another structural type.
+  - Tom agreed and acknowledged that use of a UDL would affect the interface and the user experience.
+  - Mateusz asserted that the parameter type should have associated text semantics and not just
+    provide storage.
+  - Tom asked how important it is that the programmer be able to control whether symbols are
+    formatted with Unicode or ASCII-only characters.
+  - Mateusz replied that there are some users that require ASCII-only output and that an inability
+    to opt-out of a full Unicode mode would be a no-go.
+  - Mateusz stated that there isn't a similar concern for iostreams since a manipulator could be
+    provided to control the mode.
+  - Tom stated this can remain an open question for now.
+  - Fraser suggested that the formatter could allow the programmer to specify an alternate unit
+    symbol in the format specification itself.
+  - Victor noted that `std::print` works with iostreams, so iostream support could be provided
+    indirectly.
+  - Victor asked if there are interactions with locale.
+  - Mateusz replied that the ability to provide locale support is limited by the standard not
+    providing access to the Unicode CLDR database or similarly suitable locale support.
+  - Victor recommended reserving an 'L' option specifier in the format specification that would
+    render the code ill-formed for now so as to allow extension later without an ABI break.
+  - Eddie noted that the standard already permits an implementation to choose between a Unicode
+    and ASCII symbol for iostream formatting of `std::chrono::duration`.
+  - [ Editor's note: see
+    [\[time.duration.io\]p(1,5)](http://eel.is/c++draft/time.duration.io#1.5):
+      > Otherwise, if `Period::type` is `micro`, it is implementation-defined whether
+      > *units-suffix* is "μs" ("\u00b5\u0073") or "us".
+
+    ]
+  - Eddie opined that `char8_t` should probably be used for storage of the Unicode symbol name.
+  - Eddie asserted that the paper should substitute "basic character set" for "ASCII" throughout.
+  - Eddie noted that U+212B (ANGSTROM SIGN) has a tendency to get normalized to
+    U+00C5 (LATIN CAPITAL LETTER A WITH RING ABOVE) or
+    U+0041 (LATIN CAPITAL LETTER A) followed by U+030A (COMBINING RING ABOVE).
+  - Mateusz responded that, with regard to use of `char8_t`, that it was suggested to him to
+    just use `char`.
+  - Tom replied that opinions differ on that.
+  - Steve asserted that the proposal should explicitly specify the code points to be used and
+    should not rely on glyphs.
+  - Tom noted that the language specification has been updated to be explicit about code points,
+    but that fewer such updates have been done for the library specification.
+  - Eddie asserted that normalization should be specified as well.
+  - Tom agreed and stated a preference for NFC.
+  - Eddie disagreed with the use of NFC since, per earlier discussion, U+212B (ANGSTROM SIGN)
+    won't be preserved.
+  - Mateusz directed discussion to section 13.1.4.1 (`unit_symbol_formatting`) where various
+    enumerations are defined to support encapsolating formatting in the `unit_symbol_formatting`
+    class.
+  - Victor commented that the enumeration types in that section should have specified underlying
+    types unless they are intended to be transient.
+  - Mateusz replied that the enumerations are only used at compile-time, but agreed that adding
+    a fixed underlying type might still make sense.
+  - Mateusz explained that `space_before_unit_symbol` is provided as a customization point to
+    control whether a space is inserted between a value and its unit symbol by default.
+  - Mateusz directed discussion to section 13.2.3.1 (`std::format` Grammar) and noted that the
+    proposed grammar is similar to that for `std::chrono` with the addition of options for
+    text encoding, and controls for inserting a solidus or separator character.
+  - Victor observed that the `units-unit-modifier` seems odd since, as specified, it requires
+    that if any of `units-text-encoding`, `units-unit-symbol-denominator`, and
+    `units-unit-symbol-separator` is present, then they all must be.
+  - Victor asked whether each of those terms should appear separately in square brackets.
+  - Mateusz replied that the intent is that each term can optionally be present in an unordered
+    sequence.
+  - Tom replied that specifying an order would avoid having to consider each term being present
+    multiple times.
+- Tom raised discussion of upcoming meeting plans:
+  - Tom stated that the next meeting is scheduled for December 13th and that he would like to
+    return to some LWG issues.
+  - \[ Editor's note: The December 13th meeting was canceled due to lack of sufficient progress
+    on the LWG issues to warrant additional discussion. \]
+  - Tom asked Mateusz if we can resume discussion of this paper on January 10th.
+  - Mateusz replied that he is not available that week.
+  - Tom asked if January 24th would work.
+  - Mateusz replied affirmatively.
+  - Mateusz requested a list of items to address or consider before the January 24th meeting so
+    that he can work on them to try and get some implementation experience in the meantime.
 
 
 # October 25th, 2023
