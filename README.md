@@ -163,6 +163,14 @@ Draft agenda:
   - Tom agreed and stated a preference for NFC.
   - Eddie disagreed with the use of NFC since, per earlier discussion, U+212B (ANGSTROM SIGN)
     won't be preserved.
+  - Steve pointed out that although the standard requires NFC for identifiers, it imposes no
+    such requirement on string literals.
+  - After some back and forth it was pointed out that the precedent in the standard is that
+    the code point used for iostream formatting of `std::chrono::duration` is
+    U+00B5 MICRO SIGN rather than its normalized equivalent U+03BC GREEK SMALL LETTER MU
+  - Eddie opined that, given this precedent, we should not specify a normalization for units,
+    and given multiple alternatives we should use code points corresponding to units, e.g.
+    U+212B (ANGSTROM SIGN) rather than U+00C5 (LATIN CAPITAL LETTER A WITH RING ABOVE).
   - Mateusz directed discussion to section 13.1.4.1 (`unit_symbol_formatting`) where various
     enumerations are defined to support encapsolating formatting in the `unit_symbol_formatting`
     class.
