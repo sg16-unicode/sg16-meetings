@@ -13,6 +13,7 @@ Wednesday, February 7th, 2024, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240207T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
+- Updates from the Unicode liaison from the UTC #178 meeting.
 - [CWG 2843: Undated reference to Unicode makes C++ a moving target](https://cplusplus.github.io/CWG/issues/2843.html).
 - [P2845R6: Formatting of std::filesystem::path](https://wg21.link/p2845r6).
 - [P3070R0: Formatting enums](https://wg21.link/p3070r0).
@@ -236,7 +237,7 @@ Draft agenda:
       conforming; implementations will do so regardless.
   - Steve summarized the consensus: we recommend having a dated reference to the Unicode Standard in the
     "Normative references" section, a minimum version requirement, and an allowance for implementors to
-    to use an implementation-defined later version.
+    use an implementation-defined later version.
   - Jens stated that he will update the proposed resolution for the CWG issue to reflect the SG16
     consensus.
 - [P2626R0: charN_t incremental adoption: Casting pointers of UTF character types](https://wg21.link/p2626r0):
