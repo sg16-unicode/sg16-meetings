@@ -160,7 +160,7 @@ Draft agenda:
   - Robin informed the group that ICU does not provide default tailoring support.
   - Steve responded that the base tailoring algorithms are not terribly difficult to implement but
     that some data is required.
-  - Poll 1: Recommend specifying Unicode 15.1.0 as the minimum Unicode version for C++23 (as a DR) and C++26.
+  - **Poll 1: Recommend specifying Unicode 15.1.0 as the minimum Unicode version for C++23 (as a DR) and C++26.**
     - Attendees: 9
       | SF  | F   | N   | A   | SA  |
       | --: | --: | --: | --: | --: |
@@ -200,7 +200,7 @@ Draft agenda:
     - The `path-format-spec` now supports a `g` option to enable formatting a path as a generic path.
   - Discussion in chat confirmed that `/` is used as the path separator when formatting a generic
     path and that the native path separator is used otherwise.
-  - Poll 2: Forward P2845R6 to LEWG.
+  - **Poll 2: Forward P2845R6 to LEWG.**
     - Attendees: 9
     - No objection to unanimous consent.
 - [P3070R0: Formatting enums](https://wg21.link/p3070r0):
@@ -233,7 +233,7 @@ Draft agenda:
     name of an enumerator.
   - Victor agreed that mapping an enumerator value to a name still has to be explicitly
     written but that reflection would make that easy.
-  - Poll 3: Forward P3070R0 to LEWG.
+  - **Poll 3: Forward P3070R0 to LEWG.**
     - Attendees: 9
     - No objection to unanimous consent.
 - Tom announced that the next meeting will be on 2024-07-21 and that the agenda is TBD.
