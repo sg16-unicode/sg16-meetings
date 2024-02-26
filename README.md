@@ -17,6 +17,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [February 7th, 2024](#february-7th-2024)
 - [January 24th, 2024](#january-24th-2024)
 - [January 10th, 2024](#january-10th-2024)
 - [Meetings held in 2023](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2023.md)
@@ -26,6 +27,216 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 7th, 2024
+
+## Agenda
+- Updates from the Unicode liaison from the UTC #178 meeting.
+- [CWG 2843: Undated reference to Unicode makes C++ a moving target](https://cplusplus.github.io/CWG/issues/2843.html).
+- [P2845R6: Formatting of std::filesystem::path](https://wg21.link/p2845r6).
+- [P3070R0: Formatting enums](https://wg21.link/p3070r0).
+
+## Meeting summary
+- Attendees:
+  - Eddie Nolan
+  - Jens Maurer
+  - Mark de Wever
+  - Nathan Owen
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- Updates from the Unicode liaison from the UTC #178 meeting:
+  - Robin shared the following updates:
+    - Draft meeting minutes are available at https://www.unicode.org/L2/L2024/24006.htm#178-0.
+    - Character assignments may now be specified on a provisional basis to facilitate early feedback
+      and development; this is particularly useful for font development.
+    - ICU will not expose characters in alpha or beta status.
+    - Product releases should not include support for provisional character assignments.
+    - Alpha review for Unicode 16.0 started yesterday; background material is available at
+      https://www.unicode.org/review/pri497/pri497-background.html.
+    - Unicode 16.0 will specify new normalization behavior that might invalidate optimization
+      techniques used by some implementations.
+    - A conformance testsuite is available that exercises the new normalization behavior.
+    - There was a minor update to
+      [UTS #55](http://www.unicode.org/reports/tr55/)
+      for case insensitive identifiers.
+    - \[ Editor's note: See the changes to
+      [section 3.1.1, "Normalization and Case", in the 2024-01-03 proposed update of UTS #55](https://www.unicode.org/reports/tr55/tr55-4.html#Normalization-Case).
+       \]
+    - Fraser Gordon was nominated and confirmed to chair the Terminal Text Working Group.
+    - The ICU technical committee has created a new Inflection Working Group.
+  - Tom noted that the new Inflection WG would presumably be relevant to the
+    Message Formatting Working Group.
+  - Robin agreed.
+- [CWG 2843: Undated reference to Unicode makes C++ a moving target](https://cplusplus.github.io/CWG/issues/2843.html):
+  - Tom explained that, following decisions made during the
+    [2024-01-10 SG16 meeting](https://github.com/sg16-unicode/sg16-meetings#january-10th-2024),
+    we now need to select a Unicode version for the standard to refer to.
+  - Steve proposed using the version that was current when designs were being evaluated and wording
+    drafted.
+  - Steve observed that doing otherwise might result in references that don't exist in the normatively
+    referenced version or that behavior or features might have changed.
+  - Steve stated that, for most features adopted during the C++23 development cycle, that would
+    probably be Unicode 15.
+  - Robin reported that Unicode 15.1.0 has material differences due to changes inspired by SG16 and
+    the
+    [UTS #55 (Unicode Source Code Handling)](https://www.unicode.org/reports/tr55/)
+    effort that impacted the `XID_start` and `XID_continue` properties.
+  - Robin noted that Unicode 15.1.0 also has changes for EGC segmentation for Indic scripts, shared
+    a link to the
+    [Sample Grapheme Clusters table in UAX #29 (Unicode Text Segmentation)](https://www.unicode.org/reports/tr29/#Table_Sample_Grapheme_Clusters),
+    and referenced the Devanagari *kshi* example (क्षि).
+  - Robin observed that the current undated reference currently resolves to Unicode 15.1.0.
+  - Eddie indicated a desire to ensure that implementors can defer to ICU for normalization and be
+    free to choose which ICU version they use.
+  - Eddie reported that, following discussion with Zach, he was convinced to use the latest Unicode
+    version which is currently 15.1.0.
+  - Eddie stated that implementors should be able to use different Unicode versions for the core
+    language and the standard library.
+  - Steve pointed out that there are multiple options for an ICU version to defer to; if they choose
+    to defer to one supplied by the platform, then they could get stuck with an old version.
+  - Eddie replied that is motivation for implementors not to defer to a platform supplied version or
+    for granting permission for use of an older version.
+  - Steve noted that Linux distributors like RedHat support the installation of new compiler versions
+    on older OS releases.
+  - Steve reported having encountered issues due to use of old versions of some platform supplied
+    libraries.
+  - Steve stated that we need to allow time for implementors to adapt to changes to the normatively
+    referenced version.
+  - Tom asked Jens if he will want EWG to review the choice of normative Unicode version reference.
+  - Jens replied that this issue has wide visibility and that the related GitHub issue is tagged for
+    EWG and LWG as well as SG16.
+  - Jens added that LWG can forward any concerns they have to LEWG.
+  - Jens stated that CWG will only be involved to vet the actual wording changes and the guarantees
+    regarding availability of character names as needed for the core language.
+  - Mark commented that, if libc++ were to start relying on ICU, that such reliance would likely be
+    expected to be satisfied by a distibution provided by the target platform.
+  - Mark stated that use of ICU would likely be determined on a per-feature basis.
+  - Eddie argued that such expectations suggest standardizing the lowest version that still covers
+    everything in the standard.
+  - Jens noted that, at present, that lowest version is the most recent Unicode version due to the
+    undated reference in C++23.
+  - Jens expressed being comfortable with specifying Unicode 15.0.
+  - Jens stated an expectation that implementors will likely honor the resolution of this CWG issue
+    for C++23 if it is approved as a DR.
+  - Jens suggested that some implementors might choose to warn on use of features from newer
+    Unicode versions.
+  - Robin reported that it is possible to subdivide ICU to include only necessary components.
+  - Robin added that it shouldn't be assumed that an implementor needs to rely on a version
+    distributed with the platform.
+  - Steve stated that ICU has support for symbol versioning and that this would allow an implementor
+    to distribute their own version such that it will not conflict with other versions.
+  - Jens suggested that future paper authors be encouraged to comment on whether implementations
+    should or should not rely on ICU for particular features and the potential to get stuck with a
+    dependency on an older version.
+  - Jens advocated for collecting opinions from implementors.
+  - Robin asserted that specifying Unicode 15.1.0 will help to position implementors for future
+    upgrades.
+  - Steve claimed it would be useful to give implementors advanced notice.
+  - Tom asked if anyone knows what ICU version Microsoft provides and whether any implementations
+    defer to it today.
+  - Mark reported that Microsoft relies on the platform ICU version for timezone data, but not for
+    `std::format()` related features.
+  - \[ Editor's note:
+    [Microsoft's ICU documentation](https://learn.microsoft.com/en-us/windows/win32/intl/international-components-for-unicode--icu-)
+    does not report an ICU version, but does indicate that only C APIs are exposed due to the lack
+    of a stable ABI for C++. \]
+  - Steve asserted that we should not use a normative reference for a version prior to Unicode 14.0.
+  - Steve stated that wording review would be necessary to determine if Unicode 13.0 matches the
+    required features and intended semantics for recently adopted papers.
+  - Eddie asked whether SG16 would be ok if, for
+    [P2729 (Unicode in the Library, Part 2: Normalization)](https://wg21.link/p2729),
+    implementors wanted to use the version of ICU provided by the platform.
+  - Tom replied that he thinks implementors have options available to them to meet requirements;
+    they might not love any of the options, but they do exist.
+  - Steve asserted that we need to make it clear to implementors that they must use consistent
+    implementations of the Unicode algorithms.
+  - Eddie agreed and disclosed that there is also an unpublished proposal for segmentation.
+  - Eddie reported that there is a long history of security vulnerabilities that occured due to
+    use of parsers that interpreted the same text inconsistently.
+  - Robin informed the group that ICU does not provide default tailoring support.
+  - Steve responded that the base tailoring algorithms are not terribly difficult to implement but
+    that some data is required.
+  - Poll 1: Recommend specifying Unicode 15.1.0 as the minimum Unicode version for C++23 (as a DR) and C++26.
+    - Attendees: 9
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   5 |   1 |   0 |   0 |
+    - Consensus in favor
+  - Tom stated that, with regard to Unicode versions being consistent across the core language
+    implementation and the standard library, that it doesn't seem feasible to not allow divergence.
+  - Steve commented that problems caused by a mismatch are unlikely to be worse than processing text
+    from other sources.
+  - Eddie noted that it is common to use Clang with libstdc++ and libc++ and that EDG does not
+    provide a standard library implementation.
+  - Mark reported that different people tend to work on the compiler and the standard library and
+    that the versions of each can be mixed; requiring a consistent Unicode version would be very hard.
+  - Steve took a devil's advocate role and suggested that, perhaps such cases are just not conforming.
+  - Steve stated that it is not required for all deployments to be conforming; non-conforming is not
+    the same as useless.
+  - Steve opined that the standard should still acknowledge the possibility of mismatched versions.
+  - Robin noted that the standard library does not currently require a normative reference to Unicode
+    for any of its features at the moment.
+  - Jens expressed a preference for treating the C++ standard as a unit and only normatively require
+    a single Unicode version with allowances for use of a later version.
+  - Tom agreed, but stated a desire to provide programmers the ability to query the version in use.
+  - Jens replied that preprocessor behavior is impacted by Unicode version and that it is therefore
+    unclear how useful a feature test macro would be.
+  - Steve suggested that we might be getting ahead of ourselves in asking what we would use a feature
+    test macro for.
+  - Jens posited that a library version query utility of some kind might be more useful than a feature
+    test macro.
+  - Jens stated that certain features can just be avoided for core language.
+  - Jens opined that it could be useful to write a `#error` directive based on Unicode version.
+  - Tom concluded that we should avoid specifying a feature test macro and an explicit allowance for
+    the core language and standard library to use different Unicode versions until more need is
+    identified.
+  - Tom stated that he will forward the CWG issue with the above poll.
+- [P2845R6: Formatting of std::filesystem::path](https://wg21.link/p2845r6):
+  - Victor introduced the recent changes.
+    - The `path-format-spec` now supports a `g` option to enable formatting a path as a generic path.
+  - Discussion in chat confirmed that `/` is used as the path separator when formatting a generic
+    path and that the native path separator is used otherwise.
+  - Poll 2: Forward P2845R6 to LEWG.
+    - Attendees: 9
+    - No objection to unanimous consent.
+- [P3070R0: Formatting enums](https://wg21.link/p3070r0):
+  - Victor explained the motivation for the new feature:
+    - This allows defining a `format_as()` function rather than writing a `std::formatter`
+      specialization.
+    - This approach is simpler and more efficient at run-time.
+  - Jens asked if an alternate type presentation can be requested in the format specifier.
+  - Victor replied that a `std::formatter` specialization is required to do that.
+  - Tom asked if the format specifier has to be `{}`.
+  - Victor replied that it doesn't, that the format specifier is parsed according to the
+    mapped type; the type returned by the `format_as()` customization point.
+  - Jens asked if `format_as` is an existing customization point.
+  - Victor replied that it is not; it is new with this proposal.
+  - Eddie observed that the proposed functionality seems useful for many types, but that
+    the proposal is restricted to enumeration types.
+  - Victor responded that it is extensible to other types, but is limited to enumeration
+    types for now due to lack of experience with other types.
+  - Mark asked how field widths are handled.
+  - Victor replied that they are handled the same as for the mapped type.
+  - Eddie asked for confirmation that, as proposed, an attempt to use this feature for a
+    type other than an enumeration type will fail.
+  - Victor confirmed the intent, but noted that the proposed wording is currently missing
+    a constraint.
+  - Jens asked if the mapping is applied recursively and what happens if `as_format()`
+    returns another enumeration type.
+  - Victor replied that it should work, but that he needs to check and then update the
+    paper accordingly.
+  - Peter observed that this approach doesn't solve the problem of wanting to format the
+    name of an enumerator.
+  - Victor agreed that mapping an enumerator value to a name still has to be explicitly
+    written but that reflection would make that easy.
+  - Poll 3: Forward P3070R0 to LEWG.
+    - Attendees: 9
+    - No objection to unanimous consent.
+- Tom announced that the next meeting will be on 2024-07-21 and that the agenda is TBD.
 
 
 # January 24th, 2024
