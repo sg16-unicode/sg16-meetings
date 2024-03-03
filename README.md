@@ -9,11 +9,16 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, February 21st, 2024, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240221T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, March 13th, 2024, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240313T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cet)).
 
 Draft agenda:
-- TBD
+- TBD. Candidates include:
+  - [P2626R0: charN_t incremental adoption: Casting pointers of UTF character types](https://wg21.link/p2626r0).
+  - [P2758R2: Emitting messages at compile time](https://wg21.link/p2758r2).
+  - [P1729R4: Text Parsing](https://wg21.link/p1729r4).
+  - [P3154R0: Deprecating signed character types in iostreams](https://wg21.link/p3154r0).
+  - [P3094R0: std::basic_fixed_string](https://wg21.link/p3094r0).
 
 
 # Past SG16 meetings
