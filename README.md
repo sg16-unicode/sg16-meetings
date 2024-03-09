@@ -22,6 +22,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [February 21st, 2024](#february-21st-2024)
 - [February 7th, 2024](#february-7th-2024)
 - [January 24th, 2024](#january-24th-2024)
 - [January 10th, 2024](#january-10th-2024)
@@ -32,6 +33,156 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# February 21st, 2024
+
+## Agenda
+- [CWG 2843: Undated reference to Unicode makes C++ a moving target](https://cplusplus.github.io/CWG/issues/2843.html).
+  - Identify updates needed for UAX #31 changes in Unicode 15.1.0.
+- [LWG 4043: "ASCII" is not a registered character encoding](https://wg21.link/lwg4043).
+- [LWG 4044: Confusing requirements for std::print on POSIX platforms](https://wg21.link/lwg4044).
+
+## Meeting summary
+- Attendees:
+  - Eddie Nolan
+  - Fraser Gordon
+  - Jens Maurer
+  - Nathan Owens
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [CWG 2843: Undated reference to Unicode makes C++ a moving target](https://cplusplus.github.io/CWG/issues/2843.html):
+  - Tom provided a brief introduction:
+    - Unicode 15.1.0 introduced changes to
+      [default identifier syntax](https://www.unicode.org/reports/tr31/#Default_Identifier_Syntax)
+      to allow U+200C (ZERO WIDTH NON-JOINER) and U+200D (ZERO WIDTH JOINER) in identifiers.
+    - We can choose to accept these changes or to adopt a profile that retains the prior
+      behavior.
+    - Regardless, the removal of
+      [UAX31-R1a](https://www.unicode.org/reports/tr31/#R1a)
+      necessitates an update to
+      [\[uaxid.def.rfmt\]](http://eel.is/c++draft/uaxid.def.rfmt)
+      in
+      [Annex E](http://eel.is/c++draft/uaxid).
+  - Steve stated that it makes the most sense to defer to Unicode for valid identifier syntax and
+    for individual projects to decide what constitutes a reasonable identifier.
+  - Steve asserted that following Unicode guidance should not be an on-going discussion for WG21.
+  - Jens reminded the group that we decided to defer to Unicode explicitly so that we would not
+    have to decide what is a valid identifier.
+  - Robin explained that this topic is on the agenda because there was a change to UAX #31 and
+    Annex E now has dangling-ish references.
+  - Robin reported that the change made to default identifiers was a simplification and that
+    [UTS #55 (Unicode Source Code Handling)](https://www.unicode.org/reports/tr55/)
+    gives general guidance for identifiers.
+  - Robin noted that the provided guidance suggests adopting a profile from
+    [UAX #31 section 7.1](https://www.unicode.org/reports/tr31/#Mathematical_Compatibility_Notation_Profile)
+    to allow additional characters that are not included in default identifiers.
+  - Robin stated that some implementations already allow those characters and that formally adding
+    them to C++ should probably be pursued by a separate paper.
+  - Tom noted that those additional characters are for some mathematics symbols.
+  - Steve agreed that is something to consider, but is unrelated to the current issue.
+  - Tom asked if anyone had an argument to offer for why we should not accept the UAX #31 updates.
+  - No such arguments were offered.
+  - Tom asked for a volunteer to update annex E.
+  - Steve volunteered.
+  - Robin expressed interest in collaborating on a paper to adopt the
+    [Mathematical Compatibility Notation Profile](https://www.unicode.org/reports/tr31/#Mathematical_Compatibility_Notation_Profile). 
+  - Tom requested that Steve send updated wording to Jens to be included in the proposed resolution.
+  - Jens stated that the proposed resolution will require approval from EWG due to the minimum version
+    requirement.
+- [LWG 4043: "ASCII" is not a registered character encoding](https://wg21.link/lwg4043):
+  - Tom provided a brief introduction:
+    - Users expect "ASCII" to be a recognized encoding name, existing converters recognize
+      it, the proposed resolution is that it be recognized as an alias of "US-ASCII".
+  - Fraser asked if it is known why "ASCII" isn't already an alias for "US-ASCII" in the
+    [IANA character set registry](https://www.iana.org/assignments/character-sets/character-sets.xhtml).
+  - Tom guessed that it is due to historic confusion regarding "extended ASCII"
+    character sets.
+  - Tom shared a link to the IANA character set reference and quoted the first paragraph
+    in chat.
+      > These are the official names for character sets that may be used in
+      > the Internet and may be referred to in Internet documentation.  These
+      > names are expressed in ANSI_X3.4-1968 which is commonly called
+      > US-ASCII or simply ASCII.  The character set most commonly use in the
+      > Internet and used especially in protocol standards is US-ASCII, this
+      > is strongly encouraged.  The use of the name US-ASCII is also
+      > encouraged.
+  - Steve noted that the IANA registry includes a "csASCII" alias.
+  - Fraser opined that this sounds like a historic issue.
+  - Steve recalled that some special handling for "cs" prefixed names was adopted.
+  - Tom replied that the `std::text_encoding::id` enumerators use the "cs" prefixed aliases
+    with the "cs" prefix removed.
+  - Tom asked if anyone is opposed to adding the proposed "ASCII" alias.
+  - Jens noted that implementations already have lattitude to add additional names.
+  - Jens agreed we should add this particular alias, but not as a precedent for adding
+    additional aliases later.
+  - Peter stated that ASCII is deserving of special consideration and is recognized
+    around the world.
+  - Victor opined that the motivation in the LWG issue is a little weak, but that he
+    isn't opposed.
+  - Tom reported that `iconv()` and ICU will already recognize it and opined that users
+    will expect it to be recognized.
+  - Steve noted that implementors don't need our approval to add this alias.
+  - **Poll 1: Approve the addition of "ASCII" as an alias for the US-ASCII IANA encoding.**
+    - Attendees: 9
+    - No objection to unanimous consent.
+- [LWG 4044: Confusing requirements for std::print on POSIX platforms](https://wg21.link/lwg4044):
+  - Victor introduced the issue:
+    - Jonathan Wakely implemented support for `std::print()` in libstdc++ and encountered a
+      significant performance issue due to how he interpreted the standard wording.
+    - When discussing `std::print()` in SG16, we didn't consider POSIX streams as a
+      "Native Unicode API".
+    - Private correspondence with Jonathan clarified the intent and resolved the performance
+      issues.
+  - Victor guided discussion through the proposed wording.
+  - Victor highlighted the removal of the POSIX and `isatty()` related wording as the important change.
+  - Victor suggested that the moved text that encourages implementations to diagnose invalid code units
+    be removed.
+  - Eddie agreed with striking the wording regarding diagnosing invalid code units.
+  - Eddie noted that checking for ill-formed code unit sequences imposes overhead.
+  - Steve asserted that `isatty()` is fragile and that its use complicates debugging since it leads to
+    file redirection changing program behavior.
+  - Eddie asked Steve for clarification.
+  - Steve replied that `isatty()` is fragile because it is easy to cause `isatty()` to return false
+    when the output is still going to the terminal.
+  - \[ Editor's note: Compare the behavior of `ls` vs `ls | cat` on Linux for example. \]
+  - Eddie opined that tools should check the `NO_COLOR` environment variable.
+  - Steve insisted that `isatty()` is too low level for what `std::print()` is intended to do.
+  - Tom expressed support for dropping the wording regarding diagnosing invalid code units.
+  - Tom asked if the wording should state something else regarding the behavior when invalid code unit
+    sequences are present but concluded that likely falls under implementation-defined behavior related
+    to use of the native Unicode API.
+  - Jens asked if the Windows checks for code directed to a console have similar overhead concerns as
+    calls to `isatty()` on POSIX systems.
+  - Victor replied affirmatively but noted that there is no known alternative at present.
+  - Victor stated that the check could become a no-op in the future if it becomes possible to check
+    for use of a Unicode code page instead.
+  - Victor summarized that we can either do the wrong thing quickly or the right thing slowly.
+  - Jens expressed agreement for striking the wording regarding diagnosing invalid code unit sequences.
+  - Peter opined that the wording appears to be written from a Windows point of view and seems quite
+    strange from a POSIX perspective.
+  - Peter suggested that the wording could discuss Windows specifically.
+  - Jens replied that Windows is specifically addressed in a note.
+  - Tom acknowledged that Peter has a valid point; the "native Unicode API" is only needed when writing
+    directly to the stream is insufficient to produce the right result.
+  - Eddie advised caution regarding discounting the possibility that writing directly to the stream
+    could produce the right result on Windows.
+  - Tom noted that Microsoft does ship versions of Windows that only support UTF-8 as the active
+    code page and offered HoloLens as an example.
+  - Steve asked if implementors need this guidance.
+  - Victor replied that they do and that it took considerable exploration to determine exactly which
+    functions were needed to achieve the right results.
+  - Jens commented that this is one of those rare places in the standard where we try to tell
+    implementors what to do rather than just specifying the required behavior.
+  - Jens stated that the wording needs to be sufficient to guide implementors to the right result.
+  - **Poll 2: Approve the LWG 4044 proposed resolution with the wording about diagnosing invalid code units removed.**
+    - Attendees: 9
+    - No objection to unanimous consent.
+- Tom announced that the next meeting will be on 2024-03-13; the week before the Tokyo meeting.
+- Tom requested suggestions for any papers or issues that need SG16 review prior to Tokyo.
 
 
 # February 7th, 2024
