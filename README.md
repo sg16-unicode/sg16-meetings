@@ -17,6 +17,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [March 13th, 2024](#march-13th-2024)
 - [February 21st, 2024](#february-21st-2024)
 - [February 7th, 2024](#february-7th-2024)
 - [January 24th, 2024](#january-24th-2024)
@@ -28,6 +29,200 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 13th, 2024
+
+## Agenda
+- [P1729R4: Text Parsing](https://wg21.link/p1729r4).
+- [P3154R0: Deprecating signed character types in iostreams](https://wg21.link/p3154r0).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Elias Kosunen
+  - Fraser Gordon
+  - Jens Maurer
+  - Mark de Wever
+  - Nathan Owens
+  - Robin Leroy
+  - Tom Honermann
+  - Victor Zverovich
+- A round of introductions was held for new attendee Braden Ganetsky.
+- [P1729R4: Text Parsing](https://wg21.link/p1729r4):
+  - Elias explained that prior feedback has been addressed and that the paper is expected
+    to be ready for a forwarding poll.
+  - Elias reviewed the revision history and the changes requested by SG9.
+  - Elias stated that support for stdin will be provided in a future paper; similar to
+    how `std::print()` was proposed after `std::format()` was adopted.
+  - Elias proceeded to review each section of the paper.
+  - Eddie noted that the comment in the example in section 3.2, "Reading multiple values at once",
+    appears to be missing `values()` following `operator->`.
+  - \[ Editor's note: The comment appears to be intentional in only referring to `operator->`,
+    but incorrect in stating, "will throw if it doesn't contain a value"; a call to
+    `std::expected<T>::operator->()` exhibits UB if `has_value()` is not true. \]
+  - Tom asked, while looking at the example in section 3.4, "Reading multiple values in a loop",
+    if all result values are definitely assigned.
+  - Elias explained that the scan result is returned by value and that there is no way to
+    provide an object that is referenced within the result object.
+  - Tom asked, while looking at the example in section 3.6, "Scanning a user-defined type",
+    if the use of `std::expected` is required or whether another `std::expected`-like type
+    could be used.
+  - Elias replied that a concept-like approach is used in the reference implementation.
+  - Braden asked if it will be surprising to programmers that `std::scan` reports errors via
+    `std::expected` where as `std::format` uses exceptions.
+  - Elias responded that a failure to parse input provided at run-time is expected and therefore
+    a different category of error than what is expected when formatting.
+  - Victor agreed with Elias and stated that this is a reasonable design.
+  - Mark asked what happens if the scan format string is not valid.
+  - Elias replied that the format string is constant evaluated and, if not valid, renders the
+    program ill-formed.
+  - Mark commented that both throwing an exception and returning a `std::expected` value that
+    holds an error type in response to an invalid format string can suffice to produce a
+    compile-time error.
+  - Elias proceeded to review section 4, "Design".
+  - Robin requested that, in section 4.2, "Format strings", in the discussion of whitespace,
+    the word "currently" in "Those code points are currently" be struck since the Unicode
+    stability policy ensures these won't change.
+  - Robin observed that the list of whitespace code points appears to be missing some
+    characters; U+000B LINE TABULATION for example.
+  - Elias responded that the ASCII line includes a range of code points that includes that
+    character.
+  - Tom suggested it would be more clear for the list to include all of the
+    [`Pattern_White_Space`](https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%3Apattern_white_space%3A%5D&g=&i=)
+    characters individually.
+  - Elias continued review in section 4.3.2, "Fill and align", and explained the behavior
+    for scanning of centered text without an explicit width; an unambiguous width cannot be
+    inferred based on surrounding fill characters.
+  - Tom referenced the `rH` example that scans `"*42**"` with a `"{:*^}"` format specification,
+    noted that the final `*` character is not scanned, and asked for confirmation that the
+    example won't roundtrip with what `std::format()` produces with an explicit field width.
+  - Elias confirmed.
+  - Victor suggested double checking how the
+    [Python parse project](https://pypi.org/project/parse/)
+    handles that situation.
+  - Elias responded that he had checked at one point, but would need to do so again.
+  - \[ Editor's note: The "Format Specification" section in the
+    [Python parse project description](https://pypi.org/project/parse/)
+    states:
+
+      > Note that the “center” alignment does not test to make sure the value is centered -
+      > it just strips leading and trailing whitespace.
+
+    \]
+  - Victor pondered whether it is possible to roundtrip in general without field width
+    information and suggested the possibility of not supporting scanning of center aligned
+    text without an explicit field width.
+  - Elias agreed that such cases could be disallowed.
+  - Jens questioned whether it might be a good to scale back the options for scanning.
+  - Jens noted that there are already some asymmetries and provided an example;
+    `std::format()` produces a specific whitespace sequence while `std::scan()` will
+    consume arbitrary whitespace.
+  - Jens suggested that use of a regular expression to consume fill characters might
+    provide a more practical approach.
+  - Elias asked if Jens' suggestion is intended just for handling of center alignment or
+    for all field widths.
+  - Jens clarified that the goal would be for the `r5` example to have a format specifier
+    that consumes an arbitrary number of fill characters.
+  - Jens stated that perhaps the `r7` example would not be covered by this idea since it has
+    an explicit field width.
+  - Jens opined that the `r5` example and all those that follow it are a little concerning;
+    particularly with regard to centering.
+  - Elias responded that section 6.2, "`scanf`-like `[character set]` matching" discusses
+    potential future support for matching regular expressions and discarding characters.
+  - Elias stated these future directions would cover Jens' suggested approach, but
+    acknowledged that a format specifier option would be convenient.
+  - Jens stated that full regular expression support would invite complication.
+  - Mark asked if dynamic field widths are supported.
+  - Elias replied that they are explicitly disallowed.
+  - Elias reported that there was a poll in LEWGI that supported compatibility with
+    `std::format` as a guiding principle.
+  - Elias acknowledged that formatting and scanning are different.
+  - Jens agreed and stated that compatibility makes sense as long as it makes sense.
+  - Victor stated that symmetry with `std::format()` is not a goal, but that providing a
+    replacement for `scanf()` is a goal and the motivation for many of these use cases.
+  - Jens replied that he is not aware of features in `scanf()` that would allow for
+    skipping over fill characters.
+  - Victor acknowledged the lack of such general features but that the use cases apply
+    when the fill character is a space character.
+  - Victor asked if iostreams supports skipping fill characters when scanning.
+  - General uncertainty was expressed.
+  - Jens reported that it appears that example `r5` cannot be parsed with `scanf()`.
+  - Tom stated that it sounds like there is some homework to be done.
+  - Jens suggested that homework be done and that review continue at a future telecon.
+  - Tom agreed.
+  - Eddie moved on to section 4.3.3, "Sign, '#', and '0'", and stated that ignoring
+    '+' and '-' signs or leading '0' characters would not be desirable by default,
+    but could be useful in conjunction with the sign and '0' format options.
+  - Elias responded that, in his experience, it is more important to have a clean design
+    space than it is to have compatible format strings and that he preferred to not
+    allow those flags in order to avoid confusion.
+  - Victor agreed with Elias.
+  - Elias explained that there is an additional roundtrip asymmetry when formatted text
+    exceeds an explicit field width; scanning the text with an explicit field width won't
+    consume all of the formatted text.
+  - Elias noted that section 4.3.5.2, "Design discussion: Separate flag for thousands
+    separators" will be removed; it was unintentionally left in.
+- [P3154R0: Deprecating signed character types in iostreams](https://wg21.link/p3154r0):
+  - Elias introduced the paper by explaining that the `signed char` and `unsigned char`
+    inserters and extractors behavior is surprising because those types are treated as
+    character types but are often used as the underlying types of `int8_t` and `uint8_t`.
+  - Alisdair asked how `std::format()` handles these types.
+  - Elias responded that they are formatted as integer types.
+  - Jens suggested updating section 1, "Motivation", to add a `std::format()` example for
+    each of the `std::cout` examples.
+  - Alisdair asked about the long term intent and whether these functions might be defined
+    as deleted or specified to have different behavior after a deprecation period.
+  - Alisdair asserted that deprecation should be a transitional state; features should not
+    stay deprecated indefinitely.
+  - Elias expressed a preference for defining them as deleted due to concerns about just
+    switching to new behavior.
+  - Victor expressed strong support for deprecation and stated that these functions are a
+    common source of errors.
+  - Victor noted that the existing behavior will remain available but will require an
+    explicit cast to a `char`-based type.
+  - Jens stated that a plan to deprecate in C++26, to define these functions as deleted for
+    C++29, and to define them with new behavior for C++40 or so could make sense.
+  - Jens expressed strong support for defining these functions as deleted as either a final
+    or further intermediate step.
+  - Jens requested gathering some implementation experience by modifying a C++ standard
+    library to define these functions as deleted and then compiling some real world projects
+    to see if any latent bugs are discovered.
+  - Jens opined that deprecation is a LEWG concern and that SG16 should offer a recommendation
+    on use of `signed char` and `unsigned char` as character types.
+  - Alisdair pondered an option to change the behavior to implementation-defined or unspecified.
+  - **Poll 1: Recommend reserving `signed char` and `unsigned char` for use as integer types, not character types.**
+    - Attendees: 11 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   7 |   2 |   0 |   1 |   0 |
+    - Consensus in favor.
+    - A: I would like to see the results for the experiment Jens suggested first.
+  - **Poll 2: Forward P3154R0 with the suggested modifications to the motivation section to LEWG for C++26.**
+    - Attendees: 11 (3 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   2 |   1 |   1 |   0 |
+    - Consensus in favor.
+    - A: The direction is more a matter for LEWG.
+  - Those that abstained from the second poll reported being uneasy with the poll because
+    the proposed change to deprecate these features is not an SG16 concern.
+  - Tom explained that his intention with forwarding polls is to confirm that there are
+    no outstanding SG16 concerns that are not either addressed or discussed in the paper;
+    these polls are not intended to state a position on matters that do not fall under SG16's
+    purview.
+- Tom reported intent to cancel the scheduled 2024-03-27 SG16 meeting since the WG21 meeting
+  in Tokyo will have just concluded and we'll all be busy catching up with our regular lives.
+- Jens expressed support for that cancellation.
+- Tom reported that he has historically scheduled SG16 meetings for the 2nd and 4th Wednesday
+  of each month, but that meetings from now through 2024-10-24 were scheduled for every two
+  weeks; whether inadvertently or intentionally with now forgotten intent remains a mystery.
+- Tom indicated an inclination to stick with that schedule for now and requested that anyone
+  that will encounter attendance difficulties because of it let him know.
+- Tom announced that the next meeting is scheduled for 2024-04-10 and that there are a
+  number of papers awaiting review.
 
 
 # February 21st, 2024
