@@ -18,6 +18,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [April 10th, 2024](#april-10th-2024)
 - [March 13th, 2024](#march-13th-2024)
 - [February 21st, 2024](#february-21st-2024)
 - [February 7th, 2024](#february-7th-2024)
@@ -30,6 +31,140 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 10th, 2024
+
+## Agenda
+- [P2758R2: Emitting messages at compile time](https://wg21.link/p2758r2).
+
+## Meeting summary
+- Attendees:
+  - Barry Revzin
+  - Corentin Jabot
+  - Fraser Gordon
+  - Jens Maurer
+  - Mark de Wever
+  - Tom Honermann
+  - Victor Zverovich
+- Due to a scheduling conflict, Barry was delayed in joining the meeting and review of
+  P2758R2 was thus delayed. The time was filled with informal chat of various items
+  including but not limited to:
+  - Progress on [P2873 (Remove Deprecated Locale Category Facets For Unicode from C++26)](https://wg21.link/p2873).
+  - The need, or lack thereof, for `u8streampos`, `u16streampos`, and `u32streampos`.
+  - The Unicode Text Terminal Working Group.
+  - U+FDFD (ARABIC LIGATURE BISMILLAH AR-RAHMAN AR-RAHEEM) and other characters with
+    very wide display widths.
+  - The past Tokyo and future St. Louis meetings.
+  - Locales, `std::format()`, and `char8_t` support.
+  - The Unicode Message Formatting Working Group.
+  - [ICU4X](https://docs.rs/icu/latest/icu).
+- [P2758R2: Emitting messages at compile time](https://wg21.link/p2758r2):
+  - Barry provided an introduction:
+    - The goal is to allow programmers to produce more friendly diagnostics.
+    - `static_assert` has limitations and clever hacks only go so far.
+    - Producing errors is great, but there is value in being able to produce
+      informational messages and warnings that can be elevated to errors.
+    - `std::format()` is not declared `constexpr`, but probably could be.
+    - The proposal is minimal and intended to provide infrastructure on which better
+      interfaces can be built.
+  - Victor posited that it would be useful to have a portable way to suppress a warning
+    in a portable manner; a portable version of the `#pragma` directives that many
+    implementations support today.
+  - Victor stated that the paper needs updates to reflect the adoption of
+    [P2741R3 (user-generated `static_assert` messages)](https://wg21.link/p2741r3).
+  - Mark expressed support for the paper and commented that he recently asked Clang
+    developers about such a feature.
+  - Victor noted that clang-tidy allows a comment-based annotation to suppress diagnostics
+    that emanate from specified source code lines.
+  - Barry asked if such annotations would be expected to suppress diagnostics that would be
+    produced from a specific call to one of these functions.
+  - Victor replied affirmatively and stated that it would be difficult for his organization
+    to enable these warnings otherwise without a way to suppress false positives.
+  - Jens explained that clang-tidy annotations are written at the line where the diagnostic
+    is issued from and that the annotation Victor is interested in would have to work
+    differently.
+  - Victor agreed and stated this suppression would be more complicated.
+  - Tom suggested it would probably have to be an annotation that suppresses any indicated
+    warnings that emanate from within the constant evaluation of the annotated source line.
+  - Corentin opined that this paper doesn't need to address suppression of a diagnostic.
+  - Corentin noted that display of a diagnostic is within the purview of the implementor.
+  - Corentin asserted that, as long as there is a tag available, that implementors can
+    provide a means to suppress it.
+  - Tom replied that a tag is specified for `constexpr_warning_str()`, but not for the
+    other cases.
+  - Tom stated that, from an implementation stand point, he could see treating errors as
+    discretionary errors that can be demoted to warnings.
+  - Barry replied that production of an error is intended to halt constant evaluation.
+  - Barry said that there are use cases for both fatal and discretionary errors, but that
+    he doesn't really agree with motivation for the latter.
+  - Victor expressed opposition to being able to demote an error to a warning.
+  - Corentin observed that the wording needs to require that the message is provided in the
+    ordinary literal encoding.
+  - Corentin reported that wording examples can be found in the wording for `static_assert`.
+  - \[ Editor's note: see [\[dcl.pre\]p12](http://eel.is/c++draft/dcl.pre#12). \]
+  - Jens clarified that the elements of the `std::string_view` that holds the message will
+    be considered code units of the ordinary literal encoding.
+  - Barry reported having located the wording and indicated he can copy it.
+  - Jens asked if `constexpr_error_str()` is equivalent to `static_assert(false, "message")`.
+  - Barry replied that it is very similar.
+  - Corentin explained that the evaluation is performed at a different time and potentially
+    for a different number of occurrences; a `static_assert` will be evaluated once at
+    translation or template instantiation time where as `constexpr_error_str()` may be
+    evaluated multiple times during constant evaluation.
+  - Corentin asked what the expectations for a call to `constexpr_error_str()` are; for
+    example, whether a diagnostic with different color highlighting would be produced.
+  - Corentin asserted that it should be possible to suppress each message kind; they should
+    all have a tag for this reason.
+  - Corentin asked if escape sequences may appear in the message strings.
+  - Barry asked what `static_assert` does and was informed it is implementation-defined.
+  - \[ Editor's note: examples with hilariously predictable implementation divergence can
+    be seen at https://godbolt.org/z/xasvnMPre. \]
+  - Victor agreed with the suggestion to add a tag to `constexpr_print_str()`.
+  - Victor asked how ill-formed tags are handled.
+  - Tom replied that tags should be restricted to the basic literal character set.
+  - Corentin stated that implementations should escape non-printable characters and
+    ill-formed code unit sequences in the diagnostics they produce.
+  - Tom asked for confirmation that text in the message that looks like a
+    *universal-character-name* would not be treated as such.
+  - Corentin confirmed.
+  - Jens observed that the paper proposes a library facility but that he is uncertain that
+    it is.
+  - Jens stated that [\[intro.compliance.general\]](http://eel.is/c++draft/intro.compliance.general)
+    would need an update.
+  - Jens noted that section was updated to address the requirement for the `#warning` and
+    `#error` directives to produce a diagnostic message.
+  - Jens asked why it would be necessary to state that the program is ill-formed rather than
+    that the expression is not a core constant expression.
+  - Jens explained that ill-formed means a diagnostic must be produced, but an implementation
+    can do what it wants otherwise.
+  - Jens asked if specifying these as ill-formed requires an implementation to refuse to
+    translate the program and noted that this is currently only required for `#error`.
+  - Tom asked Barry if the intent is to match `#error`.
+  - Barry expressed uncertainty.
+  - Jens advised reading [\[intro.compliance.general\]](http://eel.is/c++draft/intro.compliance.general).
+  - Corentin stated that the characters permitted in tags needs to be clarified; quotes,
+    semicolon, and other characters that have special meaning in command line shells should
+    be prohibited.
+  - Tom pondered whether this should really be a core language facility.
+  - Tom suggested the tag should be required to be an unevaluated string to facilitate audits.
+  - Victor expressed a preference for the tag being a string literal.
+  - Corentin observed that requiring a string literal would require a core language feature.
+  - Barry replied that he would eventually like to expose this functionality with more
+    `std::format()` like capabilities but doing so wouldn't be possible if this is specified
+    as a language feature; at least not without expression aliases or some other way to pass
+    a tag through a library interface.
+  - Tom stated he would like to review the proposal in SG16 again to review limitations on
+    tags and wording for encoding requirements.
+  - Jens indicated that CWG will need to review the paper as well and stated he has a gut
+    feeling that there is something missing.
+  - Jens noted that erroneous behavior is increasing motivation for producing something akin
+    to diagnostics at run-time.
+  - Jens suggested that LEWG might not have a lot of input since the library interface would
+    just forward calls to a builtin function; that builtin function will require input from
+    core implementors.
+- Tom announced that the next meeting will be on 2024-04-24 and that he would work with
+  authors to get papers scheduled with more advance notice this time.
 
 
 # March 13th, 2024
