@@ -9,12 +9,12 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, April 24th, 2024, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240424T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, May 8th, 2024, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240508T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- [P1953R0: Unicode Identifiers And Reflection](https://wg21.link/p1953r0)
-- [P2996R2: Reflection for C++26](https://wg21.link/p2996r2)
+- [P2758R2: Emitting messages at compile time](https://wg21.link/p2758r2).
+- [P2996R2: Reflection for C++26](https://wg21.link/p2996r2).
 
 
 # Past SG16 meetings
