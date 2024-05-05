@@ -13,7 +13,7 @@ Wednesday, May 8th, 2024, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240508T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- [P2758R2: Emitting messages at compile time](https://wg21.link/p2758r2).
+- [D3258R0: Formatting of `charN_t`](https://wg21.link/d3258r0).
 - [P2996R2: Reflection for C++26](https://wg21.link/p2996r2).
 
 
