@@ -18,6 +18,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [April 24th, 2024](#april-24th-2024)
 - [April 10th, 2024](#april-10th-2024)
 - [March 13th, 2024](#march-13th-2024)
 - [February 21st, 2024](#february-21st-2024)
@@ -31,6 +32,254 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 24th, 2024
+
+## Agenda
+- [P1953R0: Unicode Identifiers And Reflection](https://wg21.link/p1953r0).
+- [P2996R2: Reflection for C++26](http://wg21.link/p2996r2).
+
+## Meeting summary
+- Attendees:
+  - Andrei Alexandrescu
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Dan Katz
+  - Daveed Vandevoorde
+  - Eddie Nolan
+  - Giuseppe D'Angelo
+  - Jens Maurer
+  - Mark de Wever
+  - Nathan Owens
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+  - Wyatt Childers
+- [P1953R0: Unicode Identifiers And Reflection](https://wg21.link/p1953r0):
+  - Corentin provided an introduction:
+    - This is an older paper and reflection has changed in the meantime, but it is still relevant.
+    - [P1949 (C++ Identifier Syntax using Unicode Standard Annex 31)](https://wg21.link/p1949r7)
+      clarified the syntax for identifiers to provide better support for non-English speakers and
+      mathematicians.
+    - String literals are converted from the source file encoding to an implementation-defined
+      literal encoding that might not be Unicode.
+    - [P1854R4 (Making non-encodable string literals ill-formed)](https://wg21.link/p1854r4)
+      changed string literals to be ill-formed if they specify characters that are not
+      representable in the associated literal encoding.
+    - Characters can always be converted to Unicode encodings without loss of data in C++.
+    - Reflection needs to specify the type and encoding used to reflect an identifier.
+    - The only solution that works in all cases is to expose identifiers in a UTF encoding.
+    - It is not possible to infer the encoding of a string just by looking at the values of its
+      code units.
+  - Daveed commented that there are some encodings that have characters that lack representation
+    in Unicode.
+  - Corentin acknowledged such limitations and explained that new characters are regularly
+    invented in some cultures but are not widely used or encoded.
+  - Corentin noted that trademarks and various other symbols likewise are not encoded in Unicode.
+  - \[ Editor's note: The editor's Bluetooth stack regretably crashed and a minute or so of
+    Corentin's continued elaborations were not captured. \]
+  - Victor stated that having reflection expose names solely in `char8_t` would be user hostile
+    since there is little support for `char8_t` in the standard library.
+  - Victor reported that his organization bans use of `u8` literals.
+  - Victor expressed support for the approach described in section 4.4.6,
+    "`name_of`, `display_name_of`, `source_location_of`" that limits names to characters in the
+    [*basic character set*](http://eel.is/c++draft/lex.charset#def:character_set,basic).
+  - Victor asserted that reflection must provide good support for the common case where the
+    ordinary literal encoding is UTF-8.
+  - Daveed asked about implications for EBCDIC based platforms.
+  - Corentin replied that EBCDIC and UTF-8 encoded data can't be discerned just by looking at the
+    string contents, so reflecting names in UTF-8 in `char`-based storage would be problematic
+    for such platforms.
+  - Tom replied that there are EBCDIC code pages that are missing representation for some characters
+    from the basic character set but that digraphs are available for those characters so we don't
+    really concern ourselves with them in practice.
+  - Steve corrected Tom in the chat; EBCDIC code pages provide representation for all the characters
+    in the basic character set, but not all such characters are encoded with the same value.
+  - Jens explained that, for the purpose of this discussion, it is important to recognize that
+    EBCDIC and ASCII map characters of the basic character set to different code points and are
+    therefore not compatible.
+- [P2996R2: Reflection for C++26](http://wg21.link/p2996r2):
+  - Daveed presented:
+    - \[ Editor's note: Daveed's presentation slides are avilable
+      [here](presentations/2024-04-24-p2996r2-presentation.pdf). \]
+    - An overview of the proposed reflection syntax was provided.
+    - There are three functions that reflect the names of entities at present, but more might be added.
+    - There is only one function that consumes names as strings right now, but more might be added.
+    - Names provided by some reflection interfaces must be consumable in the same form by other
+      reflection interfaces.
+    - The ability to write names to `std::cout` is required.
+    - It is ok for the names to not be source-like; `std::meta::display_name_of()` can use a descriptive
+      notation.
+    - The translation model is Unicode based so names can be provided in Unicode encodings, but the
+      standard library is missing support for text in `char8_t`.
+    - Proposal sketch #1:
+      - Provide names in both `char` and `char8_t` based storage and associated encodings.
+      - Require names to round-trip.
+    - Proposal sketch #2:
+      - Provide names only in `char8_t` based storage and UTF-8; names naturally round-trip.
+      - Make `std::cout` work with UTF-8 text in `char8_t`.
+    - \[ Editor's note: Proposal sketch #3 in the linked slides was added after the meeting as
+      inspired by ensuing discussion. \]
+  - Jens asked if `name_of()` is proposed as a `consteval` function.
+  - Daveed confirmed that it is.
+  - Tom asked for clarification regarding the intended use cases for `name_of()`, `qualified_name_of()`,
+    and `display_name_of()`.
+  - Daveed replied that `name_of()` is intended to return an identifier or a canonical name such as
+    `operator X` and that `qualified_name_of()` and `display_name_of()` are intended to return
+    potentially localized descriptive text.
+  - Andrei observed that programmers might want to pass a `data_member_options_t` object around and
+    that the `optional<string_view>` `name` member is potentially problematic for lifetime reasons.
+  - Daveed acknowledged that the data member type might need to be changed to an owning string type.
+  - Corentin explained that conversion from an arbitrary encoding to Unicode might not roundtrip
+    because characters like Å (U+212B ANGSTROM SIGN) and Å (U+00C5 LATIN CAPITAL LETTER A WITH RING ABOVE)
+    are distinct in Unicode, but might not be distinct in the ordinary literal encoding.
+  - \[ Editor's note: The Å (U+00C5 LATIN CAPITAL LETTER A WITH RING ABOVE), Å (U+212B ANGSTROM SIGN), 
+    A (U+0041 LATIN CAPITAL LETTER A), and  ̊ (U+030A COMBINING RING ABOVE) characters are all individually
+    permitted in Unicode identifiers. However, since C++ identifiers are required to be in Unicode
+    normalization form C (NFC), only the first form (U+00C5) is permitted in a C++ identifier. The
+    ordinary literal encoding is not restricted to NFC, so this character could be converted to one
+    of the other forms and therefore fail to round-trip. This could result in a requirement for
+    implementations to perform conversion to NFC when consuming names. See the "Singleton Exclusions"
+    section of
+    [UAX #15 (Unicode Normalization Forms)](https://unicode.org/reports/tr15). \]
+  - Steve asked if there is a desire or requirement to be able to emit text containing names at compile-time.
+  - Daveed responded negatively and stated that the `std::cout` requirement is intended as a debugging aid.
+  - Corentin responded to Victor's earlier statements regarding lack of support for `char8_t` in the standard
+    library and asserted that we should fix that.
+  - Corentin expressed support for providing names in both `char` and `char8_t`.
+  - Corentin stated that reflection is an important feature and that we shouldn't implement hacks just to
+    workaround the missing support for `char8_t`.
+  - Corentin insisted that improving support for `char8_t` is a tractable problem and that we have some time
+    for improvements in C++26.
+  - Victor opined that reflection should not be dependent on `std::string_view`.
+  - Victor stated that it took a long time to properly specify `std::print()` and that we shouldn't implement
+    hacks in iostreams just to make `std::cout` work with `char8_t` in the C++26 timeframe.
+  - Victor explained that the model we are moving towards is one where the ordinary literal encoding is UTF-8.
+  - Victor suggested that an identifier or name type could be provided instead of a string; this would enable
+    writing formatters for it.
+  - Eddie asked Corentin if there are round-trip normalization concerns and whether renormalization is required.
+  - Corentin replied negatively and stated that there are characters that are duplicated in Unicode and do not
+    normalize to each other.
+  - Eddie replied that identifiers are required to be in NFC.
+  - Tom stated that we are not going to be able to reach a conclusion on round-tripping and renormalization now
+    and that we'll need to research and revisit.
+  - Tom said he is not convinced that normalization is a significant issue.
+  - Daveed asked what the deadline is for new library feature proposals for C++26.
+  - Jens provided a link to
+    [P1000R5 (C++ IS schedule)](https://wg21.link/p1000)
+    and reported that the Wrocław meeting in November is the last meeting for core language features that require
+    a response from LEWG and that the Hagenberg meeting in February is the last meeting to forward papers to
+    CWG and LWG.
+  - Tom expressed support for Victor's suggestion of a distinct formattable type for names and identifiers.
+  - Tom agreed with Victor regarding optimizing for the case where UTF-8 is the ordinary literal encoding, but
+    disagreed with the suggestion that `char` will ever imply UTF everywhere.
+  - Tom expressed a preference for exposing names in both `char` and `char8_t` based storage.
+  - Daveed described limitations of constant evaluation that make use of `std::string` problematic, but noted
+    that implementations can provide views backed by data in a string literal pool.
+  - Corentin noted that the encoding challenges remain the same if a unique type is used; a solution is still
+    needed to enable printing of it.
+  - Corentin acknowledged that an opaque type might confer other benefits.
+  - Jens agreed with Tom that, while we might like for UTF-8 to take over everywhere, environments that rely
+    on EBCDIC are likely to remain.
+  - Jens asserted that we must take backward compatibility into account.
+  - Jens observed that there are two levels of encoding:
+    - At compile-time, data might or might not be UTF-8, but the encoding is known if a name is produced and
+      consumed during constant evaluation.
+    - At run-time, the encoding of the environment might be different and might require transcoding or some
+      form of escaping to not lose data.
+  - Jens noted that we explicitly decided not to interfere with the existing behavior of `std::cout` and
+    introduced `std::print()` as a new interface.
+  - Jens asked how programmers will produce new names based on reflected ones given that `std::format()` is
+    not declared `constexpr`.
+  - Jens expressed uncertainty regarding what locale means during constant evaluation.
+  - Jens suggested that returning an opaque type might be useful, but is also not so different from returning
+    `std::string_view` and providing additional library support.
+  - Daveed stated that the addition of a distinct type creates some complexity but that it could be associated
+    with statically allocated memory.
+  - Daveed noted that the creation of lots of names could produce massive numbers of string literals if names
+    are backed by string pools and stated there could be an advantage to the distinct type approach.
+  - Eddie observed that an opaque type that converts to both `std::string_view` and `std::u8string_view` could
+    result in ambiguous conversions for formatted printing.
+  - Dan observed that an opaque type helpe to make it clear to the user that they might want to perform some
+    operations on it before printing it.
+  - Corentin responded to Eddie's observation by stating that, as long as the opaque type doesn't require
+    conversion in order to be printed, then there are no ambiguous conversion concerns.
+  - Corentin observed that SG16 talks about EBCDIC a lot, but noted that Windows is not UTF-8 by default and
+    that Shift-JIS is still the main encoding used in Japan.
+  - Corentin agreed with Victor that it would be nice to have `char` be synonomous with UTF-8 but stated that
+    isn't the world we live in.
+  - Corentin noted that, when writing output to a terminal, we can't guarantee that an identifier can be
+    accurately displayed due to encoding limitations, encoding conversion limitations, and fonts.
+  - Corentin stated that `std::format()` and `std::print()` do a much better job than iostreams and that
+    `std::print()` will print Unicode correctly on Windows; that can't be fixed for iostreams.
+  - Corentin asked Daveed if non-transient memory allocation is still being pursued.
+  - Daveed responded that it probably is not feasible to deliver in C++26.
+  - Victor also responded to Eddie's observation by opining that he doesn't think implicit conversions from an
+    opaque type would be an issue for `std::format()` but that he wasn't sure about iostreams.
+  - Victor noted that writing `char8_t` to iostreams will be lossy or produce mojibake.
+  - Victor stated that `constexpr` support for `std::format()` is frequently requested and asserted that we
+    should prioritize that over adding new support for `char8_t`.
+  - Victor reported that proposals for compile-time messages have expressed interest in `constexpr` support
+    for `std::format()`.
+  - Tom posted the following candidate polls in the chat:
+    - Candidate poll 1: P2996R2: identifier names should be made available via `char`, `wchar_t`, `char8_`,
+      `char16_t`, and `char32_t` consistent with `std::filesystem::path` and
+      [\[fs.path.native.obs\]](https://eel.is/c++draft/fs.path.native.obs).
+    - Candidate poll 2: P2996R2: identifier names returned by `name_of()` in `char`-based storage should be
+      encoded in the ordinary literal encoding with non-representable characters rendering the call ill-formed.
+    - Candidate poll 3: P2996R2: identifier names returned by `display_name_of()` in `char`-based storage
+      should be encoded in the ordinary literal encoding with non-representable characters escaped as in
+      [\[format.string.escaped\]](https://eel.is/c++draft/format.string.escaped).
+    - Candidate poll 4: P2996R2: `char`-based identifier names accepted by `data_member_spec()`
+      (via `data_member_options_t`) should be encoded in the ordinary literal encoding.
+  - Corentin expressed concern about memory footprint if names are backed by string literals and made
+    available in multiple encodings.
+  - Daveed responded that the strings are only generated when you actually use them; Victor's opaque type
+    would effectively have a handle to an internal representation backed by static storage.
+  - Tom pointed out that conversions from the internal representation could then be performed at run-time.
+  - Victor expressed curiosity about candidate poll 1.
+  - Tom explained the thoughts that motivated that poll suggestion; `std::filesystem::path` provides a
+    precedent for providing conversions to various encodings; if this poll has consensus, then there is no
+    need to poll support for individual encodings; if not, we can.
+  - Tom posted the following alternatives to candidate poll 1 in the chat:
+    - Candidate poll 1.1: P2996R2: identifier names should be made available in `char`-based storage.
+    - Candidate poll 1.2: P2996R2: identifier names should be made available in `char8_t`-based storage.
+    - Candidate poll 1.3: P2996R2: identifier names should be made available in `char16_t`-based storage.
+    - Candidate poll 1.4: P2996R2: identifier names should be made available in `char32_t`-based storage.
+    - Candidate poll 1.5: P2996R2: identifier names should be made available in `wchar_t`-based storage.
+  - Victor expressed support for candidate poll 2, noted that we didn't discuss it yet, but likes that it
+    enables support for all possible identifiers in UTF-8 in `char`-based interfaces when the ordinary
+    literal encoding is UTF-8.
+  - Steve noted that there is the possibility of problems caused by translation units being compiled
+    with different ordinary literal encodings.
+  - Steve suggested that it might be useful to provide a library interface that can produce strings with
+    UCN-like sequences substituted.
+  - Steve noted that use of an opaque type would enable use with any of the range encoding libraries.
+  - Daveed stated that the P2996 authors would be opposed to support for all five character types but
+    that they are ok with support for `char` and `char8_t`.
+  - Tom asked for clarification regarding opposition for support of the other character types.
+  - Daveed responded that common storage can be used to back the same representation for `char` and
+    `char8_t`, but that isn't the case for the other character types.
+  - Corentin noted that `char16_t` and `char32_t` are also less efficient to store.
+  - Corentin stated that he is not opposed to an opaque type as long as it can be printed as Unicode
+    with good results.
+  - Corentin asserted that we still need to make `char8_t` work in the standard library regardless.
+  - Corentin expressed opposition to introduction of an escape mechanism that effectively introduces
+    an additional encoding.
+  - Corentin suggested that if we want to support `wchar_t`, `char16_t`, and `char32_t`, that we should
+    provide a translation interface rather than duplicating interfaces throughout the standard library.
+  - Daveed responded with "Amen, brother!"
+  - Eddie stated that
+    [P2728 (Unicode in the Library, Part 1: UTF Transcoding)](https://wg21.link/p2728)
+    is fully constexpr and would provide support for conversion to UTF-16 in `char16_t` and UTF-32 in
+    `char32_t`.
+- Tom requested that Daveed make his presentation available for inclusion in the meeting summary.
+- Daveed immediately obliged.
+- Tom announced that the next meeting will be held May 8th and that we'll continue discussion of this
+  paper then.
+- Tom apologized to Corentin and lamented that this will once again delay further review of
+  [P2626 (`charN_t` incremental adoption: Casting pointers of UTF character types)](https://wg21.link/p2626).
 
 
 # April 10th, 2024
