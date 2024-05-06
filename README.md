@@ -1,4 +1,4 @@
-# SG16 meetings
+provided to reflection interfaces# SG16 meetings
 
 SG16 meetings are typically held on Wednesdays from 19:30-21:00 UTC on the 2nd and 4th
 weeks of each month, but scheduling conflicts or other time pressures sometimes force
@@ -201,7 +201,7 @@ Draft agenda:
     are backed by string pools and stated there could be an advantage to the distinct type approach.
   - Eddie observed that an opaque type that converts to both `std::string_view` and `std::u8string_view` could
     result in ambiguous conversions for formatted printing.
-  - Dan observed that an opaque type helpe to make it clear to the user that they might want to perform some
+  - Dan observed that an opaque type helps to make it clear to the user that they might want to perform some
     operations on it before printing it.
   - Corentin responded to Eddie's observation by stating that, as long as the opaque type doesn't require
     conversion in order to be printed, then there are no ambiguous conversion concerns.
