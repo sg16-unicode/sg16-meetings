@@ -156,7 +156,7 @@ Draft agenda:
   - Dan opined that it does, noted that Daveed would like to have iostream support, but commented that
     he doesn't feel as strongly about that.
   - Corentin said that he would like to know if anyone felt very strongly about support for iostreams.
-  - Corenting stated he would rather focus on support for `std::format()` and `std::print()`, but that he
+  - Corentin stated he would rather focus on support for `std::format()` and `std::print()`, but that he
     can understand why others might want iostream support specifically.
   - Corentin explained that he did not propose iostream support because he didn't feel like he was the
     right person to do so.
