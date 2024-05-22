@@ -68,7 +68,7 @@ Draft agenda:
   - Significant changes were made to the line breaking algorithm, but these changes don't
     affect current C++.
     - Improvements were made to the handling of quotation marks in simplified Chinese.
-    - Lines are no longer broken after hyphens that separate Hebrew and non-Hebrew text.
+    - Changes were made to the handling of hyphens and numeric expressions.
   - Recommendations from the CJK & Unihan Working Group were accepted that will impact the
     wording currently present in
     [\[format.string.std\]p13](https://eel.is/c++draft/format.string.std#13)
