@@ -9,13 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, May 22nd, 2024, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240522T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, June 12th, 2024, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240612T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- Fraser to report on the May 3rd Text Terminal WG meeting.
-- Review results of the 2024 C++ Developer Survey.
-- [P2626R0: charN_t incremental adoption: Casting pointers of UTF character types](https://wg21.link/p2626r0).
+- [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://cplusplus.github.io/LWG/issue4070).
+- [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://cplusplus.github.io/LWG/issue4090).
+- [LWG issue 4087: Standard exception messages have unspecified encoding](https://cplusplus.github.io/LWG/issue4087).
 
 
 # Past SG16 meetings
