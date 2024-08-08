@@ -1,4 +1,4 @@
-provided to reflection interfaces# SG16 meetings
+# SG16 meetings
 
 SG16 meetings are typically held on Wednesdays from 19:30-21:00 UTC on the 2nd and 4th
 weeks of each month, but scheduling conflicts or other time pressures sometimes force
@@ -9,11 +9,12 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, July 17th, 2024, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240717T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, August 14th, 2024, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240814T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- TBD
+- [P2996R4: Reflection for C++26](https://wg21.link/p2996r4).
+- [P2319R0: Prevent path presentation problems](https://wg21.link/p2319r0).
 
 
 # Past SG16 meetings
