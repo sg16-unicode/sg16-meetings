@@ -18,6 +18,11 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [September 25th, 2024](#september-25th-2024)
+- [September 11th, 2024](#september-11th-2024)
+- [August 14th, 2024](#august-14th-2024)
+- [July 31st, 2024](#july-31st-2024)
+- [June 12th, 2024](#june-12th-2024)
 - [May 22nd, 2024](#may-22nd-2024)
 - [May 8th, 2024](#may-8th-2024)
 - [April 24th, 2024](#april-24th-2024)
@@ -34,6 +39,111 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 25th, 2024
+
+## Agenda
+- [P2319R1: Prevent path presentation problems](https://wg21.link/p2319r1).
+- [P2019R7: Thread attributes](https://wg21.link/p2019r7).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Jens Maurer
+  - Tom Honermann
+  - Steve Downey
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+  of this meeting in due time. \]
+
+
+# September 11th, 2024
+
+## Agenda
+- [P2319R0: Prevent path presentation problems](https://wg21.link/p2319r0).
+- [P3364R0: Remove Deprecated u8path overloads From C++26](https://wg21.link/p3364r0).
+- [P2019R6: Thread attributes](https://wg21.link/p2019r6).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Jens Maurer
+  - Jiaming Liang
+  - Tom Honermann
+  - Steve Downey
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+  of this meeting in due time. \]
+
+
+# August 14th, 2024
+
+## Agenda
+- [D2996R5: Reflection for C++26](https://wg21.link/d2996r5).
+- [P2319R0: Prevent path presentation problems](https://wg21.link/p2319r0).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Dan Katz
+  - Daveed Vandevoorde
+  - Eddie Nolan
+  - Inbal Levi
+  - Jens Maurer
+  - Steve Downey
+  - Tomasz Kamínski
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+  of this meeting in due time. \]
+
+
+# July 31st, 2024
+
+## Agenda
+- [P3068R2: Allowing exception throwing in constant-evaluation](https://wg21.link/p3068r2).
+- [LWG issue 4087: Standard exception messages have unspecified encoding](https://cplusplus.github.io/LWG/issue4087).
+
+## Meeting summary
+- Attendees:
+  - Eddie Nolan
+  - Hana Dusìkovà
+  - Inbal Levi
+  - Jens Maurer
+  - Robin Leroy
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+  of this meeting in due time. \]
+
+
+# June 12th, 2024
+
+## Agenda
+- [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://cplusplus.github.io/LWG/issue4070).
+- [LWG issue 4087: Standard exception messages have unspecified encoding](https://cplusplus.github.io/LWG/issue4087).
+- [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://cplusplus.github.io/LWG/issue4090).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Jens Maurer
+  - Mark de Wever
+  - Nathan Owen
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+  of this meeting in due time. \]
 
 
 # May 22nd, 2024
