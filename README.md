@@ -9,15 +9,17 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, August 14th, 2024, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20240814T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, January 8th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250108T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
-- [P2996R4: Reflection for C++26](https://wg21.link/p2996r4).
-- [P2319R0: Prevent path presentation problems](https://wg21.link/p2319r0).
+- TBD.
 
 
 # Past SG16 meetings
+- [November 6th, 2024](#november-6th-2024)
+- [October 23rd, 2024](#october-23rd-2024)
+- [October 9th, 2024](#october-9th-2024)
 - [September 25th, 2024](#september-25th-2024)
 - [September 11th, 2024](#september-11th-2024)
 - [August 14th, 2024](#august-14th-2024)
@@ -41,6 +43,123 @@ Draft agenda:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# November 6th, 2024
+
+## Agenda
+- [P3258R0: Formatting of charN_t](https://wg21.link/p3258r0).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Jens Maurer
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3258R0: Formatting of charN_t](https://wg21.link/p3258r0):
+  - **Poll 1: It is more important to avoid implicit loss of information during transcoding operations
+    than to provide support for formatting `charN_t` in the standard library.**
+    - Attendees: 7
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   3 |   1 |   1 |   1 |
+    - Weak consensus in favor.
+  - **Poll 2: Encourage more work on P3258R0, particularly with regard to handling of transcoding failures.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   0 |   0 |   2 |   1 |
+    - No consensus.
+  - **Poll 3: Encourage work on support for `std::format` and `std::print` with `charN_t` format strings.**
+    - Attendees: 6
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   2 |   1 |   0 |   0 |
+    - Consensus in favor.
+
+
+# October 23rd, 2024
+
+## Agenda
+- [P3374R0: Adding formatter for fpos<mbstate_t>](https://wg21.link/p3374r0).
+- [P2019R7: Thread attributes](https://wg21.link/p2019r7).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Jens Maurer
+  - Jiaming Liang
+  - Nathan Owen
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3374R0: Adding formatter for fpos<mbstate_t>](https://wg21.link/p3374r0):
+  - **Poll 1: P3374R0: The C++ standard library should include a formatter for `std::fpos<State>`.**
+    - Attendees: 9 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   5 |   2 |   1 |   0 |
+    - Consensus in favor.
+  - **Poll 2: P3374R0: The C++ standard library should include a formatter for `std::mbstate_t`.**
+    - Attendees: 9 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   1 |   3 |   4 |   0 |
+    - Consensus against.
+  - **Poll 3: P3374R0: The `std::fpos<State>` and/or `std::mbstate` formatter should only indicate whether the state is in an initial state.**
+    - Attendees: 9 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   2 |   2 |   1 |   0 |
+    - Consensus in favor.
+    - A: Requiring this overconstrains implementations and I would prefer the full data be included.
+- [P2019R7: Thread attributes](https://wg21.link/p2019r7):
+
+
+# October 9th, 2024
+
+## Agenda
+- [P3094R3: std::basic_fixed_string](https://wg21.link/p3094r3).
+- [P3045R1: Quantities and units library](https://wg21.link/p3045r1).
+- [P3258R0: Formatting of charN_t](https://wg21.link/p3258r0).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Henrik Nyhammer
+  - Mateusz Pusz
+  - Peter Bindels
+  - Jens Maurer
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3094R3: std::basic_fixed_string](https://wg21.link/p3094r3):
+  - **Poll 1: P3094R4: Amend the proposal to remove the `traits` template parameter and dependence on `std::char_traits`.**
+    - Attendees: 12 (2 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   5 |   1 |   0 |   0 |
+    - Strong consensus in favor.
+  - **Poll 2: P3094R4: Forward as amended to LEWG.**
+    - Attendees: 12
+    - No objection to unanimous consent.
+- [P3045R1: Quantities and units library](https://wg21.link/p3045r1):
+- [P3258R0: Formatting of charN_t](https://wg21.link/p3258r0):
+
+
 # September 25th, 2024
 
 ## Agenda
@@ -57,8 +176,28 @@ Draft agenda:
   - Tom Honermann
   - Steve Downey
   - Victor Zverovich
-- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
   of this meeting in due time. \]
+- [P2319R1: Prevent path presentation problems](https://wg21.link/p2319r1):
+  - **Poll 1: P2319R2: Forward to LEWG.**
+    - Attendees: 8
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   6 |   0 |   0 |   0 |
+    - Strong consensus in favor.
+- [P2019R7: Thread attributes](https://wg21.link/p2019r7):
+  - **Poll 2: P2019R7: Name hint should be provided in the ordinary literal encoding.**
+    - Attendees: 8
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   1 |   3 |   1 |   0 |
+    - Weak consensus in favor.
+  - **Poll 3: P2019R7: Name hint should be provided as an NTMBS in the C locale encoding.**
+    - Attendees: 8
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   5 |   1 |   0 |   1 |
+    - Consensus in favor.
 
 
 # September 11th, 2024
@@ -80,14 +219,36 @@ Draft agenda:
   - Tom Honermann
   - Steve Downey
   - Victor Zverovich
-- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
   of this meeting in due time. \]
+- [P2319R0: Prevent path presentation problems](https://wg21.link/p2319r0):
+  - **Poll 1: P2319R0: The `string()` member function of `std::filesystem::path` should be deprecated.**
+    - Attendees: 9
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   4 |   1 |   0 |   0 |
+    - Consensus in favor.
+  - **Poll 2: P2319R0: The proposed `system_string()` member function should be added to `std::filesystem::path`.**
+    - Attendees: 9
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   2 |   4 |   1 |   0 |
+    - No consensus.
+- [P3364R0: Remove Deprecated u8path overloads From C++26](https://wg21.link/p3364r0):
+  - **Poll 3: P2319R0: In the long term we want to remove `std::filesystem::u8path`
+    (with the implication that, if we don't, that we will undeprecate it).**
+    - Attendees: 10
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   2 |   0 |   0 |   2 |
+    - Consensus in favor.
+- [P2019R6: Thread attributes](https://wg21.link/p2019r6):
 
 
 # August 14th, 2024
 
 ## Agenda
-- [D2996R5: Reflection for C++26](https://wg21.link/d2996r5).
+- [P2996R5: Reflection for C++26](https://wg21.link/p2996r5).
 - [P2319R0: Prevent path presentation problems](https://wg21.link/p2319r0).
 
 ## Meeting summary
@@ -103,8 +264,28 @@ Draft agenda:
   - Tomasz Kamínski
   - Tom Honermann
   - Victor Zverovich
-- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
   of this meeting in due time. \]
+- [P2996R5: Reflection for C++26](https://wg21.link/p2996r5):
+  - \[ Editor's note: D2996R5 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P2996R5 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - **Poll 1: Provide a generic `define_static_array(span<const T>) -> span<const T>` function and remove
+    `define_static_string()` until we have clarity on how to satisfy desires for a null terminated string
+    and a return type of `string_view` (or similar).**
+    - Attendees: 10 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   6 |   2 |   1 |   0 |   0 |
+    - Consensus in favor.
+  - **Poll 2: Forward P2996R5 with a recommendation to amend per prior poll to replace
+    `define_static_string` with a generic `define_static_array` function.**
+    - Attendees: 10 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   7 |   3 |   0 |   0 |   0 |
+    - Consensus in favor.
+- [P2319R0: Prevent path presentation problems](https://wg21.link/p2319r0):
 
 
 # July 31st, 2024
@@ -122,8 +303,10 @@ Draft agenda:
   - Robin Leroy
   - Tom Honermann
   - Victor Zverovich
-- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
   of this meeting in due time. \]
+- [P3068R2: Allowing exception throwing in constant-evaluation](https://wg21.link/p3068r2):
+- [LWG issue 4087: Standard exception messages have unspecified encoding](https://cplusplus.github.io/LWG/issue4087):
 
 
 # June 12th, 2024
@@ -142,8 +325,11 @@ Draft agenda:
   - Steve Downey
   - Tom Honermann
   - Victor Zverovich
-- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a summary
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
   of this meeting in due time. \]
+- [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://cplusplus.github.io/LWG/issue4070):
+- [LWG issue 4087: Standard exception messages have unspecified encoding](https://cplusplus.github.io/LWG/issue4087):
+- [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://cplusplus.github.io/LWG/issue4090):
 
 
 # May 22nd, 2024
