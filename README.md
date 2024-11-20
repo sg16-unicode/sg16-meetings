@@ -92,7 +92,7 @@ Draft agenda:
   - Braden Ganetsky
   - Eddie Nolan
   - Jens Maurer
-  - Jiaming Liang
+  - Liang Jiaming
   - Nathan Owen
   - Robin Leroy
   - Steve Downey
@@ -101,6 +101,8 @@ Draft agenda:
 - \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
   of this meeting in due time. \]
 - [P3374R0: Adding formatter for fpos<mbstate_t>](https://wg21.link/p3374r0):
+  - \[ Editor's note: Liang's presentation slides are avilable
+    [here](presentations/2024-10-23-p3374r0-presentation.pdf). \]
   - **Poll 1: P3374R0: The C++ standard library should include a formatter for `std::fpos<State>`.**
     - Attendees: 9 (1 abstention)
       | SF  | F   | N   | A   | SA  |
