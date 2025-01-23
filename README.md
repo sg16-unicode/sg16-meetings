@@ -19,6 +19,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [January 22nd, 2025](#january-22nd-2025)
 - [November 6th, 2024](#november-6th-2024)
 - [October 23rd, 2024](#october-23rd-2024)
 - [October 9th, 2024](#october-9th-2024)
@@ -43,6 +44,35 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# January 22nd, 2025
+
+## Agenda
+- Decide on a meeting schedule for before/after the Hagenberg meeting.
+- [P2019R7: Thread attributes](https://wg21.link/p2019).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Lauri Vasama
+  - Jens Maurer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P2019R7: Thread attributes](https://wg21.link/p2019):
+  - **Poll 1: P2019R7: Forward to LEWG modified to use the ordinary literal encoding for name hint.**
+    - Attendees: 9 (one abstention)
+      SF  F  N  A SA
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   3 |   1 |   0 |   0 |
+    - Strong consensus in favor.
 
 
 # November 6th, 2024
