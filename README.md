@@ -13,9 +13,8 @@ Wednesday, February 5th, 2025, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250205T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
-- [P2873R2: Remove Deprecated Locale-Category Facets for Unicode from C++26](https://wg21.link/p2873r2).
-- [P2758R4: Emitting messages at compile time](https://wg21.link/p2758r4).
 - [P3560R0: Error Handling in Reflection](https://wg21.link/p3560r0).
+- [P2758R4: Emitting messages at compile time](https://wg21.link/p2758r4).
 
 
 # Past SG16 meetings
