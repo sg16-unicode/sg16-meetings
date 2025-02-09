@@ -9,15 +9,17 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, February 5th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250205T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, February 26th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250226T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
-- [P3560R0: Error Handling in Reflection](https://wg21.link/p3560r0).
-- [P2758R4: Emitting messages at compile time](https://wg21.link/p2758r4).
+- [P2873R2: Remove Deprecated locale category facets for Unicode from C++26](https://wg21.link/p2873r2).
+- [P2645R1: path_view: a design that took a wrong turn](https://wg21.link/p2645r1).
+- [P3548R0: P1030 std::filesystem::path_view forward progress options](https://wg21.link/p3548r0).
 
 
 # Past SG16 meetings
+- [February 5th, 2025](#february-5th-2025)
 - [January 22nd, 2025](#january-22nd-2025)
 - [November 6th, 2024](#november-6th-2024)
 - [October 23rd, 2024](#october-23rd-2024)
@@ -45,6 +47,67 @@ Draft agenda:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# February 5th, 2025
+
+## Agenda
+- [P3560R0: Error Handling in Reflection](https://wg21.link/p3560r0).
+- [P2758R4: Emitting messages at compile time](https://wg21.link/p2758r4).
+
+## Meeting summary
+- Attendees:
+  - Barry Revzin
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Inbal Levi
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3560R0: Error Handling in Reflection](https://wg21.link/p3560r0):
+  - **Poll 1: P3560R0: std::meta::exception should support both char and char8_t-based construction and accessors.**
+    - Attendees: 8 (one abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   2 |   3 |   1 |   0 |
+    - No consensus (too many neutrals).
+  - **Poll 2: P3560R0: Forward to LEWG as is.**
+    - Attendees: 9 (one abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   4 |   0 |   1 |   0 |
+    - Consensus.
+- [P2758R4: Emitting messages at compile time](https://wg21.link/p2758r4):
+  - **Poll 3: P2758R4: Add overloads that allow the message to be passed as std::u8string_view.**
+    - Attendees: 9 (two abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   2 |   1 |   0 |   0 |
+    - Consensus.
+  - **Poll 4: P2758R4: Add overloads that allow the message to be passed as std::wstring_view.**
+    - Attendees: 9 (two abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   2 |   2 |   2 |   1 |
+    - No consensus.
+    - A/SA: `std::wstring_view` is mostly useful on Windows at run-time, we don't really need it
+      at compile-time.
+  - **Poll 5: P2758R4: Add overloads that allow the message to be passed as std::u16string_view and std::u32string_view.**
+    - Attendees: 9 (two abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   1 |   5 |   1 |   0 |
+    - No consensus.
+  - **Poll 6: P2758R4: Forward to LEWG modified to include std::u8string_view overloads.**
+    - Attendees: 9 (two abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   4 |   0 |   0 |   0 |
+    - Strong consensus.
+
+
 # January 22nd, 2025
 
 ## Agenda
@@ -67,7 +130,6 @@ Draft agenda:
 - [P2019R7: Thread attributes](https://wg21.link/p2019):
   - **Poll 1: P2019R7: Forward to LEWG modified to use the ordinary literal encoding for name hint.**
     - Attendees: 9 (one abstention)
-      SF  F  N  A SA
       | SF  | F   | N   | A   | SA  |
       | --: | --: | --: | --: | --: |
       |   4 |   3 |   1 |   0 |   0 |
