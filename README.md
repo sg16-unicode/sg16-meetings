@@ -13,9 +13,8 @@ Wednesday, February 26th, 2025, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250226T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
 
 Draft agenda:
-- [P2873R2: Remove Deprecated locale category facets for Unicode from C++26](https://wg21.link/p2873r2).
-- [P2645R1: path_view: a design that took a wrong turn](https://wg21.link/p2645r1).
-- [P3548R0: P1030 std::filesystem::path_view forward progress options](https://wg21.link/p3548r0).
+- [P3263R0: Encoding annotated char](https://wg21.link/p3263r0).
+- [P3412R1: String interpolation](https://wg21.link/p3412r1).
 
 
 # Past SG16 meetings
