@@ -18,6 +18,8 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [March 12th, 2025](#march-12th-2025)
+- [February 26th, 2025](#february-26th-2025)
 - [February 5th, 2025](#february-5th-2025)
 - [January 22nd, 2025](#january-22nd-2025)
 - [November 6th, 2024](#november-6th-2024)
@@ -44,6 +46,70 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 12th, 2025
+
+## Agenda
+- [P3395R0: Formatting of std::error_code](https://wg21.link/p3395r0).
+- [P2873R2: Remove Deprecated locale category facets for Unicode from C++26](https://wg21.link/p2873r2).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Corentin Jabot
+  - Eddie Nolan
+  - Hubert Tong
+  - Jens Maurer
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3395R0: Formatting of std::error_code](https://wg21.link/p3395r0):
+  - **Poll 1: Forward P3395R0 to LEWG amended to specify an encoding for `std::error_category::name()`
+    and for transcoding to be to UTF-8 if that matches the ordinary literal encoding and to an
+    implementation-defined encoding otherwise.**
+    - Attendees: 9 (two abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   1 |   6 |   0 |   0 |   0 |
+    - Strong consensus.
+- [P2873R2: Remove Deprecated locale category facets for Unicode from C++26](https://wg21.link/p2873r2):
+  - **Poll 2: Forward D2873R3 to LWG with the acknowledgement that LEWG has already forwarded it pending
+    SG16 approval.**
+    - Attendees: 8 (two abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   4 |   0 |   0 |   0 |
+    - Strong consensus.
+
+
+# February 26th, 2025
+
+## Agenda
+- [P3263R0: Encoding annotated char](https://wg21.link/p3263r0).
+- [P3412R1: String interpolation](https://wg21.link/p3412r1).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Bengt Gustafsson
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Hubert Tong
+  - Jens Maurer
+  - Peter Bindels
+  - Steve Downey
+  - Tiago Freire
+  - Tom Honermann
+  - Victor Zverovich
+  - Ville Voutilainen
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3263R0: Encoding annotated char](https://wg21.link/p3263r0):
+- [P3412R1: String interpolation](https://wg21.link/p3412r1):
 
 
 # February 5th, 2025
