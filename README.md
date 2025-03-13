@@ -9,12 +9,12 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, February 26th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250226T193000&p1=1440&p2=tz_pst&p3=tz_mst&p4=tz_cst&p5=tz_est&p6=tz_cet)).
+Wednesday, March 26th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250326T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cet)).
 
 Draft agenda:
-- [P3263R0: Encoding annotated char](https://wg21.link/p3263r0).
-- [P3412R1: String interpolation](https://wg21.link/p3412r1).
+- [P3491R1: define_static_{string,object,array}](https://wg21.link/p3491r1).
+- [P3391R0: constexpr std::format](https://wg21.link/p3391r0).
 
 
 # Past SG16 meetings
