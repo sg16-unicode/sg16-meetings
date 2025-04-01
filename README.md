@@ -18,6 +18,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [March 26th, 2025](#march-26th-2025)
 - [March 12th, 2025](#march-12th-2025)
 - [February 26th, 2025](#february-26th-2025)
 - [February 5th, 2025](#february-5th-2025)
@@ -46,6 +47,40 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# March 26th, 2025
+
+## Agenda
+- [P3491R2: define_static_{string,object,array}](https://wg21.link/p3491r2).
+- [P3391R0: constexpr std::format](https://wg21.link/p3391r0).
+
+## Meeting summary
+- Attendees:
+  - Barry Revzin
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Fraser Gordon
+  - Jens Maurer
+  - Steve Downey
+  - Victor Zverovich
+  - Tom Honermann
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3491R2: define_static_{string,object,array}](https://wg21.link/p3491r2):
+  - **Poll 1: Forward P3491R2 to LWG/CWG with the understanding that LEWG has already forwarded this for inclusion in C++26.**
+    - Attendees: 8
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   6 |   0 |   0 |   0 |
+    - Strong consensus.
+- [P3391R0: constexpr std::format](https://wg21.link/p3391r0):
+  - **Poll 2: Forward P3391R1 to LEWG.**
+    - Attendees: 8
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   3 |   0 |   0 |   0 |
+    - Strong consensus.
 
 
 # March 12th, 2025
