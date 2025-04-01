@@ -145,6 +145,8 @@ Draft agenda:
   of this meeting in due time. \]
 - [P3263R0: Encoding annotated char](https://wg21.link/p3263r0):
 - [P3412R1: String interpolation](https://wg21.link/p3412r1):
+  - \[ Editor's note: Bengt Gustafsson's presentation slides are avilable
+    [here](presentations/2025-02-26-p3412r1-presentation.pdf). \]
 
 
 # February 5th, 2025
