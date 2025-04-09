@@ -18,6 +18,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [April 9th, 2025](#april-9th-2025)
 - [March 26th, 2025](#march-26th-2025)
 - [March 12th, 2025](#march-12th-2025)
 - [February 26th, 2025](#february-26th-2025)
@@ -31,6 +32,35 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 9th, 2025
+
+## Agenda
+- [P3474R1: std::arguments](https://wg21.link/p3474r1).
+- [P3655R0: std::zstring_view](https://wg21.link/p3655r0).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Hana Dusíková
+  - Jeremy Rifkin
+  - Jens Maurer
+  - Nevin Liber
+  - Peter Bindels
+  - Steve Downey
+  - Tiago Freire
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3474R1: std::arguments](https://wg21.link/p3474r1):
+  - \[ Editor's note: D3474R1 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P3474R1 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+- [P3655R0: std::zstring_view](https://wg21.link/p3655r0):
 
 
 # March 26th, 2025
