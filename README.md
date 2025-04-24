@@ -9,14 +9,15 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, April 23rd, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250423T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, May 14th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250514T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- [P3655R0: std::zstring_view](https://wg21.link/p3655r0).
+- TBD.
 
 
 # Past SG16 meetings
+- [April 23rd, 2025](#april-23rd-2025)
 - [April 9th, 2025](#april-9th-2025)
 - [March 26th, 2025](#march-26th-2025)
 - [March 12th, 2025](#march-12th-2025)
@@ -31,6 +32,46 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# April 23rd, 2025
+
+## Agenda
+- [P3655R0: std::zstring_view](https://wg21.link/p3655r0).
+- [P2873R3: Remove Deprecated locale category facets for Unicode from C++26](https://wg21.link/p2873r3).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Hana Dusíková
+  - Jens Maurer
+  - Jeremy Rifkin
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3655R0: std::zstring_view](https://wg21.link/p3655r0):
+  - **Poll 1: P3655R0: No objection to use of std::char_traits for consistency and compatibility with std::string_view.**
+    - Attendees: 8 (no abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   7 |   1 |   0 |   0 |   0 |
+    - Strong consensus.
+  - **Poll 2: P3655R0: Forward to LEWG with encouragement to add analysis of overload resolution and techniques to address ambiguity.**
+    - Attendees: 8 (no abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   8 |   0 |   0 |   0 |   0 |
+    - Strong consensus.
+- [P2873R3: Remove Deprecated locale category facets for Unicode from C++26](https://wg21.link/p2873r3):
+  - **Poll 3: P2873R3: Recommend to retain the deprecated std::codecvt<charN_t, char8_t> facets in C++26 based on observations of existing use.**
+    - Attendees: 7 (no abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   7 |   0 |   0 |   0 |
+    - Strong consensus.
 
 
 # April 9th, 2025
