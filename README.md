@@ -19,6 +19,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [May 14th, 2025](#may-14th-2025)
 - [April 23rd, 2025](#april-23rd-2025)
 - [April 9th, 2025](#april-9th-2025)
 - [March 26th, 2025](#march-26th-2025)
@@ -34,6 +35,38 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 14th, 2025
+
+## Agenda
+- [P3658R0: Adjust *identifier* following new Unicode recommendations](https://wg21.link/p3658r0).
+- [P3556R0: Input files are source files](https://wg21.link/p3556r0).
+- [P3657R0: A Grammar for Whitespace Characters](https://wg21.link/p3657r0).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Jens Maurer
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3658R0: Adjust *identifier* following new Unicode recommendations](https://wg21.link/p3658r0):
+  - **Poll 1:  P3658R0: Forward to EWG.**
+    - Attendees: 9 (1 abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   6 |   2 |   0 |   0 |   0 |
+    - Strong consensus.
+- [P3556R0: Input files are source files](https://wg21.link/p3556r0):
+- [P3657R0: A Grammar for Whitespace Characters](https://wg21.link/p3657r0):
 
 
 # April 23rd, 2025
