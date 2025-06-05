@@ -19,6 +19,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [May 28th, 2025](#may-28th-2025)
 - [May 14th, 2025](#may-14th-2025)
 - [April 23rd, 2025](#april-23rd-2025)
 - [April 9th, 2025](#april-9th-2025)
@@ -35,6 +36,27 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# May 28th, 2025
+
+## Agenda
+- [P3671R0: Clarifying the interaction of the literal and execution encodings](https://wg21.link/p3671r0).
+- [P3677R0: Preserving LC_CTYPE at program start for UTF-8 locales](https://wg21.link/p3677r0).
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Eddie Nolan
+  - Hubert Tong
+  - Jens Maurer
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3671R0: Clarifying the interaction of the literal and execution encodings](https://wg21.link/p3671r0):
+- [P3677R0: Preserving LC_CTYPE at program start for UTF-8 locales](https://wg21.link/p3677r0):
 
 
 # May 14th, 2025
