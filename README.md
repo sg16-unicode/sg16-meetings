@@ -13,7 +13,7 @@ Wednesday, June 11th, 2025, from 19:30-21:00 UTC
 ([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250611T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- [D3727R0: Update Annex E onto Unicode 16](https://isocpp.org/files/papers/D3727R0.pdf).
+- [D3727R0: Update Annex E onto Unicode 15.1](https://isocpp.org/files/papers/D3727R0.pdf).
 - [CWG2843: Undated reference to Unicode makes C++ a moving target](https://wg21.link/cwg2843).
 - [P2843R2: Preprocessing is never undefined](https://wg21.link/p2843r2).
 
