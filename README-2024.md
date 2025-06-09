@@ -313,11 +313,419 @@ Meeting summaries for meetings held more recently than 2024 are available at
   - Steve Downey
   - Tom Honermann
   - Victor Zverovich
-- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
-  of this meeting in due time. \]
 - [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://cplusplus.github.io/LWG/issue4070):
+  - Steve introduced the issue.
+  - Victor, as author of the paper that introduced the wording the issue is concerned with, confirmed that the
+    intent is to first perform substitution for ill-formed code unit sequences and then to transcode the result.
+  - \[ Editor's note: The related paper is
+    [P2845R8 (Formatting of std::filesystem::path)](https://wg21.link/p2845r8). \]
+  - Victor expressed agreement with the issue author that the wording is lacking for non-escaped paths.
+  - Victor opined that the resolution is correct with the exception of an issue Tom pointed out in the second part
+    of the proposed resolution.
+  - \[ Editor's note: See
+    [Tom's 2024-06-12 email with subject "Agenda for the 2024-06-12 SG16 meeting - TODAY"](https://lists.isocpp.org/sg16/2024/06/4332.php).
+
+        With respect to the PR, I think the proposed update to implementation-defined behavior is subtly incorrect;
+        the implementation-defined behavior comes into play when the ordinary literal encoding is not UTF-8
+        (an implementation may still convert to UTF-8 when the ordinary literal encoding is not UTF-8). 
+    \]
+  - Tom suggested replacing the proposed "and not converting from `wchar_t` to UTF-8" wording with
+    "and the literal encoding is not UTF-8".
+  - Tom noted that the `wchar_t` encoding is still implementation defined, but that is unrelated to the particular
+    implementation-defined behavior that is intended to be conveyed for this issue.
+  - Steve summarized that, if the environment is fully Unicode, then the behavior is completely specified.
+  - Tom clarified that this is specific to when the ordinary literal encoding is UTF-8.
+  - Steve noted that this part of the wording is a title for an index entry that links back to
+    [\[fs.path.fmtr.funcs\]](https://eel.is/c++draft/fs.path.fmtr.funcs#:transcoding_of_a_formatted_path_when_charT_and_path::value_type_differ);
+    the intent is to describe the case well enough so someone looking through the implementation-defined behavior
+    index can find it.
+  - Victor expressed agreement that the proposed update to the implementation-defined behavior index should be
+    updated as Tom suggested.
+  - Victor stated that the first part of the proposed update to replace "escaped path" with
+    "(possibly escaped) string" looks correct.
+  - Jens stated that, with respect to the implementation-defined behavior index, the entries are intended to
+    provide a headline; the text shouldn't be wrong but doesn't have to be complete either.
+  - Jens noted that the current text is not accurate because the behavior is not implementation-defined in
+    some cases when `CharT` is `char` and `path::value_type` is `wchar_t`.
+  - Jens observed that the wording refers to the literal encoding when the ordinary literal encoding is presumaby
+    intended; the existing wording could be misread as referring to the wide literal encoding.
+  - Jens asserted that the ambiguous use of "literal encoding" is a separate issue.
+  - Jens expressed support for the suggestion to update the proposed resolution with the
+    "and the literal encoding is not UTF-8" change and noted this maintains consistency with the existing
+    wording, ambiguous though it might be.
+  - Tom asked if both references to "literal encoding" should be changed to "ordinary literal encoding".
+  - Jens replied that perhaps they should be, but that such a change is a separate issue.
+  - Steve reported that there are many places in the standard with this ambiguity and that cleaning it up should
+    be a one-time thing where we go through and clarify whether we actually mean ordinary literal encoding or
+    some other encoding.
+  - Steve shared a perception that we would be in favor of such a change.
+  - Jens stated that all we're trying to do here is correctly quote the normative text.
+  - Steve summarized his impression of the emerging consensus; we want to accept the proposed resolution for
+    the first clause and change the second clause as discussed.
+  - Jens asked why the proposed resolution for the second clause doesn't work and directed himself to review
+    Tom's email.
+  - Steve replied that the implementation-defined behavior is not contingent on the selected encoding conversion
+    but on the criteria used to determine what encodings to convert between; an implementation can opt to
+    convert to UTF-8 when the ordinary literal encoding is not UTF-8 but it's up to implementations to decide
+    how best to serve their users.
+  - Jens acknowledged the distinction and asked Tom if he is ok with not introducing "ordinary" for the sake
+    of consistency with the normative wording or whether the scope of the issue should be increased.
+  - Tom expressed being content with inserting "ordinary" as part of a separate cleanup or separate LWG issue
+    as Steve suggested.
+  - Jens summarized, so the green text in the second clause should be "and the literal encoding is not UTF-8."
+  - Tom confirmed.
 - [LWG issue 4087: Standard exception messages have unspecified encoding](https://cplusplus.github.io/LWG/issue4087):
+  - Victor introduced the issue:
+    - `std::exception` is one of the few remaining standard library types that lacks a formatter for `std::format()`.
+    - The standard does not specify the encoding for the string returned by the `what()` member function but suggests
+      that the string can be converted for display as a `wstring`.
+    - The lack of a definite encoding makes it impossible to implement a proper formatter.
+    - The example in the LWG issue uses a filesystem path, but the problem is more general.
+    - `filesystem_error` is one of the most obvious and problematic cases because the initial exception object might
+      be constructed with a `what_arg` in one encoding and a `path` object for a filename in a different
+      encoding that are somehow combined and then formatted using the ordinary literal encoding.
+    - The proposed resolution is incomplete; just a first attempt to propose something to start the discussion.
+    - The desired behavior should probably be compatible with the ordinary literal encoding since typical usage is
+      likely to combine strings in the ordinary literal encoding with the output of `what()`.
+    - An email forwarded to SG16 describes four options that nicely summarizes options to choose from.
+    - \[ Editor's note: See
+      [Victor's 2024-06-12 email with subject "Fwd: \[isocpp-lib\] Issue 4087: Standard exception messages have unspecified encoding](https://lists.isocpp.org/sg16/2024/06/4336.php).
+      \]
+    - Tom separately suggested use of the locale encoding.
+  - Steve stated that, barring any external constraints, he would expect the exception message to be in the current
+    execution encoding.
+  - Steve noted that the execution encoding may not match the literal encoding; that is a common source of broken
+    text, but that is the state of the world.
+  - Steve asserted that `char`-based text must be assumed to be in the execution encoding in the absence of other
+    information.
+  - Victor stated that, at the very least, the encoding should be specified; it isn't currently.
+  - Jens agreed.
+  - Steve agreed and noted that doing so is especially important since text in the message may be user-provided
+    for some derived classes.
+  - Tom asked, referring to the wording in the remarks that states,
+    "The message may be a null-terminated multibyte string",
+    whether the term "multibyte" implies the locale encoding.
+  - Jens replied that it doesn't.
+  - Tom noted the association of "multibyte" with functions like `mbstowcs()`.
+  - Tom lamented the vague "multibyte" specification.
+  - Steve asked if NTBS includes multibyte strings.
+  - Jens dove into the C++ standard wording and reported:
+    - [\[byte.strings\]p1](https://eel.is/c++draft/byte.strings#1):
+      "A _null-terminated byte string_, or NTBS, is a character sequence whose highest-addressed element with
+      defined content has the value zero (the _terminating null character_); no other element in the sequence
+      has the value zero."
+    - [\[multibyte.strings\]p2](https://eel.is/c++draft/multibyte.strings#2):
+      "A _null-terminated multibyte string_, or NTMBS, is an NTBS that constitutes a sequence of valid
+      multibyte characters, beginning and ending in the initial shift state."
+    - [\[multibyte.strings\]p1](https://eel.is/c++draft/multibyte.strings#1):
+      "A _multibyte character_ is a sequence of one or more bytes representing the code unit sequence for an
+      encoded character of the _execution character set_."
+  - Steve commented that this scenario presents many interesting ways to produce broken text when combining
+    `what()` output with string literals and user-provided data; one can only hope that someone will be able
+    to reconstruct something useful.
+  - Jens continued looking at wording for NTBS in the C standard:
+    - \[ Editor's note: the following quotes from the C standard correspond to
+      [WG14 N2176 (Programming languages — C)](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2176.pdf);
+      the final draft before the publication of C17.
+      I don't know which revision of the C standard Jens was consulting. \]
+    - 7.22.8.1p2 (The `mbstowcs` function):
+      "The `mbstowcs` function converts a sequence of multibyte characters that begins in the initial shift
+      state from the array pointed to by `s` into a sequence of corresponding wide characters and stores not
+      more than `n` wide characters into the array pointed to by `pwcs`.
+      No multibyte characters that follow a null character (which is converted into a null wide character)
+      will be examined or converted.
+      Each multibyte character is converted as if by a call to the `mbtowc` function, except that the
+      conversion state of the `mbtowc` function is not affected."
+    - 7.22.7p1 (Multibyte/wide character conversion functions):
+      "The behavior of the multibyte character functions is affected by the `LC_CTYPE` category of the
+      current locale.
+      For a state-dependent encoding, each function is placed into its initial conversion state at program
+      startup and can be returned to that state by a call for which its character pointer argument, `s`,
+      is a null pointer.
+      Subsequent calls with `s` as other than a null pointer cause the internal conversion state of the
+      function to be altered as necessary.
+      A call with `s` as a null pointer causes these functions to return a nonzero value if encodings
+      have state dependency, and zero otherwise.
+      Changing the `LC_CTYPE` category causes the conversion state of these functions to be indeterminate."
+  - Jens summarized; `mbstowcs()` converts an NTMBS to a wide string using a means of conversion that is
+    dependent on `LC_CTYPE`.
+  - Jens concluded; the set of valid multibyte character sequences and their meanings are therefore
+    dependent on the `LC_CTYPE` locale category that is presumably obtained from the global locale or a
+    thread local locale.
+  - Steve noted that, in our current terminology, the encoding associated with that locale is referred to
+    as the execution encoding.
+  - Jens lamented the absence of an explicit locale in the exception library and noted that the C++ standard
+    library tends to make use of the locale explicit in its interface; for example, iostreams allows a locale
+    to be imbued so that use of global locale state can be avoided.
+  - Steve observed that use of an explicit locale would avoid the builtin race condition that exists while
+    the exception is in flight.
+  - Tom commented that providing a locale in a call to `what()` wouldn't work since the message that is
+    returned is constructed much earlier.
+  - Jens agreed and stated it would have to be provided when the exception is generated.
+  - Tom repeated Steve's observation that the locale could change in between construction of the exception
+    object and the call to `what()`.
+  - Jens repled that the behavior would at least be well-defined; if the message returned by `what()` is
+    gibberish because the locale changed, then it is the programmer's fault.
+  - Jens commented that this discussion is hypothetical anyway since there is no way to specify a locale when
+    the exception object is created.
+  - Jens asked if `std::filesystem` has locale dependencies.
+  - Tom replid that it does.
+  - Victor explained that `std::filesystem::path` uses the "operating system dependent current encoding" for
+    paths in ordinary character strings.
+  - Tom stated that some of the `std::filesystem::path` constructors allow a locale object to be provided.
+  - \[ Editor's note: See
+    [\[fs.path.construct\]](https://eel.is/c++draft/fs.path.construct) \]
+  - Jens reviewed the example in the LWG issue and observed that querying a file size doesn't seem like a
+    situation in which a locale makes much sense; there is nowhere to pass a locale in and a programmer would
+    not expect to have to pass one in to such a function.
+  - Steve replied that the example illustrates the general problem.
+  - Tom stated that the only way mojibake is avoided is if the global locale remains consistent from the time
+    the exception object is created to when it is received.
+  - Victor asked if we concluded that NTBS always implies the global locale.
+  - Jens replied that NTMBS implies the global locale.
+  - Steve observed that the message could have been created with a string literal.
+  - Victor noted that the normative wording requires an NTBS.
+  - Tom clarified that the remarks state NTMBS but that the text states NTBS; it isn't consistent.
+  - Jens reviewed the wording again:
+    - [\[exception\]p5](https://eel.is/c++draft/support.exception#exception-5):
+      "*Returns*: An implementation-defined NTBS."
+    - [\[exception\]p6](https://eel.is/c++draft/support.exception#exception-6):
+      "*Remarks*: The message may be a
+      [null-terminated multibyte string](https://eel.is/c++draft/multibyte.strings#def:ntmbs),
+      suitable for conversion and display as a `wstring`
+      ([\[string.classes\]](https://eel.is/c++draft/string.classes),
+      [\[locale.codecvt\]](https://eel.is/c++draft/locale.codecvt)).
+      The return value remains valid until the exception object from which it is obtained is destroyed or a
+      non-const member function of the exception object is called."
+  - Jens summarized; return of an NTBS is required, but an NTMBS is an NTBS per
+    [\[multibyte.strings\]p2](https://eel.is/c++draft/multibyte.strings#2)
+    so the remarks explicitly note the permission an implementation has to return an NTMBS as opposed to just
+    an NTBS.
+  - Jens suggested a way forward; for the case of an NTMBS, where wording is already present that states the
+    message is suitable for conversion and display as a wide string, we can clarify that it was suitable for
+    such conversion at the time of construction.
+  - Jens explained that this reflects the requirement that `LC_CTYPE` be consulted at construction time, not when
+    `what()` is called; this is what is currently missing from the remarks.
+  - Jens noted that the cross-reference to
+    [\[locale.codecvt\]](https://eel.is/c++draft/locale.codecvt)
+    is already present, so we know the encoding requirements.
+  - Jens explained that we don't yet have a solution for the return wording where the minimum requirement is just
+    for an NTBS and suggested it might be best to just not state anything about it.
+  - Tom stated that solving the problem presented for `std::format()` requires addressing two concerns:
+    - 1) How the file path is encoded in the message.
+    - 2) What encoding is used to interpret the message.
+  - Tom suggested that, for the second issue, we can specify an "as-if using mbtowc()" or similar approach; and,
+    if the global locale has changed or if the message was not encoded as an NTMBS, then you get what you get;
+    sometimes you get mojibake.
+  - Victor asked for clarification regarding which global locale and explained that there is more than one;
+    the C++ standard library maintains one that is separate from the C locale.
+  - Steve mentioned that the various parts of each locale can also be changed independently.
+  - Jens provided additional detail; There is a locale maintained by the C standard library that can be changed
+    by calling `setlocale()` and a separate C++ locale that can be changed by calling `std::setlocale()`.
+  - Tom noted that `std::setlocale()` also calls `setlocale()` to change the C locale in some cases.
+  - Jens replied that it isn't required to do so and that both can be expected to match at the start of the
+    program.
+  - Jens asked which locale should be queried for this scenario and suggested it is presumably the C++ locale.
+  - Tom disagreed because the reference for the related conversion functions refers to the C conversion functions
+    that use the C locale.
+  - Jens asked where that reference is.
+  - Tom became confused, stated he might have misunderstood earlier, and asked if there wasn't a reference to the
+    `mbtowc()` family of functions.
+  - Jens responded that the actual cross referense is to the `std::codecvt` facet; the C++ class intended for use
+    to convert from one character encoding to another.
+  - Tom suggested investigating what implementations actually do; to try setting the C and C++ locales differently
+    and then see which encoding is used.
+  - Jens asked for clarification; which encoding is used for what?
+  - Tom replied which encoding is used to produce the exception object; the encoding used when, for example,
+    converting `char`-based file paths on Windows for inclusion in the exception message.
+  - Jens stated that the issue refers to the OS dependent current encoding for path names which would be something
+    like Windows-1251 for this example.
+  - Victor opined that path considerations are a red herring because paths have their own unrelated encoding.
+  - Victor asserted that what is lacking is specification for what the target encoding is for the exception
+    message; what a path should be converted to; not the conversions that `std::path` implements.
+  - Steve attempted to approach the issue from a programmer's perspective; and asked what encoding should be
+    targeted when producing a message for a new exception class.
+  - Steve suggested the right encoding is the current exception encoding as defined by the locale as the right
+    target encoding.
+  - Eddie asked for clarification of which locale.
+  - Jens answered with the global C++ locale and explained that there is no reference to the C locale in the
+    cross reference; the redirection to `std::codecvt` implies the global C++ locale.
+  - Victor asked for clarification regarding what was meant in earlier comments regarding the locale used at
+    exception object construction time as opposed to when `what()` is called.
+  - Steve responded that the locale can be changed asynchronously; it can change in between the point where
+    the exception object is constructed and `what()` is called; such a change is problematic.
+  - Jens asked how the global C++ locale is queried and changed.
+  - Further discussion identified the default `std::locale` constructor
+    ([\[locale.cons\]](https://eel.is/c++draft/locale.cons))
+    and `std::global()`
+    ([\[locale.statics\]](https://eel.is/c++draft/locale.statics)).
+  - Jens summarized how these work; the default `std::locale` constructor produces a copy of the current
+    C++ locale; calls to `std::global()` change the C++ locale and, if a named locale is specified, the C
+    locale is changed as well, otherwise any effect on the C locale is implementation-defined.
+  - Jens pondered the consequences of these behaviors; race conditions aren't relevant here; the standard
+    library is required to handle unsynchronized calls to `std::global()` and construction of new `std::locale`
+    objects.
+  - Victor observed that an exception class constructor could have multiple parameters and asked what
+    happens if the locale changes in between processing them.
+  - Jens replied that the program is broken.
+  - Victor asked for clarification.
+  - Jens replied that nothing prevents the locale being changed and that the best atomicity guarangee available
+    is the default `std::locale` constructor; if you call it multiple times in close proximity and get different
+    results, well, tough luck.
+  - Tom explained that consistency requires procuring a copy of the `std::locale` and reusing it until the
+    message is complete.
+  - Victor suggested that should be specified somehow; that messages are formed in one locale, not multiple.
+  - Steve equated the suggestion to instructing programmers not to do broken things.
+  - Victor stated that this still leads to an exception class that potentially needs to be sensitive to
+    multiple locales.
+  - Jens explained that the exception class constructor will need to use the locale that is current at the time
+    of its invocation; if the constructor needs to, for example, combine some text with a message produced by a
+    `std::system_error` exception, there isn't anything we can do since the encoding used to create it can't be
+    queried.
+  - Jens quipped that changing the global locale is a bad idea and we should convey that to the extent that we can.
+  - Steve reiterated that the best we can do is state that `what()` returns an NTBS in the locale encoding that was
+    in effect when the exception object was constructed.
+  - Jens expressed uncertainty about the requirements for an NTBS; it is fairly clear that an implementation that
+    returns an NTMBS should return it encoded in the current locale at the time of construction; but an NTBS
+    doesn't necessarily have sufficient capabilities to represent, for example, the characters of both an
+    explanatory string and a path.
+  - Jens suggested that the best we might be able to do is to state that an implementation-defined NTBS is
+    returned and then provide a recommended practice that describes the NTMBS case with its locale dependency and
+    leave the rest to QoI.
+  - Jens noted that, on a small system where there is no practical choice of encoding, an NTBS likely suffices.
+  - Steve agreed, noted that an NTMBS might still be a single byte encoding, and suggested clarifying in the
+    remarks that if the message returned by `what()` doesn't reflect the locale encoding at the time that the
+    exception object was created, then your contract has been broken.
+  - Jens asked if we are in agreement to refine the NTMBS wording since we can associate an encoding in that
+    case, but to leave out any guarantees since they don't really exist.
+  - Steve replied that the only guarantee provided is that the message string will be null terminated.
+  - Jens described that guarantee as not particularly useful, but adding clear recommended practice could be
+    helpful on the QoI side; users can always ask implementors for improvements.
+  - Steve volunteered to draft wording for a new proposed resolution.
+  - Victor lamented that direction since it doesn't address the core issue that we don't know what encoding
+    to use with `what()`; this just retains the current broken state.
+  - Steve agreed, but indicated this as the state of the world; the remarks provide QoI guidance.
+  - Steve noted that user data that isn't properly encoded could end up in the message; there isn't a
+    guarantee that a non-lossy properly encoded message can be produced.
+  - Tom stated that `std::format()` can be specified to interpret the `what()` message as an NTMBS in the
+    current locale with debug-print-like escaping for ill-formed code unit sequences.
+  - Steve agreed; this is foreign data and it should therefore be treated with suspicion; treat it as an
+    NTMBS in the current locale encoding, and perform a best-effort formatting.
+  - Eddie asked if we can't require an NTMBS.
+  - Jens asked if we know what standard library implementations actually do.
+  - Jens noted that, if the postconditions of `what()` are strengthened, than we likewise have to
+    strengthen the preconditions of, e.g., the `std::logic_error` constructor. However, `what()` is also
+    currently required to return the exact bytes that were provided to the constructor, so no transcoding
+    is permitted; should we invalidate existing code that depends on getting exact bytes back?
+  - Eddie replied that we probably shouldn't.
+  - Tom expressed agreement with not invalidating existing source code.
+  - Steve noted that, if the locale encoding and the ordinary literal encoding aren't compatible, deep
+    problems emerge producing any output whatsoever; hello world starts to fail.
+  - Jens acknowledged, but noted that violating the preconditions of a library function is library UB and
+    that isn't a good place to be.
+  - Steve agreed regarding the exception construction and `what()` behavior, but noted there is more
+    flexibility within `std::format()`.
+  - Jens agreed; the formatter can do what it likes with the `what()` output.
+  - Jens suggested that the recommended practice updates could direct implementors to construct a valid
+    NTMBS for the messages they create on their own, but we probably can't do more than that.
+  - Jens lamented being unable to rely on UTF-8 everywhere.
+  - Victor expressed concern that the example might have been mischaracterized because it involves paths;
+    if the encoding of the path is known, then perfect output can be produced with arbitrary binary data
+    formatted with an escape mechanism.
+  - Jens asked if it would be desirable to expose the `std::filesystem::path` object in the exception
+    class so that the formatter could use it directly.
+  - Victor stated that the path is already exposed in the message and can therefore be properly encoded
+    within it.
+  - Jens agreed that `what()` should not return text with parts in different encodings; as QoI inline
+    with the recommended practice we're trying to formulate, a consistently encoded message should be
+    produced.
+  - Steve noted that the "in the native format" wording used by `std::filesystem::path` is vague and a
+    source of confusion, but can be remediated by an implementor; unlike the exception classes that
+    require `what()` to return the exact same string provided to the class constructor.
+  - Jens agreed that implementors can be gently pushed in the right direction and opined that a
+    reasonable fix doesn't seem to exist for all of the exception classes.
+  - Tom agreed and asked if it would be a reasonable request to implementors to change existing code
+    to embed paths in exception messages using the debug-print escape mechanism that `std::format()`
+    uses for paths.
+  - Jens opined that it is; an NTMBS with differently encoded parts is untenable.
+  - Victor asked Mark to comment on making such a change.
+  - Mark expressed uncertainty since it has implications for existing users, but agreed that it would
+    be good to investigate further.
+  - Mark noted that libc++ is pretty much UTF-8 only with some accommodations for Windows.
+  - Jens remarked that `std::filesystem_error` has constructors with three parameter types;
+    a "what_arg" `std::string`, `std::filesystem::path`, and `std::error_code`; thus three potentially
+    relevant encodings; something user-defined and unknown, the path encoding, and the encoding the
+    implementation uses for `std::system_error`; thus the problem is a bit larger and there are
+    requirements on the user to provide the "what_arg" in the right encoding.
+  - Jens noted that we can probably impose additional requirements on `std::filesystem_error`
+    specifically since there is good reason to do so.
+  - Steve indicated he would draft some proposed updates for the remarks.
+  - Jens stated that there also needs to be a change made to the guarantees provided by
+    `std::filesystem_error::what()` as it states that an NTBS is returned; that can be strengthened
+    and a precondition added to the "what_arg" argument of the constructors.
+  - \[ Editor's note: see
+    [\[fs.filesystem.error.members\]p7](https://eel.is/c++draft/fs.filesystem.error.members#7). \]
+  - Jens suggested that implementors might be open to being convinced to support such a change
+    specifically for `std::filesystem_error`.
 - [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://cplusplus.github.io/LWG/issue4090):
+  - Jens provided an introduction.
+    - `std::format()` can be passed a `std::locale` parameter and standard formatters support a
+      `L` specifier to opt in to locale dependent formatting.
+    - [\[format.string.std\]p17](https://eel.is/c++draft/format.string.std#17) states:
+      "For integral types, the locale-specific form causes the context's locale to be used to
+      insert the appropriate digit group separator characters."
+    - There is likely a similar statement elsewhere for floating-point types.
+    - \[ Editor's note: a similar statement for floating-point types and `bool` is also present in
+      [\[format.string.std\]p17](https://eel.is/c++draft/format.string.std#17). \]
+    - The wording doesn't state how the locale facilities are to be used to insert the digit
+      group separator characters.
+    - For iostreams, when and how the locale facilities are used is proscribed.
+    - Programmers may imbue a locale with custom facets, so it is observable which locale
+      facilities are used.
+    - The current wording doesn't indicate how a programmer can provide custom locale
+      behavior; whether they should provide a custom `std::num_put` facet, a `std::numpunct`
+      facet, or whether the `std::numpunct_byname` facets are relevant.
+    - `std::numpunct` only supports characters that are encoded as a single code unit.
+    - Use of `std::num_put` provides a practical benefit since it isn't limited to single
+      code unit output.
+  - Steve observed that use of a half-width comma could be desired.
+  - Tom suggested investigating what implementations are currently doing.
+  - Steve enumerated the options; either specify precisely how this works or leave it up to
+    programmers to negotiate with their implementors.
+  - Jens added another option; or tell programmers not to customize under threat of undefined
+    behavior.
+  - Tom asked if Mark knew how libc++ implemented localization support.
+  - Mark replied that he didn't know off-hand, but that it is different from iostreams.
+  - Jens noted that iostreams uses `std::num_put`, but was unsure if it works on character
+    ranges or requires iostreams.
+  - Tom reported that the Microsoft implementation does have uses of `std::numpunct` in an
+    internal function named `write_integral()`, but has no uses of `std::num_put`.
+  - Jens observed that `std::num_put` has a `std::ios_base` reference parameter which would
+    make use in a formatter awkward.
+  - Jens added that `std::num_put` accepts an output iterator type as a template type parameter
+    which defaults to `std::ostreambuf_iterator` and noted that a type appropriate for a
+    formatter could presumably be provided, but that would require speifying that type.
+  - Jens concluded that `std::num_put` might be too tied to iostreams to use with `std::format()`.
+  - Tom asked if `std::format()` has been shipped with libstdc++.
+  - Mark replied that an incomplete implementation was provided with gcc 13 and that gcc 14
+    will have more improvements.
+  - Tom reported that the libstdc++ implementation has many uses of `std::numpunct` and no
+    uses of `std::num_put`.
+  - Jens confirmed and proclaimed `std::numpunct` the apparent winner.
+  - Steve opined that the wording should be updated to specify use of `std::numpunct` with the
+    noted limitation that digit separator characters will be limited to those that are encoded
+    as a single code unit.
+  - Jens proclaimed that it is not new news that the locale interface is broken and if something
+    better comes along, we might have to extend `std::format()` to provide a way to use it.
+  - Mark opined that the proposed resolution should also address floating-point and boolean values.
+  - Tom asked Jens if he would offer a proposed resolution for the issue.
+  - Jens replied that he did not intend to.
+  - Tom asked Jens what he would like done with the issue.
+  - Jens requested that LWG be informed that SG16 determined that, after implementation review,
+    the wording should be updated to specify use of `std::numpunct` for locale dependent
+    formatting of integer, floating-point, and boolean values.
+  - Jens noted that a prose description can be provided and that someone so motivated could then
+    morph the prose into proper wording for a proposed resolution.
 
 
 # May 22nd, 2024
