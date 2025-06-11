@@ -307,6 +307,7 @@ Meeting summaries for meetings held more recently than 2024 are available at
 ## Meeting summary
 - Attendees:
   - Braden Ganetsky
+  - Eddie Nolan
   - Jens Maurer
   - Mark de Wever
   - Nathan Owen
@@ -389,7 +390,7 @@ Meeting summaries for meetings held more recently than 2024 are available at
       likely to combine strings in the ordinary literal encoding with the output of `what()`.
     - An email forwarded to SG16 describes four options that nicely summarizes options to choose from.
     - \[ Editor's note: See
-      [Victor's 2024-06-12 email with subject "Fwd: \[isocpp-lib\] Issue 4087: Standard exception messages have unspecified encoding](https://lists.isocpp.org/sg16/2024/06/4336.php).
+      [Victor's 2024-06-12 email with subject "Fwd: \[isocpp-lib\] Issue 4087: Standard exception messages have unspecified encoding"](https://lists.isocpp.org/sg16/2024/06/4336.php).
       \]
     - Tom separately suggested use of the locale encoding.
   - Steve stated that, barring any external constraints, he would expect the exception message to be in the current
@@ -572,8 +573,8 @@ Meeting summaries for meetings held more recently than 2024 are available at
   - Jens replied that nothing prevents the locale being changed and that the best atomicity guarangee available
     is the default `std::locale` constructor; if you call it multiple times in close proximity and get different
     results, well, tough luck.
-  - Tom explained that consistency requires procuring a copy of the `std::locale` and reusing it until the
-    message is complete.
+  - Tom explained that consistency requires procuring a `std::locale` copy and reusing it until the message is
+    complete.
   - Victor suggested that should be specified somehow; that messages are formed in one locale, not multiple.
   - Steve equated the suggestion to instructing programmers not to do broken things.
   - Victor stated that this still leads to an exception class that potentially needs to be sensitive to
@@ -704,7 +705,7 @@ Meeting summaries for meetings held more recently than 2024 are available at
     make use in a formatter awkward.
   - Jens added that `std::num_put` accepts an output iterator type as a template type parameter
     which defaults to `std::ostreambuf_iterator` and noted that a type appropriate for a
-    formatter could presumably be provided, but that would require speifying that type.
+    formatter could presumably be provided, but that would require specifying that type.
   - Jens concluded that `std::num_put` might be too tied to iostreams to use with `std::format()`.
   - Tom asked if `std::format()` has been shipped with libstdc++.
   - Mark replied that an incomplete implementation was provided with gcc 13 and that gcc 14
