@@ -9,13 +9,11 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, June 11th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250611T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, July 9th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250709T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- [CWG2843: Undated reference to Unicode makes C++ a moving target](https://wg21.link/cwg2843).
-- [D3727R0: Update Annex E onto Unicode 15.1](https://isocpp.org/files/papers/D3727R0.pdf).
-- [P3717R0: Update Annex E onto Unicode 16.](https://wg21.link/p3717r0).
+- TBD; will focus on post-Sofia activities and/or issues for which C++26 NB comments are anticipated.
 
 
 # Past SG16 meetings
