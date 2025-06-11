@@ -62,7 +62,7 @@ Draft agenda:
     The agenda and links used here reference P3727R0 since the links to the draft paper were ephemeral.
     The published document may differ from the reviewed draft revision. \]
   - **Poll 1: CWG 2843: Recommend adoption of the May 2025 proposed resolution.**
-    - Attendees: 7
+    - Attendees: 7 (one attendee had to leave early)
     - No objection to unanimous consent.
 
 
