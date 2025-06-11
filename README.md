@@ -17,6 +17,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [June 11th, 2025](#june-11th-2025)
 - [May 28th, 2025](#may-28th-2025)
 - [May 14th, 2025](#may-14th-2025)
 - [April 23rd, 2025](#april-23rd-2025)
@@ -34,6 +35,35 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# June 11th, 2025
+
+## Agenda
+- [CWG2843: Undated reference to Unicode makes C++ a moving target](https://cplusplus.github.io/CWG/issues/2843.html).
+- [P3727R0: Update Annex E onto Unicode 15.1](https://wg21.link/p3727r0).
+- [P3717R0: Update Annex E onto Unicode 16](https://wg21.link/p3717r0).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Jens Maurer
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [CWG2843: Undated reference to Unicode makes C++ a moving target](https://cplusplus.github.io/CWG/issues/2843.html)<br>
+  [P3727R0: Update Annex E onto Unicode 15.1](https://wg21.link/p3727r0)<br>
+  [P3717R0: Update Annex E onto Unicode 16](https://wg21.link/p3717r0):
+  - \[ Editor's note: D3727R0 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P3727R0 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - **Poll 1: CWG 2843: Recommend adoption of the May 2025 proposed resolution.**
+    - Attendees: 7
+    - No objection to unanimous consent.
 
 
 # May 28th, 2025
