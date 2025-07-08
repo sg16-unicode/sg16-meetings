@@ -14,7 +14,7 @@ Wednesday, July 16th, 2025, from 19:30-21:00 UTC
 
 Draft agenda:
 - [P2843R2: Preprocessing is never undefined](https://wg21.link/p2843r2).
-- [LWG issue 4070: Transcoding by std::formatter<std::filesystem::path>](https://wg21.link/lwg4070).
+- [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://wg21.link/lwg4070).
 - [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090).
 
 
