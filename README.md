@@ -9,13 +9,13 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, July 16th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250716T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, July 30th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250730T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- [P2843R2: Preprocessing is never undefined](https://wg21.link/p2843r2).
 - [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://wg21.link/lwg4070).
 - [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090).
+- [P3677R0: Preserving LC_CTYPE at program start for UTF-8 locales](https://wg21.link/p3677r0).
 
 
 # Past SG16 meetings
