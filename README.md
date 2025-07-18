@@ -19,6 +19,7 @@ Draft agenda:
 
 
 # Past SG16 meetings
+- [July 16th, 2025](#july-16th-2025)
 - [June 11th, 2025](#june-11th-2025)
 - [May 28th, 2025](#may-28th-2025)
 - [May 14th, 2025](#may-14th-2025)
@@ -37,6 +38,33 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# July 16th, 2025
+
+## Agenda
+- [P2843R2: Preprocessing is never undefined](https://wg21.link/p2843r2).
+- [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://wg21.link/lwg4070).
+- [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Iain Sandoe
+  - Robin Leroy
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P2843R2: Preprocessing is never undefined](https://wg21.link/p2843r2).
+- [LWG issue 4070: Transcoding by std::formatter&lt;std::filesystem::path&gt;](https://wg21.link/lwg4070).
+  - This issue was not discussed due to time constraints and lack of quorum.
+- [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090).
+  - This issue was not discussed due to time constraints and lack of quorum.
 
 
 # June 11th, 2025
