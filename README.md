@@ -16,6 +16,7 @@ Draft agenda:
 - TBD
 
 # Past SG16 meetings
+- [August 27th, 2025](#august-27th-2025)
 - [July 30th, 2025](#july-30th-2025)
 - [July 16th, 2025](#july-16th-2025)
 - [June 11th, 2025](#june-11th-2025)
@@ -36,6 +37,29 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# August 27th, 2025
+
+## Agenda
+- [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090).
+- [P3681R0: char_traits: Stop the bleeding!](https://wg21.link/p3681r0)
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Fraser Gordon
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090):
+- **Poll 1: LWG 4090: Adopt Victor's suggested wording as the proposed resolution**
+  - Attendees: 7
+  - No objection to unanimous consent. 
+- [P3681R0: char_traits: Stop the bleeding!](https://wg21.link/p3681r0):
+  - Not discussed; author not present due to failure of the chair to properly coordinate.
 
 
 # July 30th, 2025
@@ -61,7 +85,7 @@ Draft agenda:
     \[fs.path.fmtr.funcs\], retain the modification to the index of implementation-defined behavior,
     and forward to LWG.**
     - Attendees: 7
-    - No objection to unanimous consent. 
+    - No objection to unanimous consent.
 - [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090):
 - [P3677R0: Preserving LC_CTYPE at program start for UTF-8 locales](https://wg21.link/p3677r0):
   - **POLL 2: Encourage WG14 to adopt P3677R0/N3539.**
@@ -69,7 +93,7 @@ Draft agenda:
       | SF  | F   | N   | A   | SA  |
       | --: | --: | --: | --: | --: |
       |   4 |   1 |   0 |   0 |   0 |
-    - Strong consensus. 
+    - Strong consensus.
 
 
 # July 16th, 2025
