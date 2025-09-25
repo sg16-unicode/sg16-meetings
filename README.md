@@ -9,13 +9,14 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, September 24th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250924T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, October 8th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251008T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
 - TBD
 
 # Past SG16 meetings
+- [September 24th, 2025](#september-24th-2025)
 - [September 10th, 2025](#september-10th-2025)
 - [August 27th, 2025](#august-27th-2025)
 - [July 30th, 2025](#july-30th-2025)
@@ -38,6 +39,49 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# September 24th, 2025
+
+## Agenda
+- [P3733R0: More named universal character escapes](https://wg21.link/p3733r0).
+- [P3695R1: Deprecate implicit conversions between Unicode character types](https://wg21.link/p3695r1).
+- [P3688R3: ASCII character utilities](https://wg21.link/p3688r3).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Eddie Nolan
+  - Hubert Tong
+  - Jan Schultke
+  - Jens Maurer
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- [P3733R0: More named universal character escapes](https://wg21.link/p3733r0):
+  - **Poll 1: P3733R0: Forward to EWG with a recommendation to adopt this feature as a defect report.**
+    - Attendees: 10
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   7 |   3 |   0 |   0 |   0 |
+    - Unanimous consensus.
+- [P3695R1: Deprecate implicit conversions between Unicode character types](https://wg21.link/p3695r1):
+  - **Poll 2: P3695R1: Recommend deprecating conversions between char and the charN_t types.**
+    - Attendees: 10
+    - No objection to unanimous **dissent**.
+  - **Poll 3: P3695R1: Recommend deprecating conversions between char8_t and wchar_t.**
+    - Attendees: 10
+    - No objection to unanimous consent.
+  - **Poll 4: P3695R1: Recommend deprecating conversions between char16_t and char32_t.**
+    - Attendees: 10
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   0 |   3 |   7 |   0 |
+    - Consensus against.
+- [P3688R3: ASCII character utilities](https://wg21.link/p3688r3):
+  - Not discussed due to lack of time.
 
 
 # September 10th, 2025
