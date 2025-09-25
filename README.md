@@ -9,13 +9,14 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, September 10th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250910T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, September 24th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20250924T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
 - TBD
 
 # Past SG16 meetings
+- [September 10th, 2025](#september-10th-2025)
 - [August 27th, 2025](#august-27th-2025)
 - [July 30th, 2025](#july-30th-2025)
 - [July 16th, 2025](#july-16th-2025)
@@ -39,11 +40,43 @@ Draft agenda:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# September 10th, 2025
+
+## Agenda
+- [P3681R0: char_traits: Stop the bleeding!](https://wg21.link/p3681r0).
+- [P3672R0: On Windows, Systems APIs, Text Encodings, and Pragmatism](https://wg21.link/p3672r0).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Hubert Tong
+  - Jan Schultke
+  - Jens Maurer
+  - Marco Foco
+  - Peter Bindels
+  - Tom Honermann
+  - Victor Zverovich
+- [P3681R0: char_traits: Stop the bleeding!](https://wg21.link/p3681r0):
+  - **Poll 1: P3681R0: Deprecate use of types other than std::char_traits specializations for
+    the Traits template argument when CharT is a core language character type.**
+    - Attendees: 11
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   3 |   1 |   1 |   1 |
+    - SA: We shouldn't deprecate code that works according to its intent due to preferences among committee members.
+    - A: We should't break existing code that works as intended.
+    - Consensus in favor.
+- [P3672R0: On Windows, Systems APIs, Text Encodings, and Pragmatism](https://wg21.link/p3672r0):
+  - Not discussed due to lack of time.
+
 # August 27th, 2025
 
 ## Agenda
 - [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090).
-- [P3681R0: char_traits: Stop the bleeding!](https://wg21.link/p3681r0)
+- [P3681R0: char_traits: Stop the bleeding!](https://wg21.link/p3681r0).
 
 ## Meeting summary
 - Attendees:
