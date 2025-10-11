@@ -9,13 +9,14 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, October 8th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251008T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, October 22nd, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251022T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
 
 Draft agenda:
-- TBD
+- NB comment processing.
 
 # Past SG16 meetings
+- [October 8th, 2025](#october-8th-2025)
 - [September 24th, 2025](#september-24th-2025)
 - [September 10th, 2025](#september-10th-2025)
 - [August 27th, 2025](#august-27th-2025)
@@ -41,6 +42,57 @@ Draft agenda:
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
 
 
+# October 8th, 2025
+
+## Agenda
+- [US 8-021: 5.5p1 \[lex.pptoken\] Allow skipping non-preprocessing tokens via #if](https://github.com/cplusplus/nbballot/issues/595).
+- [CA-022: 5.5p1 \[lex.pptoken\] Add example for ill-formed non-preprocessing tokens](https://github.com/cplusplus/nbballot/issues/596).
+- [US 63-115: 16.3.3.3.4.1p01.2 \[character.seq.general\] Move \[character.seq.general\] to the core wording](https://github.com/cplusplus/nbballot/issues/693).
+- [US 189-304: 31.12.6.1, 31.12.6.5.6, 31.12.6.5.7, D.22.2 rename filesystem::path methods](https://github.com/cplusplus/nbballot/issues/879).
+- [US 5-018: 5 \[lex\] Define "whitespace character"](https://github.com/cplusplus/nbballot/issues/592).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Hubert Tong
+  - Jan Schultke
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [US 8-021: 5.5p1 \[lex.pptoken\] Allow skipping non-preprocessing tokens via #if](https://github.com/cplusplus/nbballot/issues/595):
+  - **Poll 1: US 8: Recommend rejecting US 8 as evolutionary; the standard is intentional in specifying these preprocessing tokens as ill-formed.**
+    - Attendees: 11 (one abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   4 |   1 |   0 |   0 |
+    - Strong consensus.
+- [CA-022: 5.5p1 \[lex.pptoken\] Add example for ill-formed non-preprocessing tokens](https://github.com/cplusplus/nbballot/issues/596):
+  - **Poll 2: CA-22: Recommend accepting CA-22.**
+    - Attendees: 11 (one abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   5 |   4 |   1 |   0 |   0 |
+    - Strong consensus.
+- [US 63-115: 16.3.3.3.4.1p01.2 \[character.seq.general\] Move \[character.seq.general\] to the core wording](https://github.com/cplusplus/nbballot/issues/693):
+  - **Poll 3: US 63: Recommend rejecting US 63; the execution character sets are not relevant to lexing and depend on library concepts such as locale.**
+    - Attendees: 11 (one abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   8 |   1 |   0 |   0 |   0 |
+    - Unanimous consensus.
+- [US 189-304: 31.12.6.1, 31.12.6.5.6, 31.12.6.5.7, D.22.2 rename filesystem::path methods](https://github.com/cplusplus/nbballot/issues/879):
+  - Discussion started, but not concluded due to lack of time.
+- [US 5-018: 5 \[lex\] Define "whitespace character"](https://github.com/cplusplus/nbballot/issues/592):
+  - Not discussed due to lack of time.
+
+
 # September 24th, 2025
 
 ## Agenda
@@ -60,6 +112,8 @@ Draft agenda:
   - Steve Downey
   - Tom Honermann
   - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
 - [P3733R0: More named universal character escapes](https://wg21.link/p3733r0):
   - **Poll 1: P3733R0: Forward to EWG with a recommendation to adopt this feature as a defect report.**
     - Attendees: 10
@@ -103,6 +157,8 @@ Draft agenda:
   - Peter Bindels
   - Tom Honermann
   - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
 - [P3681R0: char_traits: Stop the bleeding!](https://wg21.link/p3681r0):
   - **Poll 1: P3681R0: Deprecate use of types other than std::char_traits specializations for
     the Traits template argument when CharT is a core language character type.**
@@ -131,6 +187,8 @@ Draft agenda:
   - Steve Downey
   - Tom Honermann
   - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
 - [LWG issue 4090: Underspecified use of locale facets for locale-dependent std::format](https://wg21.link/lwg4090):
 - **Poll 1: LWG 4090: Adopt Victor's suggested wording as the proposed resolution**
   - Attendees: 7
