@@ -9,13 +9,15 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, October 22nd, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251022T193000&p1=1440&p2=tz_pdt&p3=tz_mdt&p4=tz_cdt&p5=tz_edt&p6=tz_cest)).
+Wednesday, November 19th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251119T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cet)).
 
 Draft agenda:
-- NB comment processing.
+- TBD.
+
 
 # Past SG16 meetings
+- [October 22nd, 2025](#october-22nd-2025)
 - [October 8th, 2025](#october-8th-2025)
 - [September 24th, 2025](#september-24th-2025)
 - [September 10th, 2025](#september-10th-2025)
@@ -40,6 +42,45 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# October 22nd, 2025
+
+## Agenda
+- [US 5-018: 5 \[lex\] Define "whitespace character"](https://github.com/cplusplus/nbballot/issues/592).
+    - [P3657R1: A Grammar for Whitespace Characters](https://isocpp.org/files/papers/P3657R1.pdf).
+- [US 189-304: 31.12.6.1, 31.12.6.5.6, 31.12.6.5.7, D.22.2 rename `filesystem::path` methods](https://github.com/cplusplus/nbballot/issues/879).
+
+## Meeting summary
+- Attendees:
+  - Alisdair Meredith
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Jan Schultke
+  - Jens Maurer
+  - Peter Bindels
+  - Robin Leroy
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [US 5-018: 5 \[lex\] Define "whitespace character"](https://github.com/cplusplus/nbballot/issues/592):
+  - **Poll 1: Forward P3657R1 to CWG as a recommended resolution for US 5-018.**
+    - Attendees: 11 (one abstention)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   5 |   1 |   0 |   0 |
+    - Strong consensus.
+- [US 189-304: 31.12.6.1, 31.12.6.5.6, 31.12.6.5.7, D.22.2 rename `filesystem::path` methods](https://github.com/cplusplus/nbballot/issues/879):
+  - **Poll 2: Recommend resolving US 189-304 by renaming `\[generic_\]system_encoded_string()` to `\[generic_\]native_encoded_string()`.**
+    - Attendees: 10
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   2 |   8 |   0 |   0 |   0 |
+    - Unanimous consensus.
 
 
 # October 8th, 2025
