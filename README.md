@@ -9,14 +9,15 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, November 19th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251119T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cet)).
+Wednesday, December 10th, 2025, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251210T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cet)).
 
 Draft agenda:
-- TBD.
+- Continue discussion of [P3688R4: ASCII character utilities](https://wg21.link/p3688r4).
 
 
 # Past SG16 meetings
+- [November 19th, 2025](#november-19th-2025)
 - [October 22nd, 2025](#october-22nd-2025)
 - [October 8th, 2025](#october-8th-2025)
 - [September 24th, 2025](#september-24th-2025)
@@ -42,6 +43,42 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# November 19th, 2025
+
+## Agenda
+- [P3695R2: Deprecate implicit conversions between Unicode character types](https://wg21.link/p3695r2).
+- [P3688R4: ASCII character utilities](https://wg21.link/p3688r4).
+
+## Meeting summary
+- Attendees:
+  - Corentin Jabot
+  - Eddie Nolan
+  - Fraser Gordon
+  - Hubert Tong
+  - Jan Schultke
+  - Jens Maurer
+  - Peter Bindels
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3695R2: Deprecate implicit conversions between Unicode character types](https://wg21.link/p3695r2):
+  - **Poll 1: P3695R2: Recommend deprecating conversions between char8_t and wchar_t.**
+    - Attendees: 10
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   3 |   3 |   3 |   1 |   0 |
+    - Consensus.
+  - **Poll 2: P3695R2: Forward to EWG.**
+    - Attendees: 10
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   4 |   4 |   2 |   0 |   0 |
+    - Strong consensus.
+- [P3688R4: ASCII character utilities](https://wg21.link/p3688r4):
 
 
 # October 22nd, 2025
