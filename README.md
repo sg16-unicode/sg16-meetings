@@ -9,14 +9,15 @@ attendees.  To request an invitation, please contact tom@honermann.net.
 # Future SG16 meetings
 
 The next SG16 meeting is scheduled for
-Wednesday, December 10th, 2025, from 19:30-21:00 UTC
-([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20251210T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cet)).
+Wednesday, January 14th, 2026, from 19:30-21:00 UTC
+([timezone conversion](https://www.timeanddate.com/worldclock/converter.html?iso=20260114T193000&p1=1440&p2=tz_pt&p3=tz_mt&p4=tz_ct&p5=tz_et&p6=tz_cet)).
 
 Draft agenda:
-- Continue discussion of [P3688R4: ASCII character utilities](https://wg21.link/p3688r4).
+- Continue discussion of [P3688R5: ASCII character utilities](https://wg21.link/p3688r5).
 
 
 # Past SG16 meetings
+- [December 10th, 2025](#december-10th-2025)
 - [November 19th, 2025](#november-19th-2025)
 - [October 22nd, 2025](#october-22nd-2025)
 - [October 8th, 2025](#october-8th-2025)
@@ -43,6 +44,38 @@ Draft agenda:
 - [Meetings held in 2019](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2019.md)
 - [Meetings held in 2018](https://github.com/sg16-unicode/sg16-meetings/blob/master/README-2018.md)
 - [Prior std-text-wg meetings](#prior-std-text-wg-meetings)
+
+
+# December 10th, 2025
+
+## Agenda
+- [P3688R5: ASCII character utilities](https://wg21.link/p3688r5).
+
+## Meeting summary
+- Attendees:
+  - Braden Ganetsky
+  - Corentin Jabot
+  - Eddie Nolan
+  - Hubert Tong
+  - Jan Schultke
+  - Jens Maurer
+  - Matthias Wippich
+  - Matthew Taylor
+  - Steve Downey
+  - Tom Honermann
+  - Victor Zverovich
+- \[ Editor's note: The SG16 chair has fallen far behind his obligations but will publish a proper summary
+  of this meeting in due time. \]
+- [P3688R5: ASCII character utilities](https://wg21.link/p3688r5):
+  - \[ Editor's note: D3688R5 was the active paper under discussion at the telecon.
+    The agenda and links used here reference P3688R5 since the links to the draft paper were ephemeral.
+    The published document may differ from the reviewed draft revision. \]
+  - **Poll 1: D3688R5: Drop the char8_t and char16_t overloads due to code unit and code point confusion**
+    - Attendance: 11 (2 abstentions)
+      | SF  | F   | N   | A   | SA  |
+      | --: | --: | --: | --: | --: |
+      |   0 |   1 |   1 |   4 |   3 |
+    - Consensus against.
 
 
 # November 19th, 2025
